@@ -8,7 +8,7 @@ $(function(){
 
 
 
-    $.get('api/map.php').fail(function (response) {
+    $.get('../api/map.php').fail(function (response) {
 
         console.log('fail',response);
 
@@ -26,8 +26,11 @@ $(function(){
             blocks += '<div class="block" data-material="'+block.material+'" data-x="' + block.position.x + '" data-y="' + block.position.y + '">';
             blocks += '';
             blocks += '</div>';
-            
+
         });
+
+
+
 
 
 
@@ -61,6 +64,8 @@ $(function(){
 
 
             $this.attr('data-material', material);
+
+            $('#admin-save').trigger('click');
 
         });
 

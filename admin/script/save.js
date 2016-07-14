@@ -10,6 +10,10 @@ $(function () {
     $('#admin-save').click(function () {
 
 
+        $button = $(this);
+        $button.html('Ukládání...');//todo fa
+
+
         var blocks = [];
 
         $('#admin-world').find('.block').each(function () {
@@ -28,12 +32,13 @@ $(function () {
 
 
         $.post({
-            url: 'api/map.php',
+            url: '../api/map.php',
             dataType: 'json',
             data: JSON.stringify(blocks)
 
         }).done(function (response) {
 
+            $button.html('Uloženo');//todo datum
             console.log('done',response);
 
         }).fail(function (response) {

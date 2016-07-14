@@ -26,6 +26,7 @@
 
 <canvas id="scene"></canvas>
 <script src="script/scene.js"></script>
+<script src="script/map.js"></script>
 
 
 </body>

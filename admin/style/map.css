@@ -1,7 +1,15 @@
-#admin-table tr td {
+#admin-world .block {
+  display: block;
   width: 30px;
   height: 30px;
+  margin: 0px;
+  padding: 0px;
   border: 1px solid #ccc;
   background-color: #fff; }
-  #admin-table tr td.td[data-material="stone"] {
-    background-color: #444; }
+#admin-world .block[data-material="stone"] {
+  background-color: #444; }
+
+#admin-save {
+  position: fixed;
+  top: 20px;
+  right: 20px; }

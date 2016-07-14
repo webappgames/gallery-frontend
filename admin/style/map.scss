@@ -1,36 +1,40 @@
 
 
 
-#admin-table{
-  tr{
-    td{
+#admin-world {
 
-      width:30px;
-      height:30px;
+  .block {
 
+    display: block;
 
-      border: 1px solid #ccc;
+    width: 30px;
+    height: 30px;
 
+    margin: 0px;
+    padding: 0px;
 
-      background-color: #fff;
+    border: 1px solid #ccc;
 
-
-
-
-
-
-      &.td[data-material="stone"]{
-        background-color: #444;
-      }
-
-
-
-
-
-
-    }
-
-
+    background-color: #fff;
 
   }
+
+  .block[data-material="stone"] {
+    background-color: #444;
+  }
+
+
+}
+
+
+
+
+
+
+#admin-save{
+
+  position: fixed;
+  top:20px;
+  right: 20px;
+
 }

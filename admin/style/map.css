@@ -1,0 +1,7 @@
+#admin-table tr td {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ccc;
+  background-color: #fff; }
+  #admin-table tr td.td[data-material="stone"] {
+    background-color: #444; }

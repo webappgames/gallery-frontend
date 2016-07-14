@@ -1,0 +1,36 @@
+
+
+
+#admin-table{
+  tr{
+    td{
+
+      width:30px;
+      height:30px;
+
+
+      border: 1px solid #ccc;
+
+
+      background-color: #fff;
+
+
+
+
+
+
+      &.td[data-material="stone"]{
+        background-color: #444;
+      }
+
+
+
+
+
+
+    }
+
+
+
+  }
+}

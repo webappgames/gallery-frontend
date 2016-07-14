@@ -6,6 +6,7 @@ var engine = new BABYLON.Engine(canvas, true);
 
 
 
+
 var createScene = function () {
     var scene = new BABYLON.Scene(engine);
 
@@ -20,7 +21,7 @@ var createScene = function () {
     //Ground
     var ground = BABYLON.Mesh.CreatePlane("ground", 90000.0, scene);
     ground.material = new BABYLON.StandardMaterial("groundMat", scene);
-    ground.material.diffuseColor = new BABYLON.Color3(0.5, 1, 0.5);
+    ground.material.diffuseColor = new BABYLON.Color3(0.5, 0.9, 0.7);
     ground.material.backFaceCulling = false;
     ground.position = new BABYLON.Vector3(0, 0, 0);
     ground.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
@@ -43,10 +44,47 @@ var createScene = function () {
     ground.checkCollisions = true;
 
 
-    return scene;
-}
+    camera.keysLeft = [];
+    camera.keysRight = [];
 
-var scene = createScene();
+
+
+
+    /*$( canvas ).keydown(function( event ) {
+
+        console.log(event.which);
+
+
+        if ( event.which == 39 ) {
+
+            camera.rotation.y += 0.2;
+        }
+        if ( event.which == 37 ) {
+
+            camera.rotation.y -= 0.2;
+
+        }
+
+
+
+    });*/
+
+
+
+
+
+
+    return({
+        scene: scene,
+        camera: camera,
+    });
+    
+};
+
+var scene_ = createScene();
+var scene = scene_.scene;
+var camera = scene_.camera;
+
 
 engine.runRenderLoop(function () {
     scene.render();

@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title>Gallery</title>
 
+    <script>
+        var r = console.log.bind(console);
+    </script>
 
     <!-- Babylon.js -->
     <script src="script/babylon/hand.minified-1.2.js"></script>
@@ -27,6 +30,7 @@
 <canvas id="scene"></canvas>
 <script src="script/scene.js"></script>
 <script src="script/map.js"></script>
+<script src="script/keys.js"></script>
 
 
 </body>

@@ -9,7 +9,10 @@
 #admin-world .block[data-material="stone"] {
   background-color: #444; }
 
-#admin-save {
+#admin-tools {
   position: fixed;
   top: 20px;
   right: 20px; }
+  #admin-tools button {
+    border: none;
+    background-color: aqua; }

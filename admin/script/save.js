@@ -7,7 +7,7 @@
 
 $(function () {
 
-    $('#admin-save').click(function () {
+    $('.save').click(function () {
 
 
         $button = $(this);

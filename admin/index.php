@@ -18,12 +18,28 @@
     <script src="script/new.js"></script>
 
 
-    <link rel="stylesheet" href="style/map.css">
+    <?php
+
+    foreach(glob('style/*.css') as $file){
+        echo('<link rel="stylesheet" href="'.$file.'">');
+    }
+
+    ?>
+    
+
 <body>
 
 
-    <div id="admin-world">
-    </div>
+
+    <section id="admin-gallery">
+        
+        <img src="">
+        
+    </section>
+
+
+    <section id="admin-world">
+    </section>
 
 
 
@@ -36,6 +52,7 @@
             <div class="block" data-material=""></div>
             <div class="block" data-material="wall"></div>
             <div class="block" data-material="door"></div>
+            <div class="block" data-material="light"></div>
         </div>
 
     </nav>

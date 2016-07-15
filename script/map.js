@@ -32,6 +32,15 @@ $(function(){
 
             //console.log(block);
 
+            if(!block.material)return;
+
+            var position = new BABYLON.Vector3(
+                block.position.x * -BLOCK_SIZE,
+                BLOCK_SIZE*BLOCK_SIZE_VERTICAL/2,
+                block.position.y * BLOCK_SIZE
+            );
+
+
             if(block.material=='wall' || block.material=='door') {
 
 
@@ -41,7 +50,7 @@ $(function(){
                 box.material.diffuseColor = new BABYLON.Color3(0.2,0.2,0.2);
                 //box.material.diffuseTexture = new BABYLON.Texture("images/textures/crate.png", scene);
                 //box.material.diffuseTexture.hasAlpha = true;
-                box.position = new BABYLON.Vector3(block.position.x * -BLOCK_SIZE, BLOCK_SIZE*BLOCK_SIZE_VERTICAL/2, block.position.y * BLOCK_SIZE);
+                box.position = position;
                 box.scaling.y = BLOCK_SIZE_VERTICAL;
                 box.checkCollisions = true;
 
@@ -52,7 +61,17 @@ $(function(){
                 }
 
 
+            }else
+            if(block.material=='light'){
+
+                r('creating light');
+                new BABYLON.PointLight("Omni", position, scene);
+
             }
+
+
+
+
 
             
         });

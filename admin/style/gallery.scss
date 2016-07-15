@@ -1,0 +1,30 @@
+
+
+
+#admin-gallery{
+
+  position: fixed;
+  top:0px;
+  left: 0px;
+
+  width: 200px;
+  height: 100vh;
+
+  border-right: 1px solid #323030;
+
+
+
+  img{
+
+    display: inline-block;
+
+    width: 30px;
+    height: 30px;
+
+    margin: 2px;
+
+    border: 1px solid #ccc;
+
+  }
+
+}

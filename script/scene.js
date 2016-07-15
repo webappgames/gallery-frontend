@@ -15,8 +15,8 @@ var createScene = function () {
     var scene = new BABYLON.Scene(engine);
 
     // Lights
-    var light0 = new BABYLON.DirectionalLight("Omni", new BABYLON.Vector3(-2, -5, 2), scene);
-    var light1 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(2, -5, -2), scene);
+    //var light0 = new BABYLON.DirectionalLight("Omni", new BABYLON.Vector3(-2, -5, 2), scene);
+    //var light1 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(2, -5, -2), scene);
 
     // Need a free camera for collisions
     var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, 2, 30*BLOCK_SIZE), scene);

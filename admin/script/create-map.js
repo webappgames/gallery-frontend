@@ -21,6 +21,14 @@ function createMap(blocks) {
     var $blocks = $(blocks_html);
 
 
+
+    $blocks.click(function () {
+
+        var $this = $(this);
+        $this.attr('data-material', material_selected);
+
+    });
+
     var drawing = false;
 
     $('#admin-world').unbind('mousedown').mousedown(function () {

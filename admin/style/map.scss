@@ -27,9 +27,11 @@
   background-color: #444;
 }
 .block[data-material="door"] {
-  background-color: #443913;
+  background-color: #a98d2e;
 }
-
+.block[data-material="light"] {
+  background-color: #feff95;
+}
 
 .selected{
   border: 2px solid #f00;

@@ -1,4 +1,8 @@
 
+var BLOCK_SIZE=5;
+var BLOCK_SIZE_VERTICAL=10;
+var BLOCK_SIZE_DOOR=2;
+
 
 var canvas = document.getElementById("scene");
 var engine = new BABYLON.Engine(canvas, true);
@@ -15,7 +19,8 @@ var createScene = function () {
     var light1 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(2, -5, -2), scene);
 
     // Need a free camera for collisions
-    var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, 2, 0), scene);
+    var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, 2, 30*BLOCK_SIZE), scene);
+    camera.rotation.y=Math.PI;
     camera.attachControl(canvas, true);
 
     //Ground

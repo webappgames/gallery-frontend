@@ -7,6 +7,10 @@
     </head>
 
 
+    <script>
+        var r = console.log.bind(console);
+    </script>
+
     <script src="../node_modules/jquery/dist/jquery.min.js"></script>
     <script src="script/create-map.js"></script>
     <script src="script/load.js"></script>
@@ -18,17 +22,26 @@
 <body>
 
 
-<div id="admin-world">
-</div>
+    <div id="admin-world">
+    </div>
 
 
 
-<nav id="admin-tools">
-<button class="save">Uložit</button>
-<button class="new">Nový</button>
-</nav>
+    <nav id="admin-tools">
+    <button class="save">Uložit</button>
+    <button class="new">Nový</button>
 
 
+        <div class="palette">
+            <div class="block" data-material=""></div>
+            <div class="block" data-material="wall"></div>
+            <div class="block" data-material="door"></div>
+        </div>
+
+    </nav>
+
+
+    <script src="script/palette.js"></script>
 
 
 </body>

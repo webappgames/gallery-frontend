@@ -21,27 +21,35 @@ function createMap(blocks) {
     var $blocks = $(blocks_html);
 
 
-    $blocks.click(function () {
+    var drawing = false;
 
+    $('#admin-world').unbind('mousedown').mousedown(function () {
+        r('start drawing');
+        drawing = true;
+    });
+    $('#admin-world').unbind('mouseup').mouseup(function () {
+        r('stop drawing');
+        drawing = false;
+        $('.save').trigger('click');
+    });
+
+    $blocks.mouseenter(function () {
+
+        if(!drawing)return;
 
         var $this = $(this);
-        //var x = $this.attr('data-x');
-        //var y = $this.attr('data-y');
-        var material = $this.attr('data-material');
 
 
-        if (material == '') {
-            material = 'stone';
-        } else {
-            material = '';
-        }
+        $this.attr('data-material', material_selected);
 
 
-        $this.attr('data-material', material);
-
-        $('.save').trigger('click');
 
     });
+
+
+
+
+
 
 
     var width = $(window).width();

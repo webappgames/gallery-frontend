@@ -33,5 +33,10 @@
 <script src="script/keys.js"></script>
 
 
+<script>
+    document.getElementById("scene").focus();
+</script>
+
+
 </body>
 </html>

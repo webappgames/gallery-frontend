@@ -3,29 +3,37 @@
 
 #admin-world {
 
-  .block {
+}
 
-    display: block;
 
-    width: 30px;
-    height: 30px;
 
-    margin: 0px;
-    padding: 0px;
+.block {
 
-    border: 1px solid #ccc;
+  display: block;
 
-    background-color: #fff;
+  width: 30px;
+  height: 30px;
 
-  }
+  margin: 0px;
+  padding: 0px;
 
-  .block[data-material="stone"] {
-    background-color: #444;
-  }
+  border: 1px solid #ccc;
 
+  background-color: #fff;
 
 }
 
+.block[data-material="wall"] {
+  background-color: #444;
+}
+.block[data-material="door"] {
+  background-color: #443913;
+}
+
+
+.selected{
+  border: 2px solid #f00;
+}
 
 
 
@@ -40,6 +48,11 @@
     border: none;
     background-color: aqua;
 
+  }
+
+
+  .palette{
+    border: 2px solid #ccc;
   }
 
 }

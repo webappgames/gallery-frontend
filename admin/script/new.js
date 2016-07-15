@@ -10,13 +10,29 @@ $(function () {
     $('.new').click(function () {
 
 
+        var size={
+            x: 16,
+            y: 8
+        };
 
+        var material;
         var blocks = [];
-         for (var y = -8; y < 8; y++) {
-         for (var x = -8; x < 8; x++) {
+         for (var y = -size.y; y <= size.y; y++) {
+         for (var x = -size.x; x <= size.x; x++) {
+
+
+         if(
+             (x==size.x || y==size.y || x==-size.x || y==-size.y)
+             && !(y==size.y && x==0 )
+         ){
+             material='wall';
+         }else{
+             material='';
+         }
+
          blocks.push({
              position:{x:x,y:y},
-             material: ''
+             material: material
          });
          }
          }

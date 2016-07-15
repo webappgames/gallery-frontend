@@ -23,6 +23,8 @@ $(function(){
         console.log('done', response);
 
 
+        
+
 
 
         var blocks = '';
@@ -30,20 +32,28 @@ $(function(){
 
             //console.log(block);
 
-            if(block.material) {
+            if(block.material=='wall' || block.material=='door') {
 
 
                 //Simple crate
-                var box = new BABYLON.Mesh.CreateBox("crate", 2, scene);
+                var box = new BABYLON.Mesh.CreateBox("crate", BLOCK_SIZE, scene);
                 box.material = new BABYLON.StandardMaterial("Mat", scene);
                 box.material.diffuseColor = new BABYLON.Color3(0.2,0.2,0.2);
                 //box.material.diffuseTexture = new BABYLON.Texture("images/textures/crate.png", scene);
                 //box.material.diffuseTexture.hasAlpha = true;
-                box.position = new BABYLON.Vector3(block.position.x * 2, 2*3/2, block.position.y * 2);
-                box.scaling.y = 3;
+                box.position = new BABYLON.Vector3(block.position.x * -BLOCK_SIZE, BLOCK_SIZE*BLOCK_SIZE_VERTICAL/2, block.position.y * BLOCK_SIZE);
+                box.scaling.y = BLOCK_SIZE_VERTICAL;
                 box.checkCollisions = true;
 
+
+                if(block.material=='door') {
+                    box.scaling.y = BLOCK_SIZE_VERTICAL-BLOCK_SIZE_DOOR;
+                    box.position.y += BLOCK_SIZE_DOOR*BLOCK_SIZE;
+                }
+
+
             }
+
             
         });
 

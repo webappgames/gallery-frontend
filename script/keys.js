@@ -121,7 +121,7 @@ var keys_tick = function (timestamp) {
         camera.position.z -= Math.cos(camera.rotation.y)*0.2;
 
     }*/
-    
+
 
     if (controls_down.LEFT) {
         camera.rotation.y -= 0.2;
@@ -140,3 +140,6 @@ var keys_tick = function (timestamp) {
     requestAnimationFrame(keys_tick);
 };
 requestAnimationFrame(keys_tick);
+
+
+

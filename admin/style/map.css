@@ -1,4 +1,4 @@
-#admin-world .block {
+.block {
   display: block;
   width: 30px;
   height: 30px;
@@ -6,8 +6,15 @@
   padding: 0px;
   border: 1px solid #ccc;
   background-color: #fff; }
-#admin-world .block[data-material="stone"] {
+
+.block[data-material="wall"] {
   background-color: #444; }
+
+.block[data-material="door"] {
+  background-color: #443913; }
+
+.selected {
+  border: 2px solid #f00; }
 
 #admin-tools {
   position: fixed;
@@ -16,3 +23,5 @@
   #admin-tools button {
     border: none;
     background-color: aqua; }
+  #admin-tools .palette {
+    border: 2px solid #ccc; }

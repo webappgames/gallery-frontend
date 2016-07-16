@@ -17,7 +17,8 @@ $(function(){
 
         console.log('done', response);
 
-        createMap(response)
+        objects = response;
+        createMap()
         
 
 

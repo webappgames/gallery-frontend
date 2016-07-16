@@ -12,6 +12,7 @@
     </script>
 
     <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
     <script src="script/create-map.js"></script>
     <script src="script/load.js"></script>
     <script src="script/save.js"></script>
@@ -48,12 +49,28 @@
     <button class="new">Nový</button>
 
 
-        <div class="palette">
+        
+        
+        <fieldset class="palette">
+
+            <legend>Bloky</legend>
+
             <div class="block" data-material=""></div>
             <div class="block" data-material="wall"></div>
             <div class="block" data-material="door"></div>
             <div class="block" data-material="light"></div>
-        </div>
+        </fieldset>
+
+
+
+
+        <fieldset class="palette">
+            <legend>Předměty</legend>
+            <div class="item" data-material="light"></div>
+        </fieldset>
+
+
+
 
     </nav>
 

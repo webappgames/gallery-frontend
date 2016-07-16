@@ -2,25 +2,44 @@
  * Created by Pavel on 14.07.2016.
  */
 
-function createMap(blocks) {
+var FIELD_SIZE = 30;
+var objects = [];
 
+function createMap() {
+    
 
     var blocks_html = '';
-    blocks.forEach(function (block) {
+    var items_html = '';
 
-        blocks_html += '<div class="block" data-material="' + block.material + '" data-x="' + block.position.x + '" data-y="' + block.position.y + '">';
-        blocks_html += '';
-        blocks_html += '</div>';
+    objects.forEach(function (object) {
+
+        if(object.type == 'block'){
+
+            blocks_html += '<div class="block" data-type="block" data-material="' + object.material + '" data-x="' + object.position.x + '" data-y="' + object.position.y + '">';
+            blocks_html += '';
+            blocks_html += '</div>';
+
+        }else
+        if(object.type == 'item'){
+
+            items_html += '<div class="item" data-type="item" data-material="' + object.material + '" data-x="' + object.position.x + '" data-y="' + object.position.y + '">';
+            items_html += '';
+            items_html += '</div>';
+
+        }
+
+
 
     });
 
+    var $blocks= $(blocks_html);
+    var $items= $(items_html);
 
 
 
 
-    var $blocks = $(blocks_html);
 
-
+    //----------------------------------------------------------------------------
 
     $blocks.click(function () {
 
@@ -55,15 +74,48 @@ function createMap(blocks) {
     });
 
 
+    //----------------------------------------------------------------------------
 
 
 
+    //----------------------------------------------------------------------------
+    $items.draggable({
+
+        stop: function () {
+
+            var width = $(window).width();
+            var height = $(window).height();
+            var offset = $(this).offset();
+
+            var x = (offset.left-width/2)/FIELD_SIZE;
+            var y = (offset.top-height/2)/FIELD_SIZE;
+
+            $(this)
+                .attr('data-x',x)
+                .attr('data-y',y);
+
+            $('.save').trigger('click');
+            
+
+        }
+        
+        
+    });
+    //----------------------------------------------------------------------------
+
+
+
+    $('#admin-world').html('');
+    $('#admin-world').append($blocks);
+    $('#admin-world').append($items);
 
 
     var width = $(window).width();
     var height = $(window).height();
 
-    $blocks.each(function () {
+    $('#admin-world').find('.block,.item').each(function () {
+
+        //r(this);
 
         var $this = $(this);
         var x = $this.attr('data-x');
@@ -71,13 +123,11 @@ function createMap(blocks) {
 
 
         $this.css('position', 'absolute');
-        $this.css('top', y * 30 + height / 2);
-        $this.css('left', x * 30 + width / 2);
+        $this.css('top', y * FIELD_SIZE + height / 2);
+        $this.css('left', x * FIELD_SIZE + width / 2);
 
     });
 
-
-    $('#admin-world').html($blocks);
 
 
 }

@@ -13,11 +13,20 @@
 .block[data-material="door"] {
   background-color: #a98d2e; }
 
-.block[data-material="light"] {
-  background-color: #feff95; }
-
 .selected {
   border: 2px solid #f00; }
+
+.item {
+  display: block;
+  width: 30px;
+  height: 30px;
+  margin: 0px;
+  padding: 0px;
+  border-radius: 30px;
+  border: 1px solid #000000; }
+
+.item[data-material="light"] {
+  background-color: #feff95; }
 
 #admin-tools {
   position: fixed;

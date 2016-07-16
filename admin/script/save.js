@@ -16,15 +16,17 @@ $(function () {
 
         var blocks = [];
 
-        $('#admin-world').find('.block').each(function () {
+        $('#admin-world').find('.block,.item').each(function () {
 
             var $this = $(this);
             var x = $this.attr('data-x');
             var y = $this.attr('data-y');
+            var type = $this.attr('data-type');
             var material = $this.attr('data-material');
 
             blocks.push({
                 position:{x:x,y:y},
+                type: type,
                 material: material
             });
 

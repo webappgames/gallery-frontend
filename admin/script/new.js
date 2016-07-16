@@ -32,12 +32,14 @@ $(function () {
 
          blocks.push({
              position:{x:x,y:y},
+             type: 'block',
              material: material
          });
          }
          }
 
-        createMap(blocks);
+        objects = blocks;
+        createMap();
 
         $('.save').trigger('click');
 

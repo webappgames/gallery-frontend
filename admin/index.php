@@ -30,24 +30,38 @@
 
 <body>
 
-
-
-    <section id="admin-gallery">
-        
-        <img src="">
-        
-    </section>
-
-
     <section id="admin-world">
     </section>
 
 
 
-    <nav id="admin-tools">
-    <button class="save">Uložit</button>
-    <button class="new">Nový</button>
+    <nav id="menu-left">
 
+        <fieldset class="palette">
+            <legend>galerie</legend>
+            <img src="">
+            <img src="">
+            <img src="">
+            <img src="">
+            <img src="">
+            <img src="">
+        </fieldset>
+        
+    </nav>
+ 
+
+
+
+    <nav id="menu-right">
+
+
+        <fieldset class="palette" id="admin-tools">
+            
+            <legend>Akce</legend>
+            <button class="save">Uložit</button>
+            <button class="new">Nový</button>
+            
+        </fieldset>
 
         
         

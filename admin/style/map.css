@@ -27,13 +27,3 @@
 
 .item[data-material="light"] {
   background-color: #feff95; }
-
-#admin-tools {
-  position: fixed;
-  top: 20px;
-  right: 20px; }
-  #admin-tools button {
-    border: none;
-    background-color: aqua; }
-  #admin-tools .palette {
-    border: 2px solid #ccc; }

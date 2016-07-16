@@ -1,6 +1,6 @@
 var material_selected = '';
 
-$('#admin-tools').find('.palette').find('.block').click(function () {
+$('.palette').find('.block').click(function () {
 
     $('#admin-tools').find('.palette').find('.block').removeClass('selected');
     $(this).addClass('selected');
@@ -12,7 +12,7 @@ $('#admin-tools').find('.palette').find('.block').click(function () {
 
 
 
-$('#admin-tools').find('.palette').find('.item').draggable({
+$('.palette').find('.item').draggable({
 
     //helper: 'clone',
 

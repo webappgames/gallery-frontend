@@ -1,0 +1,49 @@
+
+#menu-left {
+
+  position: fixed;
+  top: 0px;
+  left: 0px;
+
+}
+
+#menu-right {
+
+  position: fixed;
+  top: 0px;
+  right: 0px;
+
+}
+
+
+nav{
+
+  .palette{
+    margin:5px;
+    background-color: #fff;
+    border: 2px solid #ccc;
+  }
+
+  button{
+
+    border: none;
+    background-color: aqua;
+
+  }
+
+  img{
+
+    display: inline-block;
+
+    width: 30px;
+    height: 30px;
+
+    margin: 2px;
+
+    border: 1px solid #ccc;
+
+  }
+
+
+
+}

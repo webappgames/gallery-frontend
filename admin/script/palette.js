@@ -1,11 +1,11 @@
-var material_selected = '';
+var shape_selected = '';
 
 $('.palette').find('.block').click(function () {
 
     $('.palette').find('.block').removeClass('selected');
     $(this).addClass('selected');
 
-    material_selected = $(this).attr('data-material');
+    shape_selected = $(this).attr('data-shape');
     
     
 });
@@ -24,8 +24,9 @@ $('.palette').find('.light').draggable({
 
 
         objects.push({
-            position: position,
+            id: createGuid(),
             type: 'light',
+            position: position,
             color: '#fff',
             intensity: 1
 

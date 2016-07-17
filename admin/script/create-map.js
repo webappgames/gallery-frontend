@@ -5,6 +5,17 @@
 var FIELD_SIZE = 30;
 var objects = [];
 
+function getObjectById(id){
+    for(var i=0,l=objects.length;i<l;i++){
+        if(objects[i].id==id)return(objects[i]);
+    }
+    throw new Error('Unknown id '+id);
+}
+
+
+
+
+
 function createMap() {
 
     var $admin_world = $('#admin-world');
@@ -30,7 +41,16 @@ function createMap() {
     $blocks.click(function () {
 
         var $this = $(this);
-        $this.attr('data-material', material_selected);
+        $this.attr('data-shape', shape_selected);
+
+
+        var id = $this.attr('data-id');
+        var object = getObjectById(id);
+        object.shape = shape_selected;
+
+
+        $('.save').trigger('click');
+
 
     });
 
@@ -53,8 +73,12 @@ function createMap() {
         var $this = $(this);
 
 
-        $this.attr('data-material', material_selected);
+        $this.attr('data-shape', shape_selected);
 
+
+        var id = $this.attr('data-id');
+        var object = getObjectById(id);
+        object.shape = shape_selected;
 
 
     });
@@ -67,13 +91,13 @@ function createMap() {
 
         stop: function () {
 
-
+            var offset = $(this).offset();
             var position = getPositionFromLeftTop(offset.left,offset.top);
 
 
-            $(this)
-                .attr('data-x',position.x)
-                .attr('data-y',position.y);
+            var id = $(this).attr('data-id');
+            var object = getObjectById(id);
+            object.position = position;
 
             $('.save').trigger('click');
             

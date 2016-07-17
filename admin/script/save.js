@@ -39,7 +39,7 @@ $(function () {
         $.post({
             url: '../api/map.php',
             dataType: 'json',
-            data: JSON.stringify(blocks)
+            data: JSON.stringify(objects)
 
         }).done(function (response) {
 

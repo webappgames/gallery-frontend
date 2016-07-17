@@ -13,6 +13,8 @@
 
     <script src="../node_modules/jquery/dist/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
+    <script src="script/position.js"></script>
+    <script src="script/create-html.js"></script>
     <script src="script/create-map.js"></script>
     <script src="script/load.js"></script>
     <script src="script/save.js"></script>
@@ -35,7 +37,7 @@
 
 
 
-    <nav id="menu-left">
+    <!--<nav id="menu-left">
 
         <fieldset class="palette">
             <legend>galerie</legend>
@@ -47,7 +49,7 @@
             <img src="">
         </fieldset>
         
-    </nav>
+    </nav>-->
  
 
 
@@ -80,7 +82,7 @@
 
         <fieldset class="palette">
             <legend>Předměty</legend>
-            <div class="item" data-material="light"></div>
+            <div class="light" data-material="light"></div>
         </fieldset>
 
 
@@ -90,6 +92,7 @@
 
 
     <script src="script/palette.js"></script>
+    <script src="script/filedrop.js"></script>
 
 
 </body>

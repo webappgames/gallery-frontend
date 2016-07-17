@@ -14,9 +14,9 @@ $(function () {
         $button.html('Ukládání...');//todo fa
 
 
-        var blocks = [];
+        blocks = [];
 
-        $('#admin-world').find('.block,.item').each(function () {
+        $('#admin-world').find('.block,.light').each(function () {
 
             var $this = $(this);
             var x = $this.attr('data-x');
@@ -24,11 +24,20 @@ $(function () {
             var type = $this.attr('data-type');
             var material = $this.attr('data-material');
 
+
+
             blocks.push({
                 position:{x:x,y:y},
                 type: type,
                 material: material
             });
+            createMap();
+
+
+
+
+
+
 
         });
 

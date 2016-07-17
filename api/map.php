@@ -5,6 +5,11 @@ header("Access-Control-Allow-Headers: *");
 
 
 $map_file = __DIR__.'/../data/map.json';
+if(!file_exists($map_file)){
+    file_put_contents($map_file,'[]');
+    chmod($map_file,0777);
+}
+
 
 
 $method = strtoupper($_SERVER['REQUEST_METHOD']);

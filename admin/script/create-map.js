@@ -9,37 +9,39 @@ function createMap() {
     
 
     var blocks_html = '';
-    var items_html = '';
+    var lights_html = '';
+    var images_html = '';
 
     objects.forEach(function (object) {
 
         if(object.type == 'block'){
 
-            blocks_html += '<div class="block" data-type="block" data-material="' + object.material + '" data-x="' + object.position.x + '" data-y="' + object.position.y + '">';
-            blocks_html += '';
-            blocks_html += '</div>';
+            blocks_html += createObjectHTML(object);
 
         }else
-        if(object.type == 'item'){
+        if(object.type == 'light'){
 
-            items_html += '<div class="item" data-type="item" data-material="' + object.material + '" data-x="' + object.position.x + '" data-y="' + object.position.y + '">';
-            items_html += '';
-            items_html += '</div>';
+            lights_html += createObjectHTML(object);
+
+        }
+        if(object.type == 'image'){
+
+            images_html += createObjectHTML(object);
 
         }
 
-
-
     });
 
+
     var $blocks= $(blocks_html);
-    var $items= $(items_html);
+    var $lights= $(lights_html);
+    var $images= $(images_html);
 
 
 
 
 
-    //----------------------------------------------------------------------------
+    //----------------------------------------------------------------------------BLOCKS
 
     $blocks.click(function () {
 
@@ -78,21 +80,18 @@ function createMap() {
 
 
 
-    //----------------------------------------------------------------------------
-    $items.draggable({
+    //----------------------------------------------------------------------------LIGHTS
+    $lights.draggable({
 
         stop: function () {
 
-            var width = $(window).width();
-            var height = $(window).height();
-            var offset = $(this).offset();
 
-            var x = (offset.left-width/2)/FIELD_SIZE;
-            var y = (offset.top-height/2)/FIELD_SIZE;
+            var position = getPositionFromLeftTop(offset.left,offset.top);
+
 
             $(this)
-                .attr('data-x',x)
-                .attr('data-y',y);
+                .attr('data-x',position.x)
+                .attr('data-y',position.y);
 
             $('.save').trigger('click');
             
@@ -105,15 +104,18 @@ function createMap() {
 
 
 
+
+
     $('#admin-world').html('');
     $('#admin-world').append($blocks);
-    $('#admin-world').append($items);
+    $('#admin-world').append($lights);
+    $('#admin-world').append($images);
 
 
     var width = $(window).width();
     var height = $(window).height();
 
-    $('#admin-world').find('.block,.item').each(function () {
+    $('#admin-world').find('.block,.light,.image').each(function () {
 
         //r(this);
 

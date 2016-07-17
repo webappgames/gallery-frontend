@@ -16,7 +16,7 @@
 .selected {
   border: 2px solid #f00; }
 
-.item {
+.light {
   display: block;
   width: 30px;
   height: 30px;
@@ -25,5 +25,15 @@
   border-radius: 30px;
   border: 1px solid #000000; }
 
-.item[data-material="light"] {
+.light[data-material="light"] {
   background-color: #feff95; }
+
+.image {
+  display: block;
+  width: 30px;
+  height: 30px;
+  margin: 0px;
+  padding: 0px;
+  border-radius: 30px;
+  border: 1px solid #000000;
+  background-color: #7dfff8; }

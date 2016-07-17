@@ -12,25 +12,19 @@ $('.palette').find('.block').click(function () {
 
 
 
-$('.palette').find('.item').draggable({
+$('.palette').find('.light').draggable({
 
     //helper: 'clone',
 
 
     stop: function () {
 
-        var width = $(window).width();
-        var height = $(window).height();
-        var offset = $(this).offset();
-
-        var x = (offset.left-width/2)/FIELD_SIZE;
-        var y = (offset.top-height/2)/FIELD_SIZE;
-
+        var position = getPositionFromLeftTop(offset.left,offset.top);
 
 
         objects.push({
-            position: {x:x,y:y},
-            type: 'item',
+            position: position,
+            type: 'light',
             material: 'light'
 
         });

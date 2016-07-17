@@ -71,10 +71,9 @@
 
             <legend>Bloky</legend>
 
-            <div class="block" data-material=""></div>
-            <div class="block" data-material="wall"></div>
-            <div class="block" data-material="door"></div>
-            <div class="block" data-material="light"></div>
+            <div class="block" data-shape="room"></div>
+            <div class="block" data-shape="wall"></div>
+            <div class="block" data-shape="door"></div>
         </fieldset>
 
 

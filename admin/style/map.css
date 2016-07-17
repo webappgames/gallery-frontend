@@ -1,20 +1,22 @@
+.selected {
+  border: 2px solid #f00; }
+
 .block {
   display: block;
   width: 30px;
   height: 30px;
   margin: 0px;
   padding: 0px;
-  border: 1px solid #ccc;
+  border: 1px solid #ccc; }
+
+.block[data-shape="room"] {
   background-color: #fff; }
 
-.block[data-material="wall"] {
+.block[data-shape="wall"] {
   background-color: #444; }
 
-.block[data-material="door"] {
-  background-color: #a98d2e; }
-
-.selected {
-  border: 2px solid #f00; }
+.block[data-shape="door"] {
+  background-color: #a94616; }
 
 .light {
   display: block;
@@ -23,9 +25,7 @@
   margin: 0px;
   padding: 0px;
   border-radius: 30px;
-  border: 1px solid #000000; }
-
-.light[data-material="light"] {
+  border: 1px solid #000000;
   background-color: #feff95; }
 
 .image {

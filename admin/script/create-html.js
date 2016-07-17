@@ -2,19 +2,41 @@
  * Created by hejny on 17.7.16.
  */
 
-function createObjectHTML(object) {
-    
-    var html='';
+function createObject$(object) {
+
+    var element = '<div></div>';
+
+    var $element = $(element);
+
+
+    $element.attr('class',object.type);
+    for(var key in object){
+        $element.attr('data-'+key,object[key]);
+    }
+
+    $element.attr('data-json',JSON.stringify(object));
+
+
+    return($element);
+
+
 
     //todo class should be only object!
+    /*
+    if(object.type == 'block'){
 
-    if(object.type == 'block' || object.type == 'light'){
-
-        //todo: shape || intensity, color
-        html += '<div class="block" data-type="block" data-material="' + object.material + '" data-x="' + object.position.x + '" data-y="' + object.position.y + '">';
+        //todo:  || intensity, color
+        html += '<div class="block" data-type="block" data-shape="' + object.shape + '" data-x="' + object.position.x + '" data-y="' + object.position.y + '">';
         html += '';
         html += '</div>';
     
+    }else
+    if(object.type == 'light'){
+
+        html += '<div class="light" data-type="light" data-intensity="' + object.intensity + '" data-color="' + object.color + '" data-x="' + object.position.x + '" data-y="' + object.position.y + '">';
+        html += '';
+        html += '</div>';
+
     }else
     if(object.type == 'image'){
 
@@ -27,5 +49,6 @@ function createObjectHTML(object) {
     }
 
     return(html);
+    /**/
 
 }

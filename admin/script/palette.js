@@ -2,7 +2,7 @@ var material_selected = '';
 
 $('.palette').find('.block').click(function () {
 
-    $('#admin-tools').find('.palette').find('.block').removeClass('selected');
+    $('.palette').find('.block').removeClass('selected');
     $(this).addClass('selected');
 
     material_selected = $(this).attr('data-material');
@@ -19,13 +19,15 @@ $('.palette').find('.light').draggable({
 
     stop: function () {
 
+        var offset = $(this).offset();
         var position = getPositionFromLeftTop(offset.left,offset.top);
 
 
         objects.push({
             position: position,
             type: 'light',
-            material: 'light'
+            color: '#fff',
+            intensity: 1
 
         });
         createMap();

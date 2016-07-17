@@ -6,43 +6,27 @@ var FIELD_SIZE = 30;
 var objects = [];
 
 function createMap() {
-    
 
-    var blocks_html = '';
-    var lights_html = '';
-    var images_html = '';
+    var $admin_world = $('#admin-world');
+    $admin_world.html('');
+
 
     objects.forEach(function (object) {
 
-        if(object.type == 'block'){
-
-            blocks_html += createObjectHTML(object);
-
-        }else
-        if(object.type == 'light'){
-
-            lights_html += createObjectHTML(object);
-
-        }
-        if(object.type == 'image'){
-
-            images_html += createObjectHTML(object);
-
-        }
+        $admin_world.append(createObject$(object));
 
     });
 
 
-    var $blocks= $(blocks_html);
-    var $lights= $(lights_html);
-    var $images= $(images_html);
 
+    var $blocks= $admin_world.find('.block');
+    var $lights= $admin_world.find('.light');
+    var $images= $admin_world.find('.image');
 
 
 
 
     //----------------------------------------------------------------------------BLOCKS
-
     $blocks.click(function () {
 
         var $this = $(this);
@@ -74,8 +58,6 @@ function createMap() {
 
 
     });
-
-
     //----------------------------------------------------------------------------
 
 
@@ -106,29 +88,25 @@ function createMap() {
 
 
 
-    $('#admin-world').html('');
-    $('#admin-world').append($blocks);
-    $('#admin-world').append($lights);
-    $('#admin-world').append($images);
-
-
+    //----------------------------------------------------------------------------POSITIONS
     var width = $(window).width();
     var height = $(window).height();
 
-    $('#admin-world').find('.block,.light,.image').each(function () {
+    $('#admin-world').find('*').each(function () {
 
-        //r(this);
 
         var $this = $(this);
-        var x = $this.attr('data-x');
-        var y = $this.attr('data-y');
+        var object = JSON.parse($this.attr('data-json'));
 
+        //r(object);
+        //r('-------------');
 
         $this.css('position', 'absolute');
-        $this.css('top', y * FIELD_SIZE + height / 2);
-        $this.css('left', x * FIELD_SIZE + width / 2);
+        $this.css('top', object.position.y * FIELD_SIZE + height / 2);
+        $this.css('left', object.position.x * FIELD_SIZE + width / 2);
 
     });
+    //----------------------------------------------------------------------------
 
 
 

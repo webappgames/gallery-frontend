@@ -6,6 +6,16 @@
 }
 
 
+.selected{
+  border: 2px solid #f00;
+}
+
+
+
+
+//=======================================================================================
+
+
 
 .block {
 
@@ -18,22 +28,20 @@
   padding: 0px;
 
   border: 1px solid #ccc;
-
-  background-color: #fff;
-
 }
 
-.block[data-material="wall"] {
+
+
+.block[data-shape="room"] {
+  background-color: #fff;
+}
+.block[data-shape="wall"] {
   background-color: #444;
 }
-.block[data-material="door"] {
-  background-color: #a98d2e;
+.block[data-shape="door"] {
+  background-color: #a94616;
 }
 
-
-.selected{
-  border: 2px solid #f00;
-}
 
 
 //=======================================================================================
@@ -54,10 +62,9 @@
 
   border: 1px solid #000000;
 
-
-}
-.light[data-material="light"] {
   background-color: #feff95;
+
+
 }
 
 

@@ -14,7 +14,7 @@ $(function () {
         $button.html('Ukládání...');//todo fa
 
 
-        blocks = [];
+        /*blocks = [];
 
         $('#admin-world').find('.block,.light').each(function () {
 
@@ -31,15 +31,9 @@ $(function () {
                 type: type,
                 material: material
             });
-            createMap();
+            //createMap();
 
-
-
-
-
-
-
-        });
+        });*/
 
 
         $.post({

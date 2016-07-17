@@ -103,15 +103,10 @@ document.addEventListener("drop", function(e){
             try{
 
                 console.log('all done: ' + xhr.status);
-                r(message);
+                r(e);
 
-
-                r(event);
-
-
-
-                var position = getPositionFromLeftTop(event.clientX,event.clientY);
-
+                var position = getPositionFromLeftTop(e.clientX,e.clientY);
+                r(position);
 
                 var response=(JSON.parse(xhr.response));
 
@@ -120,11 +115,13 @@ document.addEventListener("drop", function(e){
 
                     var filename = files_name_key[key];
 
-                    blocks.push({
-                        position:{x:x,y:y},
+                    objects.push({
+                        id: createGuid(),
                         type: 'image',
-                        name: response[key],
-                        src: filename
+                        position:position,
+                        name: filename,
+                        src: response[key]
+
                     });
 
 
@@ -138,6 +135,8 @@ document.addEventListener("drop", function(e){
 
             }catch(e){
 
+                console.log('Error when processing data...');
+                r(e);
 
             }
 

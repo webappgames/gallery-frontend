@@ -110,6 +110,40 @@ function createMap() {
 
 
 
+    //----------------------------------------------------------------------------IMAGES
+    $images.draggable({
+
+        stop: function () {
+
+            var offset = $(this).offset();
+            var position = getPositionFromLeftTop(offset.left,offset.top);
+
+
+            var id = $(this).attr('data-id');
+            var object = getObjectById(id);
+            object.position = position;
+
+            $('.save').trigger('click');
+
+
+        }
+
+
+    });
+    $images.each(function () {
+
+        var $this = $(this);
+
+        $this.css('background','url('+$this.attr('data-src')+')');
+        $this.css('background-size','cover');
+        $this.css('background-repeat','no-repeat');
+
+
+    });
+    //----------------------------------------------------------------------------
+
+
+
 
 
     //----------------------------------------------------------------------------POSITIONS

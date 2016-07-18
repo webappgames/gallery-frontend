@@ -11,6 +11,10 @@
         var r = console.log.bind(console);
     </script>
 
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+
     <script src="../node_modules/jquery/dist/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
     <script src="script/position.js"></script>
@@ -34,6 +38,16 @@
 
     <section id="admin-world">
     </section>
+
+
+    <div id="selected-toolbox">
+
+        <i class="delete fa fa-trash" aria-hidden="true"></i>
+        <i class="resize fa fa-square" aria-hidden="true"></i>
+        <i class="rotate fa fa-circle" aria-hidden="true"></i>
+
+
+    </div>
 
 
 
@@ -81,7 +95,9 @@
 
         <fieldset class="palette">
             <legend>Předměty</legend>
-            <div class="light" data-material="light"></div>
+            <div class="light"></div>
+            <div class="label"></div>
+
         </fieldset>
 
 

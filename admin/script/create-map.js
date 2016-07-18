@@ -15,16 +15,19 @@ function getObjectById(id){
 
 
 
-
+var window_width,window_height;
 function createMap() {
 
     var $admin_world = $('#admin-world');
     $admin_world.html('');
 
 
+    window_width = $(window).width();
+    window_height = $(window).height();
+
     objects.forEach(function (object) {
 
-        $admin_world.append(createObject$(object));
+        $admin_world.append('\n').append(createObject$(object));
 
     });
 
@@ -32,7 +35,70 @@ function createMap() {
 
     var $blocks= $admin_world.find('.block');
     var $lights= $admin_world.find('.light');
+    var $labels= $admin_world.find('.label');
     var $images= $admin_world.find('.image');
+
+
+
+
+
+    //----------------------------------------------------------------------------SELECTING
+    var top_z_index = 10000;
+    var select_callback = function () {
+
+        r('click');
+
+        $this = $(this);
+
+        var $img = $this.find('img');
+        if($img.length){
+            $this = $img;
+        }
+
+        var offset = $this.offset();
+        var width = $this.outerWidth();
+        var height = $this.outerHeight();
+
+        $('.selected-object').removeClass('selected-object');
+        $this.addClass('selected-object');
+
+        var border = 20;
+
+        $('#selected-toolbox')
+            .css('position', 'absolute')
+            .css('top',offset.top-border)
+            .css('left',offset.left-border)
+            .css('width',width+2*border)
+            .css('height',height+2*border)
+            .css('z-index',top_z_index++)
+            .show();
+
+        $this.css('z-index',top_z_index++);
+
+
+
+        var $delete = $('#selected-toolbox').find('.delete');
+        var $rotate = $('#selected-toolbox').find('.rotate');
+        var $resize = $('#selected-toolbox').find('.resize');
+
+        /*
+        $rotate
+            .css('display', 'block')
+            .css('position', 'absolute')
+            .css('top',-10)
+            .css('right',0)
+            .css('z-index',top_z_index++);
+
+        r($rotate.css('top'),$rotate.css('left'));*/
+        //r(top_z_index++);
+
+
+    };
+    $images.mousedown(select_callback);
+    $lights.mousedown(select_callback);
+    $labels.mousedown(select_callback);
+    //----------------------------------------------------------------------------
+
 
 
 
@@ -44,7 +110,7 @@ function createMap() {
         $this.attr('data-shape', shape_selected);
 
 
-        var id = $this.attr('data-id');
+        var id = $this.attr('id');
         var object = getObjectById(id);
         object.shape = shape_selected;
 
@@ -56,11 +122,11 @@ function createMap() {
 
     var drawing = false;
 
-    $('#admin-world').unbind('mousedown').mousedown(function () {
+    $blocks.unbind('mousedown').mousedown(function () {
         r('start drawing');
         drawing = true;
     });
-    $('#admin-world').unbind('mouseup').mouseup(function () {
+    $blocks.unbind('mouseup').mouseup(function () {
         r('stop drawing');
         drawing = false;
         $('.save').trigger('click');
@@ -76,7 +142,7 @@ function createMap() {
         $this.attr('data-shape', shape_selected);
 
 
-        var id = $this.attr('data-id');
+        var id = $this.attr('id');
         var object = getObjectById(id);
         object.shape = shape_selected;
 
@@ -86,26 +152,34 @@ function createMap() {
 
 
 
-    //----------------------------------------------------------------------------LIGHTS
-    $lights.draggable({
+    //----------------------------------------------------------------------------LIGHTS, LABELS
+    var draggable_options = {
 
+
+        drag: function(){
+            $('#selected-toolbox').hide();
+        },
         stop: function () {
+
+            select_callback.call(this);
 
             var offset = $(this).offset();
             var position = getPositionFromLeftTop(offset.left,offset.top);
 
 
-            var id = $(this).attr('data-id');
+            var id = $(this).attr('id');
             var object = getObjectById(id);
             object.position = position;
 
             $('.save').trigger('click');
-            
+
 
         }
-        
-        
-    });
+
+
+    };
+    $lights.draggable(draggable_options);
+    $labels.draggable(draggable_options);
     //----------------------------------------------------------------------------
 
 
@@ -113,13 +187,24 @@ function createMap() {
     //----------------------------------------------------------------------------IMAGES
     $images.draggable({
 
+        //grid: [ FIELD_SIZE, FIELD_SIZE ],
+        //snap: ".block[data-shape='wall']",
+        snap: ".block",
+        snapMode: "outer",
+        //snapTolerance: 10,
+
+        drag: function(){
+            $('#selected-toolbox').hide();
+        },
         stop: function () {
+
+            select_callback.call(this);
 
             var offset = $(this).offset();
             var position = getPositionFromLeftTop(offset.left,offset.top);
 
 
-            var id = $(this).attr('data-id');
+            var id = $(this).attr('id');
             var object = getObjectById(id);
             object.position = position;
 
@@ -129,42 +214,115 @@ function createMap() {
         }
 
 
+        /*
+        drag: function(event, ui) {
+            var draggable = $(this).data("ui-draggable");
+            $.each(draggable.snapElements, function(index, element) {
+                ui = $.extend({}, ui, {
+                    snapElement: $(element.item),
+                    snapping: element.snapping
+                });
+                if (element.snapping) {
+                    if (!element.snappingKnown) {
+                        element.snappingKnown = true;
+                        draggable._trigger("snapped", event, ui);
+                    }
+                } else if (element.snappingKnown) {
+                    element.snappingKnown = false;
+                    draggable._trigger("snapped", event, ui);
+                }
+            });
+        },
+        snapped: function(event, ui) {
+
+            var $this = $(this);
+            var offset1 = $this.offset();
+            var offset2 = ui.snapElement.offset();
+
+
+            offset1.top += 30;
+            offset1.left += 30;
+
+            offset2.top += 15;
+            offset2.left += 15;
+
+            var x = offset1.left-offset2.left;
+            var y = offset1.top-offset2.top;
+
+            var rad = Math.atan2(y,x);
+            var rotation =(rad * (180/Math.PI))%360;
+            rotation = Math.floor(rotation/90)*90;
+
+
+            $this.css('transform','rotate('+rotation+'deg)');
+
+            var offset = $this.offset();
+            $('#dot')
+                .css('top',offset.top)
+                .css('left',offset.left);
+
+
+            r(rotation);
+
+
+            $(".block[data-shape='wall']").html('');
+            ui.snapElement.html(rotation);
+            //$this.css('transform','rotate('+rotation+'deg)');
+
+            return;
+
+
+
+            $this.css('border','2px solid #022fff');
+            if(rotation==0){
+                $this.css('border-top','2px dotted #ff4f12');
+            }else
+            if(rotation==90){
+                $this.css('border-left','2px dotted #ff4f12');
+            }else
+            if(rotation==180){
+                $this.css('border-bottom','2px dotted #ff4f12');
+            }else
+            if(rotation==270){
+                $this.css('border-right','2px dotted #ff4f12');
+            }
+
+        }
+        */
+
+
     });
+
     $images.each(function () {
 
         var $this = $(this);
 
-        $this.css('background','url('+$this.attr('data-src')+')');
-        $this.css('background-size','cover');
-        $this.css('background-repeat','no-repeat');
+
+        var object = getObjectById($this.attr('id'));
+
+        var $img = $this.find('img');
+        //var $arrow = $this.find('.arrow');
+
+        $img.css('width',object.size.width*FIELD_SIZE);
+        $img.css('height',object.size.width*FIELD_SIZE);
+
+        $img.attr('src',object.src);
+
+
+
+        //$img.css('height',object.size.width*FIELD_SIZE-4);
+        //$this.css('background','url('+$this.attr('data-src')+')');
+        //$this.css('background-size','100% 100%');
+        //$this.css('background-repeat','no-repeat');
 
 
     });
+
     //----------------------------------------------------------------------------
 
 
 
 
-
-    //----------------------------------------------------------------------------POSITIONS
-    var width = $(window).width();
-    var height = $(window).height();
-
-    $('#admin-world').find('*').each(function () {
-
-
-        var $this = $(this);
-        var object = JSON.parse($this.attr('data-json'));
-
-        //r(object);
-        //r('-------------');
-
-        $this.css('position', 'absolute');
-        $this.css('top', object.position.y * FIELD_SIZE + height / 2);
-        $this.css('left', object.position.x * FIELD_SIZE + width / 2);
-
-    });
-    //----------------------------------------------------------------------------
 
 
 

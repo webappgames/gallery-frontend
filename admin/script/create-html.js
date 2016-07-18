@@ -9,12 +9,40 @@ function createObject$(object) {
     var $element = $(element);
 
 
+    $element.css('position', 'absolute');
+    $element.css('top', object.position.y * FIELD_SIZE + window_height / 2);
+    $element.css('left', object.position.x * FIELD_SIZE + window_width / 2);
+
+
+
     $element.attr('class',object.type);
-    for(var key in object){
-        $element.attr('data-'+key,object[key]);
+    $element.attr('id',object.id);
+    $element.attr('data-shape',object.shape);
+    /*for(var key in object){
+        if(typeof object[key] === 'object'){
+
+            $element.attr('data-'+key,JSON.stringify(object[key]));
+
+        }else{
+
+            $element.attr('data-'+key,object[key]);
+
+        }
+
+    }*/
+
+
+    //$element.attr('data-json',JSON.stringify(object));
+
+
+
+    if(object.type === 'image'){
+        $element.html('<img>');
     }
 
-    $element.attr('data-json',JSON.stringify(object));
+    /*if(object.type === 'image' || object.type === 'light') {
+        $element.append('<i class="delete fa fa-trash" aria-hidden="true"></i>');
+    }*/
 
 
     return($element);

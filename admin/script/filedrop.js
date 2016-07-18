@@ -120,7 +120,11 @@ document.addEventListener("drop", function(e){
                         type: 'image',
                         position:position,
                         name: filename,
-                        src: response[key]
+                        src: response[key],
+                        size: {
+                            width: 2
+                        },
+                        rotation: 0
 
                     });
 

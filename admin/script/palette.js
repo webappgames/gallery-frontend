@@ -12,6 +12,10 @@ $('.palette').find('.block').click(function () {
 
 
 
+//===================================================================================================
+
+
+
 $('.palette').find('.light').draggable({
 
     //helper: 'clone',
@@ -26,6 +30,46 @@ $('.palette').find('.light').draggable({
         objects.push({
             id: createGuid(),
             type: 'light',
+            position: position,
+            color: '#fff',
+            intensity: 1
+
+        });
+        createMap();
+
+        $('.save').trigger('click');
+
+        $(this)
+            .css('left',0)
+            .css('top',0);
+        //r(x,y);
+
+    }
+
+
+
+});
+
+
+
+//===================================================================================================
+
+
+
+$('.palette').find('.label').draggable({
+
+    //helper: 'clone',
+
+
+    stop: function () {
+
+        var offset = $(this).offset();
+        var position = getPositionFromLeftTop(offset.left,offset.top);
+
+
+        objects.push({
+            id: createGuid(),
+            type: 'label',
             position: position,
             color: '#fff',
             intensity: 1

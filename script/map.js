@@ -44,7 +44,7 @@ $(function(){
                 if (object.shape == 'wall' || object.shape == 'door') {
 
                     //Simple crate
-                    var box = new BABYLON.Mesh.CreateBox("crate", BLOCK_SIZE, scene);
+                    var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
                     box.material = new BABYLON.StandardMaterial("Mat", scene);
                     box.material.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.2);
                     //box.material.diffuseTexture = new BABYLON.Texture("images/textures/crate.png", scene);
@@ -65,7 +65,34 @@ $(function(){
             if(object.type=='light'){
 
                 //r('creating light');
-                new BABYLON.PointLight("Omni", position, scene);
+                new BABYLON.PointLight("light", position, scene);
+
+
+            }else
+            if(object.type=='image'){
+
+                //Simple crate
+                var box = new BABYLON.Mesh.CreateBox("image", BLOCK_SIZE, scene);
+                //box.material = new BABYLON.StandardMaterial("Mat", scene);
+                //box.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
+
+                box.material = new BABYLON.StandardMaterial("texture4", scene);
+                box.material.diffuseTexture = new BABYLON.Texture(object.src, scene);
+                box.material.diffuseTexture.vOffset = 1;//Vertical offset of 10%
+                box.material.diffuseTexture.uOffset = 1;//Horizontal offset of 40%
+                box.material.diffuseTexture.hasAlpha = true;//Has an alpha
+
+                box.position = position;
+                box.scaling.x = object.size.width;
+                box.scaling.y = object.size.width;
+                box.scaling.z = 0.1;
+
+                box.rotation.y=Math.PI;
+
+                box.position.y = EYE_VERTICAL * BLOCK_SIZE;
+
+                box.checkCollisions = true;
+
 
 
             }

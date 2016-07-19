@@ -44,11 +44,11 @@ $(function () {
         }).done(function (response) {
 
             $button.html('Uloženo');//todo datum
-            console.log('done',response);
+            //console.log('done',response);
 
         }).fail(function (response) {
 
-            console.log('fail',response);
+            //console.log('fail',response);
 
         });
 

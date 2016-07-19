@@ -50,3 +50,15 @@
   }
 
 }
+
+
+
+#selected-toolbox.valid{
+  background-color: rgba(80, 169, 38, 0.34);
+  border: none;
+}
+
+#selected-toolbox.invalid{
+  background-color: rgba(169, 116, 77, 0.34);
+  border: none;
+}

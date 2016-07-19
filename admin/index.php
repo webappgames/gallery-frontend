@@ -17,6 +17,7 @@
 
     <script src="../node_modules/jquery/dist/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
+    <script src="../script/images.js"></script>
     <script src="script/position.js"></script>
     <script src="script/create-html.js"></script>
     <script src="script/create-map.js"></script>

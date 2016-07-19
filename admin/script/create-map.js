@@ -40,15 +40,35 @@ function createMap() {
 
 
 
+    /*$admin_world.mousemove(function (e) {
+        var position = getPositionFromLeftTop(e.clientX,e.clientY);
+        document.title = isWallOn(objects,position);
+    });*/
+
 
 
     //----------------------------------------------------------------------------SELECTING
+
+    var $selected_toolbox = $('#selected-toolbox');
+
     var top_z_index = 10000;
     var select_callback = function () {
 
-        r('click');
 
         $this = $(this);
+
+
+        var id = $this.attr('id');
+        var object = getObjectById(id);
+        var rotation = wallRotation(objects,object.position);
+
+        if(rotation===false){
+            $selected_toolbox.addClass('invalid');
+            $selected_toolbox.removeClass('valid');
+        }else{
+            $selected_toolbox.addClass('valid');
+            $selected_toolbox.removeClass('invalid');
+        }
 
         var $img = $this.find('img');
         if($img.length){
@@ -64,7 +84,7 @@ function createMap() {
 
         var border = 20;
 
-        $('#selected-toolbox')
+        $selected_toolbox
             .css('position', 'absolute')
             .css('top',offset.top-border)
             .css('left',offset.left-border)
@@ -77,9 +97,9 @@ function createMap() {
 
 
 
-        var $delete = $('#selected-toolbox').find('.delete');
-        var $rotate = $('#selected-toolbox').find('.rotate');
-        var $resize = $('#selected-toolbox').find('.resize');
+        var $delete = $selected_toolbox.find('.delete');
+        var $rotate = $selected_toolbox.find('.rotate');
+        var $resize = $selected_toolbox.find('.resize');
 
         /*
         $rotate
@@ -161,7 +181,6 @@ function createMap() {
         },
         stop: function () {
 
-            select_callback.call(this);
 
             var offset = $(this).offset();
             var position = getPositionFromLeftTop(offset.left,offset.top);
@@ -170,6 +189,8 @@ function createMap() {
             var id = $(this).attr('id');
             var object = getObjectById(id);
             object.position = position;
+
+            select_callback.call(this);
 
             $('.save').trigger('click');
 
@@ -198,8 +219,6 @@ function createMap() {
         },
         stop: function () {
 
-            select_callback.call(this);
-
             var offset = $(this).offset();
             var position = getPositionFromLeftTop(offset.left,offset.top);
 
@@ -208,7 +227,11 @@ function createMap() {
             var object = getObjectById(id);
             object.position = position;
 
-            $('.save').trigger('click');
+            r(position);
+
+            select_callback.call(this);
+
+            $('.save').trigger('click');//todo refactor to function
 
 
         }

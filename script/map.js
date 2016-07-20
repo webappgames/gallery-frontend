@@ -30,6 +30,7 @@ $(function(){
 
 
         var building_blocks = [];
+        var lights = [];
 
         var blocks = '';
         objects.forEach(function (object) {
@@ -69,7 +70,8 @@ $(function(){
             if(object.type=='light'){
 
                 //r('creating light');
-                new BABYLON.PointLight("light", position, scene);
+                var light = new BABYLON.PointLight("light", position, scene);
+                lights.push(light);
 
 
             }else
@@ -151,6 +153,19 @@ $(function(){
         //building.material.emissiveTexture.vOffset = 2;//Vertical offset of 10%
         //building.material.emissiveTexture.uOffset = 1;//Horizontal offset of 40%
         //box.material.diffuseTexture.hasAlpha = true;
+
+
+
+        lights.forEach(function (light) {
+            var shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
+            shadowGenerator.getShadowMap().renderList.push(building);
+            shadowGenerator.useVarianceShadowMap = true;
+        });
+
+
+
+
+
 
 
 

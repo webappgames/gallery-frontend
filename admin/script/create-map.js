@@ -213,8 +213,8 @@ function createMap() {
     $images.draggable({
 
         //grid: [ FIELD_SIZE/2, FIELD_SIZE/2 ],
-        //snap: ".block[data-shape='wall']",
-        snap: ".block",
+        snap: ".block[data-shape='wall']",
+        //snap: ".block",
         snapMode: "outer",
         //snapTolerance: 10,
 

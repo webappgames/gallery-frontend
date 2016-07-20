@@ -3,7 +3,7 @@ var BLOCK_SIZE=5;
 var BLOCK_SIZE_VERTICAL=10;
 var BLOCK_SIZE_DOOR=2;
 
-var EYE_VERTICAL = 1;
+var EYE_VERTICAL = 2;
 
 
 var canvas = document.getElementById("scene");
@@ -36,7 +36,7 @@ var createScene = function () {
     ground.material.backFaceCulling = false;
     ground.position = new BABYLON.Vector3(0, 0, 0);
     ground.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
-    
+    ground.receiveShadows = true;
 
     //Set gravity for the scene (G force like, on Y-axis)
     scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
@@ -49,7 +49,7 @@ var createScene = function () {
     camera.applyGravity = true;
 
     //Set the ellipsoid around the camera (e.g. your player's size)
-    camera.ellipsoid = new BABYLON.Vector3(1, 1, 1);
+    camera.ellipsoid = new BABYLON.Vector3(1, EYE_VERTICAL * BLOCK_SIZE/2, 1);
 
     //finally, say which mesh will be collisionable
     ground.checkCollisions = true;

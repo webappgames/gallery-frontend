@@ -19,6 +19,8 @@
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
 
 
+    <script src="script/images.js"></script>
+
 
     <link rel="stylesheet" href="style/scene.css">
 

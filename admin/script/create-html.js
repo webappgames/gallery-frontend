@@ -11,15 +11,15 @@ function createObject$(object) {
 
     $element.css('position', 'absolute');
 
-    if(object=='image'){
+    if(object.type=='image'){
 
         $element.css('top',  object.position.y * FIELD_SIZE  + window_height / 2);
         $element.css('left', object.position.x * FIELD_SIZE  + window_width  / 2);
 
     }else{
 
-        $element.css('top',  (object.position.y-0) * FIELD_SIZE  + window_height / 2);
-        $element.css('left', (object.position.x-0.3) * FIELD_SIZE  + window_width  / 2);
+        $element.css('top',  ( object.position.y -0.5 ) * FIELD_SIZE  + window_height / 2);
+        $element.css('left', ( object.position.x -0.5 ) * FIELD_SIZE  + window_width  / 2);
 
     }
 

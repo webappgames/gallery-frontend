@@ -29,13 +29,6 @@ $(function(){
 
 
 
-
-
-
-
-
-
-
         var building_blocks = [];
 
         var blocks = '';
@@ -82,42 +75,52 @@ $(function(){
             }else
             if(object.type=='image'){
 
-                //Simple crate
-                //var box = new BABYLON.Mesh.CreateBox("image", BLOCK_SIZE, scene);
-                //box.material = new BABYLON.StandardMaterial("Mat", scene);
-                //box.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
 
-                var box = BABYLON.Mesh.CreatePlane("plane", BLOCK_SIZE, scene);
+                var rotation = wallRotation(objects,object.position);
+                r(rotation);
+                if(typeof rotation === 'number') {
 
+                    //Simple crate
+                    //var box = new BABYLON.Mesh.CreateBox("image", BLOCK_SIZE, scene);
+                    //box.material = new BABYLON.StandardMaterial("Mat", scene);
+                    //box.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
 
-                box.material = new BABYLON.StandardMaterial("texture4", scene);
-
-                box.material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
-                box.material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
-                box.material.specularPower = 32;
-                //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
-                box.material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
-                box.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+                    var box = BABYLON.Mesh.CreatePlane("plane", BLOCK_SIZE, scene);
 
 
-                box.material.emissiveTexture = new BABYLON.Texture(object.src, scene);
-                box.material.emissiveTexture.vOffset = 1;//Vertical offset of 10%
-                box.material.emissiveTexture.uOffset = 1;//Horizontal offset of 40%
-                //box.material.emissiveTexture.hasAlpha = true;//Has an alpha
+                    box.material = new BABYLON.StandardMaterial("texture4", scene);
+                    box.material.backFaceCulling = false;
+                    box.material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
+                    box.material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
+                    box.material.specularPower = 32;
+                    //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
+                    box.material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
+                    box.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
 
-                box.position = position;
-                box.scaling.x = object.size.width;
-                box.scaling.y = object.size.width;
-                box.scaling.z = 0.1;
 
-                box.rotation.y=Math.PI;
+                    box.material.emissiveTexture = new BABYLON.Texture(object.src, scene);
+                    box.material.emissiveTexture.vOffset = 1;//Vertical offset of 10%
+                    box.material.emissiveTexture.uOffset = 1;//Horizontal offset of 40%
+                    //box.material.emissiveTexture.hasAlpha = true;//Has an alpha
 
-                box.position.y = EYE_VERTICAL * BLOCK_SIZE;
+                    box.position = position;
+                    box.scaling.x = object.size.width;
+                    box.scaling.y = object.size.width;
+                    box.scaling.z = 0.1;
 
-                box.checkCollisions = true;
 
-                var x = Math.round(position.x);
-                var y = Math.round(position.y);
+                    box.rotation.y = Math.PI;
+                    box.rotation.y -= (rotation / 180) * Math.PI;
+
+
+                    box.position.y = EYE_VERTICAL * BLOCK_SIZE;
+
+                    box.checkCollisions = true;
+
+                    var x = Math.round(position.x*2)/2;
+                    var y = Math.round(position.y*2)/2;
+
+                }
 
 
 

@@ -47,6 +47,7 @@ function createMap() {
 
 
 
+
     //----------------------------------------------------------------------------SELECTING
 
     var $selected_toolbox = $('#selected-toolbox');
@@ -60,6 +61,9 @@ function createMap() {
 
         var id = $this.attr('id');
         var object = getObjectById(id);
+
+        r(object.position);
+
         var rotation = wallRotation(objects,object.position);
 
         if(rotation===false){
@@ -208,7 +212,7 @@ function createMap() {
     //----------------------------------------------------------------------------IMAGES
     $images.draggable({
 
-        //grid: [ FIELD_SIZE, FIELD_SIZE ],
+        //grid: [ FIELD_SIZE/2, FIELD_SIZE/2 ],
         //snap: ".block[data-shape='wall']",
         snap: ".block",
         snapMode: "outer",
@@ -220,7 +224,11 @@ function createMap() {
         stop: function () {
 
             var offset = $(this).offset();
-            var position = getPositionFromLeftTop(offset.left,offset.top);
+            var position = getPositionFromLeftTop(offset.left-7,offset.top);//todo wtf 7
+
+
+            position.x=Math.round(position.x*2)/2;
+            position.y=Math.round(position.y*2)/2;
 
 
             var id = $(this).attr('id');

@@ -19,8 +19,7 @@
   width: 30px;
   height: 30px;
   margin: 0px;
-  padding: 0px;
-  border: 1px solid #ccc; }
+  padding: 0px; }
 
 .block[data-shape="room"] {
   background-color: #fff; }

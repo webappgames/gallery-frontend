@@ -25,6 +25,10 @@ var createScene = function () {
     camera.rotation.y=Math.PI;
     camera.attachControl(canvas, true);
 
+    camera.keysUp.push(87); // "w"
+    camera.keysDown.push(83); // "s"
+
+
     //Ground
     var ground = BABYLON.Mesh.CreatePlane("ground", 90000.0, scene);
     ground.material = new BABYLON.StandardMaterial("groundMat", scene);

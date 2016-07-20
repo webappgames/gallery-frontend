@@ -77,9 +77,11 @@ $(function(){
 
 
                 var rotation = wallRotation(objects,object.position);
-                r(rotation);
+                //r(rotation);
                 if(typeof rotation === 'number') {
 
+
+                    var rotation_rad = (rotation / 180) * Math.PI;
                     //Simple crate
                     //var box = new BABYLON.Mesh.CreateBox("image", BLOCK_SIZE, scene);
                     //box.material = new BABYLON.StandardMaterial("Mat", scene);
@@ -103,22 +105,24 @@ $(function(){
                     box.material.emissiveTexture.uOffset = 1;//Horizontal offset of 40%
                     //box.material.emissiveTexture.hasAlpha = true;//Has an alpha
 
+                    position.x += Math.sin(rotation_rad)*BLOCK_SIZE/100;
+                    position.z += Math.cos(rotation_rad)*BLOCK_SIZE/100;
                     box.position = position;
+
+
                     box.scaling.x = object.size.width;
                     box.scaling.y = object.size.width;
                     box.scaling.z = 0.1;
 
 
-                    box.rotation.y = Math.PI;
-                    box.rotation.y -= (rotation / 180) * Math.PI;
+                    box.rotation.y = Math.PI + rotation_rad;
 
 
                     box.position.y = EYE_VERTICAL * BLOCK_SIZE;
 
                     box.checkCollisions = true;
 
-                    var x = Math.round(position.x*2)/2;
-                    var y = Math.round(position.y*2)/2;
+
 
                 }
 

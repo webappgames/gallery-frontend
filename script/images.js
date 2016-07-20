@@ -55,13 +55,13 @@ function wallRotation(objects,position){
         return(180);
     }else
     if(!a && b && c && !d){
-        return(90);
+        return(270);
     }else
     if(!a && !b && c && d){
         return(0);
     }else
     if(a && !b && !c && d){
-        return(270);
+        return(90);
     }else{
         return(false);
     }

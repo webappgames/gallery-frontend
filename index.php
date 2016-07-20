@@ -21,12 +21,75 @@
 
     <script src="script/images.js"></script>
 
-
-    <link rel="stylesheet" href="style/scene.css">
-
     
+    <?php
+
+    foreach(glob('style/*.css') as $file){
+        echo('<link rel="stylesheet" href="'.$file.'">');
+    }
+
+    ?>
+
+
 </head>
 <body>
+
+
+
+
+
+<nav id="menu">
+
+    <a href="#about" id="menu-title">
+        <img src="http://1.gravatar.com/avatar/3d98c15957c5f5dd227e53dbc7cbb60d?s=30&r=pg&d=mm" alt="Pavol Hejný">
+        <h1>Pavol Hejný</h1>
+    </a>
+
+    <ul>
+        <li>
+            <a href="#articles">Articles + Talks</a>
+
+
+
+        </li>
+        <li>
+            <a href="#projects">Projects</a>
+
+
+
+        </li>
+        <li>
+            <a href="#gallery">Gallery</a>
+
+
+
+        </li>
+        <li>
+            <a href="#contact">Contact</a>
+
+
+
+        </li>
+
+
+    </ul>
+
+    <div id="languages" >
+
+        <a href="http://pavolhejny.com" class="selected"><img src="images/locale/en.png" alt="en flag" title="English"></a>
+
+        <a href="http://pavolhejny.cz" class=""><img src="images/locale/cs.png" alt="cs flag" title="Čeština"></a>
+
+
+
+    </div>
+</nav>
+
+
+
+
+
+
 
 
 <canvas id="scene"></canvas>

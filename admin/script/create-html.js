@@ -46,7 +46,7 @@ function createObject$(object) {
 
 
     if(object.type === 'light'){
-        $element.html('<i class="fa fa-lightbulb-o" aria-hidden="true"></i>');
+        $element.html('<i style="color:'+object.color+';" class="fa fa-lightbulb-o" aria-hidden="true"></i>');
     }else
 
     if(object.type === 'label'){

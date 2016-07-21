@@ -31,7 +31,7 @@ $('.palette').find('.light').draggable({
             id: createGuid(),
             type: 'light',
             position: position,
-            color: '#fff',
+            color: '#ffffff',
             intensity: 1
 
         });
@@ -71,8 +71,6 @@ $('.palette').find('.label').draggable({
             id: createGuid(),
             type: 'label',
             position: position,
-            color: '#ffffff',
-            intensity: 1,
             name: '',
             uri: ''
 

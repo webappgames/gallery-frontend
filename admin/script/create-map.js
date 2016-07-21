@@ -5,12 +5,26 @@
 var FIELD_SIZE = 30;
 var objects = [];
 
+
+
 function getObjectById(id){
     for(var i=0,l=objects.length;i<l;i++){
         if(objects[i].id==id)return(objects[i]);
     }
     throw new Error('Unknown id '+id);
 }
+
+
+function removeObjectById(id){
+    for (var i in objects) {
+        if (objects[i].id == id) {
+            objects.splice(i, 1);
+            return true;
+        }
+    }
+    return false;
+}
+
 
 
 
@@ -33,6 +47,9 @@ function createMap() {
 
 
 
+
+    $admin_world.disableSelection();
+
     var $blocks= $admin_world.find('.block');
     var $lights= $admin_world.find('.light');
     var $labels= $admin_world.find('.label');
@@ -51,6 +68,7 @@ function createMap() {
     //----------------------------------------------------------------------------SELECTING
 
     var $selected_toolbox = $('#selected-toolbox');
+    var $selected_properties = $('#selected-properties');
 
     var top_z_index = 10000;
     var select_callback = function () {
@@ -64,15 +82,29 @@ function createMap() {
 
         r(object.position);
 
-        var rotation = wallRotation(objects,object.position);
 
-        if(rotation===false){
-            $selected_toolbox.addClass('invalid');
-            $selected_toolbox.removeClass('valid');
+        if(object.type=='image') {
+
+
+            var rotation = wallRotation(objects, object.position);
+
+            if (rotation === false) {
+                $selected_toolbox.addClass('invalid');
+                $selected_toolbox.removeClass('valid');
+            } else {
+                $selected_toolbox.addClass('valid');
+                $selected_toolbox.removeClass('invalid');
+            }
+
         }else{
+
             $selected_toolbox.addClass('valid');
             $selected_toolbox.removeClass('invalid');
+
         }
+
+
+
 
         var $img = $this.find('img');
         if($img.length){
@@ -100,11 +132,61 @@ function createMap() {
         $this.css('z-index',top_z_index++);
 
 
+        //var $delete = $selected_toolbox.find('.delete');
+        // $rotate = $selected_toolbox.find('.rotate');
+        //var $resize = $selected_toolbox.find('.resize');
 
-        var $delete = $selected_toolbox.find('.delete');
-        var $rotate = $selected_toolbox.find('.rotate');
-        var $resize = $selected_toolbox.find('.resize');
 
+
+
+        $selected_properties.html('');
+        $selected_properties.append('<legend>Objekt</legend>');
+
+        var input_element;
+        for(var key in object){
+
+
+
+            input_element=false;
+            if(key=='name' || key=='uri'/* || key=='color'*/){
+                input_element='<input type="text" value="' + object[key] + '">';
+            }else
+            if(key=='intensity'){
+                input_element='<input type="range" min="0.1" max="5" step="0.1" value="' + object[key] + '">';
+            }else
+            if(key=='color'){
+                input_element='<input type="color" value="' + object[key] + '">';
+            }
+
+
+
+            if(input_element) {
+                $selected_properties.append(
+                    '<div class="field">' +
+                    '<label>' + key + '</label>' +
+                    input_element +
+                    '</div>'
+                );
+            }
+        }
+
+
+        $selected_properties.show();
+
+
+
+
+        $delete_button = $('<button>Smazat</button>');
+        $delete_button.click(function () {
+            removeObjectById(id);
+            createMap();
+            $selected_toolbox.hide();
+            $selected_properties.hide();
+            $('.save').trigger('click');
+        });
+
+
+        $selected_properties.append($delete_button);
         /*
         $rotate
             .css('display', 'block')
@@ -118,6 +200,11 @@ function createMap() {
 
 
     };
+    var unselect_callback = function () {
+        $selected_toolbox.hide();
+        $selected_properties.hide();
+    };
+
     $images.mousedown(select_callback);
     $lights.mousedown(select_callback);
     $labels.mousedown(select_callback);
@@ -147,6 +234,8 @@ function createMap() {
     var drawing = false;
 
     $blocks.unbind('mousedown').mousedown(function () {
+        unselect_callback();
+
         r('start drawing');
         drawing = true;
     });
@@ -334,14 +423,14 @@ function createMap() {
         var $img = $this.find('img');
         //var $arrow = $this.find('.arrow');
 
-        $img.css('width',object.size.width*FIELD_SIZE);
-        $img.css('height',object.size.width*FIELD_SIZE);
+        $img.css('width',object.width*FIELD_SIZE);
+        $img.css('height',object.width*FIELD_SIZE);
 
         $img.attr('src',object.src);
 
 
 
-        //$img.css('height',object.size.width*FIELD_SIZE-4);
+        //$img.css('height',object.width*FIELD_SIZE-4);
         //$this.css('background','url('+$this.attr('data-src')+')');
         //$this.css('background-size','100% 100%');
         //$this.css('background-repeat','no-repeat');

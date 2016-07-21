@@ -45,6 +45,15 @@ function createObject$(object) {
 
 
 
+    if(object.type === 'light'){
+        $element.html('<i class="fa fa-lightbulb-o" aria-hidden="true"></i>');
+    }else
+
+    if(object.type === 'label'){
+        $element.html('<i class="fa fa-arrow-circle-o-up" aria-hidden="true"></i>');
+    }else
+
+
     if(object.type === 'image'){
         $element.html('<img>');
     }

@@ -10,7 +10,7 @@ $('.palette').find('.block').click(function () {
     
 });
 
-
+$('.palette').find('.block[data-shape="room"]').trigger('click');
 
 //===================================================================================================
 
@@ -71,8 +71,10 @@ $('.palette').find('.label').draggable({
             id: createGuid(),
             type: 'label',
             position: position,
-            color: '#fff',
-            intensity: 1
+            color: '#ffffff',
+            intensity: 1,
+            name: '',
+            uri: ''
 
         });
         createMap();

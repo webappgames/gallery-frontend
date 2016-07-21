@@ -26,66 +26,54 @@
     <script src="script/new.js"></script>
 
 
-    <?php
 
-    foreach(glob('style/*.css') as $file){
-        echo('<link rel="stylesheet" href="'.$file.'">');
-    }
+    <link rel="stylesheet" href="style/main.css">
 
-    ?>
-    
+
 
 <body>
 
-    <section id="admin-world">
-    </section>
+    <main>
+
+        <section id="admin-world">
+        </section>
 
 
-    <div id="selected-toolbox">
+        <div id="selected-toolbox">
 
-        <i class="delete fa fa-trash" aria-hidden="true"></i>
-        <i class="resize fa fa-square" aria-hidden="true"></i>
-        <i class="rotate fa fa-circle" aria-hidden="true"></i>
-
-
-    </div>
+            <!--<i class="delete fa fa-trash" aria-hidden="true"></i>
+            <i class="resize fa fa-square" aria-hidden="true"></i>
+            <i class="rotate fa fa-circle" aria-hidden="true"></i>-->
 
 
+        </div>
 
-    <!--<nav id="menu-left">
+    </main>
 
-        <fieldset class="palette">
-            <legend>galerie</legend>
-            <img src="">
-            <img src="">
-            <img src="">
-            <img src="">
-            <img src="">
-            <img src="">
+
+
+
+    <nav id="menu-left">
+        <fieldset class="palette" id="selected-properties">
         </fieldset>
-        
-    </nav>-->
- 
+    </nav>
+
 
 
 
     <nav id="menu-right">
 
-
         <fieldset class="palette" id="admin-tools">
-            
             <legend>Akce</legend>
             <button class="save">Uložit</button>
             <button class="new">Nový</button>
-            
+
         </fieldset>
 
-        
-        
+
+
         <fieldset class="palette">
-
             <legend>Bloky</legend>
-
             <div class="block" data-shape="room"></div>
             <div class="block" data-shape="wall"></div>
             <div class="block" data-shape="door"></div>
@@ -96,15 +84,15 @@
 
         <fieldset class="palette">
             <legend>Předměty</legend>
-            <div class="light"></div>
-            <div class="label"></div>
+            <div class="light"><i class="fa fa-lightbulb-o" aria-hidden="true"></i></div>
+            <div class="label"><i class="fa fa-arrow-circle-o-up" aria-hidden="true"></i></div>
 
         </fieldset>
 
-
-
-
     </nav>
+
+
+
 
 
     <script src="script/palette.js"></script>

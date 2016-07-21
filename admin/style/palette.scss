@@ -1,0 +1,26 @@
+
+.palette{
+
+  .label, .light{
+
+    display: inline-block;
+
+    i{
+      cursor: move;
+      display: inline-block;
+      font-size: 30px;
+    }
+
+
+  }
+
+
+
+  .block {
+    border: 2px solid transparent;
+  }
+  .selected{
+    border: 2px solid $selected;
+  }
+
+}

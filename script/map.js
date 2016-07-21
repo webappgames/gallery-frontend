@@ -112,8 +112,8 @@ $(function(){
                     box.position = position;
 
 
-                    box.scaling.x = object.size.width;
-                    box.scaling.y = object.size.width;
+                    box.scaling.x = object.width;
+                    box.scaling.y = object.width;
                     box.scaling.z = 0.1;
 
 

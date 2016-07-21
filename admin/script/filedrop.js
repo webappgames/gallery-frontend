@@ -121,10 +121,10 @@ document.addEventListener("drop", function(e){
                         position:position,
                         name: filename,
                         src: response[key],
-                        size: {
-                            width: 2
-                        },
-                        rotation: 0
+                        width: 2,
+                        rotation: 0,
+                        name: '',
+                        uri: ''
 
                     });
 

@@ -17,7 +17,7 @@
   margin: 0px;
   padding: 0px;
 
-  border: 1px solid #0030ff;
+  border: 1px solid $selected;
 
   //background-color: #feff95;
 
@@ -25,6 +25,8 @@
   cursor: Move;
 
 
+
+  /*
   .delete{
     position: absolute;
     left: -15px;
@@ -47,18 +49,26 @@
     position: absolute;
     right: -5px;
     top: -5px;
-  }
+  }*/
 
 }
 
 
 
 #selected-toolbox.valid{
-  background-color: rgba(80, 169, 38, 0.34);
-  border: none;
+  //background-color: rgba(80, 169, 38, 0.34);
+  //border: none;
+  border: 1px solid $selected;
 }
 
 #selected-toolbox.invalid{
-  background-color: rgba(169, 116, 77, 0.34);
-  border: none;
+  //background-color: rgba(169, 116, 77, 0.34);
+  //border: none;
+  border: 1px solid $selected-wrong;
+}
+
+
+
+#selected-properties{
+  display: none;
 }

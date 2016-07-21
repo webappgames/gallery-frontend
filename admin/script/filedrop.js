@@ -61,7 +61,7 @@ document.addEventListener("drop", function(e){
 
         if(files[i].size>TOWNS_CDN_FILE_MAX_SIZE){
 
-            T.UI.Message.error(T.Locale.get('upload error max filesize')+' '+bytesToSize(TOWNS_CDN_FILE_MAX_SIZE));
+            //T.UI.Message.error(T.Locale.get('upload error max filesize')+' '+bytesToSize(TOWNS_CDN_FILE_MAX_SIZE));
             throw new Error('File too big');
         }
 
@@ -76,7 +76,7 @@ document.addEventListener("drop", function(e){
 
     if(request_size>TOWNS_CDN_REQUEST_MAX_SIZE){
 
-        T.UI.Message.error(T.Locale.get('upload error max requestsize')+' '+bytesToSize(TOWNS_CDN_REQUEST_MAX_SIZE));
+        //T.UI.Message.error(T.Locale.get('upload error max requestsize')+' '+bytesToSize(TOWNS_CDN_REQUEST_MAX_SIZE));
         throw new Error('Request too big');
 
     }

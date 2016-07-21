@@ -42,47 +42,42 @@
 
     <a href="#about" id="menu-title">
         <img src="http://1.gravatar.com/avatar/3d98c15957c5f5dd227e53dbc7cbb60d?s=30&r=pg&d=mm" alt="Pavol Hejný">
-        <h1>Pavol Hejný</h1>
+        <h1>My gallery</h1>
     </a>
 
     <ul>
-        <li>
-            <a href="#articles">Articles + Talks</a>
+
+        <?php
 
 
-
-        </li>
-        <li>
-            <a href="#projects">Projects</a>
+        $map_file = __DIR__.'/data/map.json';
+        $objects = json_decode(file_get_contents($map_file),true);
 
 
-
-        </li>
-        <li>
-            <a href="#gallery">Gallery</a>
+        foreach($objects as $object) {
 
 
+            if($object['type']=='label') {
+                ?>
 
-        </li>
-        <li>
-            <a href="#contact">Contact</a>
+                <li>
+                    <a onclick="moveTo(<?=$object['position']['x']?>,<?=$object['position']['y']?>,<?=$object['rotation']?>);"><?=$object['name']?></a>
 
+                </li>
 
+                <?php
 
-        </li>
-
+            }
+        }
+        ?>
 
     </ul>
 
-    <div id="languages" >
-
+    <!--<div id="languages" >
         <a href="http://pavolhejny.com" class="selected"><img src="images/locale/en.png" alt="en flag" title="English"></a>
-
         <a href="http://pavolhejny.cz" class=""><img src="images/locale/cs.png" alt="cs flag" title="Čeština"></a>
+    </div>-->
 
-
-
-    </div>
 </nav>
 
 
@@ -96,6 +91,7 @@
 <script src="script/scene.js"></script>
 <script src="script/map.js"></script>
 <script src="script/keys.js"></script>
+<script src="script/move-to.js"></script>
 
 
 <script>

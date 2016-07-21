@@ -71,6 +71,8 @@ $(function(){
 
                 //r('creating light');
                 var light = new BABYLON.PointLight("light", position, scene);
+                light.diffuse = BABYLON.Color3.FromHexString(object.color);
+                light.specular = light.diffuse;
                 lights.push(light);
 
 

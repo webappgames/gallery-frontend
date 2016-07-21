@@ -71,6 +71,7 @@ $('.palette').find('.label').draggable({
             id: createGuid(),
             type: 'label',
             position: position,
+            rotation: 0,
             name: '',
             uri: ''
 

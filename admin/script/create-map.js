@@ -142,25 +142,41 @@ function createMap() {
         $selected_properties.html('');
         $selected_properties.append('<legend>Objekt</legend>');
 
-        var input_element;
+        var input_element,$input_element;
         for(var key in object){
 
 
 
             input_element=false;
             if(key=='name' || key=='uri'/* || key=='color'*/){
-                input_element='<input type="text" value="' + object[key] + '">';
+                input_element='<input type="text">';
             }else
             if(key=='intensity'){
-                input_element='<input type="range" min="0.1" max="5" step="0.1" value="' + object[key] + '">';
+                input_element='<input type="range" min="0.1" max="5" step="0.1">';
             }else
             if(key=='color'){
-                input_element='<input type="color" value="' + object[key] + '">';
+                input_element='<input type="color">';
+            }else
+            if(key=='rotation'){
+                input_element='<input type="range" min="0" max="360" step="1">';
             }
 
 
 
+
             if(input_element) {
+
+                $input_element = $(input_element);
+
+                //r(object[key]);
+                $input_element.attr('value',object[key]);
+                $input_element.attr('data-id',id);
+                $input_element.attr('data-key',key);
+
+
+                input_element = $input_element.outerHTML();
+                //r(input_element);
+
                 $selected_properties.append(
                     '<div class="field">' +
                     '<label>' + key + '</label>' +
@@ -170,6 +186,23 @@ function createMap() {
             }
         }
 
+
+        $selected_properties.find('input').change(function () {
+
+            var $this = $(this);
+
+            var val = $this.val();
+            var id = $this.attr('data-id');
+            var key = $this.attr('data-key');
+
+            var object = getObjectById(id);
+            object[key] = val;
+
+            createMap();
+            $('.save').trigger('click');
+            //r(object);
+
+        });
 
         $selected_properties.show();
 

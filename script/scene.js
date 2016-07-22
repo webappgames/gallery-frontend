@@ -47,6 +47,7 @@ var createScene = function () {
     ground.position = new BABYLON.Vector3(0, 0, 0);
     ground.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
     ground.receiveShadows = true;
+    ground.isPickable = false;
 
     //Set gravity for the scene (G force like, on Y-axis)
     scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
@@ -94,7 +95,22 @@ var createScene = function () {
     scene.onPointerDown = function (evt, pickResult) {
         // if the click hits the ground object, we change the impact position
         if (pickResult.hit) {
-            r(pickResult);
+
+            //r(pickResult.pickedMesh.name);
+
+            var object = getObjectById(pickResult.pickedMesh.name);
+            var rotation = wallRotation(objects,object.position);
+            var rotation_rad = (rotation / 180) * Math.PI;
+
+            var x = object.position.x + Math.sin(-rotation_rad)*3;
+            var y = object.position.y + Math.cos(-rotation_rad)*3;
+
+
+            moveTo(x,y,90-rotation);
+
+
+            //r(object);
+
         }
     };
 

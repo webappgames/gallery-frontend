@@ -2,6 +2,19 @@
  * Created by Pavel on 14.07.2016.
  */
 
+var objects;
+
+
+
+function getObjectById(id){
+    for(var i=0,l=objects.length;i<l;i++){
+        if(objects[i].id==id)return(objects[i]);
+    }
+    throw new Error('Unknown id '+id);
+}
+
+
+
 
 
 $(function(){
@@ -23,7 +36,7 @@ $(function(){
         console.log('done', response);
 
 
-        var objects = response;
+        objects = response;
 
 
 
@@ -91,7 +104,7 @@ $(function(){
                     //box.material = new BABYLON.StandardMaterial("Mat", scene);
                     //box.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
 
-                    var box = BABYLON.Mesh.CreatePlane("plane", BLOCK_SIZE, scene);
+                    var box = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
 
 
                     box.material = new BABYLON.StandardMaterial("texture4", scene);
@@ -151,6 +164,7 @@ $(function(){
         building.checkCollisions = true;
         building.material = new BABYLON.StandardMaterial("Mat", scene);
         building.material.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+        building.isPickable = false;
         //building.material.diffuseTexture = new BABYLON.Texture("images/textures/clay-bricks.jpg", scene);
         //building.material.emissiveTexture.vOffset = 2;//Vertical offset of 10%
         //building.material.emissiveTexture.uOffset = 1;//Horizontal offset of 40%

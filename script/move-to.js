@@ -24,7 +24,7 @@ function moveTo(x,y,rotation) {
 
     var babylon_rotation = new BABYLON.Vector3(
         0,
-        -Math.PI/2 - rotation/180*Math.PI,
+        ((-rotation-90+(360*2))%360)/180*Math.PI,//todo remove +90
         0
     );
 
@@ -51,6 +51,8 @@ function moveTo(x,y,rotation) {
         easingFunction
     );
 
+
+    r(camera.rotation.y,babylon_rotation.y);
 
     BABYLON.Animation.CreateAndStartAnimation(
         "anim",

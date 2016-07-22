@@ -127,11 +127,17 @@ var keys_tick = function (timestamp) {
 
     if (controls_down.LEFT) {
         camera.rotation.y -= 0.2;
+        if(camera.rotation.y<0){
+            camera.rotation.y+=Math.PI*2;
+        }
     }
 
 
     if (controls_down.RIGHT) {
         camera.rotation.y += 0.2;
+        if(camera.rotation.y>Math.PI*2){
+            camera.rotation.y-=Math.PI*2;
+        }
     }
 
 

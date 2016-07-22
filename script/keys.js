@@ -107,20 +107,22 @@ var keys_tick = function (timestamp) {
 
 
 
+    /*
+    if (controls_down.UP) {
 
-    /*if (controls_down.UP) {
-
-        camera.position.x += Math.sin(camera.rotation.y)*0.2;
-        camera.position.z += Math.cos(camera.rotation.y)*0.2;
+        camera.position.x += Math.sin(camera.rotation.y)*5;
+        camera.position.z += Math.cos(camera.rotation.y)*5;
 
     }
 
+
     if (controls_down.DOWN) {
 
-        camera.position.x -= Math.sin(camera.rotation.y)*0.2;
-        camera.position.z -= Math.cos(camera.rotation.y)*0.2;
+        camera.position.x -= Math.sin(camera.rotation.y)*5;
+        camera.position.z -= Math.cos(camera.rotation.y)*5;
 
-    }*/
+    }
+    */
 
 
     if (controls_down.LEFT) {

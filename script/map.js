@@ -95,7 +95,7 @@ $(function(){
 
 
                     box.material = new BABYLON.StandardMaterial("texture4", scene);
-                    box.material.backFaceCulling = false;
+                    //box.material.backFaceCulling = false;
                     box.material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
                     box.material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
                     box.material.specularPower = 32;

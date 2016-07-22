@@ -27,6 +27,16 @@ var createScene = function () {
 
     camera.keysUp.push(87); // "w"
     camera.keysDown.push(83); // "s"
+    camera.keysLeft = [];
+    camera.keysRight = [];
+
+
+
+
+    /*camera.onCollide = function(event){
+        r(event);
+
+    };*/
 
 
     //Ground
@@ -55,8 +65,7 @@ var createScene = function () {
     ground.checkCollisions = true;
 
 
-    camera.keysLeft = [];
-    camera.keysRight = [];
+
 
 
 

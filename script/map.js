@@ -117,7 +117,16 @@ $(function(){
                     box.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
 
 
-                    box.material.emissiveTexture = new BABYLON.Texture(object.src, scene);
+
+                    var src = object.src;
+                    var src_uri = URI(src)
+                        .removeSearch("width");
+                    var src_normal = src_uri.addSearch({ width: 1024 }).toString();
+
+
+
+
+                    box.material.emissiveTexture = new BABYLON.Texture(src_normal, scene);
                     box.material.emissiveTexture.vOffset = 1;//Vertical offset of 10%
                     box.material.emissiveTexture.uOffset = 1;//Horizontal offset of 40%
                     //box.material.emissiveTexture.hasAlpha = true;//Has an alpha
@@ -128,7 +137,7 @@ $(function(){
 
 
                     box.scaling.x = object.width;
-                    box.scaling.y = object.width;
+                    box.scaling.y = object.height;
                     box.scaling.z = 0.1;
 
 

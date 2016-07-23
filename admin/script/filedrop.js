@@ -34,6 +34,36 @@ document.addEventListener("dragleave", function(e){
 
 
 
+
+
+
+function setImageWidth(file,object,height) {
+
+    var reader = new FileReader();
+    reader.onload = function (event) {
+
+        var image = new Image();
+        image.src = event.target.result;
+
+
+        image.onload = function(){
+
+            var width = (this.width * height) / this.height;
+            object.width = width;
+            r(object);
+
+        };
+
+    };
+
+    reader.readAsDataURL(file);
+
+}
+
+
+
+
+
 document.addEventListener("drop", function(e){
     e.preventDefault();
 
@@ -47,9 +77,11 @@ document.addEventListener("drop", function(e){
         return;
     }
 
+    r(files);
+
     // process all File objects
     var formData = new FormData();
-    var files_name_key = {};
+    var files_key = {};
     var request_size=1024;//todo is it OK?
     for (var i = 0; i < files.length; i++) {
 
@@ -70,9 +102,9 @@ document.addEventListener("drop", function(e){
         var key='image'+i;
 
         formData.append(key, files[i]);
-        files_name_key[key] = files[i].name;
+        files_key[key] = files[i];
 
-    }   //r(files_name_key);
+    }   //r(files_key);
 
     if(request_size>TOWNS_CDN_REQUEST_MAX_SIZE){
 
@@ -110,24 +142,29 @@ document.addEventListener("drop", function(e){
 
                 var response=(JSON.parse(xhr.response));
 
+                
+                var object;
+                for (var key in files_key) {
 
-                for (var key in files_name_key) {
 
-                    var filename = files_name_key[key];
-
-                    objects.push({
+                    objects.push(object = {
                         id: createGuid(),
                         type: 'image',
                         position:position,
-                        name: filename,
+                        name: files_key[key].name,
                         src: response[key],
-                        width: 2,
+                        height: 2,
                         rotation: 0,
                         name: '',
                         uri: ''
 
                     });
 
+
+                    setImageWidth(files_key[key],object,2);
+
+
+                    position={x:position.x,y:position.y+2};
 
                 }
 

@@ -456,10 +456,19 @@ function createMap() {
         var $img = $this.find('img');
         //var $arrow = $this.find('.arrow');
 
-        $img.css('width',object.width*FIELD_SIZE);
-        $img.css('height',object.width*FIELD_SIZE);
+        //$img.css('width',object.width*FIELD_SIZE);
+        $img.css('height',object.height*FIELD_SIZE);
 
-        $img.attr('src',object.src);
+
+
+        var src = object.src;
+        var src_uri = URI(src)
+            .removeSearch("width");
+        var src_normal = src_uri.addSearch({ width: 100 }).toString();
+
+
+
+        $img.attr('src',src_normal);
 
 
 

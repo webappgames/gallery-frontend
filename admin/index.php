@@ -79,6 +79,7 @@
             <div class="block" data-shape="room"></div>
             <div class="block" data-shape="wall"></div>
             <div class="block" data-shape="door"></div>
+            <div class="block" data-shape="window"></div>
         </fieldset>
 
 
@@ -88,6 +89,8 @@
             <legend>Předměty</legend>
             <div class="light"><i class="fa fa-lightbulb-o" aria-hidden="true"></i></div>
             <div class="label"><i class="fa fa-arrow-circle-o-up" aria-hidden="true"></i></div>
+
+
 
         </fieldset>
 

@@ -55,10 +55,16 @@ main{
   //border: 1px solid #ccc;
 }
 
+#admin-world {
+  .block {
+    box-shadow: #000 0px 0px 1px;
+  }
+}
+
 
 
 .block[data-shape="room"] {
-  background-color: #f4f4f4;
+  background-color: #f8f8f8;
 }
 .block[data-shape="wall"] {
   background-color: #444;
@@ -66,7 +72,9 @@ main{
 .block[data-shape="door"] {
   background-color: #a94616;
 }
-
+.block[data-shape="window"] {
+  background-color: #78c4d8;
+}
 
 
 //=======================================================================================

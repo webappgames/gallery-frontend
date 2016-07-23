@@ -1,9 +1,22 @@
 
 var BLOCK_SIZE=5;
-var BLOCK_SIZE_VERTICAL=10;
-var BLOCK_SIZE_DOOR=2;
+//var BLOCK_SIZE_VERTICAL=10;
+//var BLOCK_SIZE_DOOR=2;
 
 var EYE_VERTICAL = 2;
+var LIGHT_VERTICAL = 3;
+
+
+var BLOCKS_2D_3D_SHAPES = {
+    room:   [1,0,0,0,0,0,0,0,1],
+    door:   [1,0,0,0,1,1,1,1,1],
+    wall:   [1,1,1,1,1,1,1,1,1],
+    window: [1,1,0,0,1,1,1,1,1]
+};
+
+
+
+
 
 
 var canvas = document.getElementById("scene");

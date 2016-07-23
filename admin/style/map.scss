@@ -23,6 +23,15 @@ main{
   user-select: none;
 
 
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  background-color: #88a9a5;
+
+
+
   /*&::selection{
 
     background: gray;
@@ -57,12 +66,16 @@ main{
 
 #admin-world {
   .block {
+
+    z-index: 10;
     box-shadow: #000 0px 0px 1px;
   }
 }
 
 
-
+.block[data-shape="none"] {
+  background-color: #88a9a5;
+}
 .block[data-shape="room"] {
   background-color: #f8f8f8;
 }
@@ -76,7 +89,6 @@ main{
   background-color: #78c4d8;
 }
 
-
 //=======================================================================================
 
 
@@ -84,6 +96,7 @@ main{
 
   .light {
 
+    z-index: 20;
     user-select: none;
 
     display: block;
@@ -116,6 +129,7 @@ main{
 
   .label {
 
+    z-index: 20;
     user-select: none;
     display: block;
 
@@ -140,6 +154,8 @@ main{
   //=======================================================================================
 
   .image {
+
+    z-index: 20;
 
     user-select: none;
 

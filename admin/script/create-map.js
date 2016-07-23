@@ -25,14 +25,32 @@ function removeObjectById(id){
     return false;
 }
 
+function removeBlockOnPosition(position){
+
+    //r(position);
+
+    for (var i in objects) {
+
+        if (objects[i].type == 'block'){
+            //r(objects[i]);
+            if(objects[i].position.x==position.x && objects[i].position.y==position.y){
+                objects.splice(i, 1);
+                return true;
+            }
+        }
+    }
+    return false;
+}
 
 
+
+var $admin_world;
 
 
 var window_width,window_height;
 function createMap() {
 
-    var $admin_world = $('#admin-world');
+    $admin_world = $('#admin-world');
     $admin_world.html('');
 
 
@@ -248,16 +266,26 @@ function createMap() {
 
 
     //----------------------------------------------------------------------------BLOCKS
-    $blocks.click(function () {
+    /*$blocks.click(function () {
 
         var $this = $(this);
-        $this.attr('data-shape', shape_selected);
+
 
 
         var id = $this.attr('id');
         var object = getObjectById(id);
-        object.shape = shape_selected;
 
+        if(shape_selected) {
+
+            object.shape = shape_selected;
+            $this.attr('data-shape', shape_selected);
+
+        }else{
+
+            removeObjectById(object.id);
+            $this.remove();
+
+        }
 
         $('.save').trigger('click');
 
@@ -280,7 +308,7 @@ function createMap() {
 
     $blocks.mouseenter(function () {
 
-        if(!drawing)return;
+        if(drawing!==1)return;
 
         var $this = $(this);
 
@@ -290,10 +318,167 @@ function createMap() {
 
         var id = $this.attr('id');
         var object = getObjectById(id);
-        object.shape = shape_selected;
+
+        if(shape_selected) {
+
+            object.shape = shape_selected;
+            $this.attr('data-shape', shape_selected);
+
+        }else{
+
+            removeObjectById(object.id);
+            $this.remove();
+
+        }
+
+
+    });*/
+    //-----------------------------------
+    /*$admin_world.click(function (event) {
+
+
+
+        if(shape_selected) {
+
+            var x = ( event.clientX -window_width /2 ) / FIELD_SIZE ;//+0.5;
+            var y = ( event.clientY -window_height/2 ) / FIELD_SIZE ;//+0.5;
+
+            x = Math.round(x);
+            y = Math.round(y);
+
+            var object = {
+                id: createGuid(),
+                type: 'block',
+                position: {x: x, y: y},
+                shape: shape_selected
+            };
+            objects.push(object);
+
+
+            $admin_world.append('\n').append(createObject$(object));//todo use also in pallete
+
+
+        }
+
+        $('.save').trigger('click');
+
+
+    });*/
+
+
+
+    var drawing=false,drawing_x,drawing_y,drawing_objects;
+    $admin_world.unbind('mousedown').mousedown(function (event) {
+
+        if($(event.target).hasClass('block') || $(event.target).attr('id')=='admin-world'){
+
+        }else{
+            return;
+        }
+
+
+        unselect_callback();
+
+        r('start drawing');
+        drawing = true;
+
+        drawing_x = Math.round(( event.clientX -window_width /2 ) / FIELD_SIZE );//+0.5;
+        drawing_y = Math.round(( event.clientY -window_height/2 ) / FIELD_SIZE );//+0.5;
+
+
+        drawing_objects=[];
+
+    });
+
+
+    var admin_world_mousemove;
+    $admin_world.unbind('mousemove').mousemove(admin_world_mousemove = function (event) {
+
+
+        if(!drawing)return;
+
+
+        r('drawing rect');
+
+
+        var stop_x = Math.round(( event.clientX -window_width /2 ) / FIELD_SIZE );//+0.5;
+        var stop_y = Math.round(( event.clientY -window_height/2 ) / FIELD_SIZE );//+0.5;
+
+        size_x = Math.abs(stop_x-drawing_x);
+        size_y = Math.abs(stop_y-drawing_y);
+
+
+        signum_x = (stop_x-drawing_x)>0?1:-1;
+        signum_y = (stop_y-drawing_y)>0?1:-1;
+
+
+        drawing_objects.forEach(function (object) {
+            $('#'+object.id).remove();
+        });
+        drawing_objects=[];
+
+
+        for(var y=0;y<=size_y;y++){
+            for(var x=0;x<=size_x;x++){
+
+
+                var object = {
+                    id: createGuid(),
+                    type: 'block',
+                    position: {
+                        x: drawing_x +x*signum_x,
+                        y: drawing_y +y*signum_y
+                    },
+                    shape: shape_selected!='wall'?shape_selected:((x==0 || y==0 || x==size_x || y==size_y)?'wall':'room')
+                };
+                //objects.push(object);
+                drawing_objects.push(object);
+
+                $admin_world.append('\n').append(createObject$(object));//todo use also in pallete
+
+
+
+            }
+        }
+
+
 
 
     });
+
+    $admin_world.unbind('mouseup').mouseup(function (event) {
+
+
+        if(!drawing)return;
+        admin_world_mousemove(event);
+        drawing = false;
+
+        var removed_stat = 0;
+        drawing_objects.forEach(function (object) {
+
+            //r('object',object);
+            //r('object.position',object.position);
+            removed_stat += removeBlockOnPosition(object.position)?1:0;
+
+            if(object.shape){
+                objects.push(object);
+            }
+
+
+        });
+
+        r('removed '+removed_stat+' objects');
+
+
+        createMap();
+
+        $('.save').trigger('click');
+
+
+
+    });
+
+    $admin_world.mousemove();
     //----------------------------------------------------------------------------
 
 
@@ -309,7 +494,7 @@ function createMap() {
 
 
             var offset = $(this).offset();
-            var position = getPositionFromLeftTop(offset.left,offset.top);
+            var position = getPositionFromLeftTop(offset.left+15,offset.top+15);
 
 
             var id = $(this).attr('id');
@@ -318,6 +503,7 @@ function createMap() {
 
             select_callback.call(this);
 
+            createMap();
             $('.save').trigger('click');
 
 

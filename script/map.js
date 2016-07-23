@@ -72,7 +72,7 @@ $(function(){
             if(object.type=='block') {
 
 
-                var position_vertical = new BABYLON.Vector3(0, BLOCK_SIZE, 0);
+                var position_vertical = new BABYLON.Vector3(0, BLOCK_SIZE*1.00001, 0);
                 var vertical = BLOCKS_2D_3D_SHAPES[object.shape];
 
                 var box;
@@ -108,6 +108,7 @@ $(function(){
                 var light = new BABYLON.PointLight("light", position, scene);
                 light.diffuse = BABYLON.Color3.FromHexString(object.color);
                 light.specular = light.diffuse;
+                light.intensity = object.intensity/2;
 
 
                 light.position.y = LIGHT_VERTICAL * BLOCK_SIZE;

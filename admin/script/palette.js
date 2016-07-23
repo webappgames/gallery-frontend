@@ -6,6 +6,10 @@ $('.palette').find('.block').click(function () {
     $(this).addClass('selected');
 
     shape_selected = $(this).attr('data-shape');
+
+    if(shape_selected=='none'){
+        shape_selected=false;
+    }
     
     
 });

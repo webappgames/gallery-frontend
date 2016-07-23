@@ -74,8 +74,14 @@
 
 
 
+
+
+
+
+
         <fieldset class="palette">
-            <legend>Bloky</legend>
+            <legend>Budova</legend>
+            <div class="block" data-shape="none"></div>
             <div class="block" data-shape="room"></div>
             <div class="block" data-shape="wall"></div>
             <div class="block" data-shape="door"></div>
@@ -89,10 +95,7 @@
             <legend>Předměty</legend>
             <div class="light"><i class="fa fa-lightbulb-o" aria-hidden="true"></i></div>
             <div class="label"><i class="fa fa-arrow-circle-o-up" aria-hidden="true"></i></div>
-
-
-
-        </fieldset>
+           </fieldset>
 
     </nav>
 

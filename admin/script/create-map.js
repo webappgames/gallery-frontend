@@ -531,29 +531,13 @@ function createMap() {
         },
         stop: function () {
 
-            var offset = $(this).offset();
-            var position = getPositionFromLeftTop(offset.left-7,offset.top);//todo wtf 7
-
-
-            position.x=Math.round(position.x*2)/2;
-            position.y=Math.round(position.y*2)/2;
-
-
-            var id = $(this).attr('id');
-            var object = getObjectById(id);
-            object.position = position;
-
-            r(position);
-
             select_callback.call(this);
-
             $('.save').trigger('click');//todo refactor to function
 
+        },
 
-        }
 
 
-        /*
         drag: function(event, ui) {
             var draggable = $(this).data("ui-draggable");
             $.each(draggable.snapElements, function(index, element) {
@@ -574,60 +558,41 @@ function createMap() {
         },
         snapped: function(event, ui) {
 
-            var $this = $(this);
-            var offset1 = $this.offset();
-            var offset2 = ui.snapElement.offset();
 
 
-            offset1.top += 30;
-            offset1.left += 30;
-
-            offset2.top += 15;
-            offset2.left += 15;
-
-            var x = offset1.left-offset2.left;
-            var y = offset1.top-offset2.top;
-
-            var rad = Math.atan2(y,x);
-            var rotation =(rad * (180/Math.PI))%360;
-            rotation = Math.floor(rotation/90)*90;
+            var offset = $(this).offset();
+            var position = getPositionFromLeftTop(offset.left-7,offset.top);//todo wtf 7
 
 
-            $this.css('transform','rotate('+rotation+'deg)');
-
-            var offset = $this.offset();
-            $('#dot')
-                .css('top',offset.top)
-                .css('left',offset.left);
-
-
-            r(rotation);
-
-
-            $(".block[data-shape='wall']").html('');
-            ui.snapElement.html(rotation);
-            //$this.css('transform','rotate('+rotation+'deg)');
-
-            return;
+            position.x=Math.round(position.x*2)/2;
+            position.y=Math.round(position.y*2)/2;
 
 
 
-            $this.css('border','2px solid #022fff');
-            if(rotation==0){
-                $this.css('border-top','2px dotted #ff4f12');
-            }else
-            if(rotation==90){
-                $this.css('border-left','2px dotted #ff4f12');
-            }else
-            if(rotation==180){
-                $this.css('border-bottom','2px dotted #ff4f12');
-            }else
-            if(rotation==270){
-                $this.css('border-right','2px dotted #ff4f12');
+
+            var rotation = wallRotation(objects, position);
+            var rotation_rad = rotation/180*Math.PI;
+
+            if (rotation === false) {
+
+            } else {
+
+                //$(this).find('img')
+                //    .css('transform','rotate('+(rotation)+'deg) translate('+(Math.cos(rotation_rad)*-50)+'%, '+(Math.sin(rotation_rad)*-50)+'%)')
+                //    .css('transform','rotate('+(rotation)+'deg) translate(-50%, -50%)')
+
             }
 
+
+
+
+            var id = $(this).attr('id');
+            var object = getObjectById(id);
+            object.position = position;
+
+
         }
-        */
+
 
 
     });

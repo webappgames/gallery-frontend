@@ -68,7 +68,7 @@ main{
   .block {
 
     z-index: 10;
-    box-shadow: #000 0px 0px 1px;
+    //box-shadow: #000 0px 0px 1px;
   }
 }
 
@@ -96,7 +96,7 @@ main{
 
   .light {
 
-    z-index: 20;
+    z-index: 30;
     user-select: none;
 
     display: block;
@@ -121,7 +121,12 @@ main{
       background-color: #000;
       border-radius: 30px;
 
+      box-shadow: #fff 0px 0px 5px;
+
+
     }
+
+
 
   }
 
@@ -129,7 +134,7 @@ main{
 
   .label {
 
-    z-index: 20;
+    z-index: 30;
     user-select: none;
     display: block;
 

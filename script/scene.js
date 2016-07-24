@@ -145,14 +145,13 @@ var createScene = function () {
             //r(pickResult.pickedMesh.name);
 
             var object = getObjectById(pickResult.pickedMesh.name);
-            var rotation = wallRotation(objects,object.position);
-            var rotation_rad = (rotation / 180) * Math.PI;
+            var rotation_rad = (object.rotation / 180) * Math.PI;
 
             var x = object.position.x + Math.sin(-rotation_rad)*3;
             var y = object.position.y + Math.cos(-rotation_rad)*3;
 
 
-            moveTo(x,y,90-rotation);
+            moveTo(x,y,object.rotation);
 
 
             //r(object);

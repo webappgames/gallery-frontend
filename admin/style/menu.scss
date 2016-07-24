@@ -1,4 +1,30 @@
 
+#save{
+  z-index: 2000;
+  position: fixed;
+  top: 0px;
+  right: calc(50% - 100px);
+
+  width:200px;
+
+  text-align: center;
+
+  color: #555;
+  //background-color: #8fff56;
+
+  cursor: Pointer;
+}
+
+
+
+#menu-left, #menu-right{
+
+  background-color: #fff;
+
+}
+
+
+
 #menu-left {
   z-index: 2000;
   position: fixed;
@@ -12,7 +38,6 @@
   position: fixed;
   top: 0px;
   right: 0px;
-
 }
 
 

@@ -120,12 +120,10 @@ $(function(){
             if(object.type=='image'){
 
 
-                var rotation = wallRotation(objects,object.position);
-                //r(rotation);
-                if(typeof rotation === 'number') {
+                if(typeof object.rotation === 'number') {
 
 
-                    var rotation_rad = (rotation / 180) * Math.PI;
+                    var rotation_rad = (object.rotation / 180) * Math.PI;
                     //Simple crate
                     //var box = new BABYLON.Mesh.CreateBox("image", BLOCK_SIZE, scene);
                     //box.material = new BABYLON.StandardMaterial("Mat", scene);

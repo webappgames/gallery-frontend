@@ -24,7 +24,7 @@ function moveTo(x,y,rotation) {
 
     var babylon_rotation = new BABYLON.Vector3(
         0,
-        ((-rotation-90+(360*2))%360)/180*Math.PI,//todo remove +90
+        (180+rotation)/180*Math.PI,
         0
     );
 

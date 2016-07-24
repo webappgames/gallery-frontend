@@ -3,7 +3,7 @@
 
     <head>
         <meta charset="UTF-8">
-        <title>Title</title>
+        <title>3D Galerie</title>
     </head>
 
 
@@ -54,6 +54,8 @@
     </main>
 
 
+    <div id="save"></div>
+
 
 
     <nav id="menu-left">
@@ -66,15 +68,12 @@
 
     <nav id="menu-right">
 
-        <fieldset class="palette" id="admin-tools">
+
+        <!--<fieldset class="palette" id="admin-tools">
             <legend>Akce</legend>
             <button class="save">Uložit</button>
             <button class="new">Nový</button>
-
-        </fieldset>
-
-
-
+        </fieldset>-->
 
 
 
@@ -94,7 +93,7 @@
 
         <fieldset class="palette">
             <legend>Předměty</legend>
-            <div class="light"><i class="fa fa-lightbulb-o" aria-hidden="true"></i></div>
+            <div class="light"><i class="fa fa-sun-o" aria-hidden="true"></i></div>
             <div class="label"><i class="fa fa-arrow-circle-o-up" aria-hidden="true"></i></div>
            </fieldset>
 

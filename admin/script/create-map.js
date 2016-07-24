@@ -47,15 +47,16 @@ function removeBlockOnPosition(position){
 var $admin_world;
 
 
-var window_width,window_height;
+var window_center;
 function createMap() {
 
     $admin_world = $('#admin-world');
     $admin_world.html('');
 
 
-    window_width = $(window).width();
-    window_height = $(window).height();
+    window_center = {};
+    window_center.x = $(window).width();
+    window_center.y = $(window).height();
 
     objects.forEach(function (object) {
 
@@ -85,10 +86,9 @@ function createMap() {
 
     //----------------------------------------------------------------------------SELECTING
 
-    var $selected_toolbox = $('#selected-toolbox');
     var $selected_properties = $('#selected-properties');
 
-    var top_z_index = 10000;
+
     var select_callback = function () {
 
 
@@ -98,62 +98,19 @@ function createMap() {
         var id = $this.attr('id');
         var object = getObjectById(id);
 
-        r(object.position);
-
-
-        if(object.type=='image') {
-
-
-            var rotation = wallRotation(objects, object.position);
-
-            if (rotation === false) {
-                $selected_toolbox.addClass('invalid');
-                $selected_toolbox.removeClass('valid');
-            } else {
-                $selected_toolbox.addClass('valid');
-                $selected_toolbox.removeClass('invalid');
-            }
-
-        }else{
-
-            $selected_toolbox.addClass('valid');
-            $selected_toolbox.removeClass('invalid');
-
-        }
+        r(object);
 
 
 
-
-        var $img = $this.find('img');
-        if($img.length){
-            $this = $img;
-        }
 
         var offset = $this.offset();
         var width = $this.outerWidth();
         var height = $this.outerHeight();
 
-        $('.selected-object').removeClass('selected-object');
-        $this.addClass('selected-object');
 
-        var border = 20;
-
-        $selected_toolbox
-            .css('position', 'absolute')
-            .css('top',offset.top-border)
-            .css('left',offset.left-border)
-            .css('width',width+2*border)
-            .css('height',height+2*border)
-            .css('z-index',top_z_index++)
-            .show();
-
-        $this.css('z-index',top_z_index++);
-
-
-        //var $delete = $selected_toolbox.find('.delete');
-        // $rotate = $selected_toolbox.find('.rotate');
-        //var $resize = $selected_toolbox.find('.resize');
-
+        $admin_world.find('div').addClass('not-selected-object').css('z-index','');
+        $this.removeClass('not-selected-object');
+        $this.css('z-index',10000);
 
 
 
@@ -175,7 +132,7 @@ function createMap() {
             if(key=='color'){
                 input_element='<input type="color">';
             }else
-            if(key=='rotation'){
+            if(key=='rotation' && object.type!=='image'){
                 input_element='<input type="range" min="0" max="360" step="1">';
             }
 
@@ -217,7 +174,7 @@ function createMap() {
             object[key] = val;
 
             createMap();
-            $('.save').trigger('click');
+            save();
             //r(object);
 
         });
@@ -231,9 +188,8 @@ function createMap() {
         $delete_button.click(function () {
             removeObjectById(id);
             createMap();
-            $selected_toolbox.hide();
             $selected_properties.hide();
-            $('.save').trigger('click');
+            save();
         });
 
 
@@ -252,7 +208,7 @@ function createMap() {
 
     };
     var unselect_callback = function () {
-        $selected_toolbox.hide();
+        $('.not-selected-object').removeClass('not-selected-object');
         $selected_properties.hide();
     };
 
@@ -287,7 +243,7 @@ function createMap() {
 
         }
 
-        $('.save').trigger('click');
+        save();
 
 
     });
@@ -303,7 +259,7 @@ function createMap() {
     $blocks.unbind('mouseup').mouseup(function () {
         r('stop drawing');
         drawing = false;
-        $('.save').trigger('click');
+        save();
     });
 
     $blocks.mouseenter(function () {
@@ -340,8 +296,8 @@ function createMap() {
 
         if(shape_selected) {
 
-            var x = ( event.clientX -window_width /2 ) / FIELD_SIZE ;//+0.5;
-            var y = ( event.clientY -window_height/2 ) / FIELD_SIZE ;//+0.5;
+            var x = ( event.clientX -window_center.x /2 ) / FIELD_SIZE ;//+0.5;
+            var y = ( event.clientY -window_center.y/2 ) / FIELD_SIZE ;//+0.5;
 
             x = Math.round(x);
             y = Math.round(y);
@@ -360,7 +316,7 @@ function createMap() {
 
         }
 
-        $('.save').trigger('click');
+        save();
 
 
     });*/
@@ -377,13 +333,18 @@ function createMap() {
         }
 
 
-        unselect_callback();
+        if($selected_properties.css('display')=='block'){
+            unselect_callback();
+            return;
+        }
+
+
 
         r('start drawing');
         drawing = true;
 
-        drawing_x = Math.round(( event.clientX -window_width /2 ) / FIELD_SIZE );//+0.5;
-        drawing_y = Math.round(( event.clientY -window_height/2 ) / FIELD_SIZE );//+0.5;
+        drawing_x = Math.round(( event.clientX -window_center.x /2 ) / FIELD_SIZE );//+0.5;
+        drawing_y = Math.round(( event.clientY -window_center.y/2 ) / FIELD_SIZE );//+0.5;
 
 
         drawing_objects=[];
@@ -401,8 +362,8 @@ function createMap() {
         r('drawing rect');
 
 
-        var stop_x = Math.round(( event.clientX -window_width /2 ) / FIELD_SIZE );//+0.5;
-        var stop_y = Math.round(( event.clientY -window_height/2 ) / FIELD_SIZE );//+0.5;
+        var stop_x = Math.round(( event.clientX -window_center.x /2 ) / FIELD_SIZE );//+0.5;
+        var stop_y = Math.round(( event.clientY -window_center.y/2 ) / FIELD_SIZE );//+0.5;
 
         size_x = Math.abs(stop_x-drawing_x);
         size_y = Math.abs(stop_y-drawing_y);
@@ -460,7 +421,7 @@ function createMap() {
             //r('object.position',object.position);
             removed_stat += removeBlockOnPosition(object.position)?1:0;
 
-            if(object.shape){
+            if(object.shape!=='none'){
                 objects.push(object);
             }
 
@@ -470,9 +431,9 @@ function createMap() {
         r('removed '+removed_stat+' objects');
 
 
-        createMap();
+        //createMap();
 
-        $('.save').trigger('click');
+        save();
 
 
 
@@ -488,7 +449,6 @@ function createMap() {
 
 
         drag: function(){
-            $('#selected-toolbox').hide();
         },
         stop: function () {
 
@@ -501,10 +461,10 @@ function createMap() {
             var object = getObjectById(id);
             object.position = position;
 
-            select_callback.call(this);
+            //select_callback.call(this);
 
-            createMap();
-            $('.save').trigger('click');
+            //createMap();
+            save();
 
 
         }
@@ -527,12 +487,27 @@ function createMap() {
         //snapTolerance: 10,
 
         drag: function(){
-            $('#selected-toolbox').hide();
         },
         stop: function () {
 
+
+            var offset = $(this).offset();
+            var position = getPositionFromLeftTop(offset.left-7,offset.top);//todo wtf 7
+
+            position.x=Math.round(position.x*2)/2;
+            position.y=Math.round(position.y*2)/2;
+
+
+
+            var id = $(this).attr('id');
+            var object = getObjectById(id);
+
+
+            object.position = position;
+
+
             select_callback.call(this);
-            $('.save').trigger('click');//todo refactor to function
+            save();//todo refactor to function
 
         },
 
@@ -559,15 +534,17 @@ function createMap() {
         snapped: function(event, ui) {
 
 
-
             var offset = $(this).offset();
             var position = getPositionFromLeftTop(offset.left-7,offset.top);//todo wtf 7
-
 
             position.x=Math.round(position.x*2)/2;
             position.y=Math.round(position.y*2)/2;
 
 
+            var id = $(this).attr('id');
+            var object = getObjectById(id);
+
+            object.position = position;
 
 
             var rotation = wallRotation(objects, position);
@@ -581,18 +558,13 @@ function createMap() {
                 $(this).find('.image-'+rotation).show();
 
 
+                object.rotation = rotation;
+
 
                 //    .css('transform','rotate('+(rotation)+'deg) translate('+(Math.cos(rotation_rad)*-50)+'%, '+(Math.sin(rotation_rad)*-50)+'%)')
                 //    .css('transform','rotate('+(rotation)+'deg) translate(-50%, -50%)')
 
             }
-
-
-
-
-            var id = $(this).attr('id');
-            var object = getObjectById(id);
-            object.position = position;
 
 
         }

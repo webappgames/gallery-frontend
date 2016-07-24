@@ -6,10 +6,6 @@ $('.palette').find('.block').click(function () {
     $(this).addClass('selected');
 
     shape_selected = $(this).attr('data-shape');
-
-    if(shape_selected=='none'){
-        shape_selected=false;
-    }
     
     
 });
@@ -41,7 +37,7 @@ $('.palette').find('.light').draggable({
         });
         createMap();
 
-        $('.save').trigger('click');
+        save();
 
         $(this)
             .css('left',0)
@@ -82,7 +78,7 @@ $('.palette').find('.label').draggable({
         });
         createMap();
 
-        $('.save').trigger('click');
+        save();
 
         $(this)
             .css('left',0)

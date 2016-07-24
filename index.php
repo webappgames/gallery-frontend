@@ -1,8 +1,36 @@
+<?php
+
+error_reporting(E_ALL & ~E_NOTICE);
+
+
+
+$map_file = __DIR__.'/data/map.json';
+$objects = json_decode(file_get_contents($map_file),true);
+
+
+$page = array();
+foreach($objects as $object) {
+
+    if ($object['uri'] == '/') {
+
+        $page['name'] = $object['name'];
+        $index_label = $object;
+
+    }
+    if ($object['name'] == 'favicon') {
+
+        $page['favicon'] = $object['src'];
+
+    }
+}
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Gallery</title>
+    <title><?=htmlspecialchars($page['name'])?></title>
 
     <script>
         var r = console.log.bind(console);
@@ -20,7 +48,6 @@
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
 
 
-    <script src="script/images.js"></script>
 
     
     <?php
@@ -41,9 +68,10 @@
 
 <nav id="menu">
 
-    <a href="#about" id="menu-title">
-        <img src="http://1.gravatar.com/avatar/3d98c15957c5f5dd227e53dbc7cbb60d?s=30&r=pg&d=mm" alt="Pavol Hejný">
-        <h1>My gallery</h1>
+
+    <a onclick="moveTo(<?=$index_label['position']['x']?>,<?=$index_label['position']['y']?>,<?=$index_label['rotation']?>);" id="menu-title">
+        <img src="<?=htmlspecialchars($page['favicon'])?>" alt="<?=htmlspecialchars($page['name'])?>">
+        <h1><?=htmlspecialchars($page['name'])?></h1>
     </a>
 
     <ul>
@@ -51,14 +79,14 @@
         <?php
 
 
-        $map_file = __DIR__.'/data/map.json';
-        $objects = json_decode(file_get_contents($map_file),true);
-
 
         foreach($objects as $object) {
 
 
             if($object['type']=='label') {
+
+                if ($object['uri'] == '/')continue;
+
                 ?>
 
                 <li>

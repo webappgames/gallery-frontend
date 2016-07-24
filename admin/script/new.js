@@ -53,7 +53,7 @@ $(function () {
         objects = blocks;
         createMap();
 
-        $('.save').trigger('click');
+        save();
 
 
     });

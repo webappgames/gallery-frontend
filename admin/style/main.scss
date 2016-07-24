@@ -1,6 +1,5 @@
 
-$selected: #5dffa2;
-$selected-wrong: #f00;
+$selected: #ff4e41;
 
 
 
@@ -12,6 +11,18 @@ $selected-wrong: #f00;
 
 
 
+body {
+  /*font-family: 'Roboto', sans-serif;*/
+  font-family: "Trebuchet MS", Helvetica, sans-serif;
+  color: #000000;
+  margin: 0px;
+  padding: 0px;
+
+  background: #fff;/* url("../data/backgrounds/page.png");/**/
+  /*background: url("data/backgrounds/BrickOldMixedSize0040_1_S.jpg");/**/
+
+
+}
 
 
 

@@ -13,13 +13,13 @@ function createObject$(object) {
 
     if(object.type=='image'){
 
-        $element.css('top',  object.position.y * FIELD_SIZE  + window_height / 2);
-        $element.css('left', object.position.x * FIELD_SIZE  + window_width  / 2);
+        $element.css('top',  object.position.y * FIELD_SIZE  + window_center.y / 2);
+        $element.css('left', object.position.x * FIELD_SIZE  + window_center.x  / 2);
 
     }else{
 
-        $element.css('top',  ( object.position.y -0.5 ) * FIELD_SIZE  + window_height / 2);
-        $element.css('left', ( object.position.x -0.5 ) * FIELD_SIZE  + window_width  / 2);
+        $element.css('top',  ( object.position.y -0.5 ) * FIELD_SIZE  + window_center.y / 2);
+        $element.css('left', ( object.position.x -0.5 ) * FIELD_SIZE  + window_center.x  / 2);
 
     }
 
@@ -46,7 +46,7 @@ function createObject$(object) {
 
 
     if(object.type === 'light'){
-        $element.html('<i style="color:'+object.color+';" class="fa fa-lightbulb-o" aria-hidden="true"></i>');
+        $element.html('<i style="color:'+object.color+';" class="fa fa-sun-o" aria-hidden="true"></i>');
     }else
 
     if(object.type === 'label'){
@@ -86,12 +86,9 @@ function createObject$(object) {
         $image_270.attr('src',src_normal);
 
 
-
-
         rotateImage($image_90[0],90);
         rotateImage($image_180[0],180);
         rotateImage($image_270[0],270);
-
 
 
         if(object.rotation === 0)$image_0.show(); else

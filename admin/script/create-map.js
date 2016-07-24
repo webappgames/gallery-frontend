@@ -577,7 +577,11 @@ function createMap() {
 
             } else {
 
-                //$(this).find('img')
+                $(this).find('img').hide();
+                $(this).find('.image-'+rotation).show();
+
+
+
                 //    .css('transform','rotate('+(rotation)+'deg) translate('+(Math.cos(rotation_rad)*-50)+'%, '+(Math.sin(rotation_rad)*-50)+'%)')
                 //    .css('transform','rotate('+(rotation)+'deg) translate(-50%, -50%)')
 
@@ -597,7 +601,7 @@ function createMap() {
 
     });
 
-    $images.each(function () {
+    /*$images.each(function () {
 
         var $this = $(this);
 
@@ -629,7 +633,7 @@ function createMap() {
         //$this.css('background-repeat','no-repeat');
 
 
-    });
+    });*/
 
     //----------------------------------------------------------------------------
 

@@ -19,6 +19,7 @@
     <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
     <script src="../script/images.js"></script>
     <script src="../script/uri-plugin.js"></script>
+    <script src="script/rotate-image.js"></script>
     <script src="script/outer-html.js"></script>
     <script src="script/position.js"></script>
     <script src="script/create-html.js"></script>

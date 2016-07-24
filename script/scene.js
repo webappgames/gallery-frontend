@@ -38,10 +38,43 @@ var createScene = function () {
     camera.rotation.y=Math.PI;
     camera.attachControl(canvas, true);
 
+
+    /*setTimeout(function () {
+        r('mousedown');
+        $(canvas).trigger('mousedown');
+    },1500);*/
+
+
+
     camera.keysUp.push(87); // "w"
     camera.keysDown.push(83); // "s"
+
+    //camera.keysLeft.push(65); // "s"
+    //camera.keysRight.push(68); // "d"
+
     camera.keysLeft = [];
     camera.keysRight = [];
+
+
+
+    camera.speed = 15;
+    camera.inertia = 0.5;
+    //camera.fov = 1.2;
+
+
+
+    scene.registerBeforeRender(function () {
+
+        if (camera.rotation.x < -0.5) {//Top
+            camera.rotation.x = -0.5;
+        }
+        if (camera.rotation.x > 0.5) {//Bottom
+            camera.rotation.x = 0.5;
+        }
+    });
+    //camera.mode = 1;
+
+
 
 
 

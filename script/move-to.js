@@ -61,6 +61,21 @@ function moveTo(x,y,rotation,immediately) {
 
 
     //r(camera.rotation.y,babylon_rotation.y);
+    function parseRadians(rad) {
+        if(rad<0)rad+=Math.PI*2;
+        if(rad>Math.PI*2)rad-=Math.PI*2;
+        return rad;
+    }
+
+
+    camera.rotation.y  = parseRadians(camera.rotation.y);
+    babylon_rotation.y = parseRadians(babylon_rotation.y);
+
+    var diff =  camera.rotation.y - babylon_rotation.y;
+
+    if(diff>Math.PI)camera.rotation.y-=Math.PI*2;
+    if(diff<-Math.PI)camera.rotation.y+=Math.PI*2;
+
 
     BABYLON.Animation.CreateAndStartAnimation(
         "anim",

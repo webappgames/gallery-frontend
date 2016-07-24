@@ -27,6 +27,7 @@
     <script src="script/load.js"></script>
     <script src="script/save.js"></script>
     <script src="script/new.js"></script>
+    <script src="script/keys.js"></script>
 
 
 

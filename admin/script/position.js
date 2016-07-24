@@ -6,12 +6,11 @@
 
 function getPositionFromLeftTop(left,top){
 
-    var width = $(window).width();
-    var height = $(window).height();
+
     var offset = $(this).offset();
 
-    var x = (left-width/2)/FIELD_SIZE;
-    var y = (top-height/2)/FIELD_SIZE;
+    var x = (left-window_center.x)/FIELD_SIZE;
+    var y = (top-window_center.y)/FIELD_SIZE;
 
     return({x:x,y:y});
 

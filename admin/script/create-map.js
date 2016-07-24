@@ -7,6 +7,10 @@ var objects = [];
 
 
 
+drawing=false;
+moving=false;
+
+
 function getObjectById(id){
     for(var i=0,l=objects.length;i<l;i++){
         if(objects[i].id==id)return(objects[i]);
@@ -46,17 +50,17 @@ function removeBlockOnPosition(position){
 
 var $admin_world;
 
+var window_center = {};
+window_center.x = $(window).width()  /2;
+window_center.y = $(window).height() /2;
 
-var window_center;
+
+
 function createMap() {
 
     $admin_world = $('#admin-world');
     $admin_world.html('');
 
-
-    window_center = {};
-    window_center.x = $(window).width();
-    window_center.y = $(window).height();
 
     objects.forEach(function (object) {
 
@@ -323,7 +327,7 @@ function createMap() {
 
 
 
-    var drawing=false,drawing_x,drawing_y,drawing_objects;
+    var drawing_x,drawing_y,drawing_objects;
     $admin_world.unbind('mousedown').mousedown(function (event) {
 
         if($(event.target).hasClass('block') || $(event.target).attr('id')=='admin-world'){
@@ -343,8 +347,8 @@ function createMap() {
         r('start drawing');
         drawing = true;
 
-        drawing_x = Math.round(( event.clientX -window_center.x /2 ) / FIELD_SIZE );//+0.5;
-        drawing_y = Math.round(( event.clientY -window_center.y/2 ) / FIELD_SIZE );//+0.5;
+        drawing_x = Math.round(( event.clientX -window_center.x  ) / FIELD_SIZE );//+0.5;
+        drawing_y = Math.round(( event.clientY -window_center.y  ) / FIELD_SIZE );//+0.5;
 
 
         drawing_objects=[];
@@ -359,11 +363,11 @@ function createMap() {
         if(!drawing)return;
 
 
-        r('drawing rect');
+        //r('drawing rect');
+        //r( event.clientY -window_center.y );
 
-
-        var stop_x = Math.round(( event.clientX -window_center.x /2 ) / FIELD_SIZE );//+0.5;
-        var stop_y = Math.round(( event.clientY -window_center.y/2 ) / FIELD_SIZE );//+0.5;
+        var stop_x = Math.round(( event.clientX -window_center.x ) / FIELD_SIZE );//+0.5;
+        var stop_y = Math.round(( event.clientY -window_center.y ) / FIELD_SIZE );//+0.5;
 
         size_x = Math.abs(stop_x-drawing_x);
         size_y = Math.abs(stop_y-drawing_y);
@@ -439,7 +443,6 @@ function createMap() {
 
     });
 
-    $admin_world.mousemove();
     //----------------------------------------------------------------------------
 
 

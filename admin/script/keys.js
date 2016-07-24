@@ -93,7 +93,7 @@ window.addEventListener('keyup', function(e) {
 
 });
 
-var speed = 10;
+
 
 
 var last = null;
@@ -107,7 +107,7 @@ var keys_tick = function (timestamp) {
 
 
 
-
+    var speed = progress*300;
 
 
      if (controls_down.UP) {

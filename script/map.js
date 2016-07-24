@@ -179,11 +179,13 @@ $(function(){
 
 
 
+            }else
+            if(object.type=='label'){
+                if(object.uri=='/'){
+                    r(object);
+                    moveTo(object.position.x,object.position.y,parseInt(object.rotation),true);//todo repair in admin
+                }
             }
-
-
-
-
 
 
 

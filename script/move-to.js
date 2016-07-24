@@ -9,7 +9,7 @@
 
 
 
-function moveTo(x,y,rotation) {
+function moveTo(x,y,rotation,immediately) {
 
     r(x,y,rotation);
 
@@ -36,6 +36,14 @@ function moveTo(x,y,rotation) {
     );
 
 
+
+    if(immediately){
+        camera.position = babylon_position;
+        camera.rotation = babylon_rotation;
+        return;
+    }
+
+
     var easingFunction = new BABYLON.CircleEase();
     easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
 
@@ -52,7 +60,7 @@ function moveTo(x,y,rotation) {
     );
 
 
-    r(camera.rotation.y,babylon_rotation.y);
+    //r(camera.rotation.y,babylon_rotation.y);
 
     BABYLON.Animation.CreateAndStartAnimation(
         "anim",

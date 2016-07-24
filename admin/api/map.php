@@ -4,7 +4,19 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *");
 
 
-$map_file = __DIR__.'/../data/map.json';
+$gallery=$_GET['gallery'];
+//todo !!!!!!!!!!!!!!!!!!!!!!! check key
+
+
+$map_dir = __DIR__.'/../../data/'.$gallery;
+$map_file = $map_dir.'/map.json';
+
+
+if(!file_exists($map_dir)){
+    mkdir($map_dir);
+    chmod($map_dir,0777);
+}
+
 if(!file_exists($map_file)){
     file_put_contents($map_file,'[]');
     chmod($map_file,0777);

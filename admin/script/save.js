@@ -33,14 +33,14 @@ function save() {
 
 
     $.post({
-        url: '../api/map.php',
+        url: 'api/map.php?gallery='+gallery,
         dataType: 'json',
         data: JSON.stringify(objects)
 
     }).done(function (response) {
 
         var date = new Date();
-        var datetime = date.getHours() + ":" + date.getMinutes() ;//+ ":" + date.getSeconds();
+        var datetime = date.getHours() + ":" + ( (date.getMinutes()<10?'0':'') + date.getMinutes() ) ;//+ ":" + date.getSeconds();
 
 
         $button.html('Uloženo '+datetime);//todo datum

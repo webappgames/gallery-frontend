@@ -17,23 +17,10 @@ function getObjectById(id){
 
 
 
-$(function(){
+
+function runGallery(response){
 
 
-
-    $.get({
-        url: 'api/map.php'
-    })
-        .fail(function (response) {
-
-        console.log('fail',response);
-
-        }).done(function (response) {
-
-
-
-
-        console.log('done', response);
 
 
         objects = response;
@@ -216,13 +203,4 @@ $(function(){
 
 
 
-
-
-
-
-
-    });
-
-
-
-});
+}

@@ -4,8 +4,33 @@ error_reporting(E_ALL & ~E_NOTICE);
 
 
 
-$map_file = __DIR__.'/data/map.json';
+
+if(isset($_GET['gallery'])) {
+
+    $gallery = $_GET['gallery'];
+
+}else{
+
+    die('You should select gallery!');//todo choose
+
+}
+
+
+$map_file = __DIR__.'/data/'.$gallery.'/map.json';
+
+if(!file_exists($map_file)){
+
+    http_response_code(404);
+    die('Galerie neexistuje!');
+
+}
+
+
 $objects = json_decode(file_get_contents($map_file),true);
+
+
+
+
 
 
 $page = array();
@@ -125,6 +150,8 @@ foreach($objects as $object) {
 
 <script>
     document.getElementById("scene").focus();
+    runGallery(<?=json_encode($objects)?>);
+
 </script>
 
 

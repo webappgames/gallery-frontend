@@ -8,7 +8,7 @@ $(function(){
 
 
 
-    $.get('../api/map.php').fail(function (response) {
+    $.get('api/map.php?gallery='+gallery).fail(function (response) {
 
         console.log('fail',response);
 

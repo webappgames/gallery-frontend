@@ -1,3 +1,20 @@
+<?php
+
+if(isset($_GET['gallery'])) {
+
+    $gallery = $_GET['gallery'];
+
+}else{
+
+    die('You should select gallery!');
+
+}
+
+
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,6 +26,8 @@
 
     <script>
         var r = console.log.bind(console);
+        var gallery = '<?=$gallery?>';
+
     </script>
 
 

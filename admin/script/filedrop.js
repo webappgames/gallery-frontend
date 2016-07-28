@@ -84,18 +84,19 @@ document.addEventListener("drop", function(e){
     var formData = new FormData();
     var files_key = {};
     var request_size=1024;//todo is it OK?
+    var filenames = [];
     for (var i = 0; i < files.length; i++) {
 
         if(TOWNS_CDN_FILE_ACCEPTED_TYPES.indexOf(files[i].type)==-1){
 
-            T.UI.Message.error(T.Locale.get('upload error only images'));
+            Message.error('Můžete nahrávat pouze obrázky.');
             throw new Error('Not allowed filetype.');
         }
 
         if(files[i].size>TOWNS_CDN_FILE_MAX_SIZE){
 
-            alert('Jeden nebo více souborů jsou moc velké.');
-            //T.UI.Message.error(T.Locale.get('upload error max filesize')+' '+bytesToSize(TOWNS_CDN_FILE_MAX_SIZE));
+            //alert('Jeden nebo více souborů jsou moc velké.');
+            Message.error('Celková velikost jednoho souboru může být maximálně'+' '+bytesToSize(TOWNS_CDN_FILE_MAX_SIZE));
             throw new Error('File too big');
         }
 
@@ -106,12 +107,17 @@ document.addEventListener("drop", function(e){
         formData.append(key, files[i]);
         files_key[key] = files[i];
 
+        filenames.push(files[i].name);
+
     }   //r(files_key);
+    filenames = filenames.join(', ');
+
+
 
     if(request_size>TOWNS_CDN_REQUEST_MAX_SIZE){
 
-        alert('Soubory jsou moc velké.');
-        //T.UI.Message.error(T.Locale.get('upload error max requestsize')+' '+bytesToSize(TOWNS_CDN_REQUEST_MAX_SIZE));
+        //alert('Soubory jsou moc velké.');
+        Message.error('Celková velikost všech souborů může být maximálně '+' '+bytesToSize(TOWNS_CDN_REQUEST_MAX_SIZE));
         throw new Error('Request too big');
 
     }
@@ -122,11 +128,16 @@ document.addEventListener("drop", function(e){
     xhr.open('POST', TOWNS_CDN_URL);
 
 
+
+    var message = Message.info();
+
+
+
     xhr.upload.onprogress = function (event) {
 
         if (event.lengthComputable) {
             var complete = (event.loaded / event.total * 100 | 0);
-            //message.text(T.Locale.get('upload progress')+' '+complete+'%');
+            message.text('Nahráno '+filenames+' '+complete+'%');
 
         }
 
@@ -174,10 +185,14 @@ document.addEventListener("drop", function(e){
 
                 createMap();
 
+                message.text('Nahráno '+filenames+' 100%','success').close();
 
-
+                save();
 
             }catch(e){
+
+                message.text('Chyba při nahrávání ','error').close();
+
 
                 console.log('Error when processing data...');
                 r(e);

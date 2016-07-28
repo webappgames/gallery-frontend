@@ -38,7 +38,7 @@ if(isset($_GET['gallery'])) {
     <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
     <script src="../script/images.js"></script>
     <script src="../script/uri-plugin.js"></script>
-    <script src="script/rotate-image.js"></script>
+    <script src="script/message.js"></script>
     <script src="script/outer-html.js"></script>
     <script src="script/position.js"></script>
     <script src="script/create-html.js"></script>
@@ -89,13 +89,10 @@ if(isset($_GET['gallery'])) {
     <nav id="menu-right">
 
 
-        <!--<fieldset class="palette" id="admin-tools">
+        <fieldset class="palette" id="admin-tools">
             <legend>Akce</legend>
-            <button class="save">Uložit</button>
-            <button class="new">Nový</button>
-        </fieldset>-->
-
-
+            <a href="../?gallery=<?=$gallery?>" target="show-gallery"><button>Zobrazit</button></a>
+        </fieldset>
 
 
 
@@ -116,6 +113,15 @@ if(isset($_GET['gallery'])) {
             <div class="light"><i class="fa fa-sun-o" aria-hidden="true"></i></div>
             <div class="label"><i class="fa fa-arrow-circle-o-up" aria-hidden="true"></i></div>
            </fieldset>
+
+
+
+        <div id="message-zone">
+        </div>
+
+
+
+
 
     </nav>
 

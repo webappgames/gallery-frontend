@@ -1,5 +1,5 @@
 
-
+/*
 function rotateImage(img_element,degree){
 
 
@@ -41,6 +41,7 @@ function rotateImage(img_element,degree){
         ctx.drawImage(img, cx, cy);
 
 
+        r(canvas.toDataURL())
         img_element.src = canvas.toDataURL();
 
     };
@@ -48,4 +49,4 @@ function rotateImage(img_element,degree){
     img.src = img_element.src;
 
 
-};
+};*/

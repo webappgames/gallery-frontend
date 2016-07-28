@@ -6,6 +6,10 @@ var BLOCK_SIZE=5;
 var EYE_VERTICAL = 2;
 var LIGHT_VERTICAL = 3;
 
+var SPEED = 7;
+var SPEED_INERTIA = 0.5;
+var SPEED_ROTATION = Math.PI/2;
+
 
 var BLOCKS_2D_3D_SHAPES = {
     room:   [1,0,0,0,0,0,0,0,1],
@@ -57,8 +61,8 @@ var createScene = function () {
 
 
 
-    camera.speed = 15;
-    camera.inertia = 0.5;
+    camera.speed = SPEED;
+    camera.inertia = SPEED_INERTIA;
     //camera.fov = 1.2;
 
 

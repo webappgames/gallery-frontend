@@ -1,7 +1,8 @@
 
 
 
-var TOWNS_CDN_URL='http://localhost/towns/towns-cdn/';
+//var TOWNS_CDN_URL='http://towns-cdn.local/';
+var TOWNS_CDN_URL='http://cdn.pavolhejny.com/';
 var TOWNS_CDN_FILE_ACCEPTED_TYPES=[
     'image/jpeg'
     ,'image/jpg'

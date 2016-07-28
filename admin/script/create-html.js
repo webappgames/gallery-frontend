@@ -81,14 +81,14 @@ function createObject$(object) {
 
 
         $image_0.attr('src',src_normal);
-        $image_90.attr('src',src_normal);
-        $image_180.attr('src',src_normal);
-        $image_270.attr('src',src_normal);
+        $image_90.attr('src',src_normal+'&rotation=90');
+        $image_180.attr('src',src_normal+'&rotation=180');
+        $image_270.attr('src',src_normal+'&rotation=270');
 
 
-        rotateImage($image_90[0],90);
-        rotateImage($image_180[0],180);
-        rotateImage($image_270[0],270);
+        //rotateImage($image_90[0],90);
+        //rotateImage($image_180[0],180);
+        //rotateImage($image_270[0],270);
 
 
         if(object.rotation === 0)$image_0.show(); else

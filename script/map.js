@@ -95,7 +95,7 @@ function runGallery(response){
                 var light = new BABYLON.PointLight("light", position, scene);
                 light.diffuse = BABYLON.Color3.FromHexString(object.color);
                 light.specular = light.diffuse;
-                light.intensity = object.intensity/2;
+                light.intensity = object.intensity/4;
 
 
                 light.position.y = LIGHT_VERTICAL * BLOCK_SIZE;

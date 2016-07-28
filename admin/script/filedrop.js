@@ -38,26 +38,21 @@ document.addEventListener("dragleave", function(e){
 
 
 
-function setImageWidth(file,object,height) {
+function setImageWidth(src,object,height) {
 
-    var reader = new FileReader();
-    reader.onload = function (event) {
-
-        var image = new Image();
-        image.src = event.target.result;
+    var image = new Image();
+    image.src = src;
 
 
-        image.onload = function(){
+    image.onload = function(){
 
-            var width = (this.width * height) / this.height;
-            object.width = width;
-            r(object);
+        var width = (this.width * height) / this.height;
+        object.width = width;
+        r(object);
 
-        };
+        save();
 
     };
-
-    reader.readAsDataURL(file);
 
 }
 
@@ -175,7 +170,7 @@ document.addEventListener("drop", function(e){
                     });
 
 
-                    setImageWidth(files_key[key],object,2);
+                    setImageWidth(response[key],object,2);
 
 
                     position={x:position.x,y:position.y+2};

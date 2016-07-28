@@ -11,7 +11,19 @@ if(isset($_GET['gallery'])) {
 
 }else{
 
-    die('You should select gallery!');//todo choose
+    echo('You should select gallery!');//todo choose
+
+
+    echo('<ul>');
+    foreach(glob( __DIR__.'/data/*') as $gallery){
+
+        echo('<li><a href="?gallery='.basename($gallery).'">'.htmlspecialchars(basename($gallery)).'</a></li>');
+
+
+    }
+    echo('</ul>');
+
+    exit;
 
 }
 

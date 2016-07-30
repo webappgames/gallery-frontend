@@ -64,6 +64,7 @@ $(function(){
             gallery = testing_gallery;
             password = testing_password;
             objects = response;
+            $('#show-gallery').attr('href','../?gallery='+gallery);
             createMap();
 
             $('#select-gallery').hide();
@@ -98,6 +99,7 @@ $(function(){
                         gallery = testing_gallery;
                         password = testing_password;
                         objects = [];
+                        $('#show-gallery').attr('href','../?gallery='+gallery);
                         createMap();
 
                         $('#select-gallery').hide();

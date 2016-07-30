@@ -6,7 +6,8 @@ if(isset($_GET['gallery'])) {
 
 }else{
 
-    die('You should select gallery!');
+    require 'nogallery.php';
+    exit;
 
 }
 
@@ -98,11 +99,11 @@ if(isset($_GET['gallery'])) {
 
         <fieldset class="palette">
             <legend>Budova</legend>
-            <div class="block" data-shape="none"></div>
-            <div class="block" data-shape="room"></div>
-            <div class="block" data-shape="wall"></div>
-            <div class="block" data-shape="door"></div>
-            <div class="block" data-shape="window"></div>
+            <div class="block" data-shape="none" title="Mimo budovu"></div>
+            <div class="block" data-shape="room" title="Místnost"></div>
+            <div class="block" data-shape="wall" title="Zeď"></div>
+            <div class="block" data-shape="door" title="Dveře"></div>
+            <div class="block" data-shape="window" title="Okno"></div>
         </fieldset>
 
 
@@ -110,8 +111,8 @@ if(isset($_GET['gallery'])) {
 
         <fieldset class="palette">
             <legend>Předměty</legend>
-            <div class="light"><i class="fa fa-sun-o" aria-hidden="true"></i></div>
-            <div class="label"><i class="fa fa-arrow-circle-o-up" aria-hidden="true"></i></div>
+            <div class="light"><i class="fa fa-sun-o" aria-hidden="true" title="Světlo"></i></div>
+            <div class="label"><i class="fa fa-arrow-circle-o-up" aria-hidden="true" title="Odkaz"></i></div>
            </fieldset>
 
 

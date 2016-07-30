@@ -32,8 +32,9 @@ function save() {
      });*/
 
 
-    $.post({
-        url: 'api/map.php?gallery='+gallery,
+    $.ajax({
+        method: 'PUT',
+        url: 'api/gallery.php?gallery='+gallery,
         dataType: 'json',
         data: JSON.stringify(objects)
 

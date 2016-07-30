@@ -1,5 +1,9 @@
 {
   "dependencies": {
-    "jquery": "^2.2.4"
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "jquery": "^2.2.4",
+    "mongodb": "^2.2.5",
+    "mongoose": "^4.5.7"
   }
 }

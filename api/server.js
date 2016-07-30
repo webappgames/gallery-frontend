@@ -2,6 +2,8 @@ var express = require('express');
 var bodyParser = require('body-parser')
 var app = express();
 var config = require(__dirname+'/config.js');
+var password = require('password-hash-and-salt');
+
 
 
 
@@ -15,7 +17,7 @@ mongoose.connect('mongodb://'+config.mongo.server,options);
 
 
 
-var Gallery = mongoose.model('galleries', { key: String, blocks: Array });
+var Gallery = mongoose.model('galleries', { key: String, pass: String, blocks: Array });
 
 
 
@@ -27,7 +29,7 @@ app.use(function(req, res, next) {
 
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, x-auth');
 
     next();
 });
@@ -60,7 +62,33 @@ app.get('/galleries/*', function (req, res) {
 
         if(gallery){
 
-            res.send(gallery.blocks);
+
+            var pass = req.headers['x-auth'];
+            //console.log(req.headers);
+            if(pass) {
+                password(pass).verifyAgainst(gallery.pass, function (error, verified) {
+                    if (error)
+                        throw new Error('Something went wrong!');
+                    if (!verified) {
+
+
+                        res.status(403);
+                        res.send({'message': 'wrong admin password'});
+
+
+                    } else {
+
+                        res.send(gallery.blocks);
+
+                    }
+                });
+            }else{
+                res.send(gallery.blocks);
+            }
+
+
+
+
 
         }else{
 
@@ -94,10 +122,29 @@ app.put('/galleries/*', function (req, res) {
 
         if(gallery){
 
-             gallery.blocks = req.body;
-             gallery.save();
+            var pass = req.headers['x-auth'];
+            password(pass).verifyAgainst(gallery.pass, function(error, verified) {
+                if(error)
+                    throw new Error('Something went wrong!');
+                if(!verified) {
 
-            res.send({'message': 'updated'});
+
+                    res.status(403);
+                    res.send({'message': 'wrong admin password'});
+
+
+                } else {
+
+                    gallery.blocks = req.body;
+                    gallery.save();
+
+                    res.send({'message': 'updated'});
+
+                }
+            });
+
+
+
 
         }else{
 
@@ -125,22 +172,34 @@ app.post('/galleries/*', function (req, res) {
     //console.log(req.body);
 
 
-    var gallery = new Gallery({ key: gallery_key, blocks: req.body });
-    gallery.save(function (err) {
-        if (err) {
-            //console.log(err);
+    var pass = req.headers['x-auth'];
+    if(!pass){
 
-            res.status(403);
-            res.send({'message': 'already exists'});
+        res.status(403);
+        res.send({'message': 'you should set admin pass'});
 
-        } else {
+    }
+    password(pass).hash(function(error, hash) {
 
-            res.send({'message': 'created'});
 
-        }
+        var gallery = new Gallery({key: gallery_key, pass: hash, blocks: req.body});
+        gallery.save(function (err) {
+            if (err) {
+                //console.log(err);
+
+                res.status(403);
+                res.send({'message': 'already exists'});
+
+            } else {
+
+                res.send({'message': 'created'});
+
+            }
+        });
+
+
+
     });
-
-
 
 });
 

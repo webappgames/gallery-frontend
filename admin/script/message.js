@@ -76,33 +76,33 @@ var Message = function () {
         /**
          *
          * @param {string} text
-         * @returns {T.UI.Message} message
+         * @returns {Message} message
          */
 
     }], [{
         key: 'error',
         value: function error(text) {
-            var message = new T.UI.Message(text, 'ERROR');
+            var message = new Message(text, 'ERROR');
             if (text) message.close();
             return message;
         }
 
         /**
          * @param {string} text
-         * @returns {T.UI.Message} message
+         * @returns {Message} message
          */
 
     }, {
         key: 'success',
         value: function success(text) {
-            var message = new T.UI.Message(text, 'SUCCESS');
+            var message = new Message(text, 'SUCCESS');
             if (text) message.close();
             return message;
         }
 
         /**
          * @param {string} text
-         * @returns {T.UI.Message} message
+         * @returns {Message} message
          */
 
     }, {

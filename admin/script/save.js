@@ -34,8 +34,8 @@ function save() {
 
     $.ajax({
         method: 'PUT',
-        url: 'api/gallery.php?gallery='+gallery,
-        dataType: 'json',
+        url: config.GALLERY_API_URL+'galleries/'+gallery,
+        contentType: "application/json",
         data: JSON.stringify(objects)
 
     }).done(function (response) {

@@ -2,7 +2,7 @@
 
 error_reporting(E_ALL & ~E_NOTICE);
 
-
+$config = json_decode(file_get_contents('config.json'),true);
 
 
 if(isset($_GET['gallery'])) {
@@ -14,10 +14,13 @@ if(isset($_GET['gallery'])) {
     echo('You should select gallery!');//todo choose
 
 
-    echo('<ul>');
-    foreach(glob( __DIR__.'/data/*') as $gallery){
+    $galleries = json_decode(file_get_contents($config['GALLERY_API_URL'].'galleries'),true);
 
-        echo('<li><a href="?gallery='.basename($gallery).'">'.htmlspecialchars(basename($gallery)).'</a></li>');
+
+    echo('<ul>');
+    foreach($galleries as $gallery){
+
+        echo('<li><a href="?gallery='.htmlspecialchars($gallery).'">'.htmlspecialchars($gallery).'</a></li>');
 
 
     }
@@ -28,21 +31,19 @@ if(isset($_GET['gallery'])) {
 }
 
 
-$map_file = __DIR__.'/data/'.$gallery.'/map.json';
 
-if(!file_exists($map_file)){
+
+$response = file_get_contents($config['GALLERY_API_URL'].'galleries/'.$gallery);
+if($response) {
+
+    $objects = json_decode($response, true);
+
+}else{
 
     http_response_code(404);
     die('Galerie neexistuje!');
 
 }
-
-
-$objects = json_decode(file_get_contents($map_file),true);
-
-
-
-
 
 
 $page = array();

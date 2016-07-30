@@ -36,7 +36,8 @@ function save() {
         method: 'PUT',
         url: config.GALLERY_API_URL+'galleries/'+gallery,
         contentType: "application/json",
-        data: JSON.stringify(objects)
+        data: JSON.stringify(objects),
+        headers: { 'x-auth': password }
 
     }).done(function (response) {
 

@@ -37,6 +37,36 @@
 
 <body>
 
+
+    <form id="select-gallery">
+
+        <div class="popup">
+
+            <div class="header">Administrace virtuálních galerií</div>
+
+
+            <ul></ul>
+
+
+            <div>
+                <label>Galerie:</label>
+                <input type="text" name="gallery" pattern="([a-z]|[0-9]|\-){3,15}" title="Zadejte název pouze z malých písmen, čísel a pomlček, který má 3-15 znaků." >
+            </div>
+            <div>
+                <label>Heslo:</label>
+                <input type="password" name="password" required>
+            </div>
+
+            <input type="submit" name="submit" value="Vstoupit">
+
+        </div>
+
+
+    </form>
+
+
+
+
     <main>
 
         <section id="admin-world">
@@ -68,6 +98,7 @@
 
 
     <nav id="menu-right">
+
 
 
         <fieldset class="palette" id="admin-tools">

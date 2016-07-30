@@ -1,0 +1,27 @@
+#select-gallery {
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  width: 100vw;
+  height: 100vh;
+  text-align: center;
+  background-color: #fff;
+  z-index: 9999; }
+  #select-gallery .popup {
+    display: inline-block;
+    margin-top: 20vh;
+    background-color: #fff;
+    /*border: 2px solid #000;*/ }
+  #select-gallery .popup .header {
+    background-color: rgba(204, 204, 204, 0.36);
+    /*font-weight: bold;*/
+    font-size: 1.2em; }
+  #select-gallery .popup label {
+    display: inline-block;
+    width: 100px;
+    text-align: left;
+    font-weight: bold;
+    /*border: 2px solid #000;*/ }
+  #select-gallery .popup input {
+    display: inline-block;
+    width: 150px; }

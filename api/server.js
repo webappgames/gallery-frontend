@@ -31,6 +31,10 @@ app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     res.header('Access-Control-Allow-Headers', 'Content-Type, x-auth');
 
+    res.header( "Pragma", "no-cache" );
+    res.header( "Cache-Control", "no-cache" );
+    res.header( "Expires", 0 );
+
     next();
 });
 
@@ -48,6 +52,30 @@ app.get('/', function (req, res) {
 
 
 });
+
+
+
+
+app.get('/galleries', function (req, res) {
+
+
+    Gallery.find({}, function (err, galleries) {
+
+        var galleries_keys = [];
+        for(var _id in galleries){
+            galleries_keys.push(galleries[_id].key);
+        }
+        res.send(galleries_keys);
+
+
+    });
+
+
+});
+
+
+
+
 
 
 
@@ -178,28 +206,28 @@ app.post('/galleries/*', function (req, res) {
         res.status(403);
         res.send({'message': 'you should set admin pass'});
 
-    }
-    password(pass).hash(function(error, hash) {
+    }else {
+        password(pass).hash(function (error, hash) {
 
 
-        var gallery = new Gallery({key: gallery_key, pass: hash, blocks: req.body});
-        gallery.save(function (err) {
-            if (err) {
-                //console.log(err);
+            var gallery = new Gallery({key: gallery_key, pass: hash, blocks: req.body});
+            gallery.save(function (err) {
+                if (err) {
+                    //console.log(err);
 
-                res.status(403);
-                res.send({'message': 'already exists'});
+                    res.status(403);
+                    res.send({'message': 'already exists'});
 
-            } else {
+                } else {
 
-                res.send({'message': 'created'});
+                    res.send({'message': 'created'});
 
-            }
+                }
+            });
+
+
         });
-
-
-
-    });
+    }
 
 });
 
@@ -210,8 +238,8 @@ app.post('/galleries/*', function (req, res) {
 
 
 
-app.listen(3000, function () {
-    console.log('Example app listening on port 3000!');
+app.listen(config.port, function () {
+    console.log('Example app listening on port '+config.port+'!');
 });
 
 

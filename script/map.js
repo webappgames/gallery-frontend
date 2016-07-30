@@ -133,7 +133,7 @@ function runGallery(response){
                     var src = object.src;
                     var src_uri = URI(src)
                         .removeSearch("width");
-                    var src_normal = src_uri.addSearch({ width: 1024 }).toString();
+                    var src_normal = src_uri.addSearch({ width: 512 }).toString();
 
 
 

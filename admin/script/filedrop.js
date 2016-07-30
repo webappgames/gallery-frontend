@@ -10,8 +10,8 @@ var TOWNS_CDN_FILE_ACCEPTED_TYPES=[
     ,'image/png'
     //todo maybe bmp? sync with towns-cdn
 ];
-var TOWNS_CDN_FILE_MAX_SIZE = 7 * Math.pow(1024, 2/*MB*/);
-var TOWNS_CDN_REQUEST_MAX_SIZE = 11047955;
+var TOWNS_CDN_FILE_MAX_SIZE = 25 * Math.pow(1024, 2/*MB*/);
+var TOWNS_CDN_REQUEST_MAX_SIZE = TOWNS_CDN_FILE_MAX_SIZE*10;
 
 
 

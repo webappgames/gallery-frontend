@@ -11,21 +11,7 @@ if(isset($_GET['gallery'])) {
 
 }else{
 
-    echo('You should select gallery!');//todo choose
-
-
-    $galleries = json_decode(file_get_contents($config['GALLERY_API_URL'].'galleries'),true);
-
-
-    echo('<ul>');
-    foreach($galleries as $gallery){
-
-        echo('<li><a href="?gallery='.htmlspecialchars($gallery).'">'.htmlspecialchars($gallery).'</a></li>');
-
-
-    }
-    echo('</ul>');
-
+    require 'nogallery.php';
     exit;
 
 }
@@ -33,7 +19,7 @@ if(isset($_GET['gallery'])) {
 
 
 
-$response = file_get_contents($config['GALLERY_API_URL'].'galleries/'.$gallery);
+$response = file_get_contents($config['GALLERY_API_URL'].'galleries/'.($gallery));
 if($response) {
 
     $objects = json_decode($response, true);

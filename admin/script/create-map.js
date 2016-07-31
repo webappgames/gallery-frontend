@@ -49,6 +49,10 @@ function removeBlockOnPosition(position){
 
 
 var $admin_world;
+$(function () {
+    $admin_world = $('#admin-world');
+});
+
 
 var window_center = {};
 window_center.x = $(window).width()  /2;
@@ -58,7 +62,7 @@ window_center.y = $(window).height() /2;
 
 function createMap() {
 
-    $admin_world = $('#admin-world');
+
     $admin_world.html('');
 
 

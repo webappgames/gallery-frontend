@@ -3,7 +3,7 @@
 
     <head>
         <meta charset="UTF-8">
-        <title>3D Galerie</title>
+        <title>Administrace | Virtuální galerie</title>
     </head>
 
 
@@ -45,9 +45,11 @@
             <div class="header">Administrace virtuálních galerií</div>
 
 
+            <p>Založte novou galerii napsáním jejího názvu a přístupového hesla k ní:</p>
+
             <div>
                 <label>Galerie:</label>
-                <input type="text" name="gallery" pattern="([a-z]|[0-9]|\-){3,15}" title="Zadejte název pouze z malých písmen, čísel a pomlček, který má 3-15 znaků." >
+                <input type="text" name="gallery" pattern="([a-z]|[A-Z]|[0-9]|-){2,15}" title="Zadejte název pouze z písmen, čísel a pomlček, který má 2-15 znaků." >
             </div>
             <div>
                 <label>Heslo:</label>
@@ -56,8 +58,11 @@
 
             <input type="submit" name="submit" value="Vstoupit">
 
-
+            <p>Nebo klikněte na už existující galerii a upravte ji (pokud k ní máte přístupové heslo):</p>
             <ul></ul>
+
+
+            <a href="/"><button>Procházet jednotlivé galerie</button></a>
 
 
         </div>

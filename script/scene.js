@@ -56,8 +56,8 @@ var createScene = function () {
     //camera.keysLeft.push(65); // "s"
     //camera.keysRight.push(68); // "d"
 
-    camera.keysLeft = [];
-    camera.keysRight = [];
+    camera.keysLeft = [81];//arrow <-
+    camera.keysRight = [69];//arrow ->
 
 
 

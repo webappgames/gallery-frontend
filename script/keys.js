@@ -9,7 +9,8 @@ var controls_keys={
     'UP':  [38,87],
     'DOWN':  [40,83],
     'LEFT':  [37,65],
-    'RIGHT':  [39,68]
+    'RIGHT':  [39,68],
+    'JUMP': [32]
 
 
 };
@@ -126,6 +127,8 @@ var keys_tick = function (timestamp) {
 
 
 
+
+
     if (controls_down.LEFT) {
         camera.rotation.y -= SPEED_ROTATION*progress;
         if(camera.rotation.y<0){
@@ -141,7 +144,9 @@ var keys_tick = function (timestamp) {
         }
     }
 
-
+    /*if (controls_down.JUMP) {
+        camera.position.y += 3;
+    }*/
 
 
 

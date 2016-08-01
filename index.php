@@ -60,6 +60,11 @@ foreach($objects as $object) {
         var r = console.log.bind(console);
     </script>
 
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+
+
     <!-- Babylon.js -->
     <script src="script/babylon/hand.minified-1.2.js"></script>
     <script src="script/babylon/cannon.js"></script>
@@ -135,7 +140,7 @@ foreach($objects as $object) {
 
 
 
-
+<div class="key topleft" id="pointer-lock"><p><i class="fa fa-arrows" aria-hidden="true"></i></p></div>
 
 
 
@@ -145,7 +150,7 @@ foreach($objects as $object) {
 <script src="script/map.js"></script>
 <script src="script/keys.js"></script>
 <script src="script/move-to.js"></script>
-
+<script src="script/pointer-lock.js"></script>
 
 <script>
     document.getElementById("scene").focus();

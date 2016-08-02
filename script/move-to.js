@@ -5,10 +5,6 @@
 
 
 
-
-
-
-
 function moveTo(x,y,rotation,immediately) {
 
     r(x,y,rotation);
@@ -34,6 +30,17 @@ function moveTo(x,y,rotation,immediately) {
         camera.position.y,
         y * BLOCK_SIZE
     );
+
+    moveToBabylon(babylon_position,babylon_rotation,immediately);
+
+}
+
+
+
+
+
+function moveToBabylon(babylon_position,babylon_rotation,immediately) {
+
 
 
 

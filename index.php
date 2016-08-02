@@ -145,12 +145,28 @@ foreach($objects as $object) {
 
 
 
+<div class="overlay" style="display: none;"></div>
+<div class="popup-window" style="display: none;">
+    <div class="header"></div>
+    <div class="content"></div>
+
+
+    <!--<div class="back js-popup-window-back" style="display: none;" onclick="window.history.back();"><i class="fa fa-arrow-left" aria-hidden="true"></i></div>-->
+    <div class="close js-popup-window-close"><i class="fa fa-times"></i></div>
+</div>
+
+
+
+
+
+
 <canvas id="scene"></canvas>
 <script src="script/scene.js"></script>
 <script src="script/map.js"></script>
 <script src="script/keys.js"></script>
 <script src="script/move-to.js"></script>
 <script src="script/pointer-lock.js"></script>
+<script src="script/popup-window.js"></script>
 
 <script>
     document.getElementById("scene").focus();

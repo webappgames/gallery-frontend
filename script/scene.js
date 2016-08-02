@@ -41,7 +41,7 @@ var createScene = function () {
     var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, EYE_VERTICAL * BLOCK_SIZE, 30*BLOCK_SIZE), scene);
     camera.rotation.y=Math.PI;
     camera.attachControl(canvas, true);
-
+    //var inputManager = camera.inputs;
 
     /*setTimeout(function () {
         r('mousedown');
@@ -65,6 +65,10 @@ var createScene = function () {
     camera.inertia = SPEED_INERTIA;
     //camera.fov = 1.2;
 
+
+    //Set gravity for the scene (G force like, on Y-axis)
+    //scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
+    //scene.enablePhysics();
 
 
     scene.registerBeforeRender(function () {
@@ -90,17 +94,23 @@ var createScene = function () {
 
 
     //Ground
-    var ground = BABYLON.Mesh.CreatePlane("ground", 90000.0, scene);
+    var ground = BABYLON.Mesh.CreatePlane("ground", 10000, scene);
     ground.material = new BABYLON.StandardMaterial("groundMat", scene);
-    ground.material.diffuseColor = new BABYLON.Color3(0.5, 0.9, 0.7);
-    ground.material.backFaceCulling = false;
+    //ground.material.diffuseColor = new BABYLON.Color3(0.5, 0.9, 0.7);
+    //ground.material.backFaceCulling = false;
+    ground.material.diffuseTexture = new BABYLON.Texture("images/textures/grass.jpg", scene);
+    ground.material.diffuseTexture.uScale = 100;//Vertical offset of 10%
+    ground.material.diffuseTexture.vScale = 100;//Horizontal offset of 40%
+    ground.material.reflectionColor = new BABYLON.Color3(0, 0, 0);
+    ground.material.specularColor = new BABYLON.Color3(0, 0, 0);
+
+
     ground.position = new BABYLON.Vector3(0, 0, 0);
     ground.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
     ground.receiveShadows = true;
-    ground.isPickable = false;
+    ground.isPickable = true;
 
-    //Set gravity for the scene (G force like, on Y-axis)
-    scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
+
 
     // Enable Collisions
     scene.collisionsEnabled = true;
@@ -116,6 +126,23 @@ var createScene = function () {
     ground.checkCollisions = true;
 
 
+
+    var sun = new BABYLON.DirectionalLight("Dir0", new BABYLON.Vector3(0, -1, -0.5), scene);
+
+
+
+    // Skybox
+    var skybox = BABYLON.Mesh.CreateBox("skyBox", 10000, scene);
+    var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+    skyboxMaterial.backFaceCulling = false;
+    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("images/skybox/TropicalSunnyDay", scene);
+    skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+    skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+    skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+    skyboxMaterial.disableLighting = true;
+    skybox.material = skyboxMaterial;
+    skybox.position = new BABYLON.Vector3(0, 0, 0);
+    skybox.isPickable = false;
 
 
 
@@ -148,16 +175,66 @@ var createScene = function () {
 
             //r(pickResult.pickedMesh.name);
 
-            var object = getObjectById(pickResult.pickedMesh.name);
-            var rotation_rad = (object.rotation / 180) * Math.PI;
-
-            var x = object.position.x + Math.sin(-rotation_rad)*3;
-            var y = object.position.y + Math.cos(-rotation_rad)*3;
+            if(pickResult.pickedMesh.name=='ground') {
 
 
-            moveTo(x,y,object.rotation);
+                var rad = Math.atan2(
+                    (pickResult.pickedPoint.x-camera.position.x),
+                    pickResult.pickedPoint.y-camera.position.y
+                );
 
 
+                //r(rad);
+
+                var babylon_rotation = new BABYLON.Vector3(
+                    0,
+                    rad,
+                    0
+                );
+
+
+
+                var babylon_position = new BABYLON.Vector3(
+                    pickResult.pickedPoint.x,
+                    camera.position.y,
+                    pickResult.pickedPoint.z
+                );
+
+                moveToBabylon(babylon_position,babylon_rotation,false);
+
+
+            }else
+            if(pickResult.pickedMesh.name=='room') {
+
+                r('room picked');
+
+            }else{
+
+                var object = getObjectById(pickResult.pickedMesh.name);
+                /*var rotation_rad = (object.rotation / 180) * Math.PI;
+
+                var x = object.position.x + Math.sin(-rotation_rad) * 3;
+                var y = object.position.y + Math.cos(-rotation_rad) * 3;
+
+
+                moveTo(x, y, object.rotation);*/
+
+                var src = object.src;
+                var src_uri = URI(src)
+                    .removeSearch("width");
+                var src_normal = src_uri.addSearch({ width: 1024 }).toString();
+
+
+                setTimeout(
+                    function () {
+                        Window.open(object.name, '<img src="'+src_normal+'">', function(){}, 'NORMAL');
+                    }, IMMEDIATELY_MS
+                );
+
+
+
+
+            }
             //r(object);
 
         }
@@ -165,10 +242,26 @@ var createScene = function () {
 
 
 
+    /*var movement = {
+      z: 0
+    };
+    scene.registerBeforeRender(function () {
+
+        //r(movement);
+        camera.position.y += movement.z;
+
+        movement.z *= 0.9;
+        if(movement.z<0.1)movement.z=0;
+
+    });*/
+
+
 
     return({
         scene: scene,
         camera: camera,
+        sun: sun,
+        //movement: movement,
     });
     
 };
@@ -176,6 +269,8 @@ var createScene = function () {
 var scene_ = createScene();
 var scene = scene_.scene;
 var camera = scene_.camera;
+var movement = scene_.movement;
+var sun = scene_.sun;
 
 
 engine.runRenderLoop(function () {

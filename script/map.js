@@ -26,16 +26,26 @@ function runGallery(response){
         objects = response;
 
 
-        //var box_prototype = BABYLON.Mesh.CreateSphere("sphere1", 3, BLOCK_SIZE, scene);
-        var box_prototype = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
-        box_prototype.isPickable = false;
-        box_prototype.checkCollisions = false;
-        box_prototype.position.y=-10;
-
 
         var box_material = new BABYLON.StandardMaterial("Mat", scene);
-        box_material.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+        box_material.diffuseTexture = new BABYLON.Texture("images/textures/stone-plain.jpg", scene);
+        box_material.diffuseTexture.uScale = 1;//Vertical offset of 10%
+        box_material.diffuseTexture.vScale = 1;//Horizontal offset of 40%
+        //box_material.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.2);
         box_material.freeze();
+
+
+        //var box_prototype = BABYLON.Mesh.CreateSphere("sphere1", 3, BLOCK_SIZE, scene);
+        var box_prototype = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
+        box_prototype.isPickable = true;
+        box_prototype.checkCollisions = false;
+        box_prototype.position.y=-10;
+        box_prototype.material = box_material;
+
+
+
+        var sunShadowGenerator = new BABYLON.ShadowGenerator(1024, sun);
+        sunShadowGenerator.useVarianceShadowMap = true;
 
 
 
@@ -69,13 +79,15 @@ function runGallery(response){
 
                     if(vertical[i]) {
 
-                        box = box_prototype.createInstance("room");
-                        box.material = box_material;
-                        box.isPickable = false;
-                        box.checkCollisions = true;
-                        //box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
-                        box.position = position;
-                        //building_blocks.push(box);
+                        block = box_prototype.createInstance("room");
+                        block.isPickable = true;
+                        block.checkCollisions = true;
+                        //block = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
+                        block.position = position;
+                        //building_blocks.push(block);
+
+                        //block.receiveShadows = true;
+                        sunShadowGenerator.getShadowMap().renderList.push(block);
 
                     }
 

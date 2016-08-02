@@ -14,9 +14,14 @@ document.exitPointerLock = document.exitPointerLock ||
 
 
 
-pointer_lock.onclick = function() {
+pointer_lock.onclick = function(e) {
 
-    canvas.requestPointerLock();
+    e.preventDefault();
+    //setTimeout(//todo is there a better solution?
+    //    function () {
+            canvas.requestPointerLock();
+    //    }, IMMEDIATELY_MS
+    //);
 
 };
 

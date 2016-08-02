@@ -145,7 +145,11 @@ var keys_tick = function (timestamp) {
     }
 
     /*if (controls_down.JUMP) {
-        camera.position.y += 3;
+
+       if(camera.position.y<15){
+           movement.z = 5;
+       }
+
     }*/
 
 

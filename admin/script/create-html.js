@@ -93,7 +93,11 @@ function createObject$(object) {
 
 
     }else
+    if(object.type === 'tree'){
 
+        $element.html('<i class="fa fa-pagelines" aria-hidden="true"></i>');
+
+    }else
 
     if(object.type === 'image'){
 

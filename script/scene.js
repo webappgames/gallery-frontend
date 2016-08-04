@@ -85,8 +85,6 @@ var createScene = function () {
 
 
 
-
-
     /*camera.onCollide = function(event){
         r(event);
 

@@ -80,6 +80,7 @@ function createMap() {
     var $blocks= $admin_world.find('.block');
     var $lights= $admin_world.find('.light');
     var $labels= $admin_world.find('.label');
+    var $trees = $admin_world.find('.tree');
     var $images= $admin_world.find('.image');
 
 
@@ -223,6 +224,7 @@ function createMap() {
     $images.mousedown(select_callback);
     $lights.mousedown(select_callback);
     $labels.mousedown(select_callback);
+    $trees.mousedown(select_callback);
     //----------------------------------------------------------------------------
 
 
@@ -386,6 +388,7 @@ function createMap() {
     };
     $lights.draggable(draggable_options);
     $labels.draggable(draggable_options);
+    $trees.draggable(draggable_options);
     //----------------------------------------------------------------------------
 
 

@@ -1,10 +1,10 @@
 
 var BLOCK_MATERIALS = [
+    'color-white',
     'clay-bricks',
     'clay-roof',
     'grass',
     'iron-plates',
-    'shadow.png',
     'stone-bricks',
     'stone-plain',
     'wood-boards',
@@ -82,78 +82,59 @@ $('.palette').find('.select-shapes').find('.block').click(function () {
 //===================================================================================================
 
 
-
-$('.palette').find('.light').draggable({
-
-    //helper: 'clone',
-
-
-    stop: function () {
-
-        var offset = $(this).offset();
-        var position = getPositionFromLeftTop(offset.left,offset.top);
-
-
-        objects.push({
-            id: createGuid(),
-            type: 'light',
-            position: position,
-            color: '#ffffff',
-            intensity: 1
-
-        });
-        createMap();
-
-        save();
-
-        $(this)
-            .css('left',0)
-            .css('top',0);
-        //r(x,y);
-
-    }
+['light','label','tree'].forEach(function (type) {
 
 
 
-});
+    $('.palette').find('.'+type).draggable({
+
+        //helper: 'clone',
+
+
+        stop: function () {
+
+            var offset = $(this).offset();
+            var position = getPositionFromLeftTop(offset.left,offset.top);
+
+
+            var object = {
+                id: createGuid(),
+                type: type,
+                position: position,
+
+            };
+
+            if(type == 'light'){
+                object.color = '#ffffff';
+                object.intensity = 1;
+            }else
+            if(type == 'label'){
+                object.name = '';
+                object.uri = '';
+                object.rotation = 0;
+            }
+
+
+            objects.push(object);
 
 
 
-//===================================================================================================
+
+            createMap();
+
+            save();
+
+            $(this)
+                .css('left',0)
+                .css('top',0);
+            //r(x,y);
+
+        }
 
 
 
-$('.palette').find('.label').draggable({
-
-    //helper: 'clone',
-
-
-    stop: function () {
-
-        var offset = $(this).offset();
-        var position = getPositionFromLeftTop(offset.left,offset.top);
-
-
-        objects.push({
-            id: createGuid(),
-            type: 'label',
-            position: position,
-            rotation: 0,
-            name: '',
-            uri: ''
-
-        });
-        createMap();
-
-        save();
-
-        $(this)
-            .css('left',0)
-            .css('top',0);
-        //r(x,y);
-
-    }
-
+    });
 
 
 });
+

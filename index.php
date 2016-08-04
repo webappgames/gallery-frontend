@@ -70,6 +70,7 @@ foreach($objects as $object) {
     <script src="script/babylon/cannon.js"></script>
     <!--<script src="script/babylon/oimo.js"></script>-->
     <script src="script/babylon/babylon.js"></script>
+    <script src="script/babylon-plugins/babylon-tree.js"></script>
     <script src="script/uri-plugin.js"></script>
 
 

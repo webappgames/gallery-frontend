@@ -125,7 +125,7 @@ var createScene = function () {
 
 
 
-    var sun = new BABYLON.DirectionalLight("Dir0", new BABYLON.Vector3(0, -1, -0.5), scene);
+    var sun = new BABYLON.DirectionalLight("Dir0", new BABYLON.Vector3(-0.7, -1, -0.5), scene);
 
 
 
@@ -178,11 +178,14 @@ var createScene = function () {
 
                 var rad = Math.atan2(
                     (pickResult.pickedPoint.x-camera.position.x),
-                    pickResult.pickedPoint.y-camera.position.y
+                    (pickResult.pickedPoint.z-camera.position.z)
+
                 );
 
 
-                //r(rad);
+                r(rad/Math.PI*180);
+
+
 
                 var babylon_rotation = new BABYLON.Vector3(
                     0,

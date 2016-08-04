@@ -65,11 +65,15 @@ function runGallery(response){
             if(object.type=='block') {
 
 
+                object.material = object.material || 'stone-plain';
+
+
                 if(typeof box_prototypes[object.material] == 'undefined') {
 
 
                     var material = new BABYLON.StandardMaterial("Mat", scene);
                     material.diffuseTexture = new BABYLON.Texture("images/textures/"+object.material+".jpg", scene);
+                    //material.bumpTexture = material.diffuseTexture;
                     material.diffuseTexture.uScale = 1;//Vertical offset of 10%
                     material.diffuseTexture.vScale = 1;//Horizontal offset of 40%
                     //material.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.2);
@@ -107,6 +111,8 @@ function runGallery(response){
                         //block = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
                         block.position = position;
                         //building_blocks.push(block);
+                        //block.rotation.x = Math.PI/2;
+
 
                         //block.receiveShadows = true;
                         sunShadowGenerator.getShadowMap().renderList.push(block);

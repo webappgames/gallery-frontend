@@ -229,108 +229,7 @@ function createMap() {
 
 
 
-    //----------------------------------------------------------------------------BLOCKS
-    /*$blocks.click(function () {
-
-        var $this = $(this);
-
-
-
-        var id = $this.attr('id');
-        var object = getObjectById(id);
-
-        if(shape_selected) {
-
-            object.shape = shape_selected;
-            $this.attr('data-shape', shape_selected);
-
-        }else{
-
-            removeObjectById(object.id);
-            $this.remove();
-
-        }
-
-        save();
-
-
-    });
-
-    var drawing = false;
-
-    $blocks.unbind('mousedown').mousedown(function () {
-        unselect_callback();
-
-        r('start drawing');
-        drawing = true;
-    });
-    $blocks.unbind('mouseup').mouseup(function () {
-        r('stop drawing');
-        drawing = false;
-        save();
-    });
-
-    $blocks.mouseenter(function () {
-
-        if(drawing!==1)return;
-
-        var $this = $(this);
-
-
-        $this.attr('data-shape', shape_selected);
-
-
-        var id = $this.attr('id');
-        var object = getObjectById(id);
-
-        if(shape_selected) {
-
-            object.shape = shape_selected;
-            $this.attr('data-shape', shape_selected);
-
-        }else{
-
-            removeObjectById(object.id);
-            $this.remove();
-
-        }
-
-
-    });*/
-    //-----------------------------------
-    /*$admin_world.click(function (event) {
-
-
-
-        if(shape_selected) {
-
-            var x = ( event.clientX -window_center.x /2 ) / FIELD_SIZE ;//+0.5;
-            var y = ( event.clientY -window_center.y/2 ) / FIELD_SIZE ;//+0.5;
-
-            x = Math.round(x);
-            y = Math.round(y);
-
-            var object = {
-                id: createGuid(),
-                type: 'block',
-                position: {x: x, y: y},
-                shape: shape_selected
-            };
-            objects.push(object);
-
-
-            $admin_world.append('\n').append(createObject$(object));//todo use also in pallete
-
-
-        }
-
-        save();
-
-
-    });*/
-
-
-
+    //----------------------------------------------------------------------------BLOCKS drawing
     var drawing_x,drawing_y,drawing_objects;
     $admin_world.unbind('mousedown').mousedown(function (event) {
 
@@ -356,6 +255,10 @@ function createMap() {
 
 
         drawing_objects=[];
+
+
+
+        r('material: '+material_selected+' | shape: '+shape_selected)
 
     });
 
@@ -398,7 +301,9 @@ function createMap() {
                         x: drawing_x +x*signum_x,
                         y: drawing_y +y*signum_y
                     },
+                    material: material_selected,
                     shape: shape_selected!='wall'?shape_selected:((x==0 || y==0 || x==size_x || y==size_y)?'wall':'room')
+
                 };
                 //objects.push(object);
                 drawing_objects.push(object);
@@ -423,6 +328,7 @@ function createMap() {
         drawing = false;
 
         var removed_stat = 0;
+        r(drawing_objects);
         drawing_objects.forEach(function (object) {
 
             //r('object',object);
@@ -439,7 +345,7 @@ function createMap() {
         r('removed '+removed_stat+' objects');
 
 
-        //createMap();
+        createMap();
 
         save();
 

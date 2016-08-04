@@ -9,17 +9,21 @@ function createObject$(object) {
     var $element = $(element);
 
 
-    $element.css('position', 'absolute');
+    if(typeof object.position!=='undefined') {
 
-    if(object.type=='image'){
+        $element.css('position', 'absolute');
 
-        $element.css('top',  object.position.y * FIELD_SIZE  + window_center.y);
-        $element.css('left', object.position.x * FIELD_SIZE  + window_center.x);
+        if (object.type == 'image') {
 
-    }else{
+            $element.css('top', object.position.y * FIELD_SIZE + window_center.y);
+            $element.css('left', object.position.x * FIELD_SIZE + window_center.x);
 
-        $element.css('top',  ( object.position.y -0.5 ) * FIELD_SIZE  + window_center.y);
-        $element.css('left', ( object.position.x -0.5 ) * FIELD_SIZE  + window_center.x);
+        } else {
+
+            $element.css('top', ( object.position.y - 0.5 ) * FIELD_SIZE + window_center.y);
+            $element.css('left', ( object.position.x - 0.5 ) * FIELD_SIZE + window_center.x);
+
+        }
 
     }
 
@@ -27,6 +31,9 @@ function createObject$(object) {
     $element.attr('class',object.type);
     $element.attr('id',object.id);
     $element.attr('data-shape',object.shape);
+    $element.attr('data-material',object.material);
+
+
     /*for(var key in object){
         if(typeof object[key] === 'object'){
 
@@ -45,6 +52,35 @@ function createObject$(object) {
 
 
 
+
+
+    if(object.type === 'block'){
+
+        object.material = object.material || 'stone-plain';
+
+        $element.css('background','url("/images/textures/'+object.material+'.jpg")');
+        $element.css('background-size','cover');
+
+        if(['window','door'].indexOf(object.shape)!=-1){
+
+            $element.html('<img src="/images/icons/'+object.shape+'.svg">');
+
+
+            $element.css('background-color','rgba(255,255,255,0.5)');
+            $element.css('background-blend-mode','overlay');
+
+        }
+
+
+        if(object.shape=='room'){
+
+            $element.css('background-color','rgba(255,255,255,0.5)');
+            $element.css('background-blend-mode','overlay');
+
+        }
+
+
+    }else
     if(object.type === 'light'){
         $element.html('<i style="color:'+object.color+';" class="fa fa-sun-o" aria-hidden="true"></i>');
     }else

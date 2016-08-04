@@ -1,16 +1,83 @@
-var shape_selected = '';
 
-$('.palette').find('.block').click(function () {
+var BLOCK_MATERIALS = [
+    'clay-bricks',
+    'clay-roof',
+    'grass',
+    'iron-plates',
+    'shadow.png',
+    'stone-bricks',
+    'stone-plain',
+    'wood-boards',
+    'wood-fence',
+    'wood-raw'];
 
-    $('.palette').find('.block').removeClass('selected');
+var BLOCK_SHAPES = ['none','room','wall','door','window'];
+
+
+
+
+var material_selected = BLOCK_MATERIALS[0];
+var shape_selected = BLOCK_SHAPES[0];
+
+
+
+//-------------------------------------------------------------
+
+
+
+
+BLOCK_MATERIALS.forEach(function (material) {
+
+
+    $('.select-materials').append(createObject$({
+        type: 'block',
+        shape: 'wall',
+        material: material
+    }));
+
+
+
+});
+
+
+BLOCK_SHAPES.forEach(function (shape) {
+
+
+    $('.select-shapes').append(createObject$({
+        type: 'block',
+        shape: shape,
+        material: 'stone-plain'
+    }));
+
+
+
+});
+
+
+
+
+
+
+$('.palette').find('.select-materials').find('.block').click(function () {
+
+    $('.palette').find('.select-materials').find('.block').removeClass('selected');
+    $(this).addClass('selected');
+
+    material_selected = $(this).attr('data-material');
+});
+
+
+
+$('.palette').find('.select-shapes').find('.block').click(function () {
+
+    $('.palette').find('.select-shapes').find('.block').removeClass('selected');
     $(this).addClass('selected');
 
     shape_selected = $(this).attr('data-shape');
-    
-    
 });
 
-$('.palette').find('.block[data-shape="room"]').trigger('click');
+
+
 
 //===================================================================================================
 

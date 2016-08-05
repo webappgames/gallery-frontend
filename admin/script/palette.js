@@ -114,8 +114,8 @@ $('.palette').find('.select-shapes').find('.block').click(function () {
                 object.rotation = 0;
             }
             if(type == 'stairs'){
-                object.width = '3';
-                object.height = '1';
+                object.width = 8;
+                object.height = 2;
                 object.rotation = 0;
             }
 

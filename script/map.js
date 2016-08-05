@@ -30,6 +30,13 @@ function runGallery(response){
         //var trees = [];
 
 
+        var stone_plain = new BABYLON.StandardMaterial("Mat", scene);
+        stone_plain.diffuseTexture = new BABYLON.Texture("images/textures/stone-plain.jpg", scene);
+        stone_plain.diffuseTexture.uScale = 1;//Vertical offset of 10%
+        stone_plain.diffuseTexture.vScale = 1;//Horizontal offset of 40%
+        stone_plain.freeze();
+
+
 
         var bark = new BABYLON.StandardMaterial("Mat", scene);
         bark.diffuseTexture = new BABYLON.Texture("images/textures/bark.jpg", scene);
@@ -256,22 +263,27 @@ function runGallery(response){
             if(object.type=='stairs') {
 
 
-                var stairs_mesh =  createStairsMesh("tree", 5, scene);
+                var stairs_mesh =  createStairsMesh("tree", 30, scene);
 
-                stairs_mesh.position = position;
+                //stairs_mesh.position = position;
+                //r(position);
 
 
 
                 stairs_mesh.scaling.x = object.width * BLOCK_SIZE;
                 stairs_mesh.scaling.z = object.height * BLOCK_SIZE;
-                stairs_mesh.scaling.y = (BLOCKS_2D_3D_SHAPES.room.lenght+1) * BLOCK_SIZE;
+                stairs_mesh.scaling.y = (BLOCKS_2D_3D_SHAPES.room.length) * BLOCK_SIZE;
 
 
+                r(stairs_mesh.scaling);
 
                 stairs_mesh.position = position;
-                stairs_mesh.rotation.y = object.rotation/180*Math.PI;
-                //tree.material = bark;
+                stairs_mesh.position.y = -BLOCK_SIZE;
+                stairs_mesh.rotation.y = (180-object.rotation)/180*Math.PI;
+                stairs_mesh.material = stone_plain;
+                /**/
 
+                stairs_mesh.checkCollisions = true;
                 sunShadowGenerator.getShadowMap().renderList.push(stairs_mesh);
 
             }

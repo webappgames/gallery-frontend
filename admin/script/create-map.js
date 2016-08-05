@@ -82,6 +82,7 @@ function createMap() {
     var $labels= $admin_world.find('.label');
     var $trees = $admin_world.find('.tree');
     var $images= $admin_world.find('.image');
+    var $stairs= $admin_world.find('.stairs');
 
 
 
@@ -225,6 +226,7 @@ function createMap() {
     $lights.mousedown(select_callback);
     $labels.mousedown(select_callback);
     $trees.mousedown(select_callback);
+    $stairs.mousedown(select_callback);
     //----------------------------------------------------------------------------
 
 
@@ -360,7 +362,7 @@ function createMap() {
 
 
     //----------------------------------------------------------------------------LIGHTS, LABELS
-    var draggable_options = {
+    var drag_normal_options = {
 
 
         drag: function(){
@@ -386,15 +388,16 @@ function createMap() {
 
 
     };
-    $lights.draggable(draggable_options);
-    $labels.draggable(draggable_options);
-    $trees.draggable(draggable_options);
+    $lights.draggable(drag_normal_options);
+    $labels.draggable(drag_normal_options);
+    $trees.draggable(drag_normal_options);
+    $stairs.draggable(drag_normal_options);
     //----------------------------------------------------------------------------
 
 
 
     //----------------------------------------------------------------------------IMAGES
-    $images.draggable({
+    var drag_snap_options = {
 
         //grid: [ FIELD_SIZE/2, FIELD_SIZE/2 ],
         snap: ".block[data-shape='wall']",
@@ -487,42 +490,9 @@ function createMap() {
 
 
 
-    });
+    };
 
-    /*$images.each(function () {
-
-        var $this = $(this);
-
-
-        var object = getObjectById($this.attr('id'));
-
-        var $img = $this.find('img');
-        //var $arrow = $this.find('.arrow');
-
-        //$img.css('width',object.width*FIELD_SIZE);
-        $img.css('height',object.height*FIELD_SIZE);
-
-
-
-        var src = object.src;
-        var src_uri = URI(src)
-            .removeSearch("width");
-        var src_normal = src_uri.addSearch({ width: 100 }).toString();
-
-
-
-        $img.attr('src',src_normal);
-
-
-
-        //$img.css('height',object.width*FIELD_SIZE-4);
-        //$this.css('background','url('+$this.attr('data-src')+')');
-        //$this.css('background-size','100% 100%');
-        //$this.css('background-repeat','no-repeat');
-
-
-    });*/
-
+    $images.draggable(drag_snap_options);
     //----------------------------------------------------------------------------
 
 

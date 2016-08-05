@@ -244,14 +244,36 @@ function runGallery(response){
                     start:new BABYLON.Vector3(0,0,0),
                     scale:PHI
                 };
-                var tree =  createTreeMesh("tree", tree_data.size, tree_data.length, tree_data.psi, tree_data.bow, tree_data.kink, tree_data.detail, tree_data.sections, tree_data.branches, tree_data.spirals, tree_data.scale, tree_data.start, self.scene);
+                var tree_mesh =  createTreeMesh("tree", tree_data.size, tree_data.length, tree_data.psi, tree_data.bow, tree_data.kink, tree_data.detail, tree_data.sections, tree_data.branches, tree_data.spirals, tree_data.scale, tree_data.start, scene);
 
-                tree.position = position;
-                tree.material = bark;
+                tree_mesh.position = position;
+                tree_mesh.material = bark;
 
-                sunShadowGenerator.getShadowMap().renderList.push(tree);
+                sunShadowGenerator.getShadowMap().renderList.push(tree_mesh);
                 //createTreeMesh();
                 //trees.push(object);
+            }else
+            if(object.type=='stairs') {
+
+
+                var stairs_mesh =  createStairsMesh("tree", 5, scene);
+
+                stairs_mesh.position = position;
+
+
+
+                stairs_mesh.scaling.x = object.width * BLOCK_SIZE;
+                stairs_mesh.scaling.z = object.height * BLOCK_SIZE;
+                stairs_mesh.scaling.y = (BLOCKS_2D_3D_SHAPES.room.lenght+1) * BLOCK_SIZE;
+
+
+
+                stairs_mesh.position = position;
+                stairs_mesh.rotation.y = object.rotation/180*Math.PI;
+                //tree.material = bark;
+
+                sunShadowGenerator.getShadowMap().renderList.push(stairs_mesh);
+
             }
 
 

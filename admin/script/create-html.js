@@ -103,7 +103,6 @@ function createObject$(object) {
         $element.html('<i class="fa fa-pagelines" aria-hidden="true"></i>');
 
     }else
-
     if(object.type === 'image'){
 
         var $image_0 = $('<img>').addClass('image-0').hide();
@@ -149,11 +148,24 @@ function createObject$(object) {
         $element.append($image_90);
         $element.append($image_180);
         $element.append($image_270);
+    }else
+    if(object.type === 'stairs'){
+
+        var $image = $('<img>').addClass('image');
+
+
+        $image.css('width',object.width*FIELD_SIZE);
+        $image.css('height',object.height*FIELD_SIZE);
+
+
+        $image.attr('src','/images/icons/stairs.jpg');
+
+        $element.append($image);
+        $element.css('transform','rotate('+object.rotation+'deg)');
+
+
     }
 
-    /*if(object.type === 'image' || object.type === 'light') {
-        $element.append('<i class="delete fa fa-trash" aria-hidden="true"></i>');
-    }*/
 
 
     return($element);

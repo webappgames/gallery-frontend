@@ -82,7 +82,7 @@ $('.palette').find('.select-shapes').find('.block').click(function () {
 //===================================================================================================
 
 
-['light','label','tree'].forEach(function (type) {
+['light','label','tree','stairs'].forEach(function (type) {
 
 
 
@@ -111,6 +111,11 @@ $('.palette').find('.select-shapes').find('.block').click(function () {
             if(type == 'label'){
                 object.name = '';
                 object.uri = '';
+                object.rotation = 0;
+            }
+            if(type == 'stairs'){
+                object.width = '3';
+                object.height = '1';
                 object.rotation = 0;
             }
 

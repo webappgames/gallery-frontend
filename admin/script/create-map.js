@@ -95,7 +95,7 @@ function createMap() {
 
 
     //----------------------------------------------------------------------------SELECTING
-
+    var $dot = $('#dot');
     var $selected_properties = $('#selected-properties');
 
 
@@ -108,8 +108,13 @@ function createMap() {
         var id = $this.attr('id');
         var object = getObjectById(id);
 
-        r(object);
+        r($this,id,object);
 
+
+
+        $dot.css('position', 'absolute');
+        $dot.css('top', object.position.y * FIELD_SIZE + window_center.y-5);
+        $dot.css('left', object.position.x * FIELD_SIZE + window_center.x-5);
 
 
 
@@ -143,7 +148,7 @@ function createMap() {
                 input_element='<input type="color">';
             }else
             if(key=='rotation' && object.type!=='image'){
-                input_element='<input type="range" min="0" max="360" step="1">';
+                input_element='<input type="range" min="0" max="360" step="10">';
             }
 
 
@@ -361,7 +366,7 @@ function createMap() {
 
 
 
-    //----------------------------------------------------------------------------LIGHTS, LABELS
+    //----------------------------------------------------------------------------LIGHTS, LABELS,TREES drag
     var drag_normal_options = {
 
 
@@ -371,7 +376,7 @@ function createMap() {
 
 
             var offset = $(this).offset();
-            var position = getPositionFromLeftTop(offset.left+15,offset.top+15);
+            var position = getPositionFromLeftTop(offset.left,offset.top);
 
 
             var id = $(this).attr('id');
@@ -391,7 +396,45 @@ function createMap() {
     $lights.draggable(drag_normal_options);
     $labels.draggable(drag_normal_options);
     $trees.draggable(drag_normal_options);
-    $stairs.draggable(drag_normal_options);
+    //----------------------------------------------------------------------------
+
+
+
+    //----------------------------------------------------------------------------STAIRS drag
+    var drag_stairs_options = {
+
+        //grid: [30,30],
+        //snap: ".block[data-shape='wall']",
+        //snapMode: "outer",
+
+        drag: function(e, ui){
+
+            ui.position.left = Math.floor((ui.position.left-window_center.x) / 30) * 30+window_center.x;
+            ui.position.top  = Math.floor((ui.position.top -window_center.y) / 30) * 30+window_center.y;
+
+        },
+        stop: function () {
+
+
+            var offset = $(this).offset();
+            var position = getPositionFromLeftTop(offset.left,offset.top);
+
+
+            var id = $(this).attr('id');
+            var object = getObjectById(id);
+            object.position = position;
+
+            //select_callback.call(this);
+
+            //createMap();
+            save();
+
+
+        }
+
+
+    };
+    $stairs.draggable(drag_stairs_options);
     //----------------------------------------------------------------------------
 
 

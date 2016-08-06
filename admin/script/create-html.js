@@ -13,7 +13,7 @@ function createObject$(object) {
 
         $element.css('position', 'absolute');
 
-        if (object.type == 'image') {
+        if (object.type !== 'image') {
 
             $element.css('top', object.position.y * FIELD_SIZE + window_center.y);
             $element.css('left', object.position.x * FIELD_SIZE + window_center.x);
@@ -154,14 +154,23 @@ function createObject$(object) {
         var $image = $('<img>').addClass('image');
 
 
-        $image.css('width',object.width*FIELD_SIZE);
-        $image.css('height',object.height*FIELD_SIZE);
+        var width = object.width*FIELD_SIZE;
+        var height = object.height*FIELD_SIZE;
 
+        $image.css('width',width);
+        $image.css('height',height);
 
         $image.attr('src','/images/icons/stairs.jpg');
 
+        $image.css('position','relative');
+        $image.css('top',-height/2);
+        $image.css('left',-width/2);
+
+        $image.css('transform','rotate('+object.rotation+'deg)');
+
+
         $element.append($image);
-        $element.css('transform','rotate('+object.rotation+'deg)');
+        //$element.css('transform','rotate('+object.rotation+'deg)');
 
 
     }

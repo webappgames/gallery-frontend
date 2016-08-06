@@ -278,8 +278,15 @@ function runGallery(response){
                 r(stairs_mesh.scaling);
 
                 stairs_mesh.position = position;
+
+
+                stairs_mesh.position.x +=BLOCK_SIZE/2;
+                stairs_mesh.position.z -=BLOCK_SIZE/2;
+
+
+
                 stairs_mesh.position.y = -BLOCK_SIZE;
-                stairs_mesh.rotation.y = (180-object.rotation)/180*Math.PI;
+                stairs_mesh.rotation.y = (object.rotation)/180*Math.PI;
                 stairs_mesh.material = stone_plain;
                 /**/
 

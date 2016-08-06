@@ -100,8 +100,7 @@ $('.palette').find('.select-shapes').find('.block').click(function () {
             var object = {
                 id: createGuid(),
                 type: type,
-                position: position,
-
+                position: position
             };
 
             if(type == 'light'){
@@ -114,7 +113,7 @@ $('.palette').find('.select-shapes').find('.block').click(function () {
                 object.rotation = 0;
             }
             if(type == 'stairs'){
-                object.width = 8;
+                object.width = 10;
                 object.height = 2;
                 object.rotation = 0;
             }

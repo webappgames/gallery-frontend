@@ -18,9 +18,9 @@ function createStairsMesh(name, stairs_count, scene){
         stair.scaling.y=1/stairs_count*2;
 
 
-        stair.position.x=i/stairs_count;
+        stair.position.x=(-i/stairs_count)+0.5-(1/stairs_count);
         stair.position.y=i/stairs_count;
-        //stair.position.y-=stair.scaling.y;
+
 
 
         r(stair.scaling,stair.position);

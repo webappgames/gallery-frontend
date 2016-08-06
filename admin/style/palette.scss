@@ -23,4 +23,34 @@
     border: 2px solid $selected;
   }
 
+
+
+
+  .select-storeys{
+    ul{
+
+      margin: 0;
+      padding: 0;
+
+      li{
+
+        display: inline-block;
+        cursor: pointer;
+
+        list-style: none;
+        margin: 2px;
+        padding: 4px;
+        background-color: #88a9a5;
+        border: 2px solid transparent;
+      }
+    }
+
+  }
+  .select-materials, .select-shapes{
+    div{
+      cursor: pointer;
+    }
+  }
+
+
 }

@@ -8,6 +8,30 @@ main{
 
 }
 
+#admin-world-basement {
+
+  z-index: 990;
+
+  user-select: none;
+
+  //cursor: not-allowed;
+  opacity: 0.2;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+
+}
 
 #admin-world {
 
@@ -110,7 +134,7 @@ main{
   //=======================================================================================
 
 
-#admin-world {
+#admin-world,#admin-world-basement {
 
     .light {
 

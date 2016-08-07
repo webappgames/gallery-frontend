@@ -3,7 +3,7 @@ var BLOCK_SIZE=5;
 //var BLOCK_SIZE_VERTICAL=10;
 //var BLOCK_SIZE_DOOR=2;
 
-var EYE_VERTICAL = 2;
+var EYE_VERTICAL = 2.5;
 var LIGHT_VERTICAL = 3;
 
 var SPEED = 7;
@@ -19,6 +19,14 @@ var BLOCKS_2D_3D_SHAPES = {
 };
 
 
+var BLOCKS_STOREYS_LEVELS = {
+    '1NP':  (0.5 - 0.9) + (8 * 0),
+    '2NP':  (0.5 - 0.9) + (8 * 1),
+    '3NP':  (0.5 - 0.9) + (8 * 2),
+    '4NP':  (0.5 - 0.9) + (8 * 3),
+    '5NP':  (0.5 - 0.9) + (8 * 4),
+    '6NP':  (0.5 - 0.9) + (8 * 5),
+};
 
 
 
@@ -67,7 +75,7 @@ var createScene = function () {
 
 
     //Set gravity for the scene (G force like, on Y-axis)
-    //scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
+    scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
     //scene.enablePhysics();
 
 

@@ -29,7 +29,7 @@ function removeObjectById(id){
     return false;
 }
 
-function removeBlockOnPosition(position){
+function removeBlockOnPosition(position,storey){
 
     //r(position);
 
@@ -37,7 +37,7 @@ function removeBlockOnPosition(position){
 
         if (objects[i].type == 'block'){
             //r(objects[i]);
-            if(objects[i].position.x==position.x && objects[i].position.y==position.y){
+            if(objects[i].position.x==position.x && objects[i].position.y==position.y && objects[i].storey==storey){
                 objects.splice(i, 1);
                 return true;
             }
@@ -48,10 +48,6 @@ function removeBlockOnPosition(position){
 
 
 
-var $admin_world;
-$(function () {
-    $admin_world = $('#admin-world');
-});
 
 
 var window_center = {};
@@ -62,11 +58,26 @@ window_center.y = $(window).height() /2;
 
 function createMap() {
 
+    var $admin_world_basement = $('#admin-world-basement');
+    $admin_world_basement.html('');
 
+    var storey_selected_basement = (parseInt(storey_selected)-1)+'NP';
+    objects.forEach(function (object) {
+
+        if(object.storey!==storey_selected_basement)return;
+
+        $admin_world_basement.append('\n').append(createObject$(object));
+
+    });
+
+
+    var $admin_world = $('#admin-world');
     $admin_world.html('');
 
 
     objects.forEach(function (object) {
+
+        if(object.storey!==storey_selected)return;
 
         $admin_world.append('\n').append(createObject$(object));
 
@@ -310,6 +321,7 @@ function createMap() {
                         x: drawing_x +x*signum_x,
                         y: drawing_y +y*signum_y
                     },
+                    storey: storey_selected,
                     material: material_selected,
                     shape: shape_selected!='wall'?shape_selected:((x==0 || y==0 || x==size_x || y==size_y)?'wall':'room')
 
@@ -342,7 +354,7 @@ function createMap() {
 
             //r('object',object);
             //r('object.position',object.position);
-            removed_stat += removeBlockOnPosition(object.position)?1:0;
+            removed_stat += removeBlockOnPosition(object.position,object.storey)?1:0;
 
             if(object.shape!=='none'){
                 objects.push(object);

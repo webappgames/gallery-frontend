@@ -19,11 +19,11 @@ function createStairsMesh(name, stairs_count, scene){
 
 
         stair.position.x=(-i/stairs_count)+0.5-(1/stairs_count);
-        stair.position.y=i/stairs_count;
+        stair.position.y=i/stairs_count-(1.666/stairs_count);
 
 
 
-        r(stair.scaling,stair.position);
+        //r(stair.scaling,stair.position);
 
         stairs_meshes.push(stair);
 
@@ -32,7 +32,7 @@ function createStairsMesh(name, stairs_count, scene){
 
     //r(stairs_meshes);
     var stairs_mesh = BABYLON.Mesh.MergeMeshes(stairs_meshes);
-    r(stairs_mesh);
+    //r(stairs_mesh);
 
 
     return stairs_mesh;

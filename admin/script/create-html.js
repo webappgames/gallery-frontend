@@ -13,17 +13,17 @@ function createObject$(object) {
 
         $element.css('position', 'absolute');
 
-        if (object.type !== 'image') {
+        //if (object.type !== 'image') {
 
             $element.css('top', object.position.y * FIELD_SIZE + window_center.y);
             $element.css('left', object.position.x * FIELD_SIZE + window_center.x);
 
-        } else {
+        /*} else {
 
             $element.css('top', ( object.position.y - 0.5 ) * FIELD_SIZE + window_center.y);
             $element.css('left', ( object.position.x - 0.5 ) * FIELD_SIZE + window_center.x);
 
-        }
+        }*/
 
     }
 

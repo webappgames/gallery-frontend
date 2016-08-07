@@ -1,4 +1,40 @@
 
+var STOREYS = [
+    '1NP',
+    '2NP',
+    '3NP',
+    '4NP',
+    '5NP',
+    '6NP'
+    ];
+
+
+
+STOREYS.forEach(function (storey) {
+    $('.select-storeys').find('ul').append($('<li></li>').text(storey).attr('data-storey',storey));
+});
+
+
+
+$('.select-storeys').find('ul').find('li').click(function () {
+
+    //r(this);
+
+    $('.select-storeys').find('ul').find('li').removeClass('selected');
+    $(this).addClass('selected');
+
+    storey_selected = $(this).attr('data-storey');
+    createMap();
+
+}).first().trigger('click');
+
+
+
+//-------------------------------------------------------------
+
+
+
+
 var BLOCK_MATERIALS = [
     'color-white',
     'clay-bricks',
@@ -13,11 +49,6 @@ var BLOCK_MATERIALS = [
 
 var BLOCK_SHAPES = ['none','room','wall','door','window'];
 
-
-
-
-var material_selected = BLOCK_MATERIALS[0];
-var shape_selected = BLOCK_SHAPES[0];
 
 
 
@@ -64,7 +95,7 @@ $('.palette').find('.select-materials').find('.block').click(function () {
     $(this).addClass('selected');
 
     material_selected = $(this).attr('data-material');
-});
+}).first().trigger('click');
 
 
 
@@ -74,7 +105,7 @@ $('.palette').find('.select-shapes').find('.block').click(function () {
     $(this).addClass('selected');
 
     shape_selected = $(this).attr('data-shape');
-});
+}).first().trigger('click');
 
 
 
@@ -100,7 +131,8 @@ $('.palette').find('.select-shapes').find('.block').click(function () {
             var object = {
                 id: createGuid(),
                 type: type,
-                position: position
+                position: position,
+                storey: storey_selected
             };
 
             if(type == 'light'){

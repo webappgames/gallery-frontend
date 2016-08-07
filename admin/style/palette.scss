@@ -20,9 +20,8 @@
     border: 2px solid transparent;
   }
   .selected{
-    border: 2px solid $selected;
+    border: 2px solid $selected !important;
   }
-
 
 
 
@@ -51,6 +50,9 @@
       cursor: pointer;
     }
   }
+
+
+
 
 
 }

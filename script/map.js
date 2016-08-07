@@ -60,9 +60,12 @@ function runGallery(response){
         objects.forEach(function (object) {
 
 
+            object.storey = object.storey || '1NP';
+            var level = BLOCKS_STOREYS_LEVELS[object.storey];
+
             var position = new BABYLON.Vector3(
                 object.position.x * -BLOCK_SIZE,
-                (0.5 - 0.9) * BLOCK_SIZE,
+                level * BLOCK_SIZE,//(0.5 - 0.9) * BLOCK_SIZE,
                 object.position.y * BLOCK_SIZE
             );
 
@@ -107,6 +110,11 @@ function runGallery(response){
 
                 var box;
 
+
+                position.x -=BLOCK_SIZE/2;
+                position.z +=BLOCK_SIZE/2;
+
+
                 for(var i=0,l=vertical.length;i<l;i++){
 
 
@@ -117,6 +125,8 @@ function runGallery(response){
                         block.checkCollisions = true;
                         //block = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
                         block.position = position;
+
+
                         //building_blocks.push(block);
                         //block.rotation.x = Math.PI/2;
 
@@ -203,7 +213,7 @@ function runGallery(response){
                     image.rotation.y = Math.PI + rotation_rad;
 
 
-                    image.position.y = EYE_VERTICAL * BLOCK_SIZE;
+                    image.position.y += EYE_VERTICAL * BLOCK_SIZE;
 
                     image.checkCollisions = false;
 
@@ -263,7 +273,7 @@ function runGallery(response){
             if(object.type=='stairs') {
 
 
-                var stairs_mesh =  createStairsMesh("tree", 30, scene);
+                var stairs_mesh =  createStairsMesh("stairs", 30, scene);
 
                 //stairs_mesh.position = position;
                 //r(position);
@@ -280,12 +290,8 @@ function runGallery(response){
                 stairs_mesh.position = position;
 
 
-                stairs_mesh.position.x +=BLOCK_SIZE/2;
-                stairs_mesh.position.z -=BLOCK_SIZE/2;
 
-
-
-                stairs_mesh.position.y = -BLOCK_SIZE;
+                //stairs_mesh.position.y = -BLOCK_SIZE;
                 stairs_mesh.rotation.y = (object.rotation)/180*Math.PI;
                 stairs_mesh.material = stone_plain;
                 /**/

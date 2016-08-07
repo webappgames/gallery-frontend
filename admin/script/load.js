@@ -64,6 +64,14 @@ $(function(){
             gallery = testing_gallery;
             password = testing_password;
             objects = response;
+
+            objects.forEach(function (object) {
+                //if(object.type == 'block'){
+                object.storey = object.storey || '1NP';
+                //}
+            });
+
+
             $('#show-gallery').attr('href','../?gallery='+gallery);
             createMap();
 

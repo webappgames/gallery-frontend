@@ -160,6 +160,7 @@ document.addEventListener("drop", function(e){
                         id: createGuid(),
                         type: 'image',
                         position:position,
+                        storey: storey_selected,
                         name: files_key[key].name,
                         src: response[key],
                         height: 2,

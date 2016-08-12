@@ -173,10 +173,10 @@ $(function(){
 
 
 
-    $('#select-gallery').find('input[name="gallery"]').val('test-local2');
+    /*$('#select-gallery').find('input[name="gallery"]').val('test-local2');
     $('#select-gallery').find('input[name="password"]').val('xxx');
     $('#select-gallery').trigger('submit');
-    
+    /**/
     
 });
 

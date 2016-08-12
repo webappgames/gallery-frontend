@@ -21,8 +21,10 @@ var Gallery = mongoose.model('galleries', { key: String, pass: String, blocks: A
 
 
 
-
-app.use(bodyParser.json());// parse application/json
+app.use(bodyParser.json({
+    'extended': true,
+    'limit': '50mb'
+}));
 
 
 app.use(function(req, res, next) {

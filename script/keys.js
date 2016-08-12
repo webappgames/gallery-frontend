@@ -10,7 +10,8 @@ var controls_keys={
     'DOWN':  [40,83],
     'LEFT':  [37,65],
     'RIGHT':  [39,68],
-    'JUMP': [32]
+    'JUMP': [32],
+    'REFRESH': [80]
 
 
 };
@@ -153,6 +154,13 @@ var keys_tick = function (timestamp) {
 
     }
 
+
+
+    if (controls_down.REFRESH) {
+
+        runGallery(objects);
+
+    }
 
 
 

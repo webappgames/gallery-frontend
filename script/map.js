@@ -26,8 +26,10 @@ function runGallery(response){
         objects = response;
 
 
-        box_prototypes = {};
-        //var trees = [];
+        boxes_materials = {};
+
+
+
 
 
         var stone_plain = new BABYLON.StandardMaterial("Mat", scene);
@@ -65,7 +67,7 @@ function runGallery(response){
 
             var position = new BABYLON.Vector3(
                 object.position.x * -BLOCK_SIZE,
-                level * BLOCK_SIZE,//(0.5 - 0.9) * BLOCK_SIZE,
+                (level+BLOCKS_1NP_LEVEL) * BLOCK_SIZE,//(0.5 - 0.9) * BLOCK_SIZE,
                 object.position.y * BLOCK_SIZE
             );
 
@@ -78,7 +80,7 @@ function runGallery(response){
                 object.material = object.material || 'stone-plain';
 
 
-                if(typeof box_prototypes[object.material] == 'undefined') {
+                /*if(typeof box_prototypes[object.material] == 'undefined') {
 
 
                     var material = new BABYLON.StandardMaterial("Mat", scene);
@@ -101,18 +103,18 @@ function runGallery(response){
                     box_prototypes[object.material] = box_prototype;
 
                     //r(object.material,materials);
-                }
+                }*/
 
 
 
-                var position_vertical = new BABYLON.Vector3(0, BLOCK_SIZE*1.00001, 0);
+                //var position_vertical = new BABYLON.Vector3(0, BLOCK_SIZE*1.00001, 0);
                 var vertical = BLOCKS_2D_3D_SHAPES[object.shape];
 
                 var box;
 
 
-                position.x -=BLOCK_SIZE/2;
-                position.z +=BLOCK_SIZE/2;
+                //position.x -=BLOCK_SIZE/2;
+                //position.z +=BLOCK_SIZE/2;
 
 
                 for(var i=0,l=vertical.length;i<l;i++){
@@ -120,23 +122,28 @@ function runGallery(response){
 
                     if(vertical[i]) {
 
-                        block =  box_prototypes[object.material].createInstance("room");
+                        /*block =  box_prototypes[object.material].createInstance("room");
                         block.isPickable = true;
                         block.checkCollisions = true;
-                        //block = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
-                        block.position = position;
+                        block.position = position;*/
+
+                        boxes_materials[object.material] = boxes_materials[object.material] || [];
+
+                        boxes_materials[object.material].push({
+                            x: object.position.x,
+                            y: object.position.y,
+                            z: i + level,
+                            processed: false
+                        });
+
+                        //r(i,level);
 
 
-                        //building_blocks.push(block);
-                        //block.rotation.x = Math.PI/2;
-
-
-                        //block.receiveShadows = true;
-                        sunShadowGenerator.getShadowMap().renderList.push(block);
+                        //sunShadowGenerator.getShadowMap().renderList.push(block);
 
                     }
 
-                    position = position.add(position_vertical);
+                    //position = position.add(position_vertical);
 
 
                 }
@@ -305,6 +312,223 @@ function runGallery(response){
 
             
         });
+
+
+
+
+        blocks_box_prototypes = {};
+        blocks_materials_groups = {};
+        //r(boxes_materials);
+
+
+
+
+        function isBlockOn(boxes,x,y,z){
+            for(var i=0,l = boxes.length;i<l;i++){
+                if(boxes[i].x===x && boxes[i].y===y && boxes[i].z===z && boxes[i].processed===false){
+                    return(true);
+                }
+            }
+            return(false);
+        }
+
+
+
+        function getBlockOn(boxes,x,y,z){
+
+            for(var i=0,l = boxes.length;i<l;i++){
+                if(boxes[i].x===x && boxes[i].y===y && boxes[i].z===z && boxes[i].processed===false){
+                    return(boxes[i]);
+                }
+            }
+            return(null);
+        }
+
+
+        function isAllRangeOn(boxes,range){
+
+            //r('isAllRangeOn');
+            for(var x = range.x.start ; x<= range.x.end; x++){
+                for(var y = range.y.start ; y<= range.y.end; y++){
+                    for(var z = range.z.start ; z<= range.z.end; z++){
+
+                        //r(x,y,z);
+                        if(!isBlockOn(boxes,x,y,z)){
+                            //r('Empty place',isBlockOn(boxes,x,y,z),boxes);
+                            return false;
+                        }
+
+                    }
+                }
+            }
+
+            return true;
+
+        }
+
+
+        function processAllRange(boxes,range){
+
+            for(var x = range.x.start ; x<= range.x.end; x++){
+                for(var y = range.y.start ; y<= range.y.end; y++){
+                    for(var z = range.z.start ; z<= range.z.end; z++){
+
+                        getBlockOn(boxes,x,y,z).processed = true;
+
+                    }
+                }
+            }
+        }
+
+
+
+
+        for(var material in boxes_materials){
+
+            var boxes = boxes_materials[material];
+
+            //r(boxes);
+
+            boxes.forEach(function (box) {
+                if(box.processed===false){
+
+                    //r(1);
+
+                    var range = {
+                        x: {start: box.x, end: box.x},
+                        y: {start: box.y, end: box.y},
+                        z: {start: box.z, end: box.z}
+                    };
+
+
+                    //r(range);
+
+                    //ee();
+
+
+
+
+                    [1,2,3,4,5,6].forEach(function (operation) {
+
+
+                        var limit = 100;
+                        while(isAllRangeOn(boxes,range) && limit>0){
+                            limit--;
+
+                            //r(operation);
+
+                            if(operation === 0){}
+                            else if(operation === 1){range.x.end++;}
+                            else if(operation === 2){range.x.start--;}
+
+                            else if(operation === 3){range.y.end++;}
+                            else if(operation === 4){range.y.start--;}
+
+                            else if(operation === 5){range.z.end++;}
+                            else if(operation === 6){range.z.start--;}
+
+
+                        }
+
+                        if(limit==100){
+                            //r(range);
+                            throw new Error('wtf');
+                        }
+
+
+                        if(operation === 0){}
+                        else if(operation === 1){range.x.end--;}
+                        else if(operation === 2){range.x.start++;}
+
+                        else if(operation === 3){range.y.end--;}
+                        else if(operation === 4){range.y.start++;}
+
+                        else if(operation === 5){range.z.end--;}
+                        else if(operation === 6){range.z.start++;}
+
+
+                    });
+
+                    //r(range);
+                    processAllRange(boxes,range);
+
+
+
+
+                    blocks_materials_groups[material] = blocks_materials_groups[material] || [];
+                    blocks_materials_groups[material].push({
+
+                        position: {
+                            x: (range.x.start+range.x.end)/2,
+                            y: (range.y.start+range.y.end)/2,
+                            z: (range.z.start+range.z.end)/2
+                        },
+                        size: {
+                            x: Math.abs(range.x.end-range.x.start)+1,
+                            y: Math.abs(range.y.end-range.y.start)+1,
+                            z: Math.abs(range.z.end-range.z.start)+1,
+                        }
+
+                    });
+
+
+                }
+            });
+
+        }
+
+
+        //r(blocks_materials_groups);
+
+
+        for(var material_key in blocks_materials_groups){
+
+
+            var material = new BABYLON.StandardMaterial("Mat", scene);
+            material.diffuseTexture = new BABYLON.Texture("images/textures/"+material_key+".jpg", scene);
+            //material.bumpTexture = material.diffuseTexture;
+            material.diffuseTexture.uScale = 1;//Vertical offset of 10%
+            material.diffuseTexture.vScale = 1;//Horizontal offset of 40%
+            //material.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+            material.freeze();
+
+
+
+
+            blocks_materials_groups[material_key].forEach(function (box_group) {
+
+
+                var position = new BABYLON.Vector3(
+                    box_group.position.x * -BLOCK_SIZE,
+                    (box_group.position.z+BLOCKS_1NP_LEVEL) * BLOCK_SIZE,//(0.5 - 0.9) * BLOCK_SIZE,
+                    box_group.position.y * BLOCK_SIZE
+                );
+
+
+
+                //var box_prototype = BABYLON.Mesh.CreateSphere("sphere1", 3, BLOCK_SIZE, scene);
+                var box_prototype = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
+                box_prototype.material = material;
+                box_prototype.isPickable = true;
+                box_prototype.checkCollisions = true;
+
+                box_prototype.position=position;
+                box_prototype.scaling.x=box_group.size.x;
+                box_prototype.scaling.y=box_group.size.z;
+                box_prototype.scaling.z=box_group.size.y;
+
+                sunShadowGenerator.getShadowMap().renderList.push(box_prototype);
+
+
+            });
+
+
+
+
+        }
+
+
+
 
         //var building = BABYLON.Mesh.MergeMeshes(building_blocks,true,true);
         //box_prototype.dispose();

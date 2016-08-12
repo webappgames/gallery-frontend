@@ -113,7 +113,8 @@ var keys_tick = function (timestamp) {
      if (controls_down.UP) {
 
          window_center.y += speed;
-         $admin_world.css('top','+='+speed+'px');
+         $('#admin_world').css('top','+='+speed+'px');
+         $('#admin_world-basement').css('top','+='+speed+'px');
 
      }
 
@@ -121,7 +122,8 @@ var keys_tick = function (timestamp) {
      if (controls_down.DOWN) {
 
          window_center.y -= speed;
-         $admin_world.css('top','-='+speed+'px');
+         $('#admin_world').css('top','-='+speed+'px');
+         $('#admin_world-basement').css('top','-='+speed+'px');
 
      }
 
@@ -131,7 +133,8 @@ var keys_tick = function (timestamp) {
     if (controls_down.LEFT) {
 
         window_center.x += speed;
-        $admin_world.css('left','+='+speed+'px');
+        $('#admin_world').css('left','+='+speed+'px');
+        $('#admin_world-basement').css('left','+='+speed+'px');
 
     }
 
@@ -139,7 +142,8 @@ var keys_tick = function (timestamp) {
     if (controls_down.RIGHT) {
 
         window_center.x -= speed;
-        $admin_world.css('left','-='+speed+'px');
+        $('#admin_world').css('left','-='+speed+'px');
+        $('#admin_world-basement').css('left','-='+speed+'px');
 
     }
 
@@ -152,8 +156,8 @@ var keys_tick = function (timestamp) {
     }else{
         if(moving){
             moving=false;
-            $admin_world.css('top','0px');
-            $admin_world.css('left','0px');
+            $('#admin_world').css('top','0px').css('left','0px');
+            $('#admin_world-basement').css('top','0px').css('left','0px');
             createMap();
 
         }

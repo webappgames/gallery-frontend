@@ -20,12 +20,12 @@ var BLOCKS_2D_3D_SHAPES = {
 
 var BLOCKS_1NP_LEVEL = (0.5 - 0.9);
 var BLOCKS_STOREYS_LEVELS = {
-    '1NP':  0,
-    '2NP':  1,
-    '3NP':  2,
-    '4NP':  3,
-    '5NP':  4,
-    '6NP':  5,
+    '1NP':  0*8,
+    '2NP':  1*8,
+    '3NP':  2*8,
+    '4NP':  3*8,
+    '5NP':  4*8,
+    '6NP':  5*8,
 };
 
 

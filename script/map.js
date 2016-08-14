@@ -345,6 +345,15 @@ function runGallery(response){
             return(null);
         }
 
+    function processAllBlocksOn(boxes,x,y,z){
+
+        for(var i=0,l = boxes.length;i<l;i++){
+            if(boxes[i].x===x && boxes[i].y===y && boxes[i].z===z && boxes[i].processed===false){
+                boxes[i].processed = true;
+            }
+        }
+    }
+
 
         function isAllRangeOn(boxes,range){
 
@@ -374,7 +383,7 @@ function runGallery(response){
                 for(var y = range.y.start ; y<= range.y.end; y++){
                     for(var z = range.z.start ; z<= range.z.end; z++){
 
-                        getBlockOn(boxes,x,y,z).processed = true;
+                        processAllBlocksOn(boxes,x,y,z);
 
                     }
                 }

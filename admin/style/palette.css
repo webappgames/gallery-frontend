@@ -1,0 +1,7 @@
+.palette .label, .palette .light {
+  display: inline-block;
+  font-size: 30px; }
+.palette .block {
+  border: 2px solid transparent; }
+.palette .selected {
+  border: 2px solid #f00; }

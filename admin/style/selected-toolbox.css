@@ -1,0 +1,43 @@
+#selected-toolbox {
+  display: none;
+  width: 30px;
+  height: 30px;
+  margin: 0px;
+  padding: 0px;
+  border: 1px solid #0030ff;
+  cursor: Move;
+  /*
+  .delete{
+    position: absolute;
+    left: -15px;
+    top: 0px;
+  }
+
+
+  .resize{
+    cursor: se-resize;
+
+
+    position: absolute;
+    right: -5px;
+    bottom: -5px;
+  }
+
+  .rotate{
+    cursor: Crosshair;
+
+    position: absolute;
+    right: -5px;
+    top: -5px;
+  }*/ }
+
+#selected-toolbox.valid {
+  background-color: rgba(80, 169, 38, 0.34);
+  border: none; }
+
+#selected-toolbox.invalid {
+  background-color: rgba(169, 116, 77, 0.34);
+  border: none; }
+
+#selected-properties {
+  display: none; }

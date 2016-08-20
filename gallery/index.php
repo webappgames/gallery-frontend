@@ -5,6 +5,17 @@ error_reporting(E_ALL & ~E_NOTICE);
 $config = json_decode(file_get_contents('../config.json'),true);
 
 
+if(isset($_GET['gallery'])) {
+
+    $gallery = $_GET['gallery'];
+
+}else{
+
+    http_response_code(404);
+    die('Galerie neexistuje!');
+
+}
+
 
 
 

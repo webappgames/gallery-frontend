@@ -37,8 +37,121 @@ $.get('../../config.json').done(function (response) {
 
 
 
+
+function loginOrCreate(testing_gallery,testing_password){
+
+
+    $.get({
+        url:config.GALLERY_API_URL +'galleries/'+ testing_gallery,
+        headers: { 'x-auth': testing_password }
+    }).done(function (response) {
+
+
+        gallery = testing_gallery;
+        password = testing_password;
+
+        window.localStorage.setItem('gallery',gallery);
+        window.localStorage.setItem('password',password);
+
+
+        objects = response;
+
+        objects.forEach(function (object) {
+            //if(object.type == 'block'){
+            object.storey = object.storey || '1NP';
+            //}
+        });
+
+
+        $('#show-gallery').attr('href','../viewer?gallery='+gallery);
+        createMap();
+
+        $('#select-gallery').hide();
+
+
+    }).fail(function (response) {
+
+        if(response.status==403){
+
+            alert('Špatné heslo!');
+
+        }else
+        if(response.status==404){
+
+            if(confirm('Galerie s názvem '+testing_gallery+' neexistuje, chcete vytvořit novou prázdnou se zadaným heslem?')){
+
+
+
+                $.post({
+                    url: config.GALLERY_API_URL +'galleries/'+ testing_gallery,
+                    contentType: "application/json",
+                    data: JSON.stringify([]),
+                    headers: { 'x-auth': testing_password }
+
+                }).done(function (response) {
+
+
+                    console.log('done', response);
+
+                    Message.success('Byla vytvořena nová galerie!');
+
+                    gallery = testing_gallery;
+                    password = testing_password;
+
+                    window.localStorage.setItem('gallery',gallery);
+                    window.localStorage.setItem('password',password);
+
+
+                    objects = [];
+                    $('#show-gallery').attr('href','../viewer?gallery='+gallery);
+                    createMap();
+
+                    $('#select-gallery').hide();
+
+
+                }).fail(function () {
+                });
+
+
+
+            }
+
+        }
+
+
+    });
+}
+
+
+
+function logout() {
+
+    if(confirm('Opravdu se chcete odhlásit?')){
+
+
+        gallery = undefined;
+        password = undefined;
+        window.localStorage.removeItem('gallery');
+        window.localStorage.removeItem('password');
+        $('#select-gallery').show();
+
+
+
+    }
+
+}
+
+
+
+
 $(function(){
 
+
+    var testing_gallery  = window.localStorage.getItem('gallery');
+    var testing_password = window.localStorage.getItem('password');
+    if(testing_gallery && testing_password){
+        loginOrCreate(testing_gallery,testing_password);
+    }
 
 
 
@@ -53,78 +166,7 @@ $(function(){
         var testing_password = $(this).find('input[name="password"]').val();
 
 
-
-
-        $.get({
-            url:config.GALLERY_API_URL +'galleries/'+ testing_gallery,
-            headers: { 'x-auth': testing_password }
-        }).done(function (response) {
-
-
-            gallery = testing_gallery;
-            password = testing_password;
-            objects = response;
-
-            objects.forEach(function (object) {
-                //if(object.type == 'block'){
-                object.storey = object.storey || '1NP';
-                //}
-            });
-
-
-            $('#show-gallery').attr('href','../?gallery='+gallery);
-            createMap();
-
-            $('#select-gallery').hide();
-
-
-        }).fail(function (response) {
-
-            if(response.status==403){
-
-                alert('Špatné heslo!');
-
-            }else
-            if(response.status==404){
-
-                if(confirm('Galerie s názvem '+testing_gallery+' neexistuje, chcete vytvořit novou prázdnou se zadaným heslem?')){
-
-
-
-                    $.post({
-                        url: config.GALLERY_API_URL +'galleries/'+ testing_gallery,
-                        contentType: "application/json",
-                        data: JSON.stringify([]),
-                        headers: { 'x-auth': testing_password }
-
-                    }).done(function (response) {
-
-
-                        console.log('done', response);
-
-                        Message.success('Byla vytvořena nová galerie!');
-
-                        gallery = testing_gallery;
-                        password = testing_password;
-                        objects = [];
-                        $('#show-gallery').attr('href','../?gallery='+gallery);
-                        createMap();
-
-                        $('#select-gallery').hide();
-
-
-                    }).fail(function () {
-                    });
-
-
-
-                }
-
-            }
-
-
-        });
-
+        loginOrCreate(testing_gallery,testing_password);
 
 
 

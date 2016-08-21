@@ -25,7 +25,7 @@ $config = json_decode(file_get_contents('config.json'),true);
     $galleries = json_decode(file_get_contents($config['GALLERY_API_URL'].'galleries'),true);
     foreach($galleries as $gallery){
 
-        echo('<li><a href="gallery?gallery='.htmlspecialchars(urlencode($gallery)).'">'.htmlspecialchars($gallery).'</a></li>'."\n");
+        echo('<li><a href="viewer?gallery='.htmlspecialchars(urlencode($gallery)).'">'.htmlspecialchars($gallery).'</a></li>'."\n");
 
 
     }

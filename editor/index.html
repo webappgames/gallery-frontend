@@ -15,10 +15,24 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
 
-    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
-    <script src="../script/images.js"></script>
-    <script src="../script/uri-plugin.js"></script>
+
+
+
+    <script
+            src="https://code.jquery.com/jquery-2.2.4.min.js"
+            integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+            crossorigin="anonymous"></script>
+    <script
+            src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
+            integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
+            crossorigin="anonymous"></script>
+
+
+
+
+
+    <script src="../viewer/script/images.js"></script>
+    <script src="../viewer/script/uri-plugin.js"></script>
     <script src="script/message.js"></script>
     <script src="script/outer-html.js"></script>
     <script src="script/position.js"></script>
@@ -115,6 +129,7 @@
         <fieldset class="palette" id="admin-tools">
             <legend>Akce</legend>
             <a href="" id="show-gallery" target="show-gallery"><button>Zobrazit</button></a>
+            <button onclick="logout();">Odhlásit se</button>
         </fieldset>
 
 

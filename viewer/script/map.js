@@ -33,7 +33,7 @@ function runGallery(response){
 
 
         var stone_plain = new BABYLON.StandardMaterial("Mat", scene);
-        stone_plain.diffuseTexture = new BABYLON.Texture("images/textures/stone-plain.jpg", scene);
+        stone_plain.diffuseTexture = new BABYLON.Texture("../images/textures/stone-plain.jpg", scene);
         stone_plain.diffuseTexture.uScale = 1;//Vertical offset of 10%
         stone_plain.diffuseTexture.vScale = 1;//Horizontal offset of 40%
         stone_plain.freeze();
@@ -41,7 +41,7 @@ function runGallery(response){
 
 
         var bark = new BABYLON.StandardMaterial("Mat", scene);
-        bark.diffuseTexture = new BABYLON.Texture("images/textures/bark.jpg", scene);
+        bark.diffuseTexture = new BABYLON.Texture("../images/textures/bark.jpg", scene);
         bark.diffuseTexture.uScale = 1;//Vertical offset of 10%
         bark.diffuseTexture.vScale = 1;//Horizontal offset of 40%
         bark.freeze();
@@ -516,7 +516,7 @@ function runGallery(response){
 
             /**/
             var material = new BABYLON.StandardMaterial("Mat", scene);
-            material.diffuseTexture = new BABYLON.Texture("images/textures/"+material_key+".jpg", scene);
+            material.diffuseTexture = new BABYLON.Texture("../images/textures/"+material_key+".jpg", scene);
             //material.bumpTexture = material.diffuseTexture;
             material.diffuseTexture.uScale = 10;//Vertical offset of 10%
             material.diffuseTexture.vScale = 10;//Horizontal offset of 40%

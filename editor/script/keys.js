@@ -20,6 +20,14 @@ var controls_keys={
 
 
 window.addEventListener('keydown', function(e) {
+
+
+    if (e.keyCode == 90 && e.ctrlKey){//Ctrl+Z
+        undo();
+        //alert("Ctrl+z");
+    }
+
+
     // space and arrow keys
     if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
 

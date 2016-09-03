@@ -2,7 +2,6 @@
  * Created by Pavel on 14.07.2016.
  */
 
-var FIELD_SIZE = 30;
 var objects = [];
 
 
@@ -124,8 +123,8 @@ function createMap() {
 
 
         $dot.css('position', 'absolute');
-        $dot.css('top', object.position.y * FIELD_SIZE + window_center.y-5);
-        $dot.css('left', object.position.x * FIELD_SIZE + window_center.x-5);
+        $dot.css('top', object.position.y * zoom_selected + window_center.y-5);
+        $dot.css('left', object.position.x * zoom_selected + window_center.x-5);
 
 
 
@@ -270,8 +269,8 @@ function createMap() {
         r('start drawing');
         drawing = true;
 
-        drawing_x = Math.round(( event.clientX -window_center.x  ) / FIELD_SIZE );//+0.5;
-        drawing_y = Math.round(( event.clientY -window_center.y  ) / FIELD_SIZE );//+0.5;
+        drawing_x = Math.round(( event.clientX -window_center.x  ) / zoom_selected );//+0.5;
+        drawing_y = Math.round(( event.clientY -window_center.y  ) / zoom_selected );//+0.5;
 
 
         drawing_objects=[];
@@ -293,8 +292,8 @@ function createMap() {
         //r('drawing rect');
         //r( event.clientY -window_center.y );
 
-        var stop_x = Math.round(( event.clientX -window_center.x ) / FIELD_SIZE );//+0.5;
-        var stop_y = Math.round(( event.clientY -window_center.y ) / FIELD_SIZE );//+0.5;
+        var stop_x = Math.round(( event.clientX -window_center.x ) / zoom_selected );//+0.5;
+        var stop_y = Math.round(( event.clientY -window_center.y ) / zoom_selected );//+0.5;
 
         size_x = Math.abs(stop_x-drawing_x);
         size_y = Math.abs(stop_y-drawing_y);
@@ -421,8 +420,8 @@ function createMap() {
 
         drag: function(e, ui){
 
-            ui.position.left = Math.floor((ui.position.left-window_center.x) / 30) * 30+window_center.x;
-            ui.position.top  = Math.floor((ui.position.top -window_center.y) / 30) * 30+window_center.y;
+            ui.position.left = Math.floor((ui.position.left-window_center.x) / zoom_selected) * zoom_selected+window_center.x;
+            ui.position.top  = Math.floor((ui.position.top -window_center.y) / zoom_selected) * zoom_selected+window_center.y;
 
         },
         stop: function () {
@@ -454,7 +453,7 @@ function createMap() {
     //----------------------------------------------------------------------------IMAGES
     var drag_snap_options = {
 
-        //grid: [ FIELD_SIZE/2, FIELD_SIZE/2 ],
+        //grid: [ zoom_selected/2, zoom_selected/2 ],
         snap: ".block[data-shape='wall']",
         //snap: ".block",
         snapMode: "outer",

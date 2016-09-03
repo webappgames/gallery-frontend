@@ -10,6 +10,7 @@ var config;
 $.get('../../config.json').done(function (response) {
 
     config = response;
+    r('loaded config');
 
     $.get(config.GALLERY_API_URL +'galleries').done(function (response) {
 
@@ -25,6 +26,11 @@ $.get('../../config.json').done(function (response) {
         $ul.find('li').click(function () {
             $('#select-gallery').find('input[name="gallery"]').val($(this).html());
         });
+
+
+
+        processFirstLogin();
+
 
 
     });
@@ -144,7 +150,7 @@ function logout() {
 
 
 
-$(function(){
+function processFirstLogin(){
 
 
     var testing_gallery  = window.localStorage.getItem('gallery');
@@ -220,7 +226,7 @@ $(function(){
     $('#select-gallery').trigger('submit');
     /**/
     
-});
+};
 
 
 

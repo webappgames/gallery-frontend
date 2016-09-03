@@ -47,8 +47,6 @@ main {
 .block {
   user-select: none;
   display: inline-block;
-  width: 30px;
-  height: 30px;
   margin: 0px;
   padding: 0px; }
 
@@ -190,10 +188,10 @@ nav {
   border: 2px solid transparent; }
 .palette .selected {
   border: 2px solid #ff4e41 !important; }
-.palette .select-storeys ul {
+.palette .select-storeys ul, .palette .select-zooms ul {
   margin: 0;
   padding: 0; }
-  .palette .select-storeys ul li {
+  .palette .select-storeys ul li, .palette .select-zooms ul li {
     display: inline-block;
     cursor: pointer;
     list-style: none;

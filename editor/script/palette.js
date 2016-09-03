@@ -1,4 +1,6 @@
 
+var storey_selected;
+
 var STOREYS = [
     '1NP',
     '2NP',
@@ -6,7 +8,7 @@ var STOREYS = [
     '4NP',
     '5NP',
     '6NP'
-    ];
+];
 
 
 
@@ -27,6 +29,42 @@ $('.select-storeys').find('ul').find('li').click(function () {
     createMap();
 
 }).first().trigger('click');
+
+
+
+//-------------------------------------------------------------
+
+
+var zoom_selected;
+
+var ZOOMS = [
+    '5',
+    '10',
+    '20',
+    '30',
+    '50'
+];
+
+
+
+ZOOMS.forEach(function (storey) {
+    $('.select-zooms').find('ul').append($('<li></li>').text(storey).attr('data-zoom',storey));
+});
+
+
+
+$('.select-zooms').find('ul').find('li').click(function () {
+
+    //r(this);
+
+    $('.select-zooms').find('ul').find('li').removeClass('selected');
+    $(this).addClass('selected');
+
+    zoom_selected = $(this).attr('data-zoom')/1;
+    createMap();
+
+}).first().next().next().next().trigger('click');//todo better
+
 
 
 

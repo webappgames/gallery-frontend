@@ -15,13 +15,13 @@ function createObject$(object) {
 
         //if (object.type !== 'image') {
 
-            $element.css('top', object.position.y * FIELD_SIZE + window_center.y);
-            $element.css('left', object.position.x * FIELD_SIZE + window_center.x);
+            $element.css('top', object.position.y * zoom_selected + window_center.y);
+            $element.css('left', object.position.x * zoom_selected + window_center.x);
 
         /*} else {
 
-            $element.css('top', ( object.position.y - 0.5 ) * FIELD_SIZE + window_center.y);
-            $element.css('left', ( object.position.x - 0.5 ) * FIELD_SIZE + window_center.x);
+            $element.css('top', ( object.position.y - 0.5 ) * zoom_selected + window_center.y);
+            $element.css('left', ( object.position.x - 0.5 ) * zoom_selected + window_center.x);
 
         }*/
 
@@ -32,6 +32,11 @@ function createObject$(object) {
     $element.attr('id',object.id);
     $element.attr('data-shape',object.shape);
     $element.attr('data-material',object.material);
+
+
+
+    $element.css('width', zoom_selected);
+    $element.css('height',zoom_selected);
 
 
     /*for(var key in object){
@@ -111,10 +116,10 @@ function createObject$(object) {
         var $image_270 = $('<img>').addClass('image-270').hide();
 
 
-        $image_0.css('height',object.height*FIELD_SIZE);
-        $image_180.css('height',object.height*FIELD_SIZE);
-        $image_90.css('width',object.height*FIELD_SIZE);
-        $image_270.css('width',object.height*FIELD_SIZE);
+        $image_0.css('height',object.height*zoom_selected);
+        $image_180.css('height',object.height*zoom_selected);
+        $image_90.css('width',object.height*zoom_selected);
+        $image_270.css('width',object.height*zoom_selected);
 
 
         var src = object.src;
@@ -154,8 +159,8 @@ function createObject$(object) {
         var $image = $('<img>').addClass('image');
 
 
-        var width = object.width*FIELD_SIZE;
-        var height = object.height*FIELD_SIZE;
+        var width = object.width*zoom_selected;
+        var height = object.height*zoom_selected;
 
         $image.css('width',width);
         $image.css('height',height);

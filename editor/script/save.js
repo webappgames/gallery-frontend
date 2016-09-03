@@ -2,8 +2,32 @@
  * Created by Pavel on 14.07.2016.
  */
 
+var last_objects;
+
+
+
+
+
+
+
+
+
+function undo() {
+    objects = last_objects;
+    createMap();
+}
+
+
+
+
+
+
 
 function save() {
+
+
+    last_objects = JSON.parse(JSON.stringify(objects));
+
 
 
     $button = $('#save');

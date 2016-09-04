@@ -66,10 +66,11 @@ foreach($objects as $object) {
 
 
     <!-- Babylon.js -->
-    <script src="script/babylon/hand.minified-1.2.js"></script>
-    <script src="script/babylon/cannon.js"></script>
-    <!--<script src="script/babylon/oimo.js"></script>-->
-    <script src="script/babylon/babylon.js"></script>
+
+    <script src="script/lib/babylon.js"></script>
+
+
+
     <script src="script/babylon-plugins/babylon-tree.js"></script>
     <script src="script/babylon-plugins/babylon-stairs.js"></script>
     <script src="script/uri-plugin.js"></script>

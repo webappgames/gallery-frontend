@@ -28,7 +28,9 @@ function createObject$(object) {
     }
 
 
-    $element.attr('class',object.type);
+    //$element.addClass('object');
+    $element.addClass(object.type);
+
     $element.attr('id',object.id);
     $element.attr('data-shape',object.shape);
     $element.attr('data-material',object.material);

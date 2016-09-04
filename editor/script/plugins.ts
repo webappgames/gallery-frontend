@@ -11,9 +11,15 @@ function runGenerator(generatorFunction){
         return(object.type==='image');
     });
 
-    r(images);
+    //r(images);
 
-    //generatorFunction();
+    var new_objects = generatorFunction(images);
+
+    objects = new_objects;
+
+
+    save();
+    createMap();
 
 
 

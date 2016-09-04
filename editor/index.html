@@ -42,6 +42,14 @@
     <script src="script/save.js"></script>
     <script src="script/new.js"></script>
     <script src="script/keys.js"></script>
+    <script src="script/plugins.js"></script>
+
+
+
+
+    <script src="script/plugins/generators/simple-garden.js"></script>
+
+
 
 
 
@@ -137,9 +145,14 @@
 
         <fieldset class="palette" id="admin-tools">
             <legend>Akce</legend>
+
             <a href="" id="show-gallery" target="show-gallery"><button>Zobrazit</button></a>
             <button onclick="logout();">Odhlásit se</button>
+
+            <button onclick="runGenerator(Plugins.Generators.SimpleGarden);">Generátory</button>
+
         </fieldset>
+
 
 
 

@@ -1,2 +1,6 @@
 {
+  "devDependencies": {
+    "gulp-typescript": "^2.13.6",
+    "run-sequence": "^1.2.2"
+  }
 }

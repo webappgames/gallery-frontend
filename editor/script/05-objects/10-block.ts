@@ -13,6 +13,7 @@ namespace GALLERY.Objects{
 
 
             var $element = super();
+            //r($element);
             let object = this;
 
 

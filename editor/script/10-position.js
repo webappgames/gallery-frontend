@@ -7,4 +7,4 @@ function getPositionFromLeftTop(left, top) {
     var y = (top - window_center.y) / zoom_selected;
     return ({ x: x, y: y });
 }
-//# sourceMappingURL=position.js.map
+//# sourceMappingURL=10-position.js.mapmap

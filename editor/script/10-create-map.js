@@ -24,7 +24,7 @@ function removeBlockOnPosition(position, storey) {
     //r(position);
     for (var i in objects) {
         if (objects[i].type == 'block') {
-            //r(objects[i]);
+            //r(05-objects[i]);
             if (objects[i].position.x == position.x && objects[i].position.y == position.y && objects[i].storey == storey) {
                 objects.splice(i, 1);
                 return true;
@@ -61,7 +61,7 @@ function createMap() {
     var $stairs = $admin_world.find('.stairs');
     /*$admin_world.mousemove(function (e) {
         var position = getPositionFromLeftTop(e.clientX,e.clientY);
-        document.title = isWallOn(objects,position);
+        document.title = isWallOn(05-objects,position);
     });*/
     //----------------------------------------------------------------------------SELECTING
     var $dot = $('#dot');
@@ -200,7 +200,7 @@ function createMap() {
                     material: material_selected,
                     shape: shape_selected != 'wall' ? shape_selected : ((x == 0 || y == 0 || x == size_x || y == size_y) ? 'wall' : 'room')
                 };
-                //objects.push(object);
+                //05-objects.push(object);
                 drawing_objects.push(object);
                 $admin_world.append('\n').append(createObject$(object)); //todo use also in pallete
             }
@@ -328,4 +328,4 @@ function createMap() {
     $images.draggable(drag_snap_options);
     //----------------------------------------------------------------------------
 }
-//# sourceMappingURL=create-map.js.map
+//# sourceMappingURL=10-create-map.js.map

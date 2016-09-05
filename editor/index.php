@@ -33,21 +33,38 @@
 
     <script src="../viewer/script/images.js"></script>
     <script src="../viewer/script/uri-plugin.js"></script>
-    <script src="script/message.js"></script>
-    <script src="script/outer-html.js"></script>
-    <script src="script/position.js"></script>
-    <script src="script/create-html.js"></script>
-    <script src="script/create-map.js"></script>
-    <script src="script/load.js"></script>
-    <script src="script/save.js"></script>
-    <script src="script/new.js"></script>
-    <script src="script/keys.js"></script>
-    <script src="script/plugins.js"></script>
 
 
 
 
-    <script src="script/plugins/generators/simple-garden.js"></script>
+
+
+
+
+
+    <?php
+
+    if ( ! function_exists('glob_recursive'))
+    {
+        // Does not support flag GLOB_BRACE
+       function glob_recursive($pattern, $flags = 0)
+       {
+         $files = glob($pattern, $flags);
+         foreach (glob(dirname($pattern).'/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir)
+         {
+           $files = array_merge($files, glob_recursive($dir.'/'.basename($pattern), $flags));
+         }
+      return $files;
+      }
+    }
+
+
+    foreach(glob_recursive('script/*.js') as $file){
+        echo('<script src="'.$file.'"></script>'."\n");
+    }
+
+    ?>
+
 
 
 
@@ -230,8 +247,8 @@
 
 
 
-    <script src="script/palette.js"></script>
-    <script src="script/filedrop.js"></script>
+    <script src="script/10-palette.js"></script>
+    <script src="script/10-filedrop.js"></script>
 
 
 </body>

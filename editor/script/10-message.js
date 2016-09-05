@@ -89,4 +89,4 @@ var Message = function () {
         }]);
     return _class;
 }();
-//# sourceMappingURL=message.js.map
+//# sourceMappingURL=10-message.js.mapmap

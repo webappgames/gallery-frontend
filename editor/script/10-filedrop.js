@@ -36,7 +36,7 @@ document.addEventListener("drop", function (e) {
         return;
     }
     r(files);
-    // process all File objects
+    // process all File 05-objects
     var formData = new FormData();
     var files_key = {};
     var request_size = 1024; //todo is it OK?
@@ -116,4 +116,4 @@ document.addEventListener("drop", function (e) {
     //-----------------
 }, false);
 //});
-//# sourceMappingURL=filedrop.js.map
+//# sourceMappingURL=10-filedrop.js.map

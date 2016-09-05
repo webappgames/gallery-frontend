@@ -75,7 +75,7 @@ document.addEventListener("drop", function(e){
 
     r(files);
 
-    // process all File objects
+    // process all File 05-objects
     var formData = new FormData();
     var files_key = {};
     var request_size=1024;//todo is it OK?

@@ -111,4 +111,4 @@ $('.palette').find('.select-shapes').find('.block').click(function () {
         }
     });
 });
-//# sourceMappingURL=palette.js.map
+//# sourceMappingURL=10-palette.js.js.map

@@ -19,6 +19,7 @@ $.get('../../config.json').done(function (response) {
         processFirstLogin();
     });
 });
+var objects;
 function loginOrCreate(testing_gallery, testing_password) {
     $.get({
         url: config.GALLERY_API_URL + 'galleries/' + testing_gallery,
@@ -28,12 +29,7 @@ function loginOrCreate(testing_gallery, testing_password) {
         password = testing_password;
         window.localStorage.setItem('gallery', gallery);
         window.localStorage.setItem('password', password);
-        objects = response;
-        objects.forEach(function (object) {
-            //if(object.type == 'block'){
-            object.storey = object.storey || '1NP';
-            //}
-        });
+        objects = new GALLERY.Objects.Array(...response);
         $('#show-gallery').attr('href', '../viewer?gallery=' + gallery);
         createMap();
         $('#select-gallery').hide();
@@ -55,7 +51,7 @@ function loginOrCreate(testing_gallery, testing_password) {
                     password = testing_password;
                     window.localStorage.setItem('gallery', gallery);
                     window.localStorage.setItem('password', password);
-                    objects = [];
+                    objects = new GALLERY.Objects.Array();
                     $('#show-gallery').attr('href', '../viewer?gallery=' + gallery);
                     createMap();
                     $('#select-gallery').hide();
@@ -91,7 +87,7 @@ function processFirstLogin() {
 
         console.log('done', response);
 
-        objects = response;
+        05-objects = response;
         createMap()
 
 
@@ -110,7 +106,7 @@ function processFirstLogin() {
 
             Message.success('Byla vytvořena nová galerie!');
 
-            objects = [];
+            05-objects = [];
             createMap()
 
 
@@ -125,4 +121,4 @@ function processFirstLogin() {
     /**/
 }
 ;
-//# sourceMappingURL=load.js.map
+//# sourceMappingURL=10-load.js.map

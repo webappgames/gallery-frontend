@@ -41,7 +41,7 @@ $.get('../../config.json').done(function (response) {
 
 
 
-
+var objects:GALLERY.Objects.Array;
 
 
 function loginOrCreate(testing_gallery,testing_password){
@@ -60,13 +60,10 @@ function loginOrCreate(testing_gallery,testing_password){
         window.localStorage.setItem('password',password);
 
 
-        objects = response;
 
-        objects.forEach(function (object) {
-            //if(object.type == 'block'){
-            object.storey = object.storey || '1NP';
-            //}
-        });
+        objects = new GALLERY.Objects.Array(...response);
+
+
 
 
         $('#show-gallery').attr('href','../viewer?gallery='+gallery);
@@ -108,7 +105,7 @@ function loginOrCreate(testing_gallery,testing_password){
                     window.localStorage.setItem('password',password);
 
 
-                    objects = [];
+                    objects = new GALLERY.Objects.Array();
                     $('#show-gallery').attr('href','../viewer?gallery='+gallery);
                     createMap();
 
@@ -188,7 +185,7 @@ function processFirstLogin(){
 
             console.log('done', response);
 
-            objects = response;
+            05-objects = response;
             createMap()
 
 
@@ -207,7 +204,7 @@ function processFirstLogin(){
 
                 Message.success('Byla vytvořena nová galerie!');
 
-                objects = [];
+                05-objects = [];
                 createMap()
 
 

@@ -166,7 +166,7 @@ foreach($objects as $object) {
 <canvas id="scene"></canvas>
 <script src="script/scene.js"></script>
 <script src="script/map.js"></script>
-<script src="script/keys.js"></script>
+<script src="script/10-keys.js"></script>
 <script src="script/move-to.js"></script>
 <script src="script/pointer-lock.js"></script>
 <script src="script/popup-window.js"></script>

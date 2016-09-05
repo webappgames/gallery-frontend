@@ -29,7 +29,8 @@ function loginOrCreate(testing_gallery, testing_password) {
         password = testing_password;
         window.localStorage.setItem('gallery', gallery);
         window.localStorage.setItem('password', password);
-        objects = new GALLERY.Objects.Array(...response);
+        //r(response);
+        objects = new GALLERY.Objects.Array(response);
         $('#show-gallery').attr('href', '../viewer?gallery=' + gallery);
         createMap();
         $('#select-gallery').hide();

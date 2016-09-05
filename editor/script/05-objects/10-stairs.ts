@@ -1,9 +1,9 @@
 
 
 
-module GALLERY.Objects{
+namespace GALLERY.Objects{
 
-    export class block extends object{
+    export class Stairs extends Object{
 
 
 

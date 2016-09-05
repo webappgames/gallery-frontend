@@ -1,4 +1,10 @@
+/// <reference path="10-create-object" />
+/// <reference path="10-create-map" />
+/// <reference path="05-objects/05-object.ts" />
+
+
 var storey_selected;
+
 var STOREYS = [
     '1NP',
     '2NP',
@@ -7,18 +13,34 @@ var STOREYS = [
     '5NP',
     '6NP'
 ];
+
+
+
 STOREYS.forEach(function (storey) {
-    $('.select-storeys').find('ul').append($('<li></li>').text(storey).attr('data-storey', storey));
+    $('.select-storeys').find('ul').append($('<li></li>').text(storey).attr('data-storey',storey));
 });
+
+
+
 $('.select-storeys').find('ul').find('li').click(function () {
+
     //r(this);
+
     $('.select-storeys').find('ul').find('li').removeClass('selected');
     $(this).addClass('selected');
+
     storey_selected = $(this).attr('data-storey');
     createMap();
+
 }).first().trigger('click');
+
+
+
 //-------------------------------------------------------------
+
+
 var zoom_selected;
+
 var ZOOMS = [
     '5',
     '10',
@@ -26,17 +48,35 @@ var ZOOMS = [
     '30',
     '50'
 ];
+
+
+
 ZOOMS.forEach(function (storey) {
-    $('.select-zooms').find('ul').append($('<li></li>').text(storey).attr('data-zoom', storey));
+    $('.select-zooms').find('ul').append($('<li></li>').text(storey).attr('data-zoom',storey));
 });
+
+
+
 $('.select-zooms').find('ul').find('li').click(function () {
+
     //r(this);
+
     $('.select-zooms').find('ul').find('li').removeClass('selected');
     $(this).addClass('selected');
-    zoom_selected = $(this).attr('data-zoom') / 1;
+
+    zoom_selected = $(this).attr('data-zoom')/1;
     createMap();
-}).first().next().next().next().trigger('click'); //todo better
+
+}).first().next().next().next().trigger('click');//todo better
+
+
+
+
 //-------------------------------------------------------------
+
+
+
+
 var BLOCK_MATERIALS = [
     'color-white',
     'clay-bricks',
@@ -48,67 +88,131 @@ var BLOCK_MATERIALS = [
     'wood-boards',
     'wood-fence',
     'wood-raw'];
-var BLOCK_SHAPES = ['none', 'room', 'wall', 'door', 'window'];
+
+var BLOCK_SHAPES = ['none','room','wall','door','window'];
+
+
+
+
 //-------------------------------------------------------------
+
+
+
+
 BLOCK_MATERIALS.forEach(function (material) {
-    $('.select-materials').append(createObject$({
+
+
+    $('.select-materials').append(createObject$(GALLERY.Objects.Object.init({
         type: 'block',
         shape: 'wall',
         material: material
-    }));
+    })));
+
+
+
 });
+
+
 BLOCK_SHAPES.forEach(function (shape) {
-    $('.select-shapes').append(createObject$({
+
+
+    $('.select-shapes').append(createObject$(GALLERY.Objects.Object.init({
         type: 'block',
         shape: shape,
         material: 'stone-plain'
-    }));
+    })));
+
+
+
 });
+
+
+
+
+
+
 $('.palette').find('.select-materials').find('.block').click(function () {
+
     $('.palette').find('.select-materials').find('.block').removeClass('selected');
     $(this).addClass('selected');
+
     material_selected = $(this).attr('data-material');
 }).first().trigger('click');
+
+
+
 $('.palette').find('.select-shapes').find('.block').click(function () {
+
     $('.palette').find('.select-shapes').find('.block').removeClass('selected');
     $(this).addClass('selected');
+
     shape_selected = $(this).attr('data-shape');
 }).first().trigger('click');
+
+
+
+
 //===================================================================================================
-['light', 'label', 'tree', 'stairs'].forEach(function (type) {
-    $('.palette').find('.' + type).draggable({
+
+
+['light','label','tree','stairs'].forEach(function (type) {
+
+
+
+    $('.palette').find('.'+type).draggable({
+
         //helper: 'clone',
+
+
         stop: function () {
+
             var offset = $(this).offset();
-            var position = getPositionFromLeftTop(offset.left, offset.top);
+            var position = getPositionFromLeftTop(offset.left,offset.top);
+
+
             var object = {
                 id: createGuid(),
                 type: type,
                 position: position,
                 storey: storey_selected
             };
-            if (type == 'light') {
+
+            if(type == 'light'){
                 object.color = '#ffffff';
                 object.intensity = 1;
-            }
-            else if (type == 'label') {
+            }else
+            if(type == 'label'){
                 object.name = '';
                 object.uri = '';
                 object.rotation = 0;
             }
-            if (type == 'stairs') {
+            if(type == 'stairs'){
                 object.width = 10;
                 object.height = 2;
                 object.rotation = 0;
             }
+
+
             objects.push(object);
+
+
+
+
             createMap();
+
             save();
+
             $(this)
-                .css('left', 0)
-                .css('top', 0);
+                .css('left',0)
+                .css('top',0);
             //r(x,y);
+
         }
+
+
+
     });
+
+
 });
-//# sourceMappingURL=10-palette.js.js.map
+

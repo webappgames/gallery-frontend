@@ -1,7 +1,7 @@
 
 
 
-module GALLERY.Objects{
+namespace GALLERY.Objects{
 
     export class Object{
 

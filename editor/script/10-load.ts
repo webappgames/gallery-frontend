@@ -61,7 +61,8 @@ function loginOrCreate(testing_gallery,testing_password){
 
 
 
-        objects = new GALLERY.Objects.Array(...response);
+        //r(response);
+        objects = new GALLERY.Objects.Array(response);
 
 
 

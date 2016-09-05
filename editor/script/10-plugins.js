@@ -8,4 +8,4 @@ function runGenerator(generatorFunction) {
     save();
     createMap();
 }
-//# sourceMappingURL=10-50-plugins.js.mapmap
+//# sourceMappingURL=10-plugins.js.map

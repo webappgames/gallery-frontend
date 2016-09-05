@@ -7,4 +7,4 @@ jQuery.fn.outerHTML = function (s) {
     }
     return (html);
 };
-//# sourceMappingURL=10-outer-html.js.mapmap
+//# sourceMappingURL=10-outer-html.js.map

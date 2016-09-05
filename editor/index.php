@@ -58,8 +58,9 @@
       }
     }
 
-
-    foreach(glob_recursive('script/*.js') as $file){
+    $files = glob_recursive('script/*.js');
+    sort($files);
+    foreach($files as $file){
         echo('<script src="'.$file.'"></script>'."\n");
     }
 
@@ -166,7 +167,7 @@
             <a href="" id="show-gallery" target="show-gallery"><button>Zobrazit</button></a>
             <button onclick="logout();">Odhlásit se</button>
 
-            <button onclick="runGenerator(Plugins.Generators.SimpleGarden);">Generátory</button>
+            <button onclick="runGenerator(GALLERY.Plugins.Generators.SimpleGarden);">Generátory</button>
 
         </fieldset>
 
@@ -247,7 +248,7 @@
 
 
 
-    <script src="script/10-palette.js"></script>
+    <script src="script/20-palette.js"></script>
     <script src="script/10-filedrop.js"></script>
 
 

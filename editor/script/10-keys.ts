@@ -1,8 +1,6 @@
-/**
- * @author Towns.cz
- * @fileOverview  Key controls - eg. arrows, wasd,...
- */
-//======================================================================================================================
+/// <reference path="../../lib/jquery.d.ts" />
+
+
 
 
 var controls_keys={

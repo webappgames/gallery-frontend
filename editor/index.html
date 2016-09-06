@@ -36,36 +36,7 @@
 
 
 
-
-
-
-
-
-
-    <?php
-
-    if ( ! function_exists('glob_recursive'))
-    {
-        // Does not support flag GLOB_BRACE
-       function glob_recursive($pattern, $flags = 0)
-       {
-         $files = glob($pattern, $flags);
-         foreach (glob(dirname($pattern).'/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir)
-         {
-           $files = array_merge($files, glob_recursive($dir.'/'.basename($pattern), $flags));
-         }
-      return $files;
-      }
-    }
-
-    $files = glob_recursive('script/*.js');
-    sort($files);
-    foreach($files as $file){
-        echo('<script src="'.$file.'"></script>'."\n");
-    }
-
-    ?>
-
+    <script src="editor.js"></script>
 
 
 
@@ -244,12 +215,6 @@
 
     </nav>
 
-
-
-
-
-    <script src="script/20-palette.js"></script>
-    <script src="script/10-filedrop.js"></script>
 
 
 </body>

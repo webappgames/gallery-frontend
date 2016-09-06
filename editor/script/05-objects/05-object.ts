@@ -1,3 +1,16 @@
+/// <reference path="10-block.ts" />
+/// <reference path="10-light.ts" />
+/// <reference path="10-label.ts" />
+/// <reference path="10-image.ts" />
+/// <reference path="10-tree.ts" />
+/// <reference path="10-stairs.ts" />
+
+
+/// <reference path="../20-palette.ts" />
+
+
+/// <reference path="../../../lib/jquery.d.ts" />
+
 
 
 
@@ -5,6 +18,13 @@ namespace GALLERY.Objects{
 
     export class Object{
 
+
+        public id: string;
+        public type: string;
+        public position: {
+          x: number,
+          y: number
+        };
 
 
         constructor(object){
@@ -37,6 +57,7 @@ namespace GALLERY.Objects{
             //----------------------------------
             if (object.type == 'block') {
 
+                //r(GALLERY);
                 object = new GALLERY.Objects.Block(object);
 
             } else if (object.type == 'light') {
@@ -63,7 +84,7 @@ namespace GALLERY.Objects{
             else {
 
                 console.log(object);
-                throw new Error('Cant put item into Gallert Objects Array because of unrecognized object type ' + object.type);
+                throw new Error('Cant put item into Gallery Objects Array because of unrecognized object type ' + object.type);
             }
             //----------------------------------
 
@@ -108,8 +129,6 @@ namespace GALLERY.Objects{
             $element.addClass(object.type);
 
             $element.attr('id',object.id);
-            $element.attr('data-shape',object.shape);
-            $element.attr('data-material',object.material);
 
 
 

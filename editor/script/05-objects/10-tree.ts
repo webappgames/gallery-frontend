@@ -1,4 +1,4 @@
-
+/// <reference path="../../../lib/jquery.d.ts" />
 
 
 namespace GALLERY.Objects{

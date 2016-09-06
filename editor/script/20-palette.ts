@@ -1,6 +1,10 @@
+/// <reference path="../../lib/jquery.d.ts" />
+
+
 /// <reference path="10-create-object" />
 /// <reference path="10-create-map" />
 /// <reference path="05-objects/05-object.ts" />
+
 
 
 var storey_selected;

@@ -1,6 +1,4 @@
-/**
- * Created by hejny on 17.7.16.
- */
+/// <reference path="../../lib/jquery.d.ts" />
 
 
 

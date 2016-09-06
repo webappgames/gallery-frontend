@@ -1,4 +1,4 @@
-
+/// <reference path="../../../lib/jquery.d.ts" />
 
 
 namespace GALLERY.Objects{
@@ -15,6 +15,12 @@ namespace GALLERY.Objects{
             var $element = super();
             //r($element);
             let object = this;
+
+
+            $element.attr('data-shape',object.shape);
+            $element.attr('data-material',object.material);
+
+
 
 
             object.material = object.material || 'stone-plain';

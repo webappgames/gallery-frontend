@@ -1,6 +1,6 @@
-/**
- * Created by Pavel on 14.07.2016.
- */
+/// <reference path="../../lib/jquery.d.ts" />
+
+
 
 var objects = [];
 
@@ -49,9 +49,11 @@ function removeBlockOnPosition(position,storey){
 
 
 
-var window_center = {};
-window_center.x = $(window).width()  /2;
-window_center.y = $(window).height() /2;
+var window_center = {
+    x: $(window).width()  /2,
+    y: $(window).height() /2
+};
+
 
 
 

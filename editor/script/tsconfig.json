@@ -1,9 +1,16 @@
 {
   "compilerOptions": {
-    "module": "amd",
+    "module": "system",
     "target": "es5",
+
     "sourceMap": true,
+    "inlineSourceMap": true,
+    "inlineSources": true,
     "outFile": "editor.js"
+
+
+
+
   },
   "exclude": [
     "node_modules"

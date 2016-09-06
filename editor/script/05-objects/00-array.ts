@@ -1,4 +1,4 @@
-
+/// <reference path="05-object.ts" />
 
 
 namespace GALLERY.Objects{
@@ -29,12 +29,12 @@ namespace GALLERY.Objects{
         }
 
 
-        forEach(callback: Function): void {
+        forEach(callback: (item: any)=>void): void {
             return this.objects.forEach(callback);
         }
 
 
-        filter(callback: Function):GALLERY.Objects.Array {
+        filter(callback: (item: any)=>boolean):GALLERY.Objects.Array {
 
             var filtered_objects = new GALLERY.Objects.Array();
 

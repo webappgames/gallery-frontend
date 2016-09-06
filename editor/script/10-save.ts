@@ -1,6 +1,7 @@
-/**
- * Created by Pavel on 14.07.2016.
- */
+/// <reference path="../../lib/jquery.d.ts" />
+
+
+
 
 var last_objects;
 

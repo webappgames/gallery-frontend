@@ -44,7 +44,7 @@ namespace GALLERY.Objects{
             //----------------------------------
             if (object.type == 'block') {
 
-                r(GALLERY);
+                //r(GALLERY);
                 object = new GALLERY.Objects.Block(object);
 
             } else if (object.type == 'light') {

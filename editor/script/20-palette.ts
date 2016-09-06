@@ -14,26 +14,27 @@ var STOREYS = [
 ];
 
 
+$(function () {
 
-STOREYS.forEach(function (storey) {
-    $('.select-storeys').find('ul').append($('<li></li>').text(storey).attr('data-storey',storey));
+    STOREYS.forEach(function (storey) {
+        $('.select-storeys').find('ul').append($('<li></li>').text(storey).attr('data-storey',storey));
+    });
+
+
+
+    $('.select-storeys').find('ul').find('li').click(function () {
+
+        //r(this);
+
+        $('.select-storeys').find('ul').find('li').removeClass('selected');
+        $(this).addClass('selected');
+
+        storey_selected = $(this).attr('data-storey');
+        createMap();
+
+    }).first().trigger('click');
+
 });
-
-
-
-$('.select-storeys').find('ul').find('li').click(function () {
-
-    //r(this);
-
-    $('.select-storeys').find('ul').find('li').removeClass('selected');
-    $(this).addClass('selected');
-
-    storey_selected = $(this).attr('data-storey');
-    createMap();
-
-}).first().trigger('click');
-
-
 
 //-------------------------------------------------------------
 
@@ -49,26 +50,27 @@ var ZOOMS = [
 ];
 
 
+$(function () {
 
-ZOOMS.forEach(function (storey) {
-    $('.select-zooms').find('ul').append($('<li></li>').text(storey).attr('data-zoom',storey));
+    ZOOMS.forEach(function (storey) {
+        $('.select-zooms').find('ul').append($('<li></li>').text(storey).attr('data-zoom',storey));
+    });
+
+
+
+    $('.select-zooms').find('ul').find('li').click(function () {
+
+        //r(this);
+
+        $('.select-zooms').find('ul').find('li').removeClass('selected');
+        $(this).addClass('selected');
+
+        zoom_selected = $(this).attr('data-zoom')/1;
+        createMap();
+
+    }).first().next().next().next().trigger('click');//todo better
+
 });
-
-
-
-$('.select-zooms').find('ul').find('li').click(function () {
-
-    //r(this);
-
-    $('.select-zooms').find('ul').find('li').removeClass('selected');
-    $(this).addClass('selected');
-
-    zoom_selected = $(this).attr('data-zoom')/1;
-    createMap();
-
-}).first().next().next().next().trigger('click');//todo better
-
-
 
 
 //-------------------------------------------------------------
@@ -93,126 +95,131 @@ var BLOCK_SHAPES = ['none','room','wall','door','window'];
 
 
 
-//-------------------------------------------------------------
 
+$(function () {
 
+    BLOCK_MATERIALS.forEach(function (material) {
 
+        //r('creating block to pallete');
 
-BLOCK_MATERIALS.forEach(function (material) {
-
-    r(GALLERY);
-
-    $('.select-materials').append(createObject$(GALLERY.Objects.Object.init({
-        type: 'block',
-        shape: 'wall',
-        material: material
-    })));
-
-
-
-});
-
-
-BLOCK_SHAPES.forEach(function (shape) {
-
-
-    $('.select-shapes').append(createObject$(GALLERY.Objects.Object.init({
-        type: 'block',
-        shape: shape,
-        material: 'stone-plain'
-    })));
-
-
-
-});
-
-
-
-
-
-
-$('.palette').find('.select-materials').find('.block').click(function () {
-
-    $('.palette').find('.select-materials').find('.block').removeClass('selected');
-    $(this).addClass('selected');
-
-    material_selected = $(this).attr('data-material');
-}).first().trigger('click');
-
-
-
-$('.palette').find('.select-shapes').find('.block').click(function () {
-
-    $('.palette').find('.select-shapes').find('.block').removeClass('selected');
-    $(this).addClass('selected');
-
-    shape_selected = $(this).attr('data-shape');
-}).first().trigger('click');
-
-
-
-
-//===================================================================================================
-
-
-['light','label','tree','stairs'].forEach(function (type) {
-
-
-
-    $('.palette').find('.'+type).draggable({
-
-        //helper: 'clone',
-
-
-        stop: function () {
-
-            var offset = $(this).offset();
-            var position = getPositionFromLeftTop(offset.left,offset.top);
-
-
-            var object = {
-                id: createGuid(),
-                type: type,
-                position: position,
-                storey: storey_selected
-            };
-
-            if(type == 'light'){
-                object.color = '#ffffff';
-                object.intensity = 1;
-            }else
-            if(type == 'label'){
-                object.name = '';
-                object.uri = '';
-                object.rotation = 0;
-            }
-            if(type == 'stairs'){
-                object.width = 10;
-                object.height = 2;
-                object.rotation = 0;
-            }
-
-
-            objects.push(object);
-
-
-
-
-            createMap();
-
-            save();
-
-            $(this)
-                .css('left',0)
-                .css('top',0);
-            //r(x,y);
-
-        }
+        $('.select-materials').append(createObject$(GALLERY.Objects.Object.init({
+            type: 'block',
+            shape: 'wall',
+            material: material
+        })));
 
 
 
     });
 
 
+
+
+    BLOCK_SHAPES.forEach(function (shape) {
+
+
+        $('.select-shapes').append(createObject$(GALLERY.Objects.Object.init({
+            type: 'block',
+            shape: shape,
+            material: 'stone-plain'
+        })));
+
+
+
+    });
+
+
+
+
+
+
+    $('.palette').find('.select-materials').find('.block').click(function () {
+
+        $('.palette').find('.select-materials').find('.block').removeClass('selected');
+        $(this).addClass('selected');
+
+        material_selected = $(this).attr('data-material');
+    }).first().trigger('click');
+
+
+
+    $('.palette').find('.select-shapes').find('.block').click(function () {
+
+        $('.palette').find('.select-shapes').find('.block').removeClass('selected');
+        $(this).addClass('selected');
+
+        shape_selected = $(this).attr('data-shape');
+    }).first().trigger('click');
+
+
 });
 
+
+//===================================================================================================
+
+
+$(function () {
+
+
+    ['light','label','tree','stairs'].forEach(function (type) {
+
+
+
+        $('.palette').find('.'+type).draggable({
+
+            //helper: 'clone',
+
+
+            stop: function () {
+
+                var offset = $(this).offset();
+                var position = getPositionFromLeftTop(offset.left,offset.top);
+
+
+                var object = {
+                    id: createGuid(),
+                    type: type,
+                    position: position,
+                    storey: storey_selected
+                };
+
+                if(type == 'light'){
+                    object.color = '#ffffff';
+                    object.intensity = 1;
+                }else
+                if(type == 'label'){
+                    object.name = '';
+                    object.uri = '';
+                    object.rotation = 0;
+                }
+                if(type == 'stairs'){
+                    object.width = 10;
+                    object.height = 2;
+                    object.rotation = 0;
+                }
+
+
+                objects.push(object);
+
+
+
+
+                createMap();
+
+                save();
+
+                $(this)
+                    .css('left',0)
+                    .css('top',0);
+                //r(x,y);
+
+            }
+
+
+
+        });
+
+
+    });
+
+});

@@ -13,13 +13,13 @@ namespace GALLERY.Objects{
         constructor(objects:GALLERY.Objects.Object[] = []) {
 
 
-            for(let i in objects){
+            this.objects=[];
 
-                objects[i] = GALLERY.Objects.Object.init(objects[i]);
-            }
+            var self = this;
 
-
-            this.objects = objects;
+            objects.forEach(function (object) {
+                self.push(object);
+            });
 
         }
 
@@ -34,7 +34,12 @@ namespace GALLERY.Objects{
         }
 
 
-        filter(callback: (item: any)=>boolean):GALLERY.Objects.Array {
+        push(object:GALLERY.Objects.Object): void {
+            this.objects.push(GALLERY.Objects.Object.init(object));
+        }
+
+
+        /*filter(callback: (item: any)=>boolean):GALLERY.Objects.Array {
 
             var filtered_objects = new GALLERY.Objects.Array();
 
@@ -44,7 +49,50 @@ namespace GALLERY.Objects{
 
             return (filtered_objects);
 
+        }*/
+
+
+
+        getObjectById(id){
+            for(var i=0,l=this.objects.length;i<l;i++){
+                if(this.objects[i].id==id)return(this.objects[i]);
+            }
+            throw new Error('Unknown id '+id);
         }
+
+
+
+
+        removeObjectById(id){
+            for (var i in this.objects) {
+                if (this.objects[i].id == id) {
+                    this.objects.splice(i, 1);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+
+        removeBlockOnPosition(position,storey){
+            //r(position);
+
+            for (var i in this.objects) {
+
+                if (this.objects[i].type == 'block'){
+                    //r(05-objects[i]);
+                    if(this.objects[i].position.x==position.x && this.objects[i].position.y==position.y && this.objects[i].storey==storey){
+                        this.objects.splice(i, 1);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+
+
 
 
     }

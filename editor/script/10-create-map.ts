@@ -9,42 +9,6 @@ drawing=false;
 moving=false;
 
 
-function getObjectById(id){
-    for(var i=0,l=objects.length;i<l;i++){
-        if(objects[i].id==id)return(objects[i]);
-    }
-    throw new Error('Unknown id '+id);
-}
-
-
-function removeObjectById(id){
-    for (var i in objects) {
-        if (objects[i].id == id) {
-            objects.splice(i, 1);
-            return true;
-        }
-    }
-    return false;
-}
-
-function removeBlockOnPosition(position,storey){
-
-    //r(position);
-
-    for (var i in objects) {
-
-        if (objects[i].type == 'block'){
-            //r(05-objects[i]);
-            if(objects[i].position.x==position.x && objects[i].position.y==position.y && objects[i].storey==storey){
-                objects.splice(i, 1);
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-
 
 
 
@@ -66,7 +30,7 @@ function createMap() {
 
         if(object.storey!==storey_selected_basement)return;
 
-        $admin_world_basement.append('\n').append(createObject$(object));
+        $admin_world_basement.append('\n').append(createObject$(GALLERY.Objects.Object.init(object)));
 
     });
 
@@ -79,7 +43,7 @@ function createMap() {
 
         if(object.storey!==storey_selected)return;
 
-        $admin_world.append('\n').append(createObject$(object));
+        $admin_world.append('\n').append(createObject$(GALLERY.Objects.Object.init(object)));
 
     });
 
@@ -117,7 +81,7 @@ function createMap() {
 
 
         var id = $this.attr('id');
-        var object = getObjectById(id);
+        var object = objects.getObjectById(id);
 
         r($this,id,object);
 
@@ -196,7 +160,7 @@ function createMap() {
             var id = $this.attr('data-id');
             var key = $this.attr('data-key');
 
-            var object = getObjectById(id);
+            var object = objects.getObjectById(id);
             object[key] = val;
 
             createMap();
@@ -212,7 +176,7 @@ function createMap() {
 
         $delete_button = $('<button>Smazat</button>');
         $delete_button.click(function () {
-            removeObjectById(id);
+            objects.removeObjectById(id);
             createMap();
             $selected_properties.hide();
             save();
@@ -307,7 +271,7 @@ function createMap() {
         drawing_objects.forEach(function (object) {
             $('#'+object.id).remove();
         });
-        drawing_objects=[];
+        drawing_objects=new GALLERY.Objects.Array();
 
 
         for(var y=0;y<=size_y;y++){
@@ -329,7 +293,7 @@ function createMap() {
                 //05-objects.push(object);
                 drawing_objects.push(object);
 
-                $admin_world.append('\n').append(createObject$(object));//todo use also in pallete
+                $admin_world.append('\n').append(createObject$(GALLERY.Objects.Object.init(object)));//todo use also in pallete
 
 
 
@@ -354,7 +318,7 @@ function createMap() {
 
             //r('object',object);
             //r('object.position',object.position);
-            removed_stat += removeBlockOnPosition(object.position,object.storey)?1:0;
+            removed_stat += objects.removeBlockOnPosition(object.position,object.storey)?1:0;
 
             if(object.shape!=='none'){
                 objects.push(object);
@@ -392,7 +356,7 @@ function createMap() {
 
 
             var id = $(this).attr('id');
-            var object = getObjectById(id);
+            var object = objects.getObjectById(id);
             object.position = position;
 
             //select_callback.call(this);
@@ -433,7 +397,7 @@ function createMap() {
 
 
             var id = $(this).attr('id');
-            var object = getObjectById(id);
+            var object = objects.getObjectById(id);
             object.position = position;
 
             //select_callback.call(this);
@@ -474,7 +438,7 @@ function createMap() {
 
 
             var id = $(this).attr('id');
-            var object = getObjectById(id);
+            var object = objects.getObjectById(id);
 
 
             object.position = position;
@@ -516,7 +480,7 @@ function createMap() {
 
 
             var id = $(this).attr('id');
-            var object = getObjectById(id);
+            var object = objects.getObjectById(id);
 
             object.position = position;
 

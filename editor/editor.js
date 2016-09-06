@@ -12,10 +12,11 @@ var GALLERY;
         var Array = (function () {
             function Array(objects) {
                 if (objects === void 0) { objects = []; }
-                for (var i in objects) {
-                    objects[i] = GALLERY.Objects.Object.init(objects[i]);
-                }
-                this.objects = objects;
+                this.objects = [];
+                var self = this;
+                objects.forEach(function (object) {
+                    self.push(object);
+                });
             }
             Array.prototype.getAll = function () {
                 return this.objects;
@@ -23,11 +24,48 @@ var GALLERY;
             Array.prototype.forEach = function (callback) {
                 return this.objects.forEach(callback);
             };
-            Array.prototype.filter = function (callback) {
+            Array.prototype.push = function (object) {
+                this.objects.push(GALLERY.Objects.Object.init(object));
+            };
+            /*filter(callback: (item: any)=>boolean):GALLERY.Objects.Array {
+    
                 var filtered_objects = new GALLERY.Objects.Array();
+    
                 //r(filtered_objects.05-objects);
+    
                 filtered_objects.objects = this.objects.filter(callback);
+    
                 return (filtered_objects);
+    
+            }*/
+            Array.prototype.getObjectById = function (id) {
+                for (var i = 0, l = this.objects.length; i < l; i++) {
+                    if (this.objects[i].id == id)
+                        return (this.objects[i]);
+                }
+                throw new Error('Unknown id ' + id);
+            };
+            Array.prototype.removeObjectById = function (id) {
+                for (var i in this.objects) {
+                    if (this.objects[i].id == id) {
+                        this.objects.splice(i, 1);
+                        return true;
+                    }
+                }
+                return false;
+            };
+            Array.prototype.removeBlockOnPosition = function (position, storey) {
+                //r(position);
+                for (var i in this.objects) {
+                    if (this.objects[i].type == 'block') {
+                        //r(05-objects[i]);
+                        if (this.objects[i].position.x == position.x && this.objects[i].position.y == position.y && this.objects[i].storey == storey) {
+                            this.objects.splice(i, 1);
+                            return true;
+                        }
+                    }
+                }
+                return false;
             };
             return Array;
         }());
@@ -55,7 +93,7 @@ var GALLERY;
                 }
                 //----------------------------------
                 if (object.type == 'block') {
-                    r(GALLERY);
+                    //r(GALLERY);
                     object = new GALLERY.Objects.Block(object);
                 }
                 else if (object.type == 'light') {
@@ -106,8 +144,8 @@ var GALLERY;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
 /// <reference path="../reference.ts" />
-r('created block');
-r(GALLERY.Objects.Object);
+//r('created block');
+//r(GALLERY.Objects.Object);
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -299,7 +337,7 @@ var GALLERY;
 })(GALLERY || (GALLERY = {}));
 /// <reference path="reference.ts" />
 function createObject$(object) {
-    r(object);
+    //r(object.create$Element());
     return object.create$Element();
 }
 /// <reference path="reference.ts" />
@@ -860,16 +898,18 @@ var STOREYS = [
     '5NP',
     '6NP'
 ];
-STOREYS.forEach(function (storey) {
-    $('.select-storeys').find('ul').append($('<li></li>').text(storey).attr('data-storey', storey));
+$(function () {
+    STOREYS.forEach(function (storey) {
+        $('.select-storeys').find('ul').append($('<li></li>').text(storey).attr('data-storey', storey));
+    });
+    $('.select-storeys').find('ul').find('li').click(function () {
+        //r(this);
+        $('.select-storeys').find('ul').find('li').removeClass('selected');
+        $(this).addClass('selected');
+        storey_selected = $(this).attr('data-storey');
+        createMap();
+    }).first().trigger('click');
 });
-$('.select-storeys').find('ul').find('li').click(function () {
-    //r(this);
-    $('.select-storeys').find('ul').find('li').removeClass('selected');
-    $(this).addClass('selected');
-    storey_selected = $(this).attr('data-storey');
-    createMap();
-}).first().trigger('click');
 //-------------------------------------------------------------
 var zoom_selected;
 var ZOOMS = [
@@ -879,16 +919,18 @@ var ZOOMS = [
     '30',
     '50'
 ];
-ZOOMS.forEach(function (storey) {
-    $('.select-zooms').find('ul').append($('<li></li>').text(storey).attr('data-zoom', storey));
+$(function () {
+    ZOOMS.forEach(function (storey) {
+        $('.select-zooms').find('ul').append($('<li></li>').text(storey).attr('data-zoom', storey));
+    });
+    $('.select-zooms').find('ul').find('li').click(function () {
+        //r(this);
+        $('.select-zooms').find('ul').find('li').removeClass('selected');
+        $(this).addClass('selected');
+        zoom_selected = $(this).attr('data-zoom') / 1;
+        createMap();
+    }).first().next().next().next().trigger('click'); //todo better
 });
-$('.select-zooms').find('ul').find('li').click(function () {
-    //r(this);
-    $('.select-zooms').find('ul').find('li').removeClass('selected');
-    $(this).addClass('selected');
-    zoom_selected = $(this).attr('data-zoom') / 1;
-    createMap();
-}).first().next().next().next().trigger('click'); //todo better
 //-------------------------------------------------------------
 var BLOCK_MATERIALS = [
     'color-white',
@@ -902,67 +944,70 @@ var BLOCK_MATERIALS = [
     'wood-fence',
     'wood-raw'];
 var BLOCK_SHAPES = ['none', 'room', 'wall', 'door', 'window'];
-//-------------------------------------------------------------
-BLOCK_MATERIALS.forEach(function (material) {
-    r(GALLERY);
-    $('.select-materials').append(createObject$(GALLERY.Objects.Object.init({
-        type: 'block',
-        shape: 'wall',
-        material: material
-    })));
+$(function () {
+    BLOCK_MATERIALS.forEach(function (material) {
+        //r('creating block to pallete');
+        $('.select-materials').append(createObject$(GALLERY.Objects.Object.init({
+            type: 'block',
+            shape: 'wall',
+            material: material
+        })));
+    });
+    BLOCK_SHAPES.forEach(function (shape) {
+        $('.select-shapes').append(createObject$(GALLERY.Objects.Object.init({
+            type: 'block',
+            shape: shape,
+            material: 'stone-plain'
+        })));
+    });
+    $('.palette').find('.select-materials').find('.block').click(function () {
+        $('.palette').find('.select-materials').find('.block').removeClass('selected');
+        $(this).addClass('selected');
+        material_selected = $(this).attr('data-material');
+    }).first().trigger('click');
+    $('.palette').find('.select-shapes').find('.block').click(function () {
+        $('.palette').find('.select-shapes').find('.block').removeClass('selected');
+        $(this).addClass('selected');
+        shape_selected = $(this).attr('data-shape');
+    }).first().trigger('click');
 });
-BLOCK_SHAPES.forEach(function (shape) {
-    $('.select-shapes').append(createObject$(GALLERY.Objects.Object.init({
-        type: 'block',
-        shape: shape,
-        material: 'stone-plain'
-    })));
-});
-$('.palette').find('.select-materials').find('.block').click(function () {
-    $('.palette').find('.select-materials').find('.block').removeClass('selected');
-    $(this).addClass('selected');
-    material_selected = $(this).attr('data-material');
-}).first().trigger('click');
-$('.palette').find('.select-shapes').find('.block').click(function () {
-    $('.palette').find('.select-shapes').find('.block').removeClass('selected');
-    $(this).addClass('selected');
-    shape_selected = $(this).attr('data-shape');
-}).first().trigger('click');
 //===================================================================================================
-['light', 'label', 'tree', 'stairs'].forEach(function (type) {
-    $('.palette').find('.' + type).draggable({
-        //helper: 'clone',
-        stop: function () {
-            var offset = $(this).offset();
-            var position = getPositionFromLeftTop(offset.left, offset.top);
-            var object = {
-                id: createGuid(),
-                type: type,
-                position: position,
-                storey: storey_selected
-            };
-            if (type == 'light') {
-                object.color = '#ffffff';
-                object.intensity = 1;
+$(function () {
+    ['light', 'label', 'tree', 'stairs'].forEach(function (type) {
+        $('.palette').find('.' + type).draggable({
+            //helper: 'clone',
+            stop: function () {
+                var offset = $(this).offset();
+                var position = getPositionFromLeftTop(offset.left, offset.top);
+                var object = {
+                    id: createGuid(),
+                    type: type,
+                    position: position,
+                    storey: storey_selected
+                };
+                if (type == 'light') {
+                    object.color = '#ffffff';
+                    object.intensity = 1;
+                }
+                else if (type == 'label') {
+                    object.name = '';
+                    object.uri = '';
+                    object.rotation = 0;
+                }
+                if (type == 'stairs') {
+                    object.width = 10;
+                    object.height = 2;
+                    object.rotation = 0;
+                }
+                objects.push(object);
+                createMap();
+                save();
+                $(this)
+                    .css('left', 0)
+                    .css('top', 0);
+                //r(x,y);
             }
-            else if (type == 'label') {
-                object.name = '';
-                object.uri = '';
-                object.rotation = 0;
-            }
-            if (type == 'stairs') {
-                object.width = 10;
-                object.height = 2;
-                object.rotation = 0;
-            }
-            objects.push(object);
-            createMap();
-            save();
-            $(this)
-                .css('left', 0)
-                .css('top', 0);
-            //r(x,y);
-        }
+        });
     });
 });
 var GALLERY;
@@ -1116,35 +1161,6 @@ var GALLERY;
 var objects = [];
 drawing = false;
 moving = false;
-function getObjectById(id) {
-    for (var i = 0, l = objects.length; i < l; i++) {
-        if (objects[i].id == id)
-            return (objects[i]);
-    }
-    throw new Error('Unknown id ' + id);
-}
-function removeObjectById(id) {
-    for (var i in objects) {
-        if (objects[i].id == id) {
-            objects.splice(i, 1);
-            return true;
-        }
-    }
-    return false;
-}
-function removeBlockOnPosition(position, storey) {
-    //r(position);
-    for (var i in objects) {
-        if (objects[i].type == 'block') {
-            //r(05-objects[i]);
-            if (objects[i].position.x == position.x && objects[i].position.y == position.y && objects[i].storey == storey) {
-                objects.splice(i, 1);
-                return true;
-            }
-        }
-    }
-    return false;
-}
 var window_center = {
     x: $(window).width() / 2,
     y: $(window).height() / 2
@@ -1156,14 +1172,14 @@ function createMap() {
     objects.forEach(function (object) {
         if (object.storey !== storey_selected_basement)
             return;
-        $admin_world_basement.append('\n').append(createObject$(object));
+        $admin_world_basement.append('\n').append(createObject$(GALLERY.Objects.Object.init(object)));
     });
     var $admin_world = $('#admin-world');
     $admin_world.html('');
     objects.forEach(function (object) {
         if (object.storey !== storey_selected)
             return;
-        $admin_world.append('\n').append(createObject$(object));
+        $admin_world.append('\n').append(createObject$(GALLERY.Objects.Object.init(object)));
     });
     $admin_world.disableSelection();
     var $blocks = $admin_world.find('.block');
@@ -1182,7 +1198,7 @@ function createMap() {
     var select_callback = function () {
         $this = $(this);
         var id = $this.attr('id');
-        var object = getObjectById(id);
+        var object = objects.getObjectById(id);
         r($this, id, object);
         $dot.css('position', 'absolute');
         $dot.css('top', object.position.y * zoom_selected + window_center.y - 5);
@@ -1229,7 +1245,7 @@ function createMap() {
             var val = $this.val();
             var id = $this.attr('data-id');
             var key = $this.attr('data-key');
-            var object = getObjectById(id);
+            var object = objects.getObjectById(id);
             object[key] = val;
             createMap();
             save();
@@ -1238,7 +1254,7 @@ function createMap() {
         $selected_properties.show();
         $delete_button = $('<button>Smazat</button>');
         $delete_button.click(function () {
-            removeObjectById(id);
+            objects.removeObjectById(id);
             createMap();
             $selected_properties.hide();
             save();
@@ -1299,7 +1315,7 @@ function createMap() {
         drawing_objects.forEach(function (object) {
             $('#' + object.id).remove();
         });
-        drawing_objects = [];
+        drawing_objects = new GALLERY.Objects.Array();
         for (var y = 0; y <= size_y; y++) {
             for (var x = 0; x <= size_x; x++) {
                 var object = {
@@ -1315,7 +1331,7 @@ function createMap() {
                 };
                 //05-objects.push(object);
                 drawing_objects.push(object);
-                $admin_world.append('\n').append(createObject$(object)); //todo use also in pallete
+                $admin_world.append('\n').append(createObject$(GALLERY.Objects.Object.init(object))); //todo use also in pallete
             }
         }
     });
@@ -1329,7 +1345,7 @@ function createMap() {
         drawing_objects.forEach(function (object) {
             //r('object',object);
             //r('object.position',object.position);
-            removed_stat += removeBlockOnPosition(object.position, object.storey) ? 1 : 0;
+            removed_stat += objects.removeBlockOnPosition(object.position, object.storey) ? 1 : 0;
             if (object.shape !== 'none') {
                 objects.push(object);
             }
@@ -1347,7 +1363,7 @@ function createMap() {
             var offset = $(this).offset();
             var position = getPositionFromLeftTop(offset.left, offset.top);
             var id = $(this).attr('id');
-            var object = getObjectById(id);
+            var object = objects.getObjectById(id);
             object.position = position;
             //select_callback.call(this);
             //createMap();
@@ -1371,7 +1387,7 @@ function createMap() {
             var offset = $(this).offset();
             var position = getPositionFromLeftTop(offset.left, offset.top);
             var id = $(this).attr('id');
-            var object = getObjectById(id);
+            var object = objects.getObjectById(id);
             object.position = position;
             //select_callback.call(this);
             //createMap();
@@ -1395,7 +1411,7 @@ function createMap() {
             position.x = Math.round(position.x * 2) / 2;
             position.y = Math.round(position.y * 2) / 2;
             var id = $(this).attr('id');
-            var object = getObjectById(id);
+            var object = objects.getObjectById(id);
             object.position = position;
             select_callback.call(this);
             save(); //todo refactor to function
@@ -1425,7 +1441,7 @@ function createMap() {
             position.x = Math.round(position.x * 2) / 2;
             position.y = Math.round(position.y * 2) / 2;
             var id = $(this).attr('id');
-            var object = getObjectById(id);
+            var object = objects.getObjectById(id);
             object.position = position;
             var rotation = wallRotation(objects, position);
             var rotation_rad = rotation / 180 * Math.PI;

@@ -1,7 +1,7 @@
 /// <reference path="../reference.ts" />
 
-r('created block');
-r(GALLERY.Objects.Object);
+//r('created block');
+//r(GALLERY.Objects.Object);
 
 namespace GALLERY.Objects{
 

@@ -90,7 +90,7 @@ var BLOCK_MATERIALS = [
     'wood-fence',
     'wood-raw'];
 
-var BLOCK_SHAPES = ['none','room','wall','door','window'];
+var BLOCK_SHAPES = ['none','room','wall','door','window','gate'];
 
 
 

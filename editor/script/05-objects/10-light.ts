@@ -1,5 +1,4 @@
-/// <reference path="../../../lib/jquery.d.ts" />
-
+/// <reference path="../reference.ts" />
 
 namespace GALLERY.Objects{
 
@@ -8,11 +7,11 @@ namespace GALLERY.Objects{
 
 
 
-        static create$Element(){
+        create$Element(){
 
 
 
-            var $element = super();
+            var $element = this._create$Element();
             let object = this;
 
             $element.html('<i style="color:'+object.color+';" class="fa fa-sun-o" aria-hidden="true"></i>');

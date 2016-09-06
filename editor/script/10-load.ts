@@ -1,4 +1,4 @@
-/// <reference path="../../lib/jquery.d.ts" />
+/// <reference path="reference.ts" />
 
 
 
@@ -60,7 +60,7 @@ function loginOrCreate(testing_gallery,testing_password){
 
 
 
-        //r(response);
+        r(response);
         objects = new GALLERY.Objects.Array(response);
 
 

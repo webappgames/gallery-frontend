@@ -1,5 +1,4 @@
-/// <reference path="../../lib/jquery.d.ts" />
-
+/// <reference path="reference.ts" />
 
 
 

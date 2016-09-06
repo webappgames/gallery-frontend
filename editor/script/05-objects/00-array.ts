@@ -1,4 +1,4 @@
-/// <reference path="05-object.ts" />
+/// <reference path="../reference.ts" />
 
 
 namespace GALLERY.Objects{

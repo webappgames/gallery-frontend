@@ -1,17 +1,4 @@
-/// <reference path="10-block.ts" />
-/// <reference path="10-light.ts" />
-/// <reference path="10-label.ts" />
-/// <reference path="10-image.ts" />
-/// <reference path="10-tree.ts" />
-/// <reference path="10-stairs.ts" />
-
-
-/// <reference path="../20-palette.ts" />
-
-
-/// <reference path="../../../lib/jquery.d.ts" />
-
-
+/// <reference path="../reference.ts" />
 
 
 namespace GALLERY.Objects{
@@ -57,7 +44,7 @@ namespace GALLERY.Objects{
             //----------------------------------
             if (object.type == 'block') {
 
-                //r(GALLERY);
+                r(GALLERY);
                 object = new GALLERY.Objects.Block(object);
 
             } else if (object.type == 'light') {
@@ -94,10 +81,12 @@ namespace GALLERY.Objects{
 
 
 
+        /*create$Element(){
+            return this._create$Element();
+        }*/
 
 
-
-        create$Element(){
+        _create$Element(){
 
             let object = this;
 
@@ -135,7 +124,7 @@ namespace GALLERY.Objects{
             $element.css('width', zoom_selected);
             $element.css('height',zoom_selected);
 
-            return(element);
+            return($element);
 
         }
 

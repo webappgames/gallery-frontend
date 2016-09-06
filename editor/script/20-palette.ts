@@ -1,9 +1,4 @@
-/// <reference path="../../lib/jquery.d.ts" />
-
-
-/// <reference path="10-create-object" />
-/// <reference path="10-create-map" />
-/// <reference path="05-objects/05-object.ts" />
+/// <reference path="reference.ts" />
 
 
 
@@ -105,6 +100,7 @@ var BLOCK_SHAPES = ['none','room','wall','door','window'];
 
 BLOCK_MATERIALS.forEach(function (material) {
 
+    r(GALLERY);
 
     $('.select-materials').append(createObject$(GALLERY.Objects.Object.init({
         type: 'block',

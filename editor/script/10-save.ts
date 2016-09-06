@@ -1,4 +1,4 @@
-/// <reference path="../../lib/jquery.d.ts" />
+/// <reference path="reference.ts" />
 
 
 
@@ -14,8 +14,9 @@ var last_objects;
 
 
 function undo() {
-    objects = last_objects;
-    createMap();
+    console.warn('Undo not yet working');
+    //objects = last_objects;
+    //createMap();
 }
 
 
@@ -27,7 +28,7 @@ function undo() {
 function save() {
 
 
-    last_objects = JSON.parse(JSON.stringify(objects));
+    //last_objects = JSON.parse(JSON.stringify(objects.getAll()));
 
 
 
@@ -61,7 +62,7 @@ function save() {
         method: 'PUT',
         url: config.GALLERY_API_URL+'galleries/'+gallery,
         contentType: "application/json",
-        data: JSON.stringify(objects),
+        data: JSON.stringify(objects.getAll()),
         headers: { 'x-auth': password }
 
     }).done(function (response) {

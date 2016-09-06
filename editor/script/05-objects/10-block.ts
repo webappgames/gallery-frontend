@@ -1,5 +1,7 @@
-/// <reference path="../../../lib/jquery.d.ts" />
+/// <reference path="../reference.ts" />
 
+r('created block');
+r(GALLERY.Objects.Object);
 
 namespace GALLERY.Objects{
 
@@ -8,12 +10,13 @@ namespace GALLERY.Objects{
 
 
 
-        static create$Element(){
+        create$Element(){
 
 
+            var $element = this._create$Element();
 
-            var $element = super();
             //r($element);
+
             let object = this;
 
 

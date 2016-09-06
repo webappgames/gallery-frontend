@@ -1,4 +1,5 @@
-/// <reference path="../../lib/jquery.d.ts" />
+/// <reference path="reference.ts" />
+
 
 
 function createObject$(object:GALLERY.Objects.Object){

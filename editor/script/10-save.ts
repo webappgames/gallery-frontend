@@ -69,6 +69,10 @@ function save() {
 
     //last_objects = JSON.parse(JSON.stringify(objects.getAll()));
 
+    if(!loaded){
+        console.warn('Cant save because not yet loaded!');
+        return;
+    }
 
 
     $button = $('#save');

@@ -9,6 +9,7 @@ drawing=false;
 moving=false;
 
 
+var selected_object;
 
 
 
@@ -86,6 +87,7 @@ function createMap() {
 
         //r($this,id,object);
 
+        selected_object = object;
 
 
         $dot.css('position', 'absolute');
@@ -229,6 +231,7 @@ function createMap() {
 
     };
     var unselect_callback = function () {
+        selected_object = null;
         $('.not-selected-object').removeClass('not-selected-object');
         $selected_properties.hide();
     };
@@ -421,16 +424,16 @@ function createMap() {
     //----------------------------------------------------------------------------STAIRS drag
     var drag_stairs_options = {
 
-        //grid: [30,30],
+        grid: [zoom_selected/2,zoom_selected/2],
         //snap: ".block[data-shape='wall']",
         //snapMode: "outer",
 
-        drag: function(e, ui){
+        /*drag: function(e, ui){
 
-            ui.position.left = Math.floor((ui.position.left-window_center.x) / zoom_selected) * zoom_selected+window_center.x;
-            ui.position.top  = Math.floor((ui.position.top -window_center.y) / zoom_selected) * zoom_selected+window_center.y;
+            ui.position.left = (Math.floor((ui.position.left-window_center.x) / zoom_selected )+0.5) * zoom_selected+window_center.x;
+            ui.position.top  = (Math.floor((ui.position.top -window_center.y) / zoom_selected )+0.5) * zoom_selected+window_center.y;
 
-        },
+        },*/
         stop: function () {
 
 

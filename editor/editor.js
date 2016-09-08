@@ -512,6 +512,7 @@ $.get('../../config.json').done(function (response) {
     });
 });
 var objects;
+var loaded = false;
 function loginOrCreate(testing_gallery, testing_password) {
     $.get({
         url: config.GALLERY_API_URL + 'galleries/' + testing_gallery,
@@ -521,6 +522,7 @@ function loginOrCreate(testing_gallery, testing_password) {
         password = testing_password;
         window.localStorage.setItem('gallery', gallery);
         window.localStorage.setItem('password', password);
+        loaded = true;
         r(response);
         objects = new GALLERY.Objects.Array(response);
         $('#show-gallery').attr('href', '../viewer?gallery=' + gallery);
@@ -544,6 +546,7 @@ function loginOrCreate(testing_gallery, testing_password) {
                     password = testing_password;
                     window.localStorage.setItem('gallery', gallery);
                     window.localStorage.setItem('password', password);
+                    loaded = true;
                     objects = new GALLERY.Objects.Array();
                     $('#show-gallery').attr('href', '../viewer?gallery=' + gallery);
                     createMap();
@@ -560,6 +563,7 @@ function logout() {
         password = undefined;
         window.localStorage.removeItem('gallery');
         window.localStorage.removeItem('password');
+        loaded = false;
         $('#select-gallery').show();
     }
 }
@@ -808,6 +812,10 @@ function undo() {
 }
 function save() {
     //last_objects = JSON.parse(JSON.stringify(objects.getAll()));
+    if (!loaded) {
+        console.warn('Cant save because not yet loaded!');
+        return;
+    }
     $button = $('#save');
     $button.html('<i class="fa fa-refresh fa-spin fa-fw"></i>Ukládání'); //todo fa
     /*blocks = [];
@@ -989,7 +997,11 @@ $(function () {
         $('.select-storeys').find('ul').find('li').removeClass('selected');
         $(this).addClass('selected');
         storey_selected = $(this).attr('data-storey');
-        createMap();
+        if (selected_object) {
+            r('Moving selected object to new storey!');
+            selected_object.storey = storey_selected;
+        }
+        saveAndRedraw();
     }).first().trigger('click');
 });
 //-------------------------------------------------------------
@@ -1002,8 +1014,8 @@ var ZOOMS = [
     '50'
 ];
 $(function () {
-    ZOOMS.forEach(function (storey) {
-        $('.select-zooms').find('ul').append($('<li></li>').text(storey).attr('data-zoom', storey));
+    ZOOMS.forEach(function (zoom) {
+        $('.select-zooms').find('ul').append($('<li></li>').text(zoom).attr('data-zoom', zoom));
     });
     $('.select-zooms').find('ul').find('li').click(function () {
         //r(this);
@@ -1257,6 +1269,7 @@ var GALLERY;
 var objects = [];
 drawing = false;
 moving = false;
+var selected_object;
 var window_center = {
     x: $(window).width() / 2,
     y: $(window).height() / 2
@@ -1295,6 +1308,7 @@ function createMap() {
         var id = $this.attr('id');
         var object = objects.getObjectById(id);
         //r($this,id,object);
+        selected_object = object;
         $dot.css('position', 'absolute');
         $dot.css('top', object.position.y * zoom_selected + window_center.y - 5);
         $dot.css('left', object.position.x * zoom_selected + window_center.x - 5);
@@ -1383,6 +1397,7 @@ function createMap() {
         //r(top_z_index++);
     };
     var unselect_callback = function () {
+        selected_object = null;
         $('.not-selected-object').removeClass('not-selected-object');
         $selected_properties.hide();
     };
@@ -1487,13 +1502,15 @@ function createMap() {
     //----------------------------------------------------------------------------
     //----------------------------------------------------------------------------STAIRS drag
     var drag_stairs_options = {
-        //grid: [30,30],
+        grid: [zoom_selected / 2, zoom_selected / 2],
         //snap: ".block[data-shape='wall']",
         //snapMode: "outer",
-        drag: function (e, ui) {
-            ui.position.left = Math.floor((ui.position.left - window_center.x) / zoom_selected) * zoom_selected + window_center.x;
-            ui.position.top = Math.floor((ui.position.top - window_center.y) / zoom_selected) * zoom_selected + window_center.y;
-        },
+        /*drag: function(e, ui){
+
+            ui.position.left = (Math.floor((ui.position.left-window_center.x) / zoom_selected )+0.5) * zoom_selected+window_center.x;
+            ui.position.top  = (Math.floor((ui.position.top -window_center.y) / zoom_selected )+0.5) * zoom_selected+window_center.y;
+
+        },*/
         stop: function () {
             var offset = $(this).offset();
             var position = getPositionFromLeftTop(offset.left, offset.top);

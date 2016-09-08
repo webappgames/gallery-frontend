@@ -41,10 +41,10 @@ $.get('../../config.json').done(function (response) {
 
 
 var objects:GALLERY.Objects.Array;
+var loaded = false;
 
 
 function loginOrCreate(testing_gallery,testing_password){
-
 
     $.get({
         url:config.GALLERY_API_URL +'galleries/'+ testing_gallery,
@@ -57,6 +57,7 @@ function loginOrCreate(testing_gallery,testing_password){
 
         window.localStorage.setItem('gallery',gallery);
         window.localStorage.setItem('password',password);
+        loaded = true;
 
 
 
@@ -103,6 +104,7 @@ function loginOrCreate(testing_gallery,testing_password){
 
                     window.localStorage.setItem('gallery',gallery);
                     window.localStorage.setItem('password',password);
+                    loaded = true;
 
 
                     objects = new GALLERY.Objects.Array();
@@ -136,6 +138,7 @@ function logout() {
         password = undefined;
         window.localStorage.removeItem('gallery');
         window.localStorage.removeItem('password');
+        loaded = false;
         $('#select-gallery').show();
 
 

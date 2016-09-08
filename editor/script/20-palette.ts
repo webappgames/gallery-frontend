@@ -30,7 +30,17 @@ $(function () {
         $(this).addClass('selected');
 
         storey_selected = $(this).attr('data-storey');
-        createMap();
+
+
+        if(selected_object){
+            r('Moving selected object to new storey!');
+
+            selected_object.storey = storey_selected;
+
+        }
+
+        saveAndRedraw();
+
 
     }).first().trigger('click');
 
@@ -52,8 +62,8 @@ var ZOOMS = [
 
 $(function () {
 
-    ZOOMS.forEach(function (storey) {
-        $('.select-zooms').find('ul').append($('<li></li>').text(storey).attr('data-zoom',storey));
+    ZOOMS.forEach(function (zoom) {
+        $('.select-zooms').find('ul').append($('<li></li>').text(zoom).attr('data-zoom',zoom));
     });
 
 
@@ -66,6 +76,7 @@ $(function () {
         $(this).addClass('selected');
 
         zoom_selected = $(this).attr('data-zoom')/1;
+
         createMap();
 
     }).first().next().next().next().trigger('click');//todo better

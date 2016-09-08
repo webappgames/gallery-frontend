@@ -24,6 +24,9 @@ namespace GALLERY.Objects{
             $element.attr('data-material',object.material);
 
 
+            $element.css('top', '-='+ 0.5 * zoom_selected);
+            $element.css('left','-='+ 0.5 * zoom_selected);
+
 
 
             object.material = object.material || 'stone-plain';

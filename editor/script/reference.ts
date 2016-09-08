@@ -14,6 +14,10 @@
 /// <reference path="05-objects/10-light.ts" />
 /// <reference path="05-objects/10-stairs.ts" />
 /// <reference path="05-objects/10-tree.ts" />
+/// <reference path="05-objects/10-key.ts" />
+/// <reference path="05-objects/10-teleport.ts" />
+
+
 /// <reference path="10-create-map.ts" />
 /// <reference path="10-create-object.ts" />
 /// <reference path="10-keys.ts" />
@@ -26,4 +30,6 @@
 /// <reference path="10-save.ts" />
 /// <reference path="20-filedrop.ts" />
 /// <reference path="20-palette.ts" />
+
+
 /// <reference path="50-plugins/generators/simple-garden.ts" />

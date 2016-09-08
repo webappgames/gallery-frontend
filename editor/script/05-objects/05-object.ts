@@ -3,7 +3,7 @@
 
 namespace GALLERY.Objects{
 
-    export class Object{
+    export abstract class Object{
 
 
         public id: string;
@@ -67,6 +67,14 @@ namespace GALLERY.Objects{
 
             object = new GALLERY.Objects.Stairs(object);
 
+            }else if (object.type == 'key') {
+
+                object = new GALLERY.Objects.Key(object);
+
+            }else if (object.type == 'teleport') {
+
+                object = new GALLERY.Objects.Teleport(object);
+
             }
             else {
 
@@ -77,6 +85,12 @@ namespace GALLERY.Objects{
 
             return (object);
 
+        }
+
+
+
+        clone():Object{
+            return(Object.init(JSON.parse(JSON.stringify(this))));
         }
 
 

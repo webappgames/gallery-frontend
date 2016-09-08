@@ -8,6 +8,45 @@ var last_objects;
 
 
 
+function cleanStorey() {
+    if(confirm('Opravdu chcete vymazat vše v aktuálním podlaží '+storey_selected+'?')){
+
+        var new_objects =
+        objects.getAll().filter(function (object) {
+
+            if(object.storey == storey_selected){
+
+                return(false);
+
+            }else{
+
+                return(true);
+
+            }
+        });
+
+        objects = new GALLERY.Objects.Array(new_objects);
+        saveAndRedraw();
+
+
+    }
+}
+
+function cleanWorld() {
+    if(confirm('Opravdu chete vymazat vše a začít znovu?')){
+
+        objects = new GALLERY.Objects.Array();
+        saveAndRedraw();
+
+    }
+}
+
+
+
+function saveAndRedraw(){ //todo use this
+    createMap();
+    save();
+}
 
 
 

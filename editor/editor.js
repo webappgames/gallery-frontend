@@ -111,12 +111,21 @@ var GALLERY;
                 else if (object.type == 'stairs') {
                     object = new GALLERY.Objects.Stairs(object);
                 }
+                else if (object.type == 'key') {
+                    object = new GALLERY.Objects.Key(object);
+                }
+                else if (object.type == 'teleport') {
+                    object = new GALLERY.Objects.Teleport(object);
+                }
                 else {
                     console.log(object);
                     throw new Error('Cant put item into Gallery Objects Array because of unrecognized object type ' + object.type);
                 }
                 //----------------------------------
                 return (object);
+            };
+            Object.prototype.clone = function () {
+                return (Object.init(JSON.parse(JSON.stringify(this))));
             };
             /*create$Element(){
                 return this._create$Element();
@@ -161,6 +170,8 @@ var GALLERY;
                 var object = this;
                 $element.attr('data-shape', object.shape);
                 $element.attr('data-material', object.material);
+                $element.css('top', '-=' + 0.5 * zoom_selected);
+                $element.css('left', '-=' + 0.5 * zoom_selected);
                 object.material = object.material || 'stone-plain';
                 $element.css('background', 'url("/images/textures/' + object.material + '.jpg")');
                 $element.css('background-size', 'cover');
@@ -333,6 +344,53 @@ var GALLERY;
             return Tree;
         }(Objects.Object));
         Objects.Tree = Tree;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="../reference.ts" />
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        var Key = (function (_super) {
+            __extends(Key, _super);
+            function Key() {
+                _super.apply(this, arguments);
+            }
+            Key.prototype.create$Element = function () {
+                var $element = this._create$Element();
+                var object = this;
+                $element.html('<i class="fa fa-key" aria-hidden="true"></i>');
+                return $element;
+            };
+            return Key;
+        }(Objects.Object));
+        Objects.Key = Key;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="../reference.ts" />
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        var Teleport = (function (_super) {
+            __extends(Teleport, _super);
+            function Teleport() {
+                _super.apply(this, arguments);
+            }
+            Teleport.prototype.create$Element = function () {
+                var $element = this._create$Element();
+                var object = this;
+                var $inner = $('<i class="fa fa-external-link" aria-hidden="true"></i>');
+                $inner.css('width', object.radius * zoom_selected);
+                $inner.css('height', object.radius * zoom_selected);
+                $inner.css('border-radius', object.radius * zoom_selected);
+                $inner.css('border', '2px solid #000');
+                $element.append($inner);
+                return $element;
+            };
+            return Teleport;
+        }(Objects.Object));
+        Objects.Teleport = Teleport;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
 /// <reference path="reference.ts" />
@@ -719,6 +777,30 @@ function getPositionFromLeftTop(left, top) {
 }
 /// <reference path="reference.ts" />
 var last_objects;
+function cleanStorey() {
+    if (confirm('Opravdu chcete vymazat vše v aktuálním podlaží ' + storey_selected + '?')) {
+        var new_objects = objects.getAll().filter(function (object) {
+            if (object.storey == storey_selected) {
+                return (false);
+            }
+            else {
+                return (true);
+            }
+        });
+        objects = new GALLERY.Objects.Array(new_objects);
+        saveAndRedraw();
+    }
+}
+function cleanWorld() {
+    if (confirm('Opravdu chete vymazat vše a začít znovu?')) {
+        objects = new GALLERY.Objects.Array();
+        saveAndRedraw();
+    }
+}
+function saveAndRedraw() {
+    createMap();
+    save();
+}
 function undo() {
     console.warn('Undo not yet working');
     //objects = last_objects;
@@ -973,8 +1055,11 @@ $(function () {
 });
 //===================================================================================================
 $(function () {
-    ['light', 'label', 'tree', 'stairs'].forEach(function (type) {
-        $('.palette').find('.' + type).draggable({
+    ['light', 'label', 'tree', 'stairs', 'key', 'teleport'].forEach(function (type) {
+        var $dot_object = createObject$(GALLERY.Objects.Object.init({
+            type: type
+        }));
+        $dot_object.draggable({
             //helper: 'clone',
             stop: function () {
                 var offset = $(this).offset();
@@ -999,6 +1084,14 @@ $(function () {
                     object.height = 2;
                     object.rotation = 0;
                 }
+                else if (type == 'key') {
+                    object.key_type = 'blue';
+                }
+                else if (type == 'teleport') {
+                    object.radius = 1;
+                    object.href = '/';
+                    object.target = '';
+                }
                 objects.push(object);
                 createMap();
                 save();
@@ -1008,6 +1101,7 @@ $(function () {
                 //r(x,y);
             }
         });
+        $('.select-dot-objects').append($dot_object);
     });
 });
 var GALLERY;
@@ -1144,6 +1238,8 @@ var GALLERY;
 /// <reference path="05-objects/10-light.ts" />
 /// <reference path="05-objects/10-stairs.ts" />
 /// <reference path="05-objects/10-tree.ts" />
+/// <reference path="05-objects/10-key.ts" />
+/// <reference path="05-objects/10-teleport.ts" />
 /// <reference path="10-create-map.ts" />
 /// <reference path="10-create-object.ts" />
 /// <reference path="10-keys.ts" />
@@ -1183,11 +1279,10 @@ function createMap() {
     });
     $admin_world.disableSelection();
     var $blocks = $admin_world.find('.block');
-    var $lights = $admin_world.find('.light');
-    var $labels = $admin_world.find('.label');
-    var $trees = $admin_world.find('.tree');
+    var $blocks_gates = $admin_world.find('.block[data-shape="gate"]');
     var $images = $admin_world.find('.image');
     var $stairs = $admin_world.find('.stairs');
+    var $dot_objects = $admin_world.find('.light, .label, .tree, .key, .teleport');
     /*$admin_world.mousemove(function (e) {
         var position = getPositionFromLeftTop(e.clientX,e.clientY);
         document.title = isWallOn(05-objects,position);
@@ -1199,7 +1294,7 @@ function createMap() {
         $this = $(this);
         var id = $this.attr('id');
         var object = objects.getObjectById(id);
-        r($this, id, object);
+        //r($this,id,object);
         $dot.css('position', 'absolute');
         $dot.css('top', object.position.y * zoom_selected + window_center.y - 5);
         $dot.css('left', object.position.x * zoom_selected + window_center.x - 5);
@@ -1214,11 +1309,14 @@ function createMap() {
         var input_element, $input_element;
         for (var key in object) {
             input_element = false;
-            if (key == 'name' || key == 'uri' /* || key=='color'*/) {
+            if (['name', 'uri', 'key_type', 'href', 'target'].indexOf(key) !== -1) {
                 input_element = '<input type="text">';
             }
             else if (key == 'intensity') {
                 input_element = '<input type="range" min="0.1" max="5" step="0.1">';
+            }
+            else if (key == 'radius') {
+                input_element = '<input type="range" min="0.4" max="5" step="0.1">';
             }
             else if (key == 'color') {
                 input_element = '<input type="color">';
@@ -1255,9 +1353,22 @@ function createMap() {
         $delete_button = $('<button>Smazat</button>');
         $delete_button.click(function () {
             objects.removeObjectById(id);
-            createMap();
             $selected_properties.hide();
-            save();
+            saveAndRedraw();
+        });
+        $selected_properties.append($delete_button);
+        $delete_button = $('<button>Duplikovat</button>');
+        $delete_button.click(function () {
+            var object = objects.getObjectById(id);
+            var new_object = object.clone();
+            new_object.id = createGuid();
+            new_object.position.x += 1;
+            new_object.position.y += 1;
+            objects.push(new_object);
+            $selected_properties.hide();
+            saveAndRedraw();
+            r($('#' + new_object.id));
+            $('#' + new_object.id).trigger('mousedown');
         });
         $selected_properties.append($delete_button);
         /*
@@ -1275,11 +1386,10 @@ function createMap() {
         $('.not-selected-object').removeClass('not-selected-object');
         $selected_properties.hide();
     };
+    $blocks_gates.mousedown(select_callback);
     $images.mousedown(select_callback);
-    $lights.mousedown(select_callback);
-    $labels.mousedown(select_callback);
-    $trees.mousedown(select_callback);
     $stairs.mousedown(select_callback);
+    $dot_objects.mousedown(select_callback);
     //----------------------------------------------------------------------------
     //----------------------------------------------------------------------------BLOCKS drawing
     var drawing_x, drawing_y, drawing_objects;
@@ -1329,6 +1439,9 @@ function createMap() {
                     material: material_selected,
                     shape: shape_selected != 'wall' ? shape_selected : ((x == 0 || y == 0 || x == size_x || y == size_y) ? 'wall' : 'room')
                 };
+                if (shape_selected == 'gate') {
+                    object.key_type = 'blue';
+                }
                 //05-objects.push(object);
                 drawing_objects.push(object);
                 $admin_world.append('\n').append(createObject$(GALLERY.Objects.Object.init(object))); //todo use also in pallete
@@ -1370,9 +1483,7 @@ function createMap() {
             save();
         }
     };
-    $lights.draggable(drag_normal_options);
-    $labels.draggable(drag_normal_options);
-    $trees.draggable(drag_normal_options);
+    $dot_objects.draggable(drag_normal_options);
     //----------------------------------------------------------------------------
     //----------------------------------------------------------------------------STAIRS drag
     var drag_stairs_options = {

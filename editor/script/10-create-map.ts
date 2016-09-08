@@ -53,12 +53,13 @@ function createMap() {
     $admin_world.disableSelection();
 
     var $blocks= $admin_world.find('.block');
-    var $lights= $admin_world.find('.light');
-    var $labels= $admin_world.find('.label');
-    var $trees = $admin_world.find('.tree');
+    var $blocks_gates= $admin_world.find('.block[data-shape="gate"]');
     var $images= $admin_world.find('.image');
     var $stairs= $admin_world.find('.stairs');
 
+
+
+    var $dot_objects= $admin_world.find('.light, .label, .tree, .key, .teleport');
 
 
     /*$admin_world.mousemove(function (e) {
@@ -83,7 +84,7 @@ function createMap() {
         var id = $this.attr('id');
         var object = objects.getObjectById(id);
 
-        r($this,id,object);
+        //r($this,id,object);
 
 
 
@@ -113,11 +114,14 @@ function createMap() {
 
 
             input_element=false;
-            if(key=='name' || key=='uri'/* || key=='color'*/){
+            if(['name','uri','key_type','href','target'].indexOf(key)!==-1){
                 input_element='<input type="text">';
             }else
             if(key=='intensity'){
                 input_element='<input type="range" min="0.1" max="5" step="0.1">';
+            }else
+            if(key=='radius'){
+                input_element='<input type="range" min="0.4" max="5" step="0.1">';
             }else
             if(key=='color'){
                 input_element='<input type="color">';
@@ -177,13 +181,40 @@ function createMap() {
         $delete_button = $('<button>Smazat</button>');
         $delete_button.click(function () {
             objects.removeObjectById(id);
-            createMap();
             $selected_properties.hide();
-            save();
+            saveAndRedraw();
         });
 
 
         $selected_properties.append($delete_button);
+
+
+
+
+
+        $delete_button = $('<button>Duplikovat</button>');
+        $delete_button.click(function () {
+            let object = objects.getObjectById(id);
+            let new_object = object.clone();
+
+            new_object.id = createGuid();
+            new_object.position.x += 1;
+            new_object.position.y += 1;
+
+            objects.push(new_object);
+
+            $selected_properties.hide();
+            saveAndRedraw();
+
+            r($('#'+new_object.id));
+            $('#'+new_object.id).trigger('mousedown');
+        });
+
+
+        $selected_properties.append($delete_button);
+
+
+
         /*
         $rotate
             .css('display', 'block')
@@ -202,11 +233,16 @@ function createMap() {
         $selected_properties.hide();
     };
 
+    $blocks_gates.mousedown(select_callback);
     $images.mousedown(select_callback);
-    $lights.mousedown(select_callback);
-    $labels.mousedown(select_callback);
-    $trees.mousedown(select_callback);
     $stairs.mousedown(select_callback);
+
+
+
+    $dot_objects.mousedown(select_callback);
+
+
+
     //----------------------------------------------------------------------------
 
 
@@ -290,6 +326,14 @@ function createMap() {
                     shape: shape_selected!='wall'?shape_selected:((x==0 || y==0 || x==size_x || y==size_y)?'wall':'room')
 
                 };
+
+
+                if(shape_selected=='gate'){
+                    object.key_type = 'blue';
+                }
+
+
+
                 //05-objects.push(object);
                 drawing_objects.push(object);
 
@@ -369,9 +413,7 @@ function createMap() {
 
 
     };
-    $lights.draggable(drag_normal_options);
-    $labels.draggable(drag_normal_options);
-    $trees.draggable(drag_normal_options);
+    $dot_objects.draggable(drag_normal_options);
     //----------------------------------------------------------------------------
 
 

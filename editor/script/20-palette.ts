@@ -161,11 +161,16 @@ $(function () {
 $(function () {
 
 
-    ['light','label','tree','stairs'].forEach(function (type) {
+    ['light','label','tree','stairs','key','teleport'].forEach(function (type) {
+
+
+        let $dot_object = createObject$(GALLERY.Objects.Object.init({
+            type: type
+        }));
 
 
 
-        $('.palette').find('.'+type).draggable({
+        $dot_object.draggable({
 
             //helper: 'clone',
 
@@ -196,6 +201,16 @@ $(function () {
                     object.width = 10;
                     object.height = 2;
                     object.rotation = 0;
+                }else
+                if(type == 'key'){
+                    object.key_type = 'blue';
+                }else
+                if(type == 'teleport'){
+
+                    object.radius = 1;
+                    object.href = '/';
+                    object.target = '';
+
                 }
 
 
@@ -218,6 +233,8 @@ $(function () {
 
 
         });
+
+        $('.select-dot-objects').append($dot_object);
 
 
     });

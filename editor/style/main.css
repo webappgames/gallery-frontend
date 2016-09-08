@@ -80,11 +80,11 @@ main {
     background-color: #000;
     border-radius: 30px;
     box-shadow: #fff 0px 0px 5px; }
-#admin-world .label, #admin-world .tree, #admin-world-basement .label, #admin-world-basement .tree {
+#admin-world .label, #admin-world .tree, #admin-world .key, #admin-world .teleport, #admin-world-basement .label, #admin-world-basement .tree, #admin-world-basement .key, #admin-world-basement .teleport {
   z-index: 30;
   user-select: none;
   display: block; }
-  #admin-world .label i, #admin-world .tree i, #admin-world-basement .label i, #admin-world-basement .tree i {
+  #admin-world .label i, #admin-world .tree i, #admin-world .key i, #admin-world .teleport i, #admin-world-basement .label i, #admin-world-basement .tree i, #admin-world-basement .key i, #admin-world-basement .teleport i {
     font-size: 30px;
     cursor: move;
     position: absolute;
@@ -292,8 +292,10 @@ button, .button, input[type="submit"] {
   display: inline-block;
   border: none;
   padding: 0px;
+  padding-left: 4px;
+  padding-right: 4px;
   margin: 2px;
-  min-width: 80px;
+  min-width: 120px;
   line-height: 40px;
   font-size: 1.1em;
   border-radius: 3px;

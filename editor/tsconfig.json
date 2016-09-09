@@ -12,7 +12,10 @@
 
 
   },
-  "exclude": [
-    "node_modules"
+  "include": [
+
+    "../shared/script",
+    "script"
+
   ]
 }

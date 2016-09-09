@@ -1,12 +1,12 @@
 /// <reference path="reference.ts" />
 
 
-var objects = [];
+var objects: GALLERY.Objects.Array = new GALLERY.Objects.Array();
 
 
 
-drawing=false;
-moving=false;
+var drawing: boolean = false;
+var moving: boolean = false;
 
 
 var selected_object;
@@ -463,15 +463,28 @@ function createMap() {
     //----------------------------------------------------------------------------IMAGES
     var drag_snap_options = {
 
-        //grid: [ zoom_selected/2, zoom_selected/2 ],
+        //grid: [ zoom_selected, zoom_selected ],
+
         snap: ".block[data-shape='wall']",
         //snap: ".block",
-        snapMode: "outer",
+        //snapMode: "outer",
         //snapTolerance: 10,
 
-        drag: function(){
-        },
-        stop: function () {
+        /*drag: function(event,ui){
+
+            ui.position.left = (Math.floor((ui.position.left-window_center.x) / zoom_selected )+0.5) * zoom_selected+window_center.x;
+            ui.position.top  = (Math.floor((ui.position.top -window_center.y) / zoom_selected )+0.5) * zoom_selected+window_center.y;
+
+
+
+            var draggable = $(this).data("ui-draggable");
+            draggable._trigger("snapped", event, ui);
+
+
+
+
+        },*/
+        stop: function (event,ui) {
 
 
             var offset = $(this).offset();
@@ -517,6 +530,19 @@ function createMap() {
         snapped: function(event, ui) {
 
 
+            /*r(event);
+            $(event.toElement).css("border",'1px solid red');
+            $(event.toElement).css("z-index",'10000');
+
+            setTimeout(function () {
+
+                $(event.toElement).css("border",'none');
+                $(event.toElement).css("z-index",'10');
+
+            },3000);*/
+
+
+
             var offset = $(this).offset();
             var position = getPositionFromLeftTop(offset.left-7,offset.top);//todo wtf 7
 
@@ -530,8 +556,11 @@ function createMap() {
             object.position = position;
 
 
-            var rotation = wallRotation(objects, position);
+
+            var rotation = GALLERY.Objects.Block.wallRotation(objects, position, storey_selected);
             var rotation_rad = rotation/180*Math.PI;
+
+            //r(position,rotation);
 
             if (rotation === false) {
 

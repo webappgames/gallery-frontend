@@ -86,7 +86,7 @@ namespace GALLERY.Plugins.Generators {
 
             testing_positions_rotations.forEach(function (position) {
 
-                if(!isWallOn(walls,position)){
+                if(!GALLERY.Objects.Block.isWallOn(walls,position,storey_selected)){
                     positions_rotations.push(position);
                 }
 

@@ -2,20 +2,31 @@
 
 
 
-/// <reference path="../../lib/jquery.d.ts" />
+/// <reference path="../../shared/lib/jquery.d.ts" />
+
+
+/// <reference path="../../shared/script/uri-plugin.ts" />
+/// <reference path="../../shared/script/images.ts" />
+
+
+
+
+/// <reference path="../../shared/script/05-objects/00-array.ts" />
+/// <reference path="../../shared/script/05-objects/05-object.ts" />
+/// <reference path="../../shared/script/05-objects/10-block.ts" />
+/// <reference path="../../shared/script/05-objects/10-image.ts" />
+/// <reference path="../../shared/script/05-objects/10-label.ts" />
+/// <reference path="../../shared/script/05-objects/10-light.ts" />
+/// <reference path="../../shared/script/05-objects/10-stairs.ts" />
+/// <reference path="../../shared/script/05-objects/10-tree.ts" />
+/// <reference path="../../shared/script/05-objects/10-key.ts" />
+/// <reference path="../../shared/script/05-objects/10-teleport.ts" />
+
+
 
 
 /// <reference path="00-common.ts" />
-/// <reference path="05-objects/00-array.ts" />
-/// <reference path="05-objects/05-object.ts" />
-/// <reference path="05-objects/10-block.ts" />
-/// <reference path="05-objects/10-image.ts" />
-/// <reference path="05-objects/10-label.ts" />
-/// <reference path="05-objects/10-light.ts" />
-/// <reference path="05-objects/10-stairs.ts" />
-/// <reference path="05-objects/10-tree.ts" />
-/// <reference path="05-objects/10-key.ts" />
-/// <reference path="05-objects/10-teleport.ts" />
+
 
 
 /// <reference path="10-create-map.ts" />

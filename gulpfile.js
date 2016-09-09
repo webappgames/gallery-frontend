@@ -28,7 +28,7 @@ gulp.task('build', function() {
 gulp.task('compile', function () {
 
 
-    var tsProject = ts.createProject('editor/script/tsconfig.json');
+    var tsProject = ts.createProject('editor/tsconfig.json');
 
 
     var tsResult = tsProject.src() // instead of gulp.src(...)

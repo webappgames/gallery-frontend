@@ -8,6 +8,7 @@ namespace GALLERY.Objects{
 
         public id: string;
         public type: string;
+        public storey: string;
         public position: {
           x: number,
           y: number

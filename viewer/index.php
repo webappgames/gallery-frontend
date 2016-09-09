@@ -50,45 +50,38 @@ foreach($objects as $object) {
 
 
 ?>
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title><?=htmlspecialchars($page['name'])?></title>
 
-    <script>
-        var r = console.log.bind(console);
-    </script>
 
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-
-
-
-    <!-- Babylon.js -->
-
-    <script src="script/lib/babylon.js"></script>
-
-
-
-    <script src="script/babylon-plugins/babylon-tree.js"></script>
-    <script src="script/babylon-plugins/babylon-stairs.js"></script>
-    <script src="script/uri-plugin.js"></script>
+    <script
+            src="https://code.jquery.com/jquery-2.2.4.min.js"
+            integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+            crossorigin="anonymous"></script>
+    <script
+            src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
+            integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
+            crossorigin="anonymous"></script>
 
 
 
-    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="style/viewer.css">
 
 
 
-    
-    <?php
 
-    foreach(glob('style/*.css') as $file){
-        echo('<link rel="stylesheet" href="'.$file.'">');
-    }
 
-    ?>
+
 
 
 </head>
@@ -164,18 +157,21 @@ foreach($objects as $object) {
 
 
 <canvas id="scene"></canvas>
-<script src="script/scene.js"></script>
-<script src="script/map.js"></script>
-<script src="script/10-keys.js"></script>
-<script src="script/move-to.js"></script>
-<script src="script/pointer-lock.js"></script>
-<script src="script/popup-window.js"></script>
 
+
+
+
+
+<script src="viewer.js"></script>
 <script>
     document.getElementById("scene").focus();
-    runGallery(<?=json_encode($objects)?>);
+    runGallery(new GALLERY.Objects.Array(<?=json_encode($objects)?>));
 
 </script>
+
+
+
+
 
 
 </body>

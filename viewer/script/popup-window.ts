@@ -1,7 +1,4 @@
-/**
- * Created by hejny on 2.8.16.
- */
-
+/// <reference path="reference.ts" />
 
 var Window={};
 var window_opened = false;

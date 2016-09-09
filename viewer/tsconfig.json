@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "module": "system",
+    "target": "es5",
+
+    "sourceMap": true,
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "outFile": "viewer.js"
+
+
+
+
+  },
+  "include": [
+
+    "../shared/script",
+    "script"
+
+  ]
+}

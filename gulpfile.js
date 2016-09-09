@@ -23,9 +23,11 @@ gulp.task('build', function() {
 
 
 
+gulp.task('compile',['compile-editor','compile-viewer']);
 
 
-gulp.task('compile', function () {
+
+gulp.task('compile-editor', function () {
 
 
     var tsProject = ts.createProject('editor/tsconfig.json');
@@ -40,6 +42,22 @@ gulp.task('compile', function () {
 
 });
 
+
+
+gulp.task('compile-viewer', function () {
+
+
+    var tsProject = ts.createProject('viewer/tsconfig.json');
+
+
+    var tsResult = tsProject.src() // instead of gulp.src(...)
+        .pipe(ts(tsProject));
+
+    return tsResult.js.pipe(gulp.dest('./viewer/'));
+
+
+
+});
 
 
 

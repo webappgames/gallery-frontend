@@ -1,4 +1,4 @@
-
+/// <reference path="../reference.ts" />
 
 
 function createStairsMesh(name, stairs_count, scene){

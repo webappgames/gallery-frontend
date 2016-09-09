@@ -39,17 +39,24 @@ namespace GALLERY.Objects{
         }
 
 
-        /*filter(callback: (item: any)=>boolean):GALLERY.Objects.Array {
 
-            var filtered_objects = new GALLERY.Objects.Array();
+        filterTypes(...types: string[]): Array {
 
-            //r(filtered_objects.05-objects);
 
-            filtered_objects.objects = this.objects.filter(callback);
+            var filtered_objects = new Array();
+
+            this.forEach(function (object) {
+
+                if ((types as [any]).indexOf(object.type) == -1)return;//todo better
+
+                filtered_objects.getAll().push(object);
+
+            });
 
             return (filtered_objects);
+        }
 
-        }*/
+
 
 
 

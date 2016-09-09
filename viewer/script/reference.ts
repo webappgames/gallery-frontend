@@ -1,7 +1,5 @@
 
 
-
-
 /// <reference path="../../shared/lib/jquery.d.ts" />
 
 
@@ -28,18 +26,21 @@
 
 
 
-/// <reference path="10-create-map.ts" />
-/// <reference path="10-create-object.ts" />
-/// <reference path="10-keys.ts" />
-/// <reference path="10-load.ts" />
-/// <reference path="10-message.ts" />
-/// <reference path="10-new.ts" />
-/// <reference path="10-outer-html.ts" />
-/// <reference path="10-plugins.ts" />
-/// <reference path="10-position.ts" />
-/// <reference path="10-save.ts" />
-/// <reference path="20-filedrop.ts" />
-/// <reference path="20-palette.ts" />
 
 
-/// <reference path="50-plugins/generators/simple-garden.ts" />
+
+/// <reference path="lib/babylon.ts" />
+/// <reference path="babylon-plugins/babylon-tree.ts" />
+/// <reference path="babylon-plugins/babylon-stairs.ts" />
+
+
+/// <reference path="map.ts" />
+/// <reference path="keys.ts" />
+/// <reference path="scene.ts" />
+/// <reference path="move-to.ts" />
+/// <reference path="reference.ts" />
+/// <reference path="popup-window.ts" />
+
+
+
+/// <reference path="pointer-lock.ts" />

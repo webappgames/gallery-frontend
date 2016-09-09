@@ -1,4 +1,8 @@
 
+
+
+
+
 body {
   /*font-family: 'Roboto', sans-serif;*/
   font-family: "Trebuchet MS", Helvetica, sans-serif;
@@ -36,3 +40,18 @@ button, .button, input[type="submit"] {
   cursor: pointer; }
 button:hover, .button:hover, input[type="submit"]:hover {
   background-color: #37beff; }
+
+
+
+
+
+
+
+@import 'https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css';
+
+
+@import 'keys.scss';
+@import 'menu.scss';
+@import 'popup-window.scss';
+@import 'scene.scss';
+

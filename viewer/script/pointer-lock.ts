@@ -1,6 +1,4 @@
-/**
- * Created by hejny on 1.8.16.
- */
+/// <reference path="reference.ts" />
 
 
 var pointer_lock = document.getElementById("pointer-lock");

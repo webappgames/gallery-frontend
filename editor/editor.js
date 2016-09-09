@@ -3,7 +3,6 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var r = console.log.bind(console);
 /*! URI.js v1.17.1 http://medialize.github.io/URI.js/ */
 /* build contains: IPv6.js, punycode.js, SecondLevelDomains.js, URI.js */
 /* jshint ignore:start */
@@ -998,17 +997,19 @@ var GALLERY;
             Array.prototype.push = function (object) {
                 this.objects.push(GALLERY.Objects.Object.init(object));
             };
-            /*filter(callback: (item: any)=>boolean):GALLERY.Objects.Array {
-    
-                var filtered_objects = new GALLERY.Objects.Array();
-    
-                //r(filtered_objects.05-objects);
-    
-                filtered_objects.objects = this.objects.filter(callback);
-    
+            Array.prototype.filterTypes = function () {
+                var types = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    types[_i - 0] = arguments[_i];
+                }
+                var filtered_objects = new Array();
+                this.forEach(function (object) {
+                    if (types.indexOf(object.type) == -1)
+                        return; //todo better
+                    filtered_objects.getAll().push(object);
+                });
                 return (filtered_objects);
-    
-            }*/
+            };
             Array.prototype.getObjectById = function (id) {
                 for (var i = 0, l = this.objects.length; i < l; i++) {
                     if (this.objects[i].id == id)
@@ -1410,6 +1411,7 @@ var GALLERY;
         Objects.Teleport = Teleport;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
+var r = console.log.bind(console);
 /// <reference path="reference.ts" />
 function createObject$(object) {
     //r(object.create$Element());
@@ -2259,7 +2261,6 @@ var GALLERY;
 })(GALLERY || (GALLERY = {}));
 /// <reference path="../../shared/lib/jquery.d.ts" />
 /// <reference path="../../shared/script/uri-plugin.ts" />
-/// <reference path="../../shared/script/images.ts" />
 /// <reference path="../../shared/script/05-objects/00-array.ts" />
 /// <reference path="../../shared/script/05-objects/05-object.ts" />
 /// <reference path="../../shared/script/05-objects/10-block.ts" />
@@ -2270,7 +2271,7 @@ var GALLERY;
 /// <reference path="../../shared/script/05-objects/10-tree.ts" />
 /// <reference path="../../shared/script/05-objects/10-key.ts" />
 /// <reference path="../../shared/script/05-objects/10-teleport.ts" />
-/// <reference path="00-common.ts" />
+/// <reference path="../../shared/script/00-common.ts" />
 /// <reference path="10-create-map.ts" />
 /// <reference path="10-create-object.ts" />
 /// <reference path="10-keys.ts" />

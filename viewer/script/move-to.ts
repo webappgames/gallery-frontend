@@ -1,6 +1,4 @@
-/**
- * Created by hejny on 21.7.16.
- */
+/// <reference path="reference.ts" />
 
 
 

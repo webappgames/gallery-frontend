@@ -1,8 +1,4 @@
-/**
- * @author Towns.cz
- * @fileOverview  Key controls - eg. arrows, wasd,...
- */
-//======================================================================================================================
+/// <reference path="reference.ts" />
 
 
 var controls_keys={

@@ -1,3 +1,6 @@
+/// <reference path="reference.ts" />
+
+
 
 var BLOCK_SIZE=5;
 //var BLOCK_SIZE_VERTICAL=10;
@@ -14,6 +17,7 @@ var SPEED_ROTATION = Math.PI/2;
 var BLOCKS_2D_3D_SHAPES = {
     room:   [1,0,0,0,0,0,0,0,1],
     door:   [1,0,0,0,1,1,1,1,1],
+    gate:   [1,0,0,0,1,1,1,1,1],
     wall:   [1,1,1,1,1,1,1,1,1],
     window: [1,1,0,0,1,1,1,1,1]
 };

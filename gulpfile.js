@@ -2,6 +2,7 @@
 
 
 var gulp = require('gulp');
+var rename = require('gulp-rename');
 var ts = require('gulp-typescript');
 var runSequence = require('run-sequence');
 
@@ -23,7 +24,7 @@ gulp.task('build', function() {
 
 
 
-gulp.task('compile',['compile-editor','compile-viewer']);
+gulp.task('compile',['compile-editor','compile-viewer','compress-viewer']);
 
 
 
@@ -44,8 +45,11 @@ gulp.task('compile-editor', function () {
 
 
 
-gulp.task('compile-viewer', function () {
 
+
+
+
+gulp.task('compile-viewer', function () {
 
     var tsProject = ts.createProject('viewer/tsconfig.json');
 
@@ -57,7 +61,31 @@ gulp.task('compile-viewer', function () {
 
 
 
+
+
+
 });
+
+
+
+
+
+var uglify = require('gulp-uglify');
+var pump = require('pump');
+
+
+gulp.task('compress-viewer', function (cb) {
+    pump([
+            gulp.src('viewer/viewer.js'),
+            uglify(),
+            rename({suffix: '.min'}),
+            gulp.dest('./viewer/')
+        ],
+        cb
+    );
+});
+
+
 
 
 

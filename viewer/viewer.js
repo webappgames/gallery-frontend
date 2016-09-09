@@ -9653,6 +9653,9 @@ function runGallery(objects) {
             stairs_mesh.checkCollisions = true;
             sunShadowGenerator.getShadowMap().renderList.push(stairs_mesh);
         }
+        else {
+            console.warn('Unknown object type "' + object.type + '", maybe version mismatch between editor and this viewer.');
+        }
     });
     for (var material_key in blocks_materials_groups) {
         /**/

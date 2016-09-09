@@ -1,6 +1,9 @@
 {
   "devDependencies": {
+    "gulp-rename": "^1.2.2",
     "gulp-typescript": "^2.13.6",
+    "gulp-uglify": "^2.0.0",
+    "pump": "^1.0.1",
     "run-sequence": "^1.2.2"
   }
 }

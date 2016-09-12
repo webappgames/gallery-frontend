@@ -1,5 +1,4 @@
-/// <reference path="../reference.ts" />
-
+//todo shared reference.ts file
 
 namespace GALLERY.Objects{
 
@@ -68,13 +67,9 @@ namespace GALLERY.Objects{
 
             object = new GALLERY.Objects.Stairs(object);
 
-            }else if (object.type == 'key') {
+            }else if (object.type == 'link') {
 
-                object = new GALLERY.Objects.Key(object);
-
-            }else if (object.type == 'teleport') {
-
-                object = new GALLERY.Objects.Teleport(object);
+                object = new GALLERY.Objects.Link(object);
 
             }
             else {

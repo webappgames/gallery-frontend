@@ -2,12 +2,9 @@
 
 namespace GALLERY.Objects{
 
-    export class Teleport extends Object{
+    export class Link extends Object{
 
 
-        public radius: number;
-        public href: string;
-        public target: string;
 
 
         create$Element(){
@@ -18,7 +15,7 @@ namespace GALLERY.Objects{
             let object = this;
 
 
-            let $inner = $('<i class="fa fa-external-link" aria-hidden="true"></i>');
+            let $inner = $('<i class="fa fa-key" aria-hidden="true"></i>');
 
 
             $inner.css('width',object.radius * zoom_selected);
@@ -35,8 +32,6 @@ namespace GALLERY.Objects{
             return $element;
 
         }
-
-
 
 
 

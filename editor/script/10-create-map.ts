@@ -60,7 +60,7 @@ function createMap() {
 
 
 
-    var $dot_objects= $admin_world.find('.light, .label, .tree, .key, .teleport');
+    var $dot_objects= $admin_world.find('.light, .label, .tree, .link');
 
 
     /*$admin_world.mousemove(function (e) {
@@ -121,6 +121,9 @@ function createMap() {
             }else
             if(key=='intensity'){
                 input_element='<input type="range" min="0.1" max="5" step="0.1">';
+            }else
+            if(key=='opacity'){
+                input_element='<input type="range" min="0" max="1" step="0.1">';
             }else
             if(key=='radius'){
                 input_element='<input type="range" min="0.4" max="5" step="0.1">';

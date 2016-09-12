@@ -1227,7 +1227,7 @@ var GALLERY;
         Objects.Array = Array;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="../reference.ts" />
+//todo shared reference.ts file
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -1266,11 +1266,8 @@ var GALLERY;
                 else if (object.type == 'stairs') {
                     object = new GALLERY.Objects.Stairs(object);
                 }
-                else if (object.type == 'key') {
-                    object = new GALLERY.Objects.Key(object);
-                }
-                else if (object.type == 'teleport') {
-                    object = new GALLERY.Objects.Teleport(object);
+                else if (object.type == 'link') {
+                    object = new GALLERY.Objects.Link(object);
                 }
                 else {
                     console.log(object);
@@ -1552,46 +1549,20 @@ var GALLERY;
 (function (GALLERY) {
     var Objects;
     (function (Objects) {
-        var Key = (function (_super) {
-            __extends(Key, _super);
-            function Key() {
+        var Link = (function (_super) {
+            __extends(Link, _super);
+            function Link() {
                 _super.apply(this, arguments);
             }
-            Key.prototype.create$Element = function () {
+            Link.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 var object = this;
                 $element.html('<i class="fa fa-key" aria-hidden="true"></i>');
                 return $element;
             };
-            return Key;
+            return Link;
         }(Objects.Object));
-        Objects.Key = Key;
-    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
-})(GALLERY || (GALLERY = {}));
-/// <reference path="../reference.ts" />
-var GALLERY;
-(function (GALLERY) {
-    var Objects;
-    (function (Objects) {
-        var Teleport = (function (_super) {
-            __extends(Teleport, _super);
-            function Teleport() {
-                _super.apply(this, arguments);
-            }
-            Teleport.prototype.create$Element = function () {
-                var $element = this._create$Element();
-                var object = this;
-                var $inner = $('<i class="fa fa-external-link" aria-hidden="true"></i>');
-                $inner.css('width', object.radius * zoom_selected);
-                $inner.css('height', object.radius * zoom_selected);
-                $inner.css('border-radius', object.radius * zoom_selected);
-                $inner.css('border', '2px solid #000');
-                $element.append($inner);
-                return $element;
-            };
-            return Teleport;
-        }(Objects.Object));
-        Objects.Teleport = Teleport;
+        Objects.Link = Link;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
 var r = console.log.bind(console);
@@ -6611,7 +6582,7 @@ var BABYLON;
     this.transparentOrderDirty = !1;
 } }, Object.defineProperty(t.prototype, "usedShaderCategories", { get: function () { return this._usedShaderCategories; }, enumerable: !0, configurable: !0 }), Object.defineProperty(t.prototype, "strides", { get: function () { return this._strides; }, enumerable: !0, configurable: !0 }), t; }(); e.GroupInstanceInfo = t; var i = function () { function e() { this.groupInsanceInfo = null, this.startZ = 0, this.endZ = 0, this.startDataIndex = 0, this.endDataIndex = 0, this.partBuffers = null; } return e.prototype.dispose = function (e) { this.partBuffers && (this.partBuffers.forEach(function (t) { return e._releaseBuffer(t); }), this.partBuffers.splice(0), this.partBuffers = null); }, e; }(); e.TransparentSegment = i; var r = function () { function t(t) { this._partData = null, this._partBuffer = null, this._partBufferSize = 0, this._partData = new e.DynamicFloatArray(t / 4, 50), this._isDisposed = !1; } return t.prototype.dispose = function (e) { return this._isDisposed ? !1 : (this._partBuffer && (e._releaseBuffer(this._partBuffer), this._partBuffer = null), this._partData = null, void (this._isDisposed = !0)); }, t; }(); e.GroupInfoPartData = r; var n = function (e) { function t(t, i) { e.call(this, t), this._partData.compareValueOffset = i, this._partData.sortingAscending = !1; } return __extends(t, e), t; }(r); e.TransparentGroupInfoPartData = n; var o = function () { function t(t, i) { this._engine = t, this._modelKey = i, this._nextKey = 1, this._refCounter = 1, this._instancesData = new e.StringDictionary, this._partData = null; } return t.prototype.dispose = function () { if (0 !== --this._refCounter)
     return !1; var e = this._engine.getExternalData("__BJSCANVAS2D__"); return e && e.DisposeModelRenderCache(this), !0; }, Object.defineProperty(t.prototype, "isDisposed", { get: function () { return this._refCounter <= 0; }, enumerable: !0, configurable: !0 }), t.prototype.addRef = function () { return ++this._refCounter; }, Object.defineProperty(t.prototype, "modelKey", { get: function () { return this._modelKey; }, enumerable: !0, configurable: !0 }), t.prototype.render = function (e, t) { return !0; }, t.prototype.addInstanceDataParts = function (e) { var t = this._nextKey.toString(); if (!this._instancesData.add(t, e))
-    throw Error("Key: " + t + " is already allocated"); return ++this._nextKey, t; }, t.prototype.removeInstanceData = function (e) { this._instancesData.remove(e); }, t.prototype.getPartIndexFromId = function (e) { for (var t = 0; t < this._partData.length; t++)
+    throw Error("Link: " + t + " is already allocated"); return ++this._nextKey, t; }, t.prototype.removeInstanceData = function (e) { this._instancesData.remove(e); }, t.prototype.getPartIndexFromId = function (e) { for (var t = 0; t < this._partData.length; t++)
     if (this._partData[t]._partId === e)
         return t; return null; }, t.prototype.loadInstancingAttributes = function (e, t) { var i = this.getPartIndexFromId(e); if (null === i)
     return null; var r = this._partsClassInfo[i], n = this._partData[i]._partUsedCategories, o = r.classContent.getInstancingAttributeInfos(t, n); return o; }, t.prototype.setupUniforms = function (e, i, r, n) { var o = this._partData[i], s = o._partDataStride / 4 * n, a = this._partsClassInfo[i]; a.fullContent.forEach(function (i, n) { if (!n.category || -1 !== o._partUsedCategories.indexOf(n.category))
@@ -9669,8 +9640,8 @@ function runGallery(objects) {
         blocks_materials_groups[material_key].forEach(function (box_group) {
             var position = new BABYLON.Vector3(box_group.position.x * -BLOCK_SIZE, (box_group.position.z + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
             box_group.position.y * BLOCK_SIZE);
-            position.x -= BLOCK_SIZE / 2;
-            position.z += BLOCK_SIZE / 2;
+            //position.x -=BLOCK_SIZE/2;
+            //position.z +=BLOCK_SIZE/2;
             //var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
             //box.showBoundingBox=false;
             //Define a material
@@ -10132,8 +10103,7 @@ function mouseMove(e) {
 /// <reference path="../../shared/script/05-objects/10-light.ts" />
 /// <reference path="../../shared/script/05-objects/10-stairs.ts" />
 /// <reference path="../../shared/script/05-objects/10-tree.ts" />
-/// <reference path="../../shared/script/05-objects/10-key.ts" />
-/// <reference path="../../shared/script/05-objects/10-teleport.ts" />
+/// <reference path="../../shared/script/05-objects/10-link.ts" />
 /// <reference path="../../shared/script/00-common.ts" />
 /// <reference path="lib/babylon.ts" />
 /// <reference path="babylon-plugins/babylon-tree.ts" />

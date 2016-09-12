@@ -172,7 +172,7 @@ $(function () {
 $(function () {
 
 
-    ['light','label','tree','stairs','key','teleport'].forEach(function (type) {
+    ['light','label','tree','stairs','link'].forEach(function (type) {
 
 
         let $dot_object = createObject$(GALLERY.Objects.Object.init({
@@ -213,14 +213,18 @@ $(function () {
                     object.height = 2;
                     object.rotation = 0;
                 }else
-                if(type == 'key'){
-                    object.key_type = 'blue';
-                }else
-                if(type == 'teleport'){
+                if(type == 'link'){
+
 
                     object.radius = 1;
                     object.href = '/';
                     object.target = '';
+
+
+                    object.color = '#00ff00';
+                    object.opacity = '0.9';
+
+
 
                 }
 

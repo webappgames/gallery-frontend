@@ -288,8 +288,9 @@ function runGallery(objects){
                     (box_group.position.z+BLOCKS_1NP_LEVEL) * BLOCK_SIZE,//(0.5 - 0.9) * BLOCK_SIZE,
                     box_group.position.y * BLOCK_SIZE
                 );
-                position.x -=BLOCK_SIZE/2;
-                position.z +=BLOCK_SIZE/2;
+
+                //position.x -=BLOCK_SIZE/2;
+                //position.z +=BLOCK_SIZE/2;
 
 
 

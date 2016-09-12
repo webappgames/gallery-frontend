@@ -1044,7 +1044,7 @@ var GALLERY;
         Objects.Array = Array;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="../reference.ts" />
+//todo shared reference.ts file
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -1083,11 +1083,8 @@ var GALLERY;
                 else if (object.type == 'stairs') {
                     object = new GALLERY.Objects.Stairs(object);
                 }
-                else if (object.type == 'key') {
-                    object = new GALLERY.Objects.Key(object);
-                }
-                else if (object.type == 'teleport') {
-                    object = new GALLERY.Objects.Teleport(object);
+                else if (object.type == 'link') {
+                    object = new GALLERY.Objects.Link(object);
                 }
                 else {
                     console.log(object);
@@ -1369,36 +1366,15 @@ var GALLERY;
 (function (GALLERY) {
     var Objects;
     (function (Objects) {
-        var Key = (function (_super) {
-            __extends(Key, _super);
-            function Key() {
+        var Link = (function (_super) {
+            __extends(Link, _super);
+            function Link() {
                 _super.apply(this, arguments);
             }
-            Key.prototype.create$Element = function () {
+            Link.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 var object = this;
-                $element.html('<i class="fa fa-key" aria-hidden="true"></i>');
-                return $element;
-            };
-            return Key;
-        }(Objects.Object));
-        Objects.Key = Key;
-    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
-})(GALLERY || (GALLERY = {}));
-/// <reference path="../reference.ts" />
-var GALLERY;
-(function (GALLERY) {
-    var Objects;
-    (function (Objects) {
-        var Teleport = (function (_super) {
-            __extends(Teleport, _super);
-            function Teleport() {
-                _super.apply(this, arguments);
-            }
-            Teleport.prototype.create$Element = function () {
-                var $element = this._create$Element();
-                var object = this;
-                var $inner = $('<i class="fa fa-external-link" aria-hidden="true"></i>');
+                var $inner = $('<i class="fa fa-key" aria-hidden="true"></i>');
                 $inner.css('width', object.radius * zoom_selected);
                 $inner.css('height', object.radius * zoom_selected);
                 $inner.css('border-radius', object.radius * zoom_selected);
@@ -1406,9 +1382,9 @@ var GALLERY;
                 $element.append($inner);
                 return $element;
             };
-            return Teleport;
+            return Link;
         }(Objects.Object));
-        Objects.Teleport = Teleport;
+        Objects.Link = Link;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
 var r = console.log.bind(console);
@@ -2086,7 +2062,7 @@ $(function () {
 });
 //===================================================================================================
 $(function () {
-    ['light', 'label', 'tree', 'stairs', 'key', 'teleport'].forEach(function (type) {
+    ['light', 'label', 'tree', 'stairs', 'link'].forEach(function (type) {
         var $dot_object = createObject$(GALLERY.Objects.Object.init({
             type: type
         }));
@@ -2115,13 +2091,12 @@ $(function () {
                     object.height = 2;
                     object.rotation = 0;
                 }
-                else if (type == 'key') {
-                    object.key_type = 'blue';
-                }
-                else if (type == 'teleport') {
+                else if (type == 'link') {
                     object.radius = 1;
                     object.href = '/';
                     object.target = '';
+                    object.color = '#00ff00';
+                    object.opacity = '0.9';
                 }
                 objects.push(object);
                 createMap();
@@ -2269,8 +2244,7 @@ var GALLERY;
 /// <reference path="../../shared/script/05-objects/10-light.ts" />
 /// <reference path="../../shared/script/05-objects/10-stairs.ts" />
 /// <reference path="../../shared/script/05-objects/10-tree.ts" />
-/// <reference path="../../shared/script/05-objects/10-key.ts" />
-/// <reference path="../../shared/script/05-objects/10-teleport.ts" />
+/// <reference path="../../shared/script/05-objects/10-link.ts" />
 /// <reference path="../../shared/script/00-common.ts" />
 /// <reference path="10-create-map.ts" />
 /// <reference path="10-create-object.ts" />
@@ -2315,7 +2289,7 @@ function createMap() {
     var $blocks_gates = $admin_world.find('.block[data-shape="gate"]');
     var $images = $admin_world.find('.image');
     var $stairs = $admin_world.find('.stairs');
-    var $dot_objects = $admin_world.find('.light, .label, .tree, .key, .teleport');
+    var $dot_objects = $admin_world.find('.light, .label, .tree, .link');
     /*$admin_world.mousemove(function (e) {
         var position = getPositionFromLeftTop(e.clientX,e.clientY);
         document.title = isWallOn(05-objects,position);
@@ -2348,6 +2322,9 @@ function createMap() {
             }
             else if (key == 'intensity') {
                 input_element = '<input type="range" min="0.1" max="5" step="0.1">';
+            }
+            else if (key == 'opacity') {
+                input_element = '<input type="range" min="0" max="1" step="0.1">';
             }
             else if (key == 'radius') {
                 input_element = '<input type="range" min="0.4" max="5" step="0.1">';

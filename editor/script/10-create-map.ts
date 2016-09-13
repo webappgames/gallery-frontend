@@ -427,16 +427,26 @@ function createMap() {
     //----------------------------------------------------------------------------STAIRS drag
     var drag_stairs_options = {
 
-        grid: [zoom_selected/2,zoom_selected/2],
+        //grid: [zoom_selected/2,zoom_selected/2],
         //snap: ".block[data-shape='wall']",
         //snapMode: "outer",
 
-        /*drag: function(e, ui){
+        drag: function(e, ui){
 
-            ui.position.left = (Math.floor((ui.position.left-window_center.x) / zoom_selected )+0.5) * zoom_selected+window_center.x;
-            ui.position.top  = (Math.floor((ui.position.top -window_center.y) / zoom_selected )+0.5) * zoom_selected+window_center.y;
+            //ui.position.left = (Math.floor((ui.position.left-window_center.x) / zoom_selected )+0.5) * zoom_selected+window_center.x;
+            //ui.position.top  = (Math.floor((ui.position.top -window_center.y) / zoom_selected )+0.5) * zoom_selected+window_center.y;
 
-        },*/
+            let grid = zoom_selected/2;
+            let offset = -4;//todo wth -4
+
+            //ui.position.left-=7;
+            ui.position.left = Math.floor((ui.position.left+offset)/grid)*grid-offset;
+            ui.position.top = Math.floor((ui.position.top+offset)/grid)*grid-offset;
+            //ui.position.left+=7;
+
+
+
+        },
         stop: function () {
 
 
@@ -483,7 +493,7 @@ function createMap() {
             var draggable = $(this).data("ui-draggable");
             draggable._trigger("snapped", event, ui);
 
-
+th
 
 
         },*/
@@ -491,7 +501,7 @@ function createMap() {
 
 
             var offset = $(this).offset();
-            var position = getPositionFromLeftTop(offset.left-7,offset.top);//todo wtf 7
+            var position = getPositionFromLeftTop(offset.left-7,offset.top);//todo wth -7
 
             position.x=Math.round(position.x*2)/2;
             position.y=Math.round(position.y*2)/2;

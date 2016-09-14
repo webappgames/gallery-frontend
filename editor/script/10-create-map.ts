@@ -60,7 +60,7 @@ function createMap() {
 
 
 
-    var $dot_objects= $admin_world.find('.light, .label, .tree, .link');
+    var $dot_objects= $admin_world.find('.light, .label, .tree, .link, .gate');
 
 
     /*$admin_world.mousemove(function (e) {
@@ -85,7 +85,7 @@ function createMap() {
         var id = $this.attr('id');
         var object = objects.getObjectById(id);
 
-        //r($this,id,object);
+        r(object);
 
         selected_object = object;
 
@@ -116,7 +116,7 @@ function createMap() {
 
 
             input_element=false;
-            if(['name','uri','key_type','href','target'].indexOf(key)!==-1){
+            if(['name','uri','key','href','target'].indexOf(key)!==-1){
                 input_element='<input type="text">';
             }else
             if(key=='intensity'){
@@ -128,6 +128,12 @@ function createMap() {
             if(key=='radius'){
                 input_element='<input type="range" min="0.4" max="5" step="0.1">';
             }else
+            if(key=='size'){
+                input_element='<input type="range" min="0.2" max="10" step="0.02">';
+            }else
+            /*if(key=='width' || key=='height'){
+                input_element='<input type="range" min="0.2" max="10" step="0.02">';
+            }else*/
             if(key=='color'){
                 input_element='<input type="color">';
             }else

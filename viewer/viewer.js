@@ -1198,7 +1198,8 @@ var GALLERY;
                     if (this.objects[i].id == id)
                         return (this.objects[i]);
                 }
-                throw new Error('Unknown id ' + id);
+                return null;
+                //throw new Error('Unknown id '+id);
             };
             Array.prototype.removeObjectById = function (id) {
                 for (var i in this.objects) {
@@ -1268,6 +1269,9 @@ var GALLERY;
                 }
                 else if (object.type == 'link') {
                     object = new GALLERY.Objects.Link(object);
+                }
+                else if (object.type == 'gate') {
+                    object = new GALLERY.Objects.Gate(object);
                 }
                 else {
                     console.log(object);
@@ -1557,12 +1561,43 @@ var GALLERY;
             Link.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 var object = this;
-                $element.html('<i class="fa fa-key" aria-hidden="true"></i>');
+                var $inner = $('<i class="fa fa-key" aria-hidden="true"></i>');
+                $inner.css('width', object.radius * zoom_selected);
+                $inner.css('height', object.radius * zoom_selected);
+                $inner.css('border-radius', object.radius * zoom_selected);
+                $inner.css('border', '2px solid #000');
+                $element.append($inner);
                 return $element;
             };
             return Link;
         }(Objects.Object));
         Objects.Link = Link;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="../reference.ts" />
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        var Gate = (function (_super) {
+            __extends(Gate, _super);
+            function Gate() {
+                _super.apply(this, arguments);
+            }
+            Gate.prototype.create$Element = function () {
+                var $element = this._create$Element();
+                var object = this;
+                var $inner = $('<img src="/images/icons/gate.svg">');
+                $inner.css('width', object.size * zoom_selected);
+                $element.css('transform', 'rotate(' + object.rotation + 'deg)');
+                $inner.css('height', 5);
+                $inner.css('background-color', object.color);
+                $element.append($inner);
+                return $element;
+            };
+            return Gate;
+        }(Objects.Object));
+        Objects.Gate = Gate;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
 var r = console.log.bind(console);
@@ -9479,14 +9514,7 @@ function createStairsMesh(name, stairs_count, scene) {
 }
 /// <reference path="reference.ts" />
 var objects;
-function getObjectById(id) {
-    for (var i = 0, l = objects.length; i < l; i++) {
-        if (objects[i].id == id)
-            return (objects[i]);
-    }
-    throw new Error('Unknown id ' + id);
-}
-function runGallery(objects) {
+function runGallery() {
     var compiled = compileObjects(objects);
     objects = compiled.objects;
     var blocks_materials_groups = compiled.blocks_materials_groups;
@@ -9524,6 +9552,7 @@ function runGallery(objects) {
             lights.push(light);
         }
         else if (object.type == 'image') {
+            //r('image',object);
             if (typeof object.rotation === 'number') {
                 var rotation_rad = (object.rotation / 180) * Math.PI;
                 //Simple crate
@@ -9609,7 +9638,7 @@ function runGallery(objects) {
             sunShadowGenerator.getShadowMap().renderList.push(tree_mesh);
         }
         else if (object.type == 'stairs') {
-            var stairs_mesh = createStairsMesh("stairs", 30, scene);
+            var stairs_mesh = createStairsMesh(object.id, 30, scene);
             //stairs_mesh.position = position;
             //r(position);
             stairs_mesh.scaling.x = object.width * BLOCK_SIZE;
@@ -9623,6 +9652,32 @@ function runGallery(objects) {
             /**/
             stairs_mesh.checkCollisions = true;
             sunShadowGenerator.getShadowMap().renderList.push(stairs_mesh);
+        }
+        else if (object.type == 'link') {
+            var link = new BABYLON.Mesh.CreateSphere(object.id, 16, object.radius * BLOCK_SIZE, scene);
+            link.position = position;
+            link.position.y += EYE_VERTICAL * BLOCK_SIZE;
+            link.material = new BABYLON.StandardMaterial("texture2", scene);
+            link.material.diffuseColor = BABYLON.Color3.FromHexString(object.color);
+            link.material.alpha = object.opacity;
+            link.checkCollisions = true;
+            //light.position.y = LIGHT_VERTICAL * BLOCK_SIZE;
+            lights.push(light);
+        }
+        else if (object.type == 'gate') {
+            var rotation_rad = (object.rotation / 180) * Math.PI;
+            var gate = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
+            gate.material = new BABYLON.StandardMaterial("texture4", scene);
+            gate.material.backFaceCulling = true;
+            gate.material.diffuseColor = BABYLON.Color3.FromHexString(object.color);
+            gate.material.alpha = object.opacity;
+            gate.material.freeze();
+            gate.position = position;
+            gate.scaling.x = object.size;
+            gate.scaling.y = 1 * BLOCK_SIZE;
+            gate.rotation.y = Math.PI + rotation_rad;
+            gate.position.y += EYE_VERTICAL * BLOCK_SIZE;
+            gate.checkCollisions = false;
         }
         else {
             console.warn('Unknown object type "' + object.type + '", maybe version mismatch between editor and this viewer.');
@@ -9779,6 +9834,19 @@ var createScene = function () {
     camera.speed = SPEED;
     camera.inertia = SPEED_INERTIA;
     //camera.fov = 1.2;
+    camera.onCollide = function (collidedMesh) {
+        if (collidedMesh.id == 'ground')
+            return;
+        var object = objects.getObjectById(collidedMesh.name);
+        if (object) {
+            if (object.type == 'link') {
+                if (object.href.substr(0, 1) === '#') {
+                    window.location.hash = object.href;
+                }
+                collidedMesh.dispose();
+            }
+        }
+    };
     //Set gravity for the scene (G force like, on Y-axis)
     scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
     //scene.enablePhysics();
@@ -9865,7 +9933,7 @@ var createScene = function () {
                 r('room picked');
             }
             else {
-                var object = getObjectById(pickResult.pickedMesh.name);
+                var object = objects.getObjectById(pickResult.pickedMesh.name);
                 /*var rotation_rad = (object.rotation / 180) * Math.PI;
 
                 var x = object.position.x + Math.sin(-rotation_rad) * 3;
@@ -10104,6 +10172,7 @@ function mouseMove(e) {
 /// <reference path="../../shared/script/05-objects/10-stairs.ts" />
 /// <reference path="../../shared/script/05-objects/10-tree.ts" />
 /// <reference path="../../shared/script/05-objects/10-link.ts" />
+/// <reference path="../../shared/script/05-objects/10-gate.ts" />
 /// <reference path="../../shared/script/00-common.ts" />
 /// <reference path="lib/babylon.ts" />
 /// <reference path="babylon-plugins/babylon-tree.ts" />

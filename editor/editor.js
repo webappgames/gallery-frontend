@@ -1015,7 +1015,8 @@ var GALLERY;
                     if (this.objects[i].id == id)
                         return (this.objects[i]);
                 }
-                throw new Error('Unknown id ' + id);
+                return null;
+                //throw new Error('Unknown id '+id);
             };
             Array.prototype.removeObjectById = function (id) {
                 for (var i in this.objects) {
@@ -1085,6 +1086,9 @@ var GALLERY;
                 }
                 else if (object.type == 'link') {
                     object = new GALLERY.Objects.Link(object);
+                }
+                else if (object.type == 'gate') {
+                    object = new GALLERY.Objects.Gate(object);
                 }
                 else {
                     console.log(object);
@@ -1385,6 +1389,32 @@ var GALLERY;
             return Link;
         }(Objects.Object));
         Objects.Link = Link;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="../reference.ts" />
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        var Gate = (function (_super) {
+            __extends(Gate, _super);
+            function Gate() {
+                _super.apply(this, arguments);
+            }
+            Gate.prototype.create$Element = function () {
+                var $element = this._create$Element();
+                var object = this;
+                var $inner = $('<img src="/images/icons/gate.svg">');
+                $inner.css('width', object.size * zoom_selected);
+                $element.css('transform', 'rotate(' + object.rotation + 'deg)');
+                $inner.css('height', 5);
+                $inner.css('background-color', object.color);
+                $element.append($inner);
+                return $element;
+            };
+            return Gate;
+        }(Objects.Object));
+        Objects.Gate = Gate;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
 var r = console.log.bind(console);
@@ -1873,13 +1903,14 @@ document.addEventListener("dragover", function (e) {
 document.addEventListener("dragleave", function (e) {
     e.preventDefault();
 }, false);
-function setImageWidth(src, object, height) {
+function setImageWidth(src, id, height) {
     var image = new Image();
     image.src = src;
     image.onload = function () {
+        var object = objects.getObjectById(id);
         var width = (this.width * height) / this.height;
         object.width = width;
-        r(object);
+        r('setting image width', object);
         save();
     };
 }
@@ -1952,12 +1983,11 @@ document.addEventListener("drop", function (e) {
                         name: '',
                         uri: ''
                     });
-                    setImageWidth(response[key], object, 2);
+                    setImageWidth(response[key], object.id, 2);
                     position = { x: position.x, y: position.y + 2 };
                 }
                 createMap();
                 message.text('Nahráno ' + filenames + ' 100%', 'success').close();
-                save();
             }
             catch (e) {
                 message.text('Chyba při nahrávání ', 'error').close();
@@ -2032,7 +2062,7 @@ var BLOCK_MATERIALS = [
     'wood-boards',
     'wood-fence',
     'wood-raw'];
-var BLOCK_SHAPES = ['none', 'room', 'wall', 'door', 'window', 'gate'];
+var BLOCK_SHAPES = ['none', 'room', 'wall', 'door', 'window'];
 $(function () {
     BLOCK_MATERIALS.forEach(function (material) {
         //r('creating block to pallete');
@@ -2062,7 +2092,7 @@ $(function () {
 });
 //===================================================================================================
 $(function () {
-    ['light', 'label', 'tree', 'stairs', 'link'].forEach(function (type) {
+    ['light', 'label', 'tree', 'stairs', 'link', 'gate'].forEach(function (type) {
         var $dot_object = createObject$(GALLERY.Objects.Object.init({
             type: type
         }));
@@ -2097,6 +2127,13 @@ $(function () {
                     object.target = '';
                     object.color = '#00ff00';
                     object.opacity = '0.9';
+                }
+                else if (type == 'gate') {
+                    object.size = 2;
+                    object.rotation = 0;
+                    object.color = '#00ff00';
+                    object.opacity = '0.9';
+                    object.key = '#red';
                 }
                 objects.push(object);
                 createMap();
@@ -2245,6 +2282,7 @@ var GALLERY;
 /// <reference path="../../shared/script/05-objects/10-stairs.ts" />
 /// <reference path="../../shared/script/05-objects/10-tree.ts" />
 /// <reference path="../../shared/script/05-objects/10-link.ts" />
+/// <reference path="../../shared/script/05-objects/10-gate.ts" />
 /// <reference path="../../shared/script/00-common.ts" />
 /// <reference path="10-create-map.ts" />
 /// <reference path="10-create-object.ts" />
@@ -2289,7 +2327,7 @@ function createMap() {
     var $blocks_gates = $admin_world.find('.block[data-shape="gate"]');
     var $images = $admin_world.find('.image');
     var $stairs = $admin_world.find('.stairs');
-    var $dot_objects = $admin_world.find('.light, .label, .tree, .link');
+    var $dot_objects = $admin_world.find('.light, .label, .tree, .link, .gate');
     /*$admin_world.mousemove(function (e) {
         var position = getPositionFromLeftTop(e.clientX,e.clientY);
         document.title = isWallOn(05-objects,position);
@@ -2301,7 +2339,7 @@ function createMap() {
         $this = $(this);
         var id = $this.attr('id');
         var object = objects.getObjectById(id);
-        //r($this,id,object);
+        r(object);
         selected_object = object;
         $dot.css('position', 'absolute');
         $dot.css('top', object.position.y * zoom_selected + window_center.y - 5);
@@ -2317,7 +2355,7 @@ function createMap() {
         var input_element, $input_element;
         for (var key in object) {
             input_element = false;
-            if (['name', 'uri', 'key_type', 'href', 'target'].indexOf(key) !== -1) {
+            if (['name', 'uri', 'key', 'href', 'target'].indexOf(key) !== -1) {
                 input_element = '<input type="text">';
             }
             else if (key == 'intensity') {
@@ -2329,7 +2367,14 @@ function createMap() {
             else if (key == 'radius') {
                 input_element = '<input type="range" min="0.4" max="5" step="0.1">';
             }
-            else if (key == 'color') {
+            else if (key == 'size') {
+                input_element = '<input type="range" min="0.2" max="10" step="0.02">';
+            }
+            else 
+            /*if(key=='width' || key=='height'){
+                input_element='<input type="range" min="0.2" max="10" step="0.02">';
+            }else*/
+            if (key == 'color') {
                 input_element = '<input type="color">';
             }
             else if (key == 'rotation' && object.type !== 'image') {

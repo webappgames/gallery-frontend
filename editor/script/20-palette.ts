@@ -101,7 +101,7 @@ var BLOCK_MATERIALS = [
     'wood-fence',
     'wood-raw'];
 
-var BLOCK_SHAPES = ['none','room','wall','door','window','gate'];
+var BLOCK_SHAPES = ['none','room','wall','door','window'];
 
 
 
@@ -172,7 +172,7 @@ $(function () {
 $(function () {
 
 
-    ['light','label','tree','stairs','link'].forEach(function (type) {
+    ['light','label','tree','stairs','link','gate'].forEach(function (type) {
 
 
         let $dot_object = createObject$(GALLERY.Objects.Object.init({
@@ -226,6 +226,13 @@ $(function () {
 
 
 
+                }else
+                if(type == 'gate'){
+                    object.size = 2;
+                    object.rotation = 0;
+                    object.color = '#00ff00';
+                    object.opacity = '0.9';
+                    object.key = '#red';
                 }
 
 

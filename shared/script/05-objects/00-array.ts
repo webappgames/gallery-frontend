@@ -64,7 +64,8 @@ namespace GALLERY.Objects{
             for(var i=0,l=this.objects.length;i<l;i++){
                 if(this.objects[i].id==id)return(this.objects[i]);
             }
-            throw new Error('Unknown id '+id);
+            return null;
+            //throw new Error('Unknown id '+id);
         }
 
 

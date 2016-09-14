@@ -78,6 +78,47 @@ var createScene = function () {
     //camera.fov = 1.2;
 
 
+
+
+
+    camera.onCollide = function(collidedMesh) {
+        if(collidedMesh.id=='ground')return;
+
+
+
+        var object = objects.getObjectById(collidedMesh.name);
+        if(object){
+
+
+
+
+
+            if(object.type=='link'){
+
+                if(object.href.substr(0,1)==='#'){
+
+                    window.location.hash  = object.href;
+                    //history.pushState(null, "Galerie", "bar.html");
+
+                }
+
+
+                collidedMesh.dispose();
+
+
+            }
+
+        }
+
+
+
+
+
+    };
+
+
+
+
     //Set gravity for the scene (G force like, on Y-axis)
     scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
     //scene.enablePhysics();
@@ -223,7 +264,7 @@ var createScene = function () {
 
             }else{
 
-                var object = getObjectById(pickResult.pickedMesh.name);
+                var object = objects.getObjectById(pickResult.pickedMesh.name);
                 /*var rotation_rad = (object.rotation / 180) * Math.PI;
 
                 var x = object.position.x + Math.sin(-rotation_rad) * 3;

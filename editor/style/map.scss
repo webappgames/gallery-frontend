@@ -174,13 +174,13 @@ main{
 
     //=======================================================================================
 
-    .label, .tree, .key, .teleport {
+    .label, .tree, .link, .gate {
 
       z-index: 30;
       user-select: none;
       display: block;
 
-      i {
+      i,img {
 
         font-size: 30px;
 

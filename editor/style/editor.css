@@ -81,11 +81,11 @@ main {
     background-color: #000;
     border-radius: 30px;
     box-shadow: #fff 0px 0px 5px; }
-#admin-world .label, #admin-world .tree, #admin-world .key, #admin-world .teleport, #admin-world-basement .label, #admin-world-basement .tree, #admin-world-basement .key, #admin-world-basement .teleport {
+#admin-world .label, #admin-world .tree, #admin-world .link, #admin-world .gate, #admin-world-basement .label, #admin-world-basement .tree, #admin-world-basement .link, #admin-world-basement .gate {
   z-index: 30;
   user-select: none;
   display: block; }
-  #admin-world .label i, #admin-world .tree i, #admin-world .key i, #admin-world .teleport i, #admin-world-basement .label i, #admin-world-basement .tree i, #admin-world-basement .key i, #admin-world-basement .teleport i {
+  #admin-world .label i, #admin-world .label img, #admin-world .tree i, #admin-world .tree img, #admin-world .link i, #admin-world .link img, #admin-world .gate i, #admin-world .gate img, #admin-world-basement .label i, #admin-world-basement .label img, #admin-world-basement .tree i, #admin-world-basement .tree img, #admin-world-basement .link i, #admin-world-basement .link img, #admin-world-basement .gate i, #admin-world-basement .gate img {
     font-size: 30px;
     cursor: move;
     position: absolute;

@@ -71,6 +71,10 @@ namespace GALLERY.Objects{
 
                 object = new GALLERY.Objects.Link(object);
 
+            }else if (object.type == 'gate') {
+
+                object = new GALLERY.Objects.Gate(object);
+
             }
             else {
 

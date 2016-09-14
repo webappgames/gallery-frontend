@@ -19,6 +19,7 @@
 /// <reference path="../../shared/script/05-objects/10-stairs.ts" />
 /// <reference path="../../shared/script/05-objects/10-tree.ts" />
 /// <reference path="../../shared/script/05-objects/10-link.ts" />
+/// <reference path="../../shared/script/05-objects/10-gate.ts" />
 
 
 

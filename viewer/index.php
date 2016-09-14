@@ -165,7 +165,9 @@ foreach($objects as $object) {
 <script src="viewer.js"></script>
 <script>
     document.getElementById("scene").focus();
-    runGallery(new GALLERY.Objects.Array(<?=json_encode($objects)?>));
+
+    var objects = new GALLERY.Objects.Array(<?=json_encode($objects)?>);
+    runGallery();
 
 </script>
 

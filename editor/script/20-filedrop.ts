@@ -40,7 +40,7 @@ document.addEventListener("dragleave", function(e){
 
 
 
-function setImageWidth(src,object,height) {
+function setImageWidth(src,id,height) {
 
     var image = new Image();
     image.src = src;
@@ -48,9 +48,11 @@ function setImageWidth(src,object,height) {
 
     image.onload = function(){
 
-        var width = (this.width * height) / this.height;
+        let object = objects.getObjectById(id);
+
+        let width = (this.width * height) / this.height;
         object.width = width;
-        r(object);
+        r('setting image width',object);
 
         save();
 
@@ -173,7 +175,7 @@ document.addEventListener("drop", function(e){
                     });
 
 
-                    setImageWidth(response[key],object,2);
+                    setImageWidth(response[key],object.id,2);
 
 
                     position={x:position.x,y:position.y+2};
@@ -182,10 +184,9 @@ document.addEventListener("drop", function(e){
 
 
                 createMap();
-
                 message.text('Nahráno '+filenames+' 100%','success').close();
 
-                save();
+                //save();
 
             }catch(e){
 

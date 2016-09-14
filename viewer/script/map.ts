@@ -6,19 +6,10 @@ var objects;
 
 
 
-function getObjectById(id){
-    for(var i=0,l=objects.length;i<l;i++){
-        if(objects[i].id==id)return(objects[i]);
-    }
-    throw new Error('Unknown id '+id);
-}
 
 
 
-
-
-
-function runGallery(objects){
+function runGallery(){
 
 
         var compiled = compileObjects(objects);
@@ -95,6 +86,7 @@ function runGallery(objects){
             }else
             if(object.type=='image'){
 
+                //r('image',object);
 
                 if(typeof object.rotation === 'number') {
 
@@ -168,6 +160,9 @@ function runGallery(objects){
 
                     image.checkCollisions = false;
 
+                    //r(object);
+                    //r(image);
+
 
 
                 }
@@ -224,7 +219,7 @@ function runGallery(objects){
             if(object.type=='stairs') {
 
 
-                var stairs_mesh =  createStairsMesh("stairs", 30, scene);
+                var stairs_mesh =  createStairsMesh(object.id, 30, scene);
 
                 //stairs_mesh.position = position;
                 //r(position);
@@ -249,6 +244,62 @@ function runGallery(objects){
 
                 stairs_mesh.checkCollisions = true;
                 sunShadowGenerator.getShadowMap().renderList.push(stairs_mesh);
+
+            }else
+            if(object.type=='link') {
+
+
+                var link = new BABYLON.Mesh.CreateSphere(object.id, 16, object.radius*BLOCK_SIZE, scene);
+                link.position = position;
+                link.position.y += EYE_VERTICAL * BLOCK_SIZE;
+
+
+
+                link.material = new BABYLON.StandardMaterial("texture2", scene);
+                link.material.diffuseColor = BABYLON.Color3.FromHexString(object.color);
+                link.material.alpha = object.opacity;
+
+
+                link.checkCollisions = true;
+
+                //light.position.y = LIGHT_VERTICAL * BLOCK_SIZE;
+
+
+
+                lights.push(light);
+
+
+
+            }else
+            if(object.type=='gate') {
+
+                var rotation_rad = (object.rotation / 180) * Math.PI;
+
+
+                var gate = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
+
+
+                gate.material = new BABYLON.StandardMaterial("texture4", scene);
+                gate.material.backFaceCulling = true;
+                gate.material.diffuseColor = BABYLON.Color3.FromHexString(object.color);
+                gate.material.alpha = object.opacity;
+                gate.material.freeze();
+
+
+                gate.position = position;
+
+
+                gate.scaling.x = object.size;
+                gate.scaling.y = 1*BLOCK_SIZE;
+
+
+                gate.rotation.y = Math.PI + rotation_rad;
+
+
+                gate.position.y += EYE_VERTICAL * BLOCK_SIZE;
+
+                gate.checkCollisions = false;
+
 
             }else{
 
@@ -384,6 +435,9 @@ function runGallery(objects){
 
                 //var box = BABYLON.Mesh.CreateRibbon("room", paths, false, true ,  0, scene);
                 //var box = BABYLON.Mesh.CreateSphere("room", 3, BLOCK_SIZE, scene);
+
+
+
                 var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
                 box.material = material;
 
@@ -398,6 +452,7 @@ function runGallery(objects){
                 box.scaling.z=box_group.size.y;
 
                 sunShadowGenerator.getShadowMap().renderList.push(box);
+
 
 
             });

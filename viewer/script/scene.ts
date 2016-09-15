@@ -75,7 +75,7 @@ var createScene = function () {
 
     camera.speed = SPEED;
     camera.inertia = SPEED_INERTIA;
-    //camera.fov = 1.2;
+    camera.fov = 1.3;
 
 
 
@@ -95,15 +95,47 @@ var createScene = function () {
 
             if(object.type=='link'){
 
-                if(object.href.substr(0,1)==='#'){
+                if(object.href.substr(0,1)==='#') {
 
-                    window.location.hash  = object.href;
-                    //history.pushState(null, "Galerie", "bar.html");
+                    if (window.location.hash != object.href){
+
+                        window.location.hash = object.href;
+                        unlockGates();
+                        //history.pushState(null, "Galerie", "bar.html");
+
+                    }
+
+                }else
+                if(object.href.substr(0,1)==='/') {
+
+                    r('teleporting...');
+
+                    objects.filterTypes('label').forEach(function (label) {
+
+                        //r(object.uri,object.href);
+                        if(label.uri == object.href){
+
+                            moveTo(label.position.x,label.position.y,parseInt(label.rotation),label.storey,true);
+                            ion.sound.play("link-teleport");
+
+
+                        }
+
+
+                    });
+
 
                 }
 
 
-                collidedMesh.dispose();
+
+
+                //collidedMesh.dispose();
+                collidedMesh.checkCollisions = false;
+
+                setTimeout(function () {
+                    collidedMesh.checkCollisions = true;
+                },200);
 
 
             }
@@ -149,7 +181,7 @@ var createScene = function () {
     ground.material = new BABYLON.StandardMaterial("groundMat", scene);
     //ground.material.diffuseColor = new BABYLON.Color3(0.5, 0.9, 0.7);
     //ground.material.backFaceCulling = false;
-    ground.material.diffuseTexture = new BABYLON.Texture("../images/textures/grass.jpg", scene);
+    ground.material.diffuseTexture = new BABYLON.Texture("../media/images/textures/grass.jpg", scene);
     ground.material.diffuseTexture.uScale = 100;//Vertical offset of 10%
     ground.material.diffuseTexture.vScale = 100;//Horizontal offset of 40%
     ground.material.reflectionColor = new BABYLON.Color3(0, 0, 0);
@@ -186,7 +218,7 @@ var createScene = function () {
     var skybox = BABYLON.Mesh.CreateBox("skyBox", 10000, scene);
     var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
     skyboxMaterial.backFaceCulling = false;
-    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../images/skybox/TropicalSunnyDay", scene);
+    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../media/images/skybox/TropicalSunnyDay", scene);
     skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
     skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
     skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);

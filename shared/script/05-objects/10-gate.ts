@@ -17,7 +17,7 @@ namespace GALLERY.Objects{
             let object = this;
 
 
-            let $inner = $('<img src="/images/icons/gate.svg">');
+            let $inner = $('<img src="/media/images/icons/gate.svg">');
 
 
             $inner.css('width',object.size * zoom_selected);

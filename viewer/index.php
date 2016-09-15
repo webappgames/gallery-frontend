@@ -115,7 +115,7 @@ foreach($objects as $object) {
                 ?>
 
                 <li>
-                    <a onclick="moveTo(<?=$object['position']['x']?>,<?=$object['position']['y']?>,<?=$object['rotation']?>);"><?=$object['name']?></a>
+                    <a onclick="moveTo(<?=$object['position']['x']?>,<?=$object['position']['y']?>,<?=$object['rotation']?>,'<?=$object['storey']?>');"><?=$object['name']?></a>
 
                 </li>
 

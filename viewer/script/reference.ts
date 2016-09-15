@@ -29,6 +29,10 @@
 
 
 
+/// <reference path="lib/ion.sound.ts" />
+
+
+
 /// <reference path="lib/babylon.ts" />
 /// <reference path="babylon-plugins/babylon-tree.ts" />
 /// <reference path="babylon-plugins/babylon-stairs.ts" />
@@ -40,6 +44,8 @@
 /// <reference path="move-to.ts" />
 /// <reference path="reference.ts" />
 /// <reference path="popup-window.ts" />
+/// <reference path="gates.ts" />
+/// <reference path="sounds.ts" />
 
 
 

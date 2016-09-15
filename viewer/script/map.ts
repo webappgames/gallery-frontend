@@ -22,7 +22,7 @@ function runGallery(){
 
 
         var stone_plain = new BABYLON.StandardMaterial("Mat", scene);
-        stone_plain.diffuseTexture = new BABYLON.Texture("../images/textures/stone-plain.jpg", scene);
+        stone_plain.diffuseTexture = new BABYLON.Texture("../media/images/textures/stone-plain.jpg", scene);
         stone_plain.diffuseTexture.uScale = 1;//Vertical offset of 10%
         stone_plain.diffuseTexture.vScale = 1;//Horizontal offset of 40%
         stone_plain.freeze();
@@ -30,11 +30,13 @@ function runGallery(){
 
 
         var bark = new BABYLON.StandardMaterial("Mat", scene);
-        bark.diffuseTexture = new BABYLON.Texture("../images/textures/bark.jpg", scene);
+        bark.diffuseTexture = new BABYLON.Texture("../media/images/textures/bark.jpg", scene);
         bark.diffuseTexture.uScale = 1;//Vertical offset of 10%
         bark.diffuseTexture.vScale = 1;//Horizontal offset of 40%
         bark.freeze();
 
+
+        gates = [];
 
 
 
@@ -121,7 +123,7 @@ function runGallery(){
 
                     /*if(!wasVideo) {
 
-                        image.material.emissiveTexture = new BABYLON.VideoTexture(src_normal, ['images/textures/video.mp4'], scene);
+                        image.material.emissiveTexture = new BABYLON.VideoTexture(src_normal, ['media/images/textures/video.mp4'], scene);
                         //image.material.emissiveTexture.vOffset = 1;//Vertical offset of 10%
                         //image.material.emissiveTexture.uOffset = 1;//Horizontal offset of 40%
 
@@ -173,7 +175,7 @@ function runGallery(){
             if(object.type=='label'){
                 if(object.uri=='/'){
                     r(object);
-                    moveTo(object.position.x,object.position.y,parseInt(object.rotation),true);//todo repair in admin
+                    moveTo(object.position.x,object.position.y,parseInt(object.rotation),object.storey,true);//todo repair in admin
                 }
             }else
             if(object.type=='tree') {
@@ -280,10 +282,10 @@ function runGallery(){
 
 
                 gate.material = new BABYLON.StandardMaterial("texture4", scene);
-                gate.material.backFaceCulling = true;
+                gate.material.backFaceCulling = false;
                 gate.material.diffuseColor = BABYLON.Color3.FromHexString(object.color);
-                gate.material.alpha = object.opacity;
-                gate.material.freeze();
+                //gate.material.alpha = object.opacity;
+                //gate.material.freeze();
 
 
                 gate.position = position;
@@ -298,7 +300,12 @@ function runGallery(){
 
                 gate.position.y += EYE_VERTICAL * BLOCK_SIZE;
 
-                gate.checkCollisions = false;
+                gate.checkCollisions = true;
+
+                gates.push({
+                   object: object,
+                   mesh: gate
+                });
 
 
             }else{
@@ -321,7 +328,7 @@ function runGallery(){
 
             /**/
             var material = new BABYLON.StandardMaterial("Mat", scene);
-            material.diffuseTexture = new BABYLON.Texture("../images/textures/"+material_key+".jpg", scene);
+            material.diffuseTexture = new BABYLON.Texture("../media/images/textures/"+material_key+".jpg", scene);
             //material.bumpTexture = material.diffuseTexture;
             material.diffuseTexture.uScale = 10;//Vertical offset of 10%
             material.diffuseTexture.vScale = 10;//Horizontal offset of 40%
@@ -353,20 +360,20 @@ function runGallery(){
 
                 /*
                 var material_x=new BABYLON.StandardMaterial("material",scene);
-                material_x.diffuseTexture = new BABYLON.Texture("images/textures/"+material_key+".jpg", scene);
+                material_x.diffuseTexture = new BABYLON.Texture("media/images/textures/"+material_key+".jpg", scene);
                 material_x.diffuseTexture.uScale = box_group.size.y;
                 material_x.diffuseTexture.vScale = box_group.size.z;
 
 
 
                 var material_y=new BABYLON.StandardMaterial("material",scene);
-                material_y.diffuseTexture = new BABYLON.Texture("images/textures/"+material_key+".jpg", scene);
+                material_y.diffuseTexture = new BABYLON.Texture("media/images/textures/"+material_key+".jpg", scene);
                 material_y.diffuseTexture.uScale = box_group.size.x;
                 material_y.diffuseTexture.vScale = box_group.size.z;
 
 
                 var material_z=new BABYLON.StandardMaterial("material",scene);
-                material_z.diffuseTexture = new BABYLON.Texture("images/textures/"+material_key+".jpg", scene);
+                material_z.diffuseTexture = new BABYLON.Texture("media/images/textures/"+material_key+".jpg", scene);
                 material_z.diffuseTexture.uScale = box_group.size.x;
                 material_z.diffuseTexture.vScale = box_group.size.y;
 

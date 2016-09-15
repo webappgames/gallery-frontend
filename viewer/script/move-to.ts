@@ -3,9 +3,9 @@
 
 
 
-function moveTo(x,y,rotation,immediately) {
+function moveTo(x,y,rotation,storey,immediately) {
 
-    r(x,y,rotation);
+    r(x,y,storey,rotation);
 
 
     /*camera.rotation.y = -Math.PI/2 - rotation/180*Math.PI;
@@ -23,9 +23,11 @@ function moveTo(x,y,rotation,immediately) {
     );
 
 
+    var level = BLOCKS_STOREYS_LEVELS[storey];
+
     var babylon_position = new BABYLON.Vector3(
         x * -BLOCK_SIZE,
-        camera.position.y,
+        (level+EYE_VERTICAL) * BLOCK_SIZE,
         y * BLOCK_SIZE
     );
 

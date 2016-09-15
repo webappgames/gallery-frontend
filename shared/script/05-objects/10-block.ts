@@ -33,12 +33,12 @@ namespace GALLERY.Objects{
 
             object.material = object.material || 'stone-plain';
 
-            $element.css('background','url("/images/textures/'+object.material+'.jpg")');
+            $element.css('background','url("/media/images/textures/'+object.material+'.jpg")');
             $element.css('background-size','cover');
 
             if(['window','door','gate'].indexOf(object.shape)!=-1) {
 
-                $element.html('<img src="/images/icons/' + object.shape + '.svg">');
+                $element.html('<img src="/media/images/icons/' + object.shape + '.svg">');
 
 
                 $element.css('background-color', 'rgba(0,0,0,0.5)');

@@ -16,7 +16,7 @@ function compileObjects(objects){
 
 
     var stone_plain = new BABYLON.StandardMaterial("Mat", scene);
-    stone_plain.diffuseTexture = new BABYLON.Texture("../images/textures/stone-plain.jpg", scene);
+    stone_plain.diffuseTexture = new BABYLON.Texture("../media/images/textures/stone-plain.jpg", scene);
     stone_plain.diffuseTexture.uScale = 1;//Vertical offset of 10%
     stone_plain.diffuseTexture.vScale = 1;//Horizontal offset of 40%
     stone_plain.freeze();
@@ -24,7 +24,7 @@ function compileObjects(objects){
 
 
     var bark = new BABYLON.StandardMaterial("Mat", scene);
-    bark.diffuseTexture = new BABYLON.Texture("../images/textures/bark.jpg", scene);
+    bark.diffuseTexture = new BABYLON.Texture("../media/images/textures/bark.jpg", scene);
     bark.diffuseTexture.uScale = 1;//Vertical offset of 10%
     bark.diffuseTexture.vScale = 1;//Horizontal offset of 40%
     bark.freeze();

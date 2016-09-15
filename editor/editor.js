@@ -1146,10 +1146,10 @@ var GALLERY;
                 $element.css('top', '-=' + 0.5 * zoom_selected);
                 $element.css('left', '-=' + 0.5 * zoom_selected);
                 object.material = object.material || 'stone-plain';
-                $element.css('background', 'url("/images/textures/' + object.material + '.jpg")');
+                $element.css('background', 'url("/media/images/textures/' + object.material + '.jpg")');
                 $element.css('background-size', 'cover');
                 if (['window', 'door', 'gate'].indexOf(object.shape) != -1) {
-                    $element.html('<img src="/images/icons/' + object.shape + '.svg">');
+                    $element.html('<img src="/media/images/icons/' + object.shape + '.svg">');
                     $element.css('background-color', 'rgba(0,0,0,0.5)');
                     $element.css('background-blend-mode', 'overlay');
                 }
@@ -1330,7 +1330,7 @@ var GALLERY;
                 var height = object.height * zoom_selected;
                 $image.css('width', width);
                 $image.css('height', height);
-                $image.attr('src', '/images/icons/stairs.jpg');
+                $image.attr('src', '/media/images/icons/stairs.jpg');
                 $image.css('position', 'relative');
                 $image.css('top', -height / 2);
                 $image.css('left', -width / 2);
@@ -1404,7 +1404,7 @@ var GALLERY;
             Gate.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 var object = this;
-                var $inner = $('<img src="/images/icons/gate.svg">');
+                var $inner = $('<img src="/media/images/icons/gate.svg">');
                 $inner.css('width', object.size * zoom_selected);
                 $element.css('transform', 'rotate(' + object.rotation + 'deg)');
                 $inner.css('height', 5);

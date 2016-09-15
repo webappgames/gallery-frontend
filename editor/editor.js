@@ -997,6 +997,24 @@ var GALLERY;
             Array.prototype.push = function (object) {
                 this.objects.push(GALLERY.Objects.Object.init(object));
             };
+            Array.prototype.filter = function (callback) {
+                var filtered_objects = new Array();
+                this.forEach(function (object) {
+                    if (callback(object)) {
+                        filtered_objects.push(object);
+                    }
+                });
+                return (filtered_objects);
+            };
+            Array.prototype.filterWorld = function (world) {
+                var filtered_objects = new Array();
+                this.forEach(function (object) {
+                    if (object.world !== world)
+                        return;
+                    filtered_objects.getAll().push(object);
+                });
+                return (filtered_objects);
+            };
             Array.prototype.filterTypes = function () {
                 var types = [];
                 for (var _i = 0; _i < arguments.length; _i++) {
@@ -1052,6 +1070,7 @@ var GALLERY;
     (function (Objects) {
         var Object = (function () {
             function Object(object) {
+                object.world = object.world || 'main';
                 object.storey = object.storey || '1NP';
                 for (var key in object) {
                     var this_key = key;
@@ -2030,6 +2049,34 @@ document.addEventListener("drop", function (e) {
 }, false);
 //});
 /// <reference path="reference.ts" />
+var world_selected;
+var WORLDS = ['main'];
+function createWorldsPallete() {
+    $('.select-worlds').find('ul').html('');
+    var $ul = $('.select-worlds').find('ul');
+    WORLDS.forEach(function (world) {
+        var $li = $('<li></li>');
+        $li.text(world);
+        $li.attr('data-world', world);
+        if (world == world_selected) {
+            $li.addClass('selected');
+        }
+        $ul.append($li);
+    });
+    $('.select-worlds').find('ul').find('li').click(function () {
+        world_selected = $(this).attr('data-world');
+        if (selected_object) {
+            r('Moving selected object to new world!');
+            selected_object.world = world_selected;
+        }
+        saveAndRedraw();
+    });
+}
+$(function () {
+    createWorldsPallete();
+    $('.select-worlds').find('ul').find('li').first().trigger('click');
+});
+//-------------------------------------------------------------
 var storey_selected;
 var STOREYS = [
     '1NP',
@@ -2131,6 +2178,7 @@ $(function () {
                     id: createGuid(),
                     type: type,
                     position: position,
+                    world: world_selected,
                     storey: storey_selected
                 };
                 if (type == 'light') {
@@ -2321,17 +2369,25 @@ var window_center = {
     y: $(window).height() / 2
 };
 function createMap() {
+    WORLDS = [];
+    objects.forEach(function (object) {
+        if (WORLDS.indexOf(object.world) == -1) {
+            WORLDS.push(object.world);
+        }
+    });
+    createWorldsPallete();
     var $admin_world_basement = $('#admin-world-basement');
     $admin_world_basement.html('');
+    var objects_world = objects.filterWorld(world_selected);
     var storey_selected_basement = (parseInt(storey_selected) - 1) + 'NP';
-    objects.forEach(function (object) {
+    objects_world.forEach(function (object) {
         if (object.storey !== storey_selected_basement)
             return;
         $admin_world_basement.append('\n').append(createObject$(GALLERY.Objects.Object.init(object)));
     });
     var $admin_world = $('#admin-world');
     $admin_world.html('');
-    objects.forEach(function (object) {
+    objects_world.forEach(function (object) {
         if (object.storey !== storey_selected)
             return;
         $admin_world.append('\n').append(createObject$(GALLERY.Objects.Object.init(object)));
@@ -2369,7 +2425,7 @@ function createMap() {
         var input_element, $input_element;
         for (var key in object) {
             input_element = false;
-            if (['name', 'uri', 'key', 'href', 'target'].indexOf(key) !== -1) {
+            if (['name', 'uri', 'key', 'href', 'target', 'world'].indexOf(key) !== -1) {
                 input_element = '<input type="text">';
             }
             else if (key == 'intensity') {
@@ -2506,6 +2562,7 @@ function createMap() {
                         x: drawing_x + x * signum_x,
                         y: drawing_y + y * signum_y
                     },
+                    world: world_selected,
                     storey: storey_selected,
                     material: material_selected,
                     shape: shape_selected != 'wall' ? shape_selected : ((x == 0 || y == 0 || x == size_x || y == size_y) ? 'wall' : 'room')

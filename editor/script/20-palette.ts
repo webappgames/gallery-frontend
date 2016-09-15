@@ -2,6 +2,68 @@
 
 
 
+var world_selected;
+
+var WORLDS = ['main'];
+
+
+function createWorldsPallete(){
+
+
+    $('.select-worlds').find('ul').html('');
+    let $ul = $('.select-worlds').find('ul');
+
+    WORLDS.forEach(function (world) {
+        let $li = $('<li></li>');
+        $li.text(world);
+        $li.attr('data-world', world);
+        if(world==world_selected){
+            $li.addClass('selected');
+        }
+
+        $ul.append($li);
+    });
+
+
+    $('.select-worlds').find('ul').find('li').click(function () {
+
+
+        world_selected = $(this).attr('data-world');
+
+
+        if(selected_object){
+            r('Moving selected object to new world!');
+
+            selected_object.world = world_selected;
+
+            //window_center.x = 0;
+            //window_center.y = 0;
+
+        }
+
+        saveAndRedraw();
+
+
+    });
+
+
+}
+
+
+
+$(function () {
+
+    createWorldsPallete();
+    $('.select-worlds').find('ul').find('li').first().trigger('click');
+
+});
+
+
+
+//-------------------------------------------------------------
+
+
+
 var storey_selected;
 
 var STOREYS = [
@@ -196,6 +258,7 @@ $(function () {
                     id: createGuid(),
                     type: type,
                     position: position,
+                    world: world_selected
                     storey: storey_selected
                 };
 

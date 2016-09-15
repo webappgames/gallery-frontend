@@ -40,6 +40,37 @@ namespace GALLERY.Objects{
 
 
 
+        filter(callback: (object: Object) => boolean): Array {
+
+            var filtered_objects = new Array();
+
+            this.forEach(function (object) {
+                if (callback(object)){
+                    filtered_objects.push(object);
+                }
+            });
+
+            return (filtered_objects);
+        }
+
+
+        filterWorld(world: string): Array {
+
+            var filtered_objects = new Array();
+
+            this.forEach(function (object) {
+
+                if (object.world !== world)return;
+
+                filtered_objects.getAll().push(object);
+
+            });
+
+            return (filtered_objects);
+        }
+
+
+
         filterTypes(...types: string[]): Array {
 
 

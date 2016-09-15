@@ -23,29 +23,43 @@ var window_center = {
 
 function createMap() {
 
-    var $admin_world_basement = $('#admin-world-basement');
+
+
+    WORLDS = [];
+    objects.forEach(function (object) {
+        if(WORLDS.indexOf(object.world)==-1){
+            WORLDS.push(object.world);
+        }
+
+    });
+    createWorldsPallete();
+
+
+
+
+
+    let $admin_world_basement = $('#admin-world-basement');
     $admin_world_basement.html('');
 
-    var storey_selected_basement = (parseInt(storey_selected)-1)+'NP';
-    objects.forEach(function (object) {
+    let objects_world = objects.filterWorld(world_selected);
 
+
+
+    let storey_selected_basement = (parseInt(storey_selected)-1)+'NP';
+    objects_world.forEach(function (object) {
         if(object.storey!==storey_selected_basement)return;
-
         $admin_world_basement.append('\n').append(createObject$(GALLERY.Objects.Object.init(object)));
-
     });
 
 
-    var $admin_world = $('#admin-world');
+    let $admin_world = $('#admin-world');
     $admin_world.html('');
 
 
-    objects.forEach(function (object) {
 
+    objects_world.forEach(function (object) {
         if(object.storey!==storey_selected)return;
-
         $admin_world.append('\n').append(createObject$(GALLERY.Objects.Object.init(object)));
-
     });
 
 
@@ -53,14 +67,14 @@ function createMap() {
 
     $admin_world.disableSelection();
 
-    var $blocks= $admin_world.find('.block');
-    var $blocks_gates= $admin_world.find('.block[data-shape="gate"]');
-    var $images= $admin_world.find('.image');
-    var $stairs= $admin_world.find('.stairs');
+    let $blocks= $admin_world.find('.block');
+    let $blocks_gates= $admin_world.find('.block[data-shape="gate"]');
+    let $images= $admin_world.find('.image');
+    let $stairs= $admin_world.find('.stairs');
 
 
 
-    var $dot_objects= $admin_world.find('.light, .label, .tree, .link, .gate');
+    let $dot_objects= $admin_world.find('.light, .label, .tree, .link, .gate');
 
 
     /*$admin_world.mousemove(function (e) {
@@ -72,11 +86,11 @@ function createMap() {
 
 
     //----------------------------------------------------------------------------SELECTING
-    var $dot = $('#dot');
-    var $selected_properties = $('#selected-properties');
+    let $dot = $('#dot');
+    let $selected_properties = $('#selected-properties');
 
 
-    var select_callback = function () {
+    let select_callback = function () {
 
 
         $this = $(this);
@@ -116,7 +130,7 @@ function createMap() {
 
 
             input_element=false;
-            if(['name','uri','key','href','target'].indexOf(key)!==-1){
+            if(['name','uri','key','href','target','world'].indexOf(key)!==-1){
                 input_element='<input type="text">';
             }else
             if(key=='intensity'){
@@ -239,7 +253,7 @@ function createMap() {
 
 
     };
-    var unselect_callback = function () {
+    let unselect_callback = function () {
         selected_object = null;
         $('.not-selected-object').removeClass('not-selected-object');
         $selected_properties.hide();
@@ -262,7 +276,7 @@ function createMap() {
 
 
     //----------------------------------------------------------------------------BLOCKS drawing
-    var drawing_x,drawing_y,drawing_objects;
+    let drawing_x,drawing_y,drawing_objects;
     $admin_world.unbind('mousedown').mousedown(function (event) {
 
         if($(event.target).hasClass('block') || $(event.target).attr('id')=='admin-world'){
@@ -295,7 +309,7 @@ function createMap() {
     });
 
 
-    var admin_world_mousemove;
+    let admin_world_mousemove;
     $admin_world.unbind('mousemove').mousemove(admin_world_mousemove = function (event) {
 
 
@@ -333,6 +347,7 @@ function createMap() {
                         x: drawing_x +x*signum_x,
                         y: drawing_y +y*signum_y
                     },
+                    world: world_selected,
                     storey: storey_selected,
                     material: material_selected,
                     shape: shape_selected!='wall'?shape_selected:((x==0 || y==0 || x==size_x || y==size_y)?'wall':'room')
@@ -399,7 +414,7 @@ function createMap() {
 
 
     //----------------------------------------------------------------------------LIGHTS, LABELS,TREES drag
-    var drag_normal_options = {
+    let drag_normal_options = {
 
 
         drag: function(){
@@ -431,7 +446,7 @@ function createMap() {
 
 
     //----------------------------------------------------------------------------STAIRS drag
-    var drag_stairs_options = {
+    let drag_stairs_options = {
 
         //grid: [zoom_selected/2,zoom_selected/2],
         //snap: ".block[data-shape='wall']",
@@ -480,7 +495,7 @@ function createMap() {
 
 
     //----------------------------------------------------------------------------IMAGES
-    var drag_snap_options = {
+    let drag_snap_options = {
 
         //grid: [ zoom_selected, zoom_selected ],
 

@@ -22,6 +22,7 @@
   background-color: #fff;
   width: 230px;
 
+
 }
 
 
@@ -38,7 +39,12 @@
   z-index: 2000;
   position: fixed;
   top: 0px;
+  bottom: 0px;
   right: 0px;
+
+  overflow-y: scroll;
+
+
 }
 
 

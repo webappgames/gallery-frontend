@@ -159,7 +159,9 @@ main {
   z-index: 2000;
   position: fixed;
   top: 0px;
-  right: 0px; }
+  bottom: 0px;
+  right: 0px;
+  overflow-y: scroll; }
 
 nav {
   /*button{
@@ -189,10 +191,10 @@ nav {
   border: 2px solid transparent; }
 .palette .selected {
   border: 2px solid #ff4e41 !important; }
-.palette .select-storeys ul, .palette .select-zooms ul {
+.palette .select-storeys ul, .palette .select-zooms ul, .palette .select-worlds ul {
   margin: 0;
   padding: 0; }
-  .palette .select-storeys ul li, .palette .select-zooms ul li {
+  .palette .select-storeys ul li, .palette .select-zooms ul li, .palette .select-worlds ul li {
     display: inline-block;
     cursor: pointer;
     list-style: none;

@@ -2,17 +2,18 @@
 
 
 
-var objects;
+//var objects;
+
+var meshes = [];
+
+
+function runWorld(objects){
+
+    //r('Running gallery with world '+world);
 
 
 
-
-
-
-function runGallery(){
-
-
-    var compiled = compileObjects(objects);
+    let compiled = compileObjects(objects);
 
 
     objects = compiled.objects;
@@ -167,7 +168,7 @@ function runGallery(){
             box.scaling.z=box_group.size.y;
 
             sunShadowGenerator.getShadowMap().renderList.push(box);
-
+            meshes.push(box);
 
 
         });
@@ -253,6 +254,7 @@ function runGallery(){
             light.position.y = LIGHT_VERTICAL * BLOCK_SIZE;
 
             lights.push(light);
+            meshes.push(light);
 
 
         }else
@@ -332,6 +334,7 @@ function runGallery(){
 
                 image.checkCollisions = false;
 
+                meshes.push(image);
                 //r(object);
                 //r(image);
 
@@ -343,10 +346,10 @@ function runGallery(){
 
         }else
         if(object.type=='label'){
-            if(object.uri=='/'){
+            /*if(object.uri=='/'){
                 r(object);
-                moveTo(object.position.x,object.position.y,parseInt(object.rotation),object.storey,true);//todo repair in admin
-            }
+                moveTo(object.position.x,object.position.y,parseInt(object.rotation),object.world,object.storey,true);//todo repair in admin
+            }*/
         }else
         if(object.type=='tree') {
 
@@ -385,6 +388,7 @@ function runGallery(){
             tree_mesh.material = bark;
 
             sunShadowGenerator.getShadowMap().renderList.push(tree_mesh);
+            meshes.push(tree_mesh);
             //createTreeMesh();
             //trees.push(object);
         }else
@@ -417,6 +421,8 @@ function runGallery(){
             stairs_mesh.checkCollisions = true;
             sunShadowGenerator.getShadowMap().renderList.push(stairs_mesh);
 
+            meshes.push(stairs_mesh);
+
         }else
         if(object.type=='link') {
 
@@ -441,6 +447,8 @@ function runGallery(){
                 object: object,
                 mesh: link
             });
+
+            meshes.push(link);
 
 
         }else
@@ -481,6 +489,8 @@ function runGallery(){
             });
 
 
+            meshes.push(gate);
+
         }else{
 
             console.warn('Unknown object type "'+object.type+'", maybe version mismatch between editor and this viewer.');
@@ -499,5 +509,20 @@ function runGallery(){
 
 
 
+
+}
+
+
+
+
+function clearWorld(){
+
+    meshes.forEach(function (mesh) {
+
+        mesh.dispose();
+
+    });
+
+    meshes = [];
 
 }

@@ -1,11 +1,27 @@
 /// <reference path="reference.ts" />
 
 
+var world_selected;
 
 
-function moveTo(x,y,rotation,storey,immediately) {
+function moveTo(x,y,rotation,world,storey,immediately=true) {
 
-    r(x,y,storey,rotation);
+
+    if(world_selected !== world){
+        r('Moving to new world "'+world+'" from world "'+world_selected+'"');
+
+        document.getElementById("scene").focus();
+
+        clearWorld();
+        runWorld(objects.filterWorld(world));
+        world_selected = world;
+
+
+        immediately=true;
+
+    }
+
+    r(x,y,world,storey,rotation,immediately);
 
 
     /*camera.rotation.y = -Math.PI/2 - rotation/180*Math.PI;

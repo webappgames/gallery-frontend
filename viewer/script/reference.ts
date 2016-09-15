@@ -13,7 +13,7 @@
 /// <reference path="babylon-plugins/babylon-stairs.ts" />
 
 
-/// <reference path="map.ts" />
+/// <reference path="run-world.ts" />
 /// <reference path="keys.ts" />
 /// <reference path="scene.ts" />
 /// <reference path="scene-collide.ts" />

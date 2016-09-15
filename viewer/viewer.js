@@ -1207,6 +1207,24 @@ var GALLERY;
             Array.prototype.push = function (object) {
                 this.objects.push(GALLERY.Objects.Object.init(object));
             };
+            Array.prototype.filter = function (callback) {
+                var filtered_objects = new Array();
+                this.forEach(function (object) {
+                    if (callback(object)) {
+                        filtered_objects.push(object);
+                    }
+                });
+                return (filtered_objects);
+            };
+            Array.prototype.filterWorld = function (world) {
+                var filtered_objects = new Array();
+                this.forEach(function (object) {
+                    if (object.world !== world)
+                        return;
+                    filtered_objects.getAll().push(object);
+                });
+                return (filtered_objects);
+            };
             Array.prototype.filterTypes = function () {
                 var types = [];
                 for (var _i = 0; _i < arguments.length; _i++) {
@@ -1262,6 +1280,7 @@ var GALLERY;
     (function (Objects) {
         var Object = (function () {
             function Object(object) {
+                object.world = object.world || 'main';
                 object.storey = object.storey || '1NP';
                 for (var key in object) {
                     var this_key = key;
@@ -10451,8 +10470,10 @@ function createStairsMesh(name, stairs_count, scene) {
     return stairs_mesh;
 }
 /// <reference path="reference.ts" />
-var objects;
-function runGallery() {
+//var objects;
+var meshes = [];
+function runWorld(objects) {
+    //r('Running gallery with world '+world);
     var compiled = compileObjects(objects);
     objects = compiled.objects;
     var blocks_materials_groups = compiled.blocks_materials_groups;
@@ -10559,6 +10580,7 @@ function runGallery() {
             box.scaling.y = box_group.size.z;
             box.scaling.z = box_group.size.y;
             sunShadowGenerator.getShadowMap().renderList.push(box);
+            meshes.push(box);
         });
     }
     //-----------------------------------------------------------------------
@@ -10591,6 +10613,7 @@ function runGallery() {
             light.intensity = object.intensity / 4;
             light.position.y = LIGHT_VERTICAL * BLOCK_SIZE;
             lights.push(light);
+            meshes.push(light);
         }
         else if (object.type == 'image') {
             //r('image',object);
@@ -10638,13 +10661,10 @@ function runGallery() {
                 image.rotation.y = Math.PI + rotation_rad;
                 image.position.y += EYE_VERTICAL * BLOCK_SIZE;
                 image.checkCollisions = false;
+                meshes.push(image);
             }
         }
         else if (object.type == 'label') {
-            if (object.uri == '/') {
-                r(object);
-                moveTo(object.position.x, object.position.y, parseInt(object.rotation), object.storey, true); //todo repair in admin
-            }
         }
         else if (object.type == 'tree') {
             var PHI = 2 / (1 + Math.sqrt(5)); //golden ratio for scale
@@ -10677,6 +10697,7 @@ function runGallery() {
             tree_mesh.position = position;
             tree_mesh.material = bark;
             sunShadowGenerator.getShadowMap().renderList.push(tree_mesh);
+            meshes.push(tree_mesh);
         }
         else if (object.type == 'stairs') {
             var stairs_mesh = createStairsMesh(object.id, 30, scene);
@@ -10693,6 +10714,7 @@ function runGallery() {
             /**/
             stairs_mesh.checkCollisions = true;
             sunShadowGenerator.getShadowMap().renderList.push(stairs_mesh);
+            meshes.push(stairs_mesh);
         }
         else if (object.type == 'link') {
             var link = new BABYLON.Mesh.CreateSphere(object.id, 16, object.radius * BLOCK_SIZE, scene);
@@ -10707,6 +10729,7 @@ function runGallery() {
                 object: object,
                 mesh: link
             });
+            meshes.push(link);
         }
         else if (object.type == 'gate') {
             var rotation_rad = (object.rotation / 180) * Math.PI;
@@ -10728,12 +10751,19 @@ function runGallery() {
                 object: object,
                 mesh: gate
             });
+            meshes.push(gate);
         }
         else {
             console.warn('Unknown object type "' + object.type + '", maybe version mismatch between editor and this viewer.');
         }
     });
     unlockGatesAndActivateKeys();
+}
+function clearWorld() {
+    meshes.forEach(function (mesh) {
+        mesh.dispose();
+    });
+    meshes = [];
 }
 /// <reference path="reference.ts" />
 var BLOCK_SIZE = 5;
@@ -10917,7 +10947,7 @@ function onCollide(collidedMesh) {
                 objects.filterTypes('label').forEach(function (label) {
                     //r(object.uri,object.href);
                     if (label.uri == object.href) {
-                        moveTo(label.position.x, label.position.y, parseInt(label.rotation), label.storey, true);
+                        moveTo(label.position.x, label.position.y, parseInt(label.rotation), label.world, label.storey, true);
                         ion.sound.play("link-teleport");
                     }
                 });
@@ -10970,8 +11000,18 @@ function onPointerDown(evt, pickResult) {
 }
 ;
 /// <reference path="reference.ts" />
-function moveTo(x, y, rotation, storey, immediately) {
-    r(x, y, storey, rotation);
+var world_selected;
+function moveTo(x, y, rotation, world, storey, immediately) {
+    if (immediately === void 0) { immediately = true; }
+    if (world_selected !== world) {
+        r('Moving to new world "' + world + '" from world "' + world_selected + '"');
+        document.getElementById("scene").focus();
+        clearWorld();
+        runWorld(objects.filterWorld(world));
+        world_selected = world;
+        immediately = true;
+    }
+    r(x, y, world, storey, rotation, immediately);
     /*camera.rotation.y = -Math.PI/2 - rotation/180*Math.PI;
     camera.rotation.x = 0;
     camera.rotation.z = 0;
@@ -11185,7 +11225,7 @@ function mouseMove (e) {
 /// <reference path="lib/babylon.ts" />
 /// <reference path="babylon-plugins/babylon-tree.ts" />
 /// <reference path="babylon-plugins/babylon-stairs.ts" />
-/// <reference path="map.ts" />
+/// <reference path="run-world.ts" />
 /// <reference path="keys.ts" />
 /// <reference path="scene.ts" />
 /// <reference path="scene-collide.ts" />

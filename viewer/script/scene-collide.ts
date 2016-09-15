@@ -47,7 +47,7 @@ function onCollide(collidedMesh) {
                     //r(object.uri,object.href);
                     if(label.uri == object.href){
 
-                        moveTo(label.position.x,label.position.y,parseInt(label.rotation),label.storey,true);
+                        moveTo(label.position.x,label.position.y,parseInt(label.rotation),label.world,label.storey,true);
                         ion.sound.play("link-teleport");
 
 

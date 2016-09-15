@@ -93,8 +93,7 @@ foreach($objects as $object) {
 
 <nav id="menu">
 
-
-    <a onclick="moveTo(<?=$index_label['position']['x']?>,<?=$index_label['position']['y']?>,<?=$index_label['rotation']?>);" id="menu-title">
+    <a onclick="moveTo(<?=$index_label['position']['x']?>,<?=$index_label['position']['y']?>,<?=$index_label['rotation']?>,'<?=$index_label['world']?>','<?=$index_label['storey']?>',false);" id="menu-title">
         <img src="<?=htmlspecialchars($page['favicon'])?>" alt="<?=htmlspecialchars($page['name'])?>">
         <h1><?=htmlspecialchars($page['name'])?></h1>
     </a>
@@ -115,7 +114,7 @@ foreach($objects as $object) {
                 ?>
 
                 <li>
-                    <a onclick="moveTo(<?=$object['position']['x']?>,<?=$object['position']['y']?>,<?=$object['rotation']?>,'<?=$object['storey']?>');"><?=$object['name']?></a>
+                    <a onclick="moveTo(<?=$object['position']['x']?>,<?=$object['position']['y']?>,<?=$object['rotation']?>,'<?=$object['world']?>','<?=$object['storey']?>',false);"><?=$object['name']?></a>
 
                 </li>
 
@@ -123,6 +122,9 @@ foreach($objects as $object) {
 
             }
         }
+
+
+
         ?>
 
     </ul>
@@ -164,10 +166,9 @@ foreach($objects as $object) {
 
 <script src="viewer.js"></script>
 <script>
-    document.getElementById("scene").focus();
 
     var objects = new GALLERY.Objects.Array(<?=json_encode($objects)?>);
-    runGallery();
+    moveTo(<?=$index_label['position']['x']?>,<?=$index_label['position']['y']?>,<?=$index_label['rotation']?>,'<?=$index_label['world']?>','<?=$index_label['storey']?>');
 
 </script>
 

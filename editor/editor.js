@@ -974,7 +974,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     return d;
 });
 /* jshint ignore:end */
-/// <reference path="../reference.ts" />
+/// <reference path="../../reference.ts" />
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -1045,7 +1045,7 @@ var GALLERY;
         Objects.Array = Array;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-//todo shared reference.ts file
+/// <reference path="../../reference.ts" />
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -1125,7 +1125,7 @@ var GALLERY;
         Objects.Object = Object;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="../reference.ts" />
+/// <reference path="../../reference.ts" />
 //r('created block');
 //r(GALLERY.Objects.Object);
 var GALLERY;
@@ -1215,7 +1215,7 @@ var GALLERY;
         Objects.Block = Block;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="../reference.ts" />
+/// <reference path="../../reference.ts" />
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -1268,7 +1268,7 @@ var GALLERY;
         Objects.Image = Image;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="../reference.ts" />
+/// <reference path="../../reference.ts" />
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -1291,7 +1291,7 @@ var GALLERY;
         Objects.Label = Label;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="../reference.ts" />
+/// <reference path="../../reference.ts" />
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -1312,7 +1312,7 @@ var GALLERY;
         Objects.Light = Light;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="../reference.ts" />
+/// <reference path="../../reference.ts" />
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -1344,7 +1344,7 @@ var GALLERY;
         Objects.Stairs = Stairs;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="../reference.ts" />
+/// <reference path="../../reference.ts" />
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -1365,7 +1365,7 @@ var GALLERY;
         Objects.Tree = Tree;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="../reference.ts" />
+/// <reference path="../../reference.ts" />
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -1391,7 +1391,7 @@ var GALLERY;
         Objects.Link = Link;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="../reference.ts" />
+/// <reference path="../../reference.ts" />
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -1404,12 +1404,24 @@ var GALLERY;
             Gate.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 var object = this;
-                var $inner = $('<img src="/media/images/icons/gate.svg">');
-                $inner.css('width', object.size * zoom_selected);
-                $element.css('transform', 'rotate(' + object.rotation + 'deg)');
-                $inner.css('height', 5);
-                $inner.css('background-color', object.color);
-                $element.append($inner);
+                if (typeof object.size !== 'undefined') {
+                    //todo all like this
+                    $element.css('width', '0px');
+                    $element.css('height', '0px');
+                    $element.css('transform', 'rotate(' + object.rotation + 'deg)');
+                    var $square = $('<span></span>');
+                    $square.css('display', 'block');
+                    $square.css('width', object.size * zoom_selected);
+                    $square.css('transform', 'translate(-50%, -50%)');
+                    $square.css('height', 5);
+                    $square.css('background-color', object.color);
+                    $element.append($square);
+                }
+                else {
+                    $element.css('width', 20);
+                    $element.css('height', 20);
+                    $element.css('background-color', '#ccc');
+                }
                 return $element;
             };
             return Gate;
@@ -1417,7 +1429,21 @@ var GALLERY;
         Objects.Gate = Gate;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
+/// <reference path="../reference.ts" />
 var r = console.log.bind(console);
+/// <reference path="lib/jquery.d.ts" />
+/// <reference path="script/uri-plugin.ts" />
+/// <reference path="script/05-objects/00-array.ts" />
+/// <reference path="script/05-objects/05-object.ts" />
+/// <reference path="script/05-objects/10-block.ts" />
+/// <reference path="script/05-objects/10-image.ts" />
+/// <reference path="script/05-objects/10-label.ts" />
+/// <reference path="script/05-objects/10-light.ts" />
+/// <reference path="script/05-objects/10-stairs.ts" />
+/// <reference path="script/05-objects/10-tree.ts" />
+/// <reference path="script/05-objects/10-link.ts" />
+/// <reference path="script/05-objects/10-gate.ts" />
+/// <reference path="script/00-common.ts" />
 /// <reference path="reference.ts" />
 function createObject$(object) {
     //r(object.create$Element());
@@ -2271,19 +2297,7 @@ var GALLERY;
         })(Generators = Plugins.Generators || (Plugins.Generators = {}));
     })(Plugins = GALLERY.Plugins || (GALLERY.Plugins = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="../../shared/lib/jquery.d.ts" />
-/// <reference path="../../shared/script/uri-plugin.ts" />
-/// <reference path="../../shared/script/05-objects/00-array.ts" />
-/// <reference path="../../shared/script/05-objects/05-object.ts" />
-/// <reference path="../../shared/script/05-objects/10-block.ts" />
-/// <reference path="../../shared/script/05-objects/10-image.ts" />
-/// <reference path="../../shared/script/05-objects/10-label.ts" />
-/// <reference path="../../shared/script/05-objects/10-light.ts" />
-/// <reference path="../../shared/script/05-objects/10-stairs.ts" />
-/// <reference path="../../shared/script/05-objects/10-tree.ts" />
-/// <reference path="../../shared/script/05-objects/10-link.ts" />
-/// <reference path="../../shared/script/05-objects/10-gate.ts" />
-/// <reference path="../../shared/script/00-common.ts" />
+/// <reference path="../../shared/reference.ts" />
 /// <reference path="10-create-map.ts" />
 /// <reference path="10-create-object.ts" />
 /// <reference path="10-keys.ts" />

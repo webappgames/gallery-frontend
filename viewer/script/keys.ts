@@ -61,7 +61,7 @@ var controls_down = {
 window.addEventListener('keydown', function(e) {
 
     //if(T.UI.Status.focusOnMap()) {
-        r('DOWN', e.keyCode);
+        //r('DOWN', e.keyCode);
 
         if (keys.indexOf(e.keyCode) === -1) {
             keys.push(e.keyCode);
@@ -76,7 +76,7 @@ window.addEventListener('keydown', function(e) {
 window.addEventListener('keyup', function(e) {
 
     //if(T.UI.Status.focusOnMap()) {
-    r('UP', e.keyCode);
+    //r('UP', e.keyCode);
 
     var i = keys.indexOf(e.keyCode);
 
@@ -104,20 +104,23 @@ var keys_tick = function (timestamp) {
 
 
 
-
     /*
+
     if (controls_down.UP) {
 
-        camera.position.x += Math.sin(camera.rotation.y)*5;
-        camera.position.z += Math.cos(camera.rotation.y)*5;
+
+        ion.sound.play("step");
+
+        //camera.position.x += Math.sin(camera.rotation.y)*5;
+        //camera.position.z += Math.cos(camera.rotation.y)*5;
 
     }
 
 
     if (controls_down.DOWN) {
 
-        camera.position.x -= Math.sin(camera.rotation.y)*5;
-        camera.position.z -= Math.cos(camera.rotation.y)*5;
+        //camera.position.x -= Math.sin(camera.rotation.y)*5;
+        //camera.position.z -= Math.cos(camera.rotation.y)*5;
 
     }
     */

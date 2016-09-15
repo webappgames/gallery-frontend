@@ -186,16 +186,30 @@ function compileObjects(objects) {
         blocks_materials_groups: blocks_materials_groups
     });
 }
-var gates;
-function unlockGates() {
+var gates, keys;
+function unlockGatesAndActivateKeys() {
+    var opening = 0, closing = 0;
     gates.forEach(function (gate) {
         if (gate.object.key == location.hash) {
             gate.mesh.checkCollisions = false;
             gate.mesh.material.alpha = 0.1;
+            opening++;
         }
         else {
             gate.mesh.checkCollisions = true;
             gate.mesh.material.alpha = 0.95;
+            closing++;
+        }
+    });
+    r('Opening ' + opening + ' gates, Closing ' + closing + ' gates. ');
+    links.forEach(function (link) {
+        if (link.object.href == location.hash) {
+            link.mesh.checkCollisions = false;
+            link.mesh.material.alpha = 0.1;
+        }
+        else {
+            link.mesh.checkCollisions = true;
+            link.mesh.material.alpha = 0.95;
         }
     });
 }
@@ -1170,7 +1184,7 @@ function unlockGates() {
     return d;
 });
 /* jshint ignore:end */
-/// <reference path="../reference.ts" />
+/// <reference path="../../reference.ts" />
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -1241,7 +1255,7 @@ var GALLERY;
         Objects.Array = Array;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-//todo shared reference.ts file
+/// <reference path="../../reference.ts" />
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -1321,7 +1335,7 @@ var GALLERY;
         Objects.Object = Object;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="../reference.ts" />
+/// <reference path="../../reference.ts" />
 //r('created block');
 //r(GALLERY.Objects.Object);
 var GALLERY;
@@ -1411,7 +1425,7 @@ var GALLERY;
         Objects.Block = Block;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="../reference.ts" />
+/// <reference path="../../reference.ts" />
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -1464,7 +1478,7 @@ var GALLERY;
         Objects.Image = Image;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="../reference.ts" />
+/// <reference path="../../reference.ts" />
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -1487,7 +1501,7 @@ var GALLERY;
         Objects.Label = Label;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="../reference.ts" />
+/// <reference path="../../reference.ts" />
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -1508,7 +1522,7 @@ var GALLERY;
         Objects.Light = Light;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="../reference.ts" />
+/// <reference path="../../reference.ts" />
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -1540,7 +1554,7 @@ var GALLERY;
         Objects.Stairs = Stairs;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="../reference.ts" />
+/// <reference path="../../reference.ts" />
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -1561,7 +1575,7 @@ var GALLERY;
         Objects.Tree = Tree;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="../reference.ts" />
+/// <reference path="../../reference.ts" />
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -1587,7 +1601,7 @@ var GALLERY;
         Objects.Link = Link;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="../reference.ts" />
+/// <reference path="../../reference.ts" />
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -1600,12 +1614,24 @@ var GALLERY;
             Gate.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 var object = this;
-                var $inner = $('<img src="/media/images/icons/gate.svg">');
-                $inner.css('width', object.size * zoom_selected);
-                $element.css('transform', 'rotate(' + object.rotation + 'deg)');
-                $inner.css('height', 5);
-                $inner.css('background-color', object.color);
-                $element.append($inner);
+                if (typeof object.size !== 'undefined') {
+                    //todo all like this
+                    $element.css('width', '0px');
+                    $element.css('height', '0px');
+                    $element.css('transform', 'rotate(' + object.rotation + 'deg)');
+                    var $square = $('<span></span>');
+                    $square.css('display', 'block');
+                    $square.css('width', object.size * zoom_selected);
+                    $square.css('transform', 'translate(-50%, -50%)');
+                    $square.css('height', 5);
+                    $square.css('background-color', object.color);
+                    $element.append($square);
+                }
+                else {
+                    $element.css('width', 20);
+                    $element.css('height', 20);
+                    $element.css('background-color', '#ccc');
+                }
                 return $element;
             };
             return Gate;
@@ -1613,7 +1639,21 @@ var GALLERY;
         Objects.Gate = Gate;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
+/// <reference path="../reference.ts" />
 var r = console.log.bind(console);
+/// <reference path="lib/jquery.d.ts" />
+/// <reference path="script/uri-plugin.ts" />
+/// <reference path="script/05-objects/00-array.ts" />
+/// <reference path="script/05-objects/05-object.ts" />
+/// <reference path="script/05-objects/10-block.ts" />
+/// <reference path="script/05-objects/10-image.ts" />
+/// <reference path="script/05-objects/10-label.ts" />
+/// <reference path="script/05-objects/10-light.ts" />
+/// <reference path="script/05-objects/10-stairs.ts" />
+/// <reference path="script/05-objects/10-tree.ts" />
+/// <reference path="script/05-objects/10-link.ts" />
+/// <reference path="script/05-objects/10-gate.ts" />
+/// <reference path="script/00-common.ts" />
 /**
  * Ion.Sound
  * version 3.0.7 Build 89
@@ -10405,6 +10445,8 @@ function createStairsMesh(name, stairs_count, scene) {
     }
     //r(stairs_meshes);
     var stairs_mesh = BABYLON.Mesh.MergeMeshes(stairs_meshes);
+    stairs_mesh.id = 'stairs'; //todo better
+    stairs_mesh.name = 'stairs';
     //r(stairs_mesh);
     return stairs_mesh;
 }
@@ -10414,6 +10456,112 @@ function runGallery() {
     var compiled = compileObjects(objects);
     objects = compiled.objects;
     var blocks_materials_groups = compiled.blocks_materials_groups;
+    var sunShadowGenerator = new BABYLON.ShadowGenerator(1024, sun);
+    sunShadowGenerator.useVarianceShadowMap = true;
+    var building_blocks = [];
+    var lights = [];
+    //-----------------------------------------------------------------------ROOM
+    for (var material_key in blocks_materials_groups) {
+        /**/
+        var material = new BABYLON.StandardMaterial("Mat", scene);
+        material.diffuseTexture = new BABYLON.Texture("../media/images/textures/" + material_key + ".jpg", scene);
+        //material.bumpTexture = material.diffuseTexture;
+        material.diffuseTexture.uScale = 10; //Vertical offset of 10%
+        material.diffuseTexture.vScale = 10; //Horizontal offset of 40%
+        //material.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+        material.freeze(); /**/
+        blocks_materials_groups[material_key].forEach(function (box_group) {
+            var position = new BABYLON.Vector3(box_group.position.x * -BLOCK_SIZE, (box_group.position.z + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
+            box_group.position.y * BLOCK_SIZE);
+            //position.x -=BLOCK_SIZE/2;
+            //position.z +=BLOCK_SIZE/2;
+            //var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
+            //box.showBoundingBox=false;
+            //Define a material
+            /*
+             var material_x=new BABYLON.StandardMaterial("material",scene);
+             material_x.diffuseTexture = new BABYLON.Texture("media/images/textures/"+material_key+".jpg", scene);
+             material_x.diffuseTexture.uScale = box_group.size.y;
+             material_x.diffuseTexture.vScale = box_group.size.z;
+
+
+
+             var material_y=new BABYLON.StandardMaterial("material",scene);
+             material_y.diffuseTexture = new BABYLON.Texture("media/images/textures/"+material_key+".jpg", scene);
+             material_y.diffuseTexture.uScale = box_group.size.x;
+             material_y.diffuseTexture.vScale = box_group.size.z;
+
+
+             var material_z=new BABYLON.StandardMaterial("material",scene);
+             material_z.diffuseTexture = new BABYLON.Texture("media/images/textures/"+material_key+".jpg", scene);
+             material_z.diffuseTexture.uScale = box_group.size.x;
+             material_z.diffuseTexture.vScale = box_group.size.y;
+
+
+
+
+
+
+
+             var x_mesh_1 = BABYLON.Mesh.CreatePlane('room', BLOCK_SIZE, scene);
+             x_mesh_1.scaling.x = box_group.size.y;
+             x_mesh_1.scaling.y = box_group.size.z;
+             x_mesh_1.rotation.y=Math.PI*(1/2);
+             x_mesh_1.position = position.add(new BABYLON.Vector3(BLOCK_SIZE/-2,0,0));
+
+
+
+
+             var x_mesh_2 = BABYLON.Mesh.CreatePlane('room', BLOCK_SIZE, scene);
+             x_mesh_2.scaling.x = box_group.size.y;
+             x_mesh_2.scaling.y = box_group.size.z;
+             x_mesh_2.rotation.y=Math.PI*(3/2);
+             x_mesh_2.position = position.add(new BABYLON.Vector3(BLOCK_SIZE/2,0,0));
+
+
+
+
+
+             var y_mesh_1 = BABYLON.Mesh.CreatePlane('room', BLOCK_SIZE, scene);
+             y_mesh_1.scaling.x = box_group.size.x;
+             y_mesh_1.scaling.y = box_group.size.z;
+             y_mesh_1.rotation.y=Math.PI*(0/2);
+             y_mesh_1.position = position.add(new BABYLON.Vector3(0,0,BLOCK_SIZE/2));
+
+
+
+
+             var y_mesh_2 = BABYLON.Mesh.CreatePlane('room', BLOCK_SIZE, scene);
+             y_mesh_2.scaling.x = box_group.size.x;
+             y_mesh_2.scaling.y = box_group.size.z;
+             y_mesh_2.rotation.y=Math.PI*(2/2);
+             y_mesh_2.position = position.add(new BABYLON.Vector3(0,0,BLOCK_SIZE/-2));
+             /**/
+            /*var paths = [[],[]];
+             paths[0].push(new BABYLON.Vector3(0.5, -0.5, 0.5));
+             paths[0].push(new BABYLON.Vector3(0.5, -0.5, -0.5));
+             paths[0].push(new BABYLON.Vector3(-0.5, -0.5, -0.5));
+             paths[0].push(new BABYLON.Vector3(-0.5, -0.5, 0.5));
+             paths[0].push(new BABYLON.Vector3(0.5, -0.5, 0.5));
+             paths[1].push(new BABYLON.Vector3(0.5, 0.5, 0.5));
+             paths[1].push(new BABYLON.Vector3(0.5, 0.5, -0.5));
+             paths[1].push(new BABYLON.Vector3(-0.5, 0.5, -0.5));
+             paths[1].push(new BABYLON.Vector3(-0.5, 0.5, 0.5));
+             paths[1].push(new BABYLON.Vector3(0.5, 0.5, 0.5));*/
+            //var box = BABYLON.Mesh.CreateRibbon("room", paths, false, true ,  0, scene);
+            //var box = BABYLON.Mesh.CreateSphere("room", 3, BLOCK_SIZE, scene);
+            var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
+            box.material = material;
+            box.isPickable = true;
+            box.checkCollisions = true;
+            box.position = position;
+            box.scaling.x = box_group.size.x;
+            box.scaling.y = box_group.size.z;
+            box.scaling.z = box_group.size.y;
+            sunShadowGenerator.getShadowMap().renderList.push(box);
+        });
+    }
+    //-----------------------------------------------------------------------
     var stone_plain = new BABYLON.StandardMaterial("Mat", scene);
     stone_plain.diffuseTexture = new BABYLON.Texture("../media/images/textures/stone-plain.jpg", scene);
     stone_plain.diffuseTexture.uScale = 1; //Vertical offset of 10%
@@ -10425,12 +10573,8 @@ function runGallery() {
     bark.diffuseTexture.vScale = 1; //Horizontal offset of 40%
     bark.freeze();
     gates = [];
-    var sunShadowGenerator = new BABYLON.ShadowGenerator(1024, sun);
-    sunShadowGenerator.useVarianceShadowMap = true;
-    var wasVideo = false;
-    var building_blocks = [];
-    var lights = [];
-    var blocks = '';
+    links = [];
+    //var wasVideo = false;
     objects.forEach(function (object) {
         object.storey = object.storey || '1NP';
         var level = BLOCKS_STOREYS_LEVELS[object.storey];
@@ -10559,21 +10703,26 @@ function runGallery() {
             link.material.alpha = object.opacity;
             link.checkCollisions = true;
             //light.position.y = LIGHT_VERTICAL * BLOCK_SIZE;
-            lights.push(light);
+            links.push({
+                object: object,
+                mesh: link
+            });
         }
         else if (object.type == 'gate') {
             var rotation_rad = (object.rotation / 180) * Math.PI;
-            var gate = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
-            gate.material = new BABYLON.StandardMaterial("texture4", scene);
-            gate.material.backFaceCulling = false;
+            //var gate = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
+            var gate = BABYLON.Mesh.CreateBox(object.id, BLOCK_SIZE, scene);
+            gate.material = new BABYLON.StandardMaterial("texture", scene);
+            //gate.material.backFaceCulling = false;
             gate.material.diffuseColor = BABYLON.Color3.FromHexString(object.color);
             //gate.material.alpha = object.opacity;
             //gate.material.freeze();
             gate.position = position;
             gate.scaling.x = object.size;
-            gate.scaling.y = 1 * BLOCK_SIZE;
+            gate.scaling.z = 0.1;
+            gate.scaling.y = BLOCKS_2D_3D_SHAPES.room.length - 1;
             gate.rotation.y = Math.PI + rotation_rad;
-            gate.position.y += EYE_VERTICAL * BLOCK_SIZE;
+            gate.position.y += gate.scaling.y * BLOCK_SIZE * 0.5;
             gate.checkCollisions = true;
             gates.push({
                 object: object,
@@ -10584,106 +10733,7 @@ function runGallery() {
             console.warn('Unknown object type "' + object.type + '", maybe version mismatch between editor and this viewer.');
         }
     });
-    for (var material_key in blocks_materials_groups) {
-        /**/
-        var material = new BABYLON.StandardMaterial("Mat", scene);
-        material.diffuseTexture = new BABYLON.Texture("../media/images/textures/" + material_key + ".jpg", scene);
-        //material.bumpTexture = material.diffuseTexture;
-        material.diffuseTexture.uScale = 10; //Vertical offset of 10%
-        material.diffuseTexture.vScale = 10; //Horizontal offset of 40%
-        //material.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-        material.freeze(); /**/
-        blocks_materials_groups[material_key].forEach(function (box_group) {
-            var position = new BABYLON.Vector3(box_group.position.x * -BLOCK_SIZE, (box_group.position.z + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
-            box_group.position.y * BLOCK_SIZE);
-            //position.x -=BLOCK_SIZE/2;
-            //position.z +=BLOCK_SIZE/2;
-            //var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
-            //box.showBoundingBox=false;
-            //Define a material
-            /*
-            var material_x=new BABYLON.StandardMaterial("material",scene);
-            material_x.diffuseTexture = new BABYLON.Texture("media/images/textures/"+material_key+".jpg", scene);
-            material_x.diffuseTexture.uScale = box_group.size.y;
-            material_x.diffuseTexture.vScale = box_group.size.z;
-
-
-
-            var material_y=new BABYLON.StandardMaterial("material",scene);
-            material_y.diffuseTexture = new BABYLON.Texture("media/images/textures/"+material_key+".jpg", scene);
-            material_y.diffuseTexture.uScale = box_group.size.x;
-            material_y.diffuseTexture.vScale = box_group.size.z;
-
-
-            var material_z=new BABYLON.StandardMaterial("material",scene);
-            material_z.diffuseTexture = new BABYLON.Texture("media/images/textures/"+material_key+".jpg", scene);
-            material_z.diffuseTexture.uScale = box_group.size.x;
-            material_z.diffuseTexture.vScale = box_group.size.y;
-
-
-
-
-
-
-
-            var x_mesh_1 = BABYLON.Mesh.CreatePlane('room', BLOCK_SIZE, scene);
-            x_mesh_1.scaling.x = box_group.size.y;
-            x_mesh_1.scaling.y = box_group.size.z;
-            x_mesh_1.rotation.y=Math.PI*(1/2);
-            x_mesh_1.position = position.add(new BABYLON.Vector3(BLOCK_SIZE/-2,0,0));
-
-
-
-
-            var x_mesh_2 = BABYLON.Mesh.CreatePlane('room', BLOCK_SIZE, scene);
-            x_mesh_2.scaling.x = box_group.size.y;
-            x_mesh_2.scaling.y = box_group.size.z;
-            x_mesh_2.rotation.y=Math.PI*(3/2);
-            x_mesh_2.position = position.add(new BABYLON.Vector3(BLOCK_SIZE/2,0,0));
-
-
-
-
-
-            var y_mesh_1 = BABYLON.Mesh.CreatePlane('room', BLOCK_SIZE, scene);
-            y_mesh_1.scaling.x = box_group.size.x;
-            y_mesh_1.scaling.y = box_group.size.z;
-            y_mesh_1.rotation.y=Math.PI*(0/2);
-            y_mesh_1.position = position.add(new BABYLON.Vector3(0,0,BLOCK_SIZE/2));
-
-
-
-
-            var y_mesh_2 = BABYLON.Mesh.CreatePlane('room', BLOCK_SIZE, scene);
-            y_mesh_2.scaling.x = box_group.size.x;
-            y_mesh_2.scaling.y = box_group.size.z;
-            y_mesh_2.rotation.y=Math.PI*(2/2);
-            y_mesh_2.position = position.add(new BABYLON.Vector3(0,0,BLOCK_SIZE/-2));
-            /**/
-            /*var paths = [[],[]];
-            paths[0].push(new BABYLON.Vector3(0.5, -0.5, 0.5));
-            paths[0].push(new BABYLON.Vector3(0.5, -0.5, -0.5));
-            paths[0].push(new BABYLON.Vector3(-0.5, -0.5, -0.5));
-            paths[0].push(new BABYLON.Vector3(-0.5, -0.5, 0.5));
-            paths[0].push(new BABYLON.Vector3(0.5, -0.5, 0.5));
-            paths[1].push(new BABYLON.Vector3(0.5, 0.5, 0.5));
-            paths[1].push(new BABYLON.Vector3(0.5, 0.5, -0.5));
-            paths[1].push(new BABYLON.Vector3(-0.5, 0.5, -0.5));
-            paths[1].push(new BABYLON.Vector3(-0.5, 0.5, 0.5));
-            paths[1].push(new BABYLON.Vector3(0.5, 0.5, 0.5));*/
-            //var box = BABYLON.Mesh.CreateRibbon("room", paths, false, true ,  0, scene);
-            //var box = BABYLON.Mesh.CreateSphere("room", 3, BLOCK_SIZE, scene);
-            var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
-            box.material = material;
-            box.isPickable = true;
-            box.checkCollisions = true;
-            box.position = position;
-            box.scaling.x = box_group.size.x;
-            box.scaling.y = box_group.size.z;
-            box.scaling.z = box_group.size.y;
-            sunShadowGenerator.getShadowMap().renderList.push(box);
-        });
-    }
+    unlockGatesAndActivateKeys();
 }
 /// <reference path="reference.ts" />
 var BLOCK_SIZE = 5;
@@ -10721,6 +10771,8 @@ var createScene = function () {
     var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, EYE_VERTICAL * BLOCK_SIZE, 30 * BLOCK_SIZE), scene);
     camera.rotation.y = Math.PI;
     camera.attachControl(canvas, true);
+    camera.angularSensibility = 1000;
+    //camera.panningSensibility = 10000;
     //var inputManager = camera.inputs;
     /*setTimeout(function () {
         r('mousedown');
@@ -10735,36 +10787,7 @@ var createScene = function () {
     camera.speed = SPEED;
     camera.inertia = SPEED_INERTIA;
     camera.fov = 1.3;
-    camera.onCollide = function (collidedMesh) {
-        if (collidedMesh.id == 'ground')
-            return;
-        var object = objects.getObjectById(collidedMesh.name);
-        if (object) {
-            if (object.type == 'link') {
-                if (object.href.substr(0, 1) === '#') {
-                    if (window.location.hash != object.href) {
-                        window.location.hash = object.href;
-                        unlockGates();
-                    }
-                }
-                else if (object.href.substr(0, 1) === '/') {
-                    r('teleporting...');
-                    objects.filterTypes('label').forEach(function (label) {
-                        //r(object.uri,object.href);
-                        if (label.uri == object.href) {
-                            moveTo(label.position.x, label.position.y, parseInt(label.rotation), label.storey, true);
-                            ion.sound.play("link-teleport");
-                        }
-                    });
-                }
-                //collidedMesh.dispose();
-                collidedMesh.checkCollisions = false;
-                setTimeout(function () {
-                    collidedMesh.checkCollisions = true;
-                }, 200);
-            }
-        }
-    };
+    camera.onCollide = onCollide;
     //Set gravity for the scene (G force like, on Y-axis)
     scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
     //scene.enablePhysics();
@@ -10836,39 +10859,7 @@ var createScene = function () {
 
     });*/
     //When pointer down event is raised
-    scene.onPointerDown = function (evt, pickResult) {
-        // if the click hits the ground object, we change the impact position
-        if (pickResult.hit) {
-            //r(pickResult.pickedMesh.name);
-            if (pickResult.pickedMesh.name == 'ground') {
-                var rad = Math.atan2((pickResult.pickedPoint.x - camera.position.x), (pickResult.pickedPoint.z - camera.position.z));
-                r(rad / Math.PI * 180);
-                var babylon_rotation = new BABYLON.Vector3(0, rad, 0);
-                var babylon_position = new BABYLON.Vector3(pickResult.pickedPoint.x, camera.position.y, pickResult.pickedPoint.z);
-                moveToBabylon(babylon_position, babylon_rotation, false);
-            }
-            else if (pickResult.pickedMesh.name == 'room') {
-                r('room picked');
-            }
-            else {
-                var object = objects.getObjectById(pickResult.pickedMesh.name);
-                /*var rotation_rad = (object.rotation / 180) * Math.PI;
-
-                var x = object.position.x + Math.sin(-rotation_rad) * 3;
-                var y = object.position.y + Math.cos(-rotation_rad) * 3;
-
-
-                moveTo(x, y, object.rotation);*/
-                var src = object.src;
-                var src_uri = URI(src)
-                    .removeSearch("width");
-                var src_normal = src_uri.addSearch({ width: 1024 }).toString();
-                setTimeout(function () {
-                    Window.open(object.name, '<img src="' + src_normal + '">', function () { }, 'NORMAL');
-                }, IMMEDIATELY_MS);
-            }
-        }
-    };
+    scene.onPointerDown = onPointerDown;
     /*var movement = {
       z: 0
     };
@@ -10899,6 +10890,85 @@ engine.runRenderLoop(function () {
 window.addEventListener("resize", function () {
     engine.resize();
 });
+/// <reference path="reference.ts" />
+function onCollide(collidedMesh) {
+    //r(collidedMesh);
+    //collidedMesh.checkCollisions = false;
+    if (['ground', 'room', 'stairs'].indexOf(collidedMesh.id) !== -1) {
+        ion.sound.play("step-" + collidedMesh.id);
+        return;
+    }
+    var object = objects.getObjectById(collidedMesh.name);
+    if (object) {
+        //r('collide',object);
+        if (object.type == 'link') {
+            if (object.href.substr(0, 1) === '#') {
+                if (window.location.hash != object.href) {
+                    window.location.hash = object.href;
+                    unlockGatesAndActivateKeys();
+                    ion.sound.play("link-key");
+                } /*else{
+
+                    ion.sound.play("link-key-none");
+                }*/
+            }
+            else if (object.href.substr(0, 1) === '/') {
+                r('teleporting...');
+                objects.filterTypes('label').forEach(function (label) {
+                    //r(object.uri,object.href);
+                    if (label.uri == object.href) {
+                        moveTo(label.position.x, label.position.y, parseInt(label.rotation), label.storey, true);
+                        ion.sound.play("link-teleport");
+                    }
+                });
+            }
+        }
+        else if (object.type == 'gate') {
+            //camera.position.x -= Math.sin(camera.rotation.y)*5;
+            //camera.position.z -= Math.cos(camera.rotation.y)*5;
+            ion.sound.play("gate-locked");
+        }
+    }
+    else {
+        r('collide with ' + collidedMesh.name);
+    }
+}
+;
+/// <reference path="reference.ts" />
+function onPointerDown(evt, pickResult) {
+    // if the click hits the ground object, we change the impact position
+    if (pickResult.hit) {
+        //r(pickResult.pickedMesh.name);
+        if (pickResult.pickedMesh.name == 'ground') {
+            var rad = Math.atan2((pickResult.pickedPoint.x - camera.position.x), (pickResult.pickedPoint.z - camera.position.z));
+            r(rad / Math.PI * 180);
+            var babylon_rotation = new BABYLON.Vector3(0, rad, 0);
+            var babylon_position = new BABYLON.Vector3(pickResult.pickedPoint.x, camera.position.y, pickResult.pickedPoint.z);
+            moveToBabylon(babylon_position, babylon_rotation, false);
+        }
+        else if (pickResult.pickedMesh.name == 'room') {
+            r('room picked');
+        }
+        else {
+            var object = objects.getObjectById(pickResult.pickedMesh.name);
+            /*var rotation_rad = (object.rotation / 180) * Math.PI;
+
+             var x = object.position.x + Math.sin(-rotation_rad) * 3;
+             var y = object.position.y + Math.cos(-rotation_rad) * 3;
+
+
+             moveTo(x, y, object.rotation);*/
+            var src = object.src;
+            var src_uri = URI(src)
+                .removeSearch("width");
+            var src_normal = src_uri.addSearch({ width: 1024 }).toString();
+            setTimeout(function () {
+                Window.open(object.name, '<img src="' + src_normal + '">', function () { }, 'NORMAL');
+            }, IMMEDIATELY_MS);
+        }
+    }
+}
+;
 /// <reference path="reference.ts" />
 function moveTo(x, y, rotation, storey, immediately) {
     r(x, y, storey, rotation);
@@ -11042,8 +11112,13 @@ Window.close = function (dont_run_close_callback) {
 // init bunch of sounds
 ion.sound({
     sounds: [
+        { name: "step-room", multiplay: false, volume: 0.2 },
+        { name: "step-ground", multiplay: false, volume: 0.4 },
+        { name: "step-stairs", multiplay: false, volume: 0.2 },
         { name: "link-teleport" },
         { name: "link-key" },
+        //{name: "link-key-none"},
+        { name: "gate-locked", multiplay: false },
     ],
     // main config
     path: "../media/sound/",
@@ -11072,40 +11147,40 @@ function lockChangeAlert() {
     if (document.pointerLockElement === canvas ||
         document.mozPointerLockElement === canvas) {
         console.log('The pointer lock status is now locked');
-        document.addEventListener("mousemove", mouseMove, false);
+        //document.addEventListener("mousemove", mouseMove, false);
         canvas.focus();
         pointer_lock.innerHTML = '<p>Esc</p>';
     }
     else {
         console.log('The pointer lock status is now unlocked');
-        document.removeEventListener("mousemove", mouseMove, false);
+        //document.removeEventListener("mousemove", mouseMove, false);
         pointer_lock.innerHTML = '<p><i class="fa fa-arrows" aria-hidden="true"></i></p>';
+        camera.detachControl(canvas);
+        setTimeout(function () {
+            camera.attachControl(canvas);
+        }, IMMEDIATELY_MS);
     }
 }
-function mouseMove(e) {
+/*
+function mouseMove (e) {
+
     r('mousemove');
+
     var movementX = e.movementX ||
-        e.mozMovementX ||
+        e.mozMovementX          ||
         0;
+
     var movementY = e.movementY ||
-        e.mozMovementY ||
+        e.mozMovementY      ||
         0;
-    camera.rotation.y += (movementX / 10) / 180 * Math.PI;
-    camera.rotation.x += (movementY / 10) / 180 * Math.PI;
-}
-/// <reference path="../../shared/lib/jquery.d.ts" />
-/// <reference path="../../shared/script/uri-plugin.ts" />
-/// <reference path="../../shared/script/05-objects/00-array.ts" />
-/// <reference path="../../shared/script/05-objects/05-object.ts" />
-/// <reference path="../../shared/script/05-objects/10-block.ts" />
-/// <reference path="../../shared/script/05-objects/10-image.ts" />
-/// <reference path="../../shared/script/05-objects/10-label.ts" />
-/// <reference path="../../shared/script/05-objects/10-light.ts" />
-/// <reference path="../../shared/script/05-objects/10-stairs.ts" />
-/// <reference path="../../shared/script/05-objects/10-tree.ts" />
-/// <reference path="../../shared/script/05-objects/10-link.ts" />
-/// <reference path="../../shared/script/05-objects/10-gate.ts" />
-/// <reference path="../../shared/script/00-common.ts" />
+
+
+    camera.rotation.y+=(movementX/10)/180*Math.PI;
+    camera.rotation.x+=(movementY/10)/180*Math.PI;
+
+
+}*/ 
+/// <reference path="../../shared/reference.ts" />
 /// <reference path="lib/ion.sound.ts" />
 /// <reference path="lib/babylon.ts" />
 /// <reference path="babylon-plugins/babylon-tree.ts" />
@@ -11113,6 +11188,8 @@ function mouseMove(e) {
 /// <reference path="map.ts" />
 /// <reference path="keys.ts" />
 /// <reference path="scene.ts" />
+/// <reference path="scene-collide.ts" />
+/// <reference path="scene-pick.ts" />
 /// <reference path="move-to.ts" />
 /// <reference path="reference.ts" />
 /// <reference path="popup-window.ts" />
@@ -11153,7 +11230,7 @@ var controls_down = {
 };
 window.addEventListener('keydown', function (e) {
     //if(T.UI.Status.focusOnMap()) {
-    r('DOWN', e.keyCode);
+    //r('DOWN', e.keyCode);
     if (keys.indexOf(e.keyCode) === -1) {
         keys.push(e.keyCode);
         controls_down.update();
@@ -11162,7 +11239,7 @@ window.addEventListener('keydown', function (e) {
 });
 window.addEventListener('keyup', function (e) {
     //if(T.UI.Status.focusOnMap()) {
-    r('UP', e.keyCode);
+    //r('UP', e.keyCode);
     var i = keys.indexOf(e.keyCode);
     if (i != -1) {
         keys.splice(i, 1);
@@ -11178,18 +11255,22 @@ var keys_tick = function (timestamp) {
     last = timestamp;
     //if(window_opened)return;
     /*
+
     if (controls_down.UP) {
 
-        camera.position.x += Math.sin(camera.rotation.y)*5;
-        camera.position.z += Math.cos(camera.rotation.y)*5;
+
+        ion.sound.play("step");
+
+        //camera.position.x += Math.sin(camera.rotation.y)*5;
+        //camera.position.z += Math.cos(camera.rotation.y)*5;
 
     }
 
 
     if (controls_down.DOWN) {
 
-        camera.position.x -= Math.sin(camera.rotation.y)*5;
-        camera.position.z -= Math.cos(camera.rotation.y)*5;
+        //camera.position.x -= Math.sin(camera.rotation.y)*5;
+        //camera.position.z -= Math.cos(camera.rotation.y)*5;
 
     }
     */

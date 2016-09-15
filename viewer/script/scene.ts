@@ -53,6 +53,10 @@ var createScene = function () {
     var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, EYE_VERTICAL * BLOCK_SIZE, 30*BLOCK_SIZE), scene);
     camera.rotation.y=Math.PI;
     camera.attachControl(canvas, true);
+    camera.angularSensibility = 1000;
+    //camera.panningSensibility = 10000;
+
+
     //var inputManager = camera.inputs;
 
     /*setTimeout(function () {
@@ -81,72 +85,7 @@ var createScene = function () {
 
 
 
-    camera.onCollide = function(collidedMesh) {
-        if(collidedMesh.id=='ground')return;
-
-
-
-        var object = objects.getObjectById(collidedMesh.name);
-        if(object){
-
-
-
-
-
-            if(object.type=='link'){
-
-                if(object.href.substr(0,1)==='#') {
-
-                    if (window.location.hash != object.href){
-
-                        window.location.hash = object.href;
-                        unlockGates();
-                        //history.pushState(null, "Galerie", "bar.html");
-
-                    }
-
-                }else
-                if(object.href.substr(0,1)==='/') {
-
-                    r('teleporting...');
-
-                    objects.filterTypes('label').forEach(function (label) {
-
-                        //r(object.uri,object.href);
-                        if(label.uri == object.href){
-
-                            moveTo(label.position.x,label.position.y,parseInt(label.rotation),label.storey,true);
-                            ion.sound.play("link-teleport");
-
-
-                        }
-
-
-                    });
-
-
-                }
-
-
-
-
-                //collidedMesh.dispose();
-                collidedMesh.checkCollisions = false;
-
-                setTimeout(function () {
-                    collidedMesh.checkCollisions = true;
-                },200);
-
-
-            }
-
-        }
-
-
-
-
-
-    };
+    camera.onCollide = onCollide;
 
 
 
@@ -252,79 +191,7 @@ var createScene = function () {
 
 
     //When pointer down event is raised
-    scene.onPointerDown = function (evt, pickResult) {
-        // if the click hits the ground object, we change the impact position
-        if (pickResult.hit) {
-
-            //r(pickResult.pickedMesh.name);
-
-            if(pickResult.pickedMesh.name=='ground') {
-
-
-                var rad = Math.atan2(
-                    (pickResult.pickedPoint.x-camera.position.x),
-                    (pickResult.pickedPoint.z-camera.position.z)
-
-                );
-
-
-                r(rad/Math.PI*180);
-
-
-
-                var babylon_rotation = new BABYLON.Vector3(
-                    0,
-                    rad,
-                    0
-                );
-
-
-
-                var babylon_position = new BABYLON.Vector3(
-                    pickResult.pickedPoint.x,
-                    camera.position.y,
-                    pickResult.pickedPoint.z
-                );
-
-                moveToBabylon(babylon_position,babylon_rotation,false);
-
-
-            }else
-            if(pickResult.pickedMesh.name=='room') {
-
-                r('room picked');
-
-            }else{
-
-                var object = objects.getObjectById(pickResult.pickedMesh.name);
-                /*var rotation_rad = (object.rotation / 180) * Math.PI;
-
-                var x = object.position.x + Math.sin(-rotation_rad) * 3;
-                var y = object.position.y + Math.cos(-rotation_rad) * 3;
-
-
-                moveTo(x, y, object.rotation);*/
-
-                var src = object.src;
-                var src_uri = URI(src)
-                    .removeSearch("width");
-                var src_normal = src_uri.addSearch({ width: 1024 }).toString();
-
-
-                setTimeout(
-                    function () {
-                        Window.open(object.name, '<img src="'+src_normal+'">', function(){}, 'NORMAL');
-                    }, IMMEDIATELY_MS
-                );
-
-
-
-
-            }
-            //r(object);
-
-        }
-    };
+    scene.onPointerDown = onPointerDown;
 
 
 

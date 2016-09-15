@@ -1,4 +1,4 @@
-//todo shared reference.ts file
+/// <reference path="../../reference.ts" />
 
 namespace GALLERY.Objects{
 
@@ -8,6 +8,7 @@ namespace GALLERY.Objects{
         public id: string;
         public type: string;
         public storey: string;
+        public world: string;
         public position: {
           x: number,
           y: number
@@ -17,6 +18,7 @@ namespace GALLERY.Objects{
         constructor(object){
 
 
+            object.world = object.world || 'main';
             object.storey = object.storey || '1NP';
 
 

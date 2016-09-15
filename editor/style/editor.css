@@ -85,7 +85,7 @@ main {
   z-index: 30;
   user-select: none;
   display: block; }
-  #admin-world .label i, #admin-world .label img, #admin-world .tree i, #admin-world .tree img, #admin-world .link i, #admin-world .link img, #admin-world .gate i, #admin-world .gate img, #admin-world-basement .label i, #admin-world-basement .label img, #admin-world-basement .tree i, #admin-world-basement .tree img, #admin-world-basement .link i, #admin-world-basement .link img, #admin-world-basement .gate i, #admin-world-basement .gate img {
+  #admin-world .label i, #admin-world .tree i, #admin-world .link i, #admin-world .gate i, #admin-world-basement .label i, #admin-world-basement .tree i, #admin-world-basement .link i, #admin-world-basement .gate i {
     font-size: 30px;
     cursor: move;
     position: absolute;

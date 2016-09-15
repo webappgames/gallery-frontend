@@ -32,6 +32,8 @@ function createStairsMesh(name, stairs_count, scene){
 
     //r(stairs_meshes);
     var stairs_mesh = BABYLON.Mesh.MergeMeshes(stairs_meshes);
+    stairs_mesh.id = 'stairs';//todo better
+    stairs_mesh.name = 'stairs';
     //r(stairs_mesh);
 
 

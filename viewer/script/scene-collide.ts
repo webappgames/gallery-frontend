@@ -9,6 +9,8 @@ function onCollide(collidedMesh) {
 
     if(['ground','room','stairs'].indexOf(collidedMesh.id) !== -1){
 
+        //on_air = false;
+
         ion.sound.play("step-"+collidedMesh.id);
         return;
     }

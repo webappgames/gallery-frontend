@@ -144,9 +144,14 @@ var keys_tick = function (timestamp) {
         }
     }
 
+
     if (controls_down.JUMP) {
 
-        camera.position.y+=1.6;
+        //on_air=true;
+
+        //if(!on_air) {
+            camera.position.y += 1.6;
+        //}
        /*if(camera.position.y<15){
            movement.z = 5;
        }*/
@@ -168,5 +173,7 @@ var keys_tick = function (timestamp) {
 };
 requestAnimationFrame(keys_tick);
 
+
+//var on_air = true;
 
 

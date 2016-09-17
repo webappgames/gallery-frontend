@@ -163,8 +163,9 @@ foreach($objects as $object) {
 
 
 
+        <script src="script/lib/babylon.js"></script>
+        <script src="viewer.js"></script>
 
-<script src="viewer.js"></script>
 <script>
 
     var objects = new GALLERY.Objects.Array(<?=json_encode($objects)?>);

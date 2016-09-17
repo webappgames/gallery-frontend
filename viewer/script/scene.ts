@@ -92,7 +92,26 @@ var createScene = function () {
 
     //Set gravity for the scene (G force like, on Y-axis)
     scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
-    //scene.enablePhysics();
+    //scene.enablePhysics(scene.gravity, new BABYLON.OimoJSPlugin());
+
+
+    // Enable Collisions
+    scene.collisionsEnabled = true;
+
+    //Then apply collisions and gravity to the active camera
+    camera.checkCollisions = true;
+    //camera.applyGravity = true;
+
+    //Set the ellipsoid around the camera (e.g. your player's size)
+    camera.ellipsoid = new BABYLON.Vector3(1, EYE_VERTICAL * BLOCK_SIZE/2, 1);
+
+    //finally, say which mesh will be collisionable
+
+
+
+
+
+
 
 
     scene.registerBeforeRender(function () {
@@ -115,6 +134,9 @@ var createScene = function () {
     };*/
 
 
+
+
+
     //Ground
     var ground = BABYLON.Mesh.CreatePlane("ground", 10000, scene);
     ground.material = new BABYLON.StandardMaterial("groundMat", scene);
@@ -132,19 +154,6 @@ var createScene = function () {
     ground.receiveShadows = true;
     ground.isPickable = true;
 
-
-
-    // Enable Collisions
-    scene.collisionsEnabled = true;
-
-    //Then apply collisions and gravity to the active camera
-    camera.checkCollisions = true;
-    camera.applyGravity = true;
-
-    //Set the ellipsoid around the camera (e.g. your player's size)
-    camera.ellipsoid = new BABYLON.Vector3(1, EYE_VERTICAL * BLOCK_SIZE/2, 1);
-
-    //finally, say which mesh will be collisionable
     ground.checkCollisions = true;
 
 

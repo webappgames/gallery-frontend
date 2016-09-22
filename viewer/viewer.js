@@ -32,7 +32,7 @@ function compileObjects(objects) {
         var box;
         //position.x -=BLOCK_SIZE/2;
         //position.z +=BLOCK_SIZE/2;
-        r(level);
+        //r(level);
         for (var i = 0, l = vertical.length; i < l; i++) {
             if (vertical[i]) {
                 /*block =  box_prototypes[object.material].createInstance("room");
@@ -1225,6 +1225,15 @@ var GALLERY;
                 });
                 return (filtered_objects);
             };
+            Array.prototype.filterStorey = function (storey) {
+                var filtered_objects = new Array();
+                this.forEach(function (object) {
+                    if (object.storey !== storey)
+                        return;
+                    filtered_objects.getAll().push(object);
+                });
+                return (filtered_objects);
+            };
             Array.prototype.filterTypes = function () {
                 var types = [];
                 for (var _i = 0; _i < arguments.length; _i++) {
@@ -1235,6 +1244,40 @@ var GALLERY;
                     if (types.indexOf(object.type) == -1)
                         return; //todo better
                     filtered_objects.getAll().push(object);
+                });
+                return (filtered_objects);
+            };
+            Array.prototype.splitTypes = function () {
+                var types = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    types[_i - 0] = arguments[_i];
+                }
+                var filtered_objects_true = new Array();
+                var filtered_objects_false = new Array();
+                this.forEach(function (object) {
+                    if (types.indexOf(object.type) !== -1) {
+                        filtered_objects_true.getAll().push(object); //r('yes');
+                    }
+                    else {
+                        filtered_objects_false.getAll().push(object); //r('no');
+                    }
+                });
+                return ([filtered_objects_true, filtered_objects_false]);
+            };
+            Array.prototype.filterSquare = function (x, y, width, height) {
+                //todo better
+                x -= .5;
+                y -= .5;
+                width += 1;
+                height += 1;
+                var filtered_objects = new Array();
+                this.forEach(function (object) {
+                    if (object.position.x >= x &&
+                        object.position.y >= y &&
+                        object.position.x <= x + width &&
+                        object.position.y <= y + height) {
+                        filtered_objects.getAll().push(object);
+                    }
                 });
                 return (filtered_objects);
             };
@@ -2678,21 +2721,63 @@ function createTreeMesh(name, size, length, psi, bow, kink, detail, sections, br
 }
 /// <reference path="../reference.ts" />
 function createStairsMesh(name, stairs_count, scene) {
-    var stairs_meshes = [];
+    var pathTopA = [];
+    var pathTopB = [];
+    var pathBottomA = [];
+    var pathBottomB = [];
+    var a = new BABYLON.Vector3(0, 0, 0.5);
+    var b = new BABYLON.Vector3(0, 0, -0.5);
+    var i1, i2;
     for (var i = 0; i < stairs_count; i++) {
-        var stair = BABYLON.Mesh.CreateBox("box", 1, scene);
-        stair.scaling.x = 1 / stairs_count;
-        stair.scaling.y = 1 / stairs_count * 2;
-        stair.position.x = (-i / stairs_count) + 0.5 - (1 / stairs_count);
-        stair.position.y = i / stairs_count - (1.666 / stairs_count);
-        //r(stair.scaling,stair.position);
-        stairs_meshes.push(stair);
+        i1 = (Math.floor((i - 1) / 2) * 2 + 1);
+        i2 = (Math.floor(i / 2) * 2);
+        var top_1 = new BABYLON.Vector3(1 - (i1 / stairs_count) - 0.5, i2 / stairs_count, 0);
+        var bottom = new BABYLON.Vector3(1 - (i / stairs_count) - 0.5, i / stairs_count - (2 / stairs_count), 0);
+        pathTopA.push(top_1.add(a));
+        pathTopB.push(top_1.add(b));
+        pathBottomA.push(bottom.add(a));
+        pathBottomB.push(bottom.add(b));
     }
+    var ribbonTop = BABYLON.Mesh.CreateRibbon("ribbon", [pathTopB, pathTopA,], false, false, 0, scene);
+    var ribbonBottom = BABYLON.Mesh.CreateRibbon("ribbon", [pathBottomA, pathBottomB], false, false, 0, scene);
+    var ribbonA = BABYLON.Mesh.CreateRibbon("ribbon", [pathTopA, pathBottomA], false, false, 0, scene);
+    var ribbonB = BABYLON.Mesh.CreateRibbon("ribbon", [pathBottomB, pathTopB], false, false, 0, scene);
+    var stairs_mesh = BABYLON.Mesh.MergeMeshes([ribbonTop, ribbonBottom, ribbonA, ribbonB]);
+    stairs_mesh.id = name; //todo better
+    stairs_mesh.name = name;
+    /*
+    var stairs_meshes = [];
+
+    for(var i=0;i<stairs_count;i++){
+
+
+
+        var stair = BABYLON.Mesh.CreateBox("box", 1, scene);
+
+
+        stair.scaling.x=1/stairs_count;
+        stair.scaling.y=1/(stairs_count+3.33)*2;
+
+
+        stair.position.x=(-i/stairs_count)+0.5-(1/stairs_count);
+        stair.position.y=i/stairs_count-(1.666/stairs_count);
+
+
+
+        //r(stair.scaling,stair.position);
+
+        stairs_meshes.push(stair);
+
+    }
+
+
     //r(stairs_meshes);
     var stairs_mesh = BABYLON.Mesh.MergeMeshes(stairs_meshes);
-    stairs_mesh.id = 'stairs'; //todo better
+    stairs_mesh.id = 'stairs';//todo better
     stairs_mesh.name = 'stairs';
     //r(stairs_mesh);
+
+     */
     return stairs_mesh;
 }
 /// <reference path="reference.ts" />
@@ -2926,7 +3011,7 @@ function runWorld(objects) {
             meshes.push(tree_mesh);
         }
         else if (object.type == 'stairs') {
-            var stairs_mesh = createStairsMesh(object.id, 30, scene);
+            var stairs_mesh = createStairsMesh(/*object.id*/ 'stairs', 30, scene);
             //stairs_mesh.position = position;
             //r(position);
             stairs_mesh.scaling.x = object.width * BLOCK_SIZE;
@@ -3051,11 +3136,32 @@ var createScene = function () {
     scene.collisionsEnabled = true;
     //Then apply collisions and gravity to the active camera
     camera.checkCollisions = true;
-    //camera.applyGravity = true;
+    camera.applyGravity = true;
     //Set the ellipsoid around the camera (e.g. your player's size)
     camera.ellipsoid = new BABYLON.Vector3(1, EYE_VERTICAL * BLOCK_SIZE / 2, 1);
     //finally, say which mesh will be collisionable
+    /*camera._oldPositionForCollisions = camera.position;
+    camera.moveWithCollisions = function(velocity: Vector3): void {
+
+        r(this);
+
+        var globalPosition = this.position;//getAbsolutePosition();
+
+        globalPosition.subtractFromFloatsToRef(0, this.ellipsoid.y, 0, this._oldPositionForCollisions);
+        //this._oldPositionForCollisions.addInPlace(this.ellipsoidOffset);
+        this._collider.radius = this.ellipsoid;
+
+        this.getScene().collisionCoordinator.getNewPosition(this._oldPositionForCollisions, velocity, this._collider, 3, this, this._onCollisionPositionChange, this.uniqueId);
+    };*/
     scene.registerBeforeRender(function () {
+        camera.cameraDirection.y += 0.01;
+        //camera.moveWithCollisions(scene.gravity);
+        /*if (!ground.intersectsPoint(camera.position)) {
+            camera.position.addInPlace(scene.gravity);
+        }*/
+        /*camera_mesh.position = camera.position;
+        camera_mesh.moveWithCollisions(scene.gravity);
+        camera.position = camera_mesh.position;*/
         if (camera.rotation.x < -0.5) {
             camera.rotation.x = -0.5;
         }
@@ -3064,6 +3170,11 @@ var createScene = function () {
         }
     });
     //camera.mode = 1;
+    /*var camera_mesh = BABYLON.Mesh.CreateSphere("crate", 16, 1, scene);
+    camera_mesh.checkCollisions = true;
+    camera_mesh.applyGravity = true;
+
+    camera_mesh.scaling.y = EYE_VERTICAL * BLOCK_SIZE/2;*/
     /*camera.onCollide = function(event){
         r(event);
 

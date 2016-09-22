@@ -42,6 +42,27 @@ function cleanWorld() {
 }
 
 
+function copyStorey() {
+    let storey = prompt('Jaké podlaží chcete zkopírovat?', (parseInt(storey_selected)-1)+'NP');
+
+
+    let new_objects = objects.filterStorey(storey);
+
+    new_objects.forEach(function (object) {
+
+        let new_object = object.clone();
+        new_object.storey = storey_selected;
+        objects.push(new_object);
+
+    });
+
+    saveAndRedraw();
+
+}
+
+
+
+
 
 function saveAndRedraw(){ //todo use this
     createMap();

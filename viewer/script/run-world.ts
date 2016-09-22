@@ -395,7 +395,7 @@ function runWorld(objects){
         if(object.type=='stairs') {
 
 
-            var stairs_mesh =  createStairsMesh(object.id, 30, scene);
+            var stairs_mesh =  createStairsMesh(/*object.id*/'stairs', 30, scene);
 
             //stairs_mesh.position = position;
             //r(position);

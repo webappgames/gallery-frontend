@@ -152,7 +152,9 @@ $(function () {
 
 
 var BLOCK_MATERIALS = [
-    'color-white',
+    //'color-white',
+    'color-light-gray',
+    'color-dark-gray',
     'clay-bricks',
     'clay-roof',
     'grass',

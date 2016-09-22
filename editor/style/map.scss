@@ -8,7 +8,7 @@ main{
 
 }
 
-#admin-world-basement {
+/*#admin-world-basement {
 
   z-index: 990;
 
@@ -31,7 +31,13 @@ main{
   left: 0px;
   right: 0px;
 
-}
+}*/
+
+/*canvas{
+
+  border: 2px solid red;
+}*/
+
 
 #admin-world {
 
@@ -64,6 +70,29 @@ main{
 
 
 }
+
+
+
+
+
+#admin-world-canvas {
+
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+
+
+}
+
+
+
+
+
+
+
+
 
 
 

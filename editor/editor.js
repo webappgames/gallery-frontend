@@ -1015,6 +1015,15 @@ var GALLERY;
                 });
                 return (filtered_objects);
             };
+            Array.prototype.filterStorey = function (storey) {
+                var filtered_objects = new Array();
+                this.forEach(function (object) {
+                    if (object.storey !== storey)
+                        return;
+                    filtered_objects.getAll().push(object);
+                });
+                return (filtered_objects);
+            };
             Array.prototype.filterTypes = function () {
                 var types = [];
                 for (var _i = 0; _i < arguments.length; _i++) {
@@ -1025,6 +1034,40 @@ var GALLERY;
                     if (types.indexOf(object.type) == -1)
                         return; //todo better
                     filtered_objects.getAll().push(object);
+                });
+                return (filtered_objects);
+            };
+            Array.prototype.splitTypes = function () {
+                var types = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    types[_i - 0] = arguments[_i];
+                }
+                var filtered_objects_true = new Array();
+                var filtered_objects_false = new Array();
+                this.forEach(function (object) {
+                    if (types.indexOf(object.type) !== -1) {
+                        filtered_objects_true.getAll().push(object); //r('yes');
+                    }
+                    else {
+                        filtered_objects_false.getAll().push(object); //r('no');
+                    }
+                });
+                return ([filtered_objects_true, filtered_objects_false]);
+            };
+            Array.prototype.filterSquare = function (x, y, width, height) {
+                //todo better
+                x -= .5;
+                y -= .5;
+                width += 1;
+                height += 1;
+                var filtered_objects = new Array();
+                this.forEach(function (object) {
+                    if (object.position.x >= x &&
+                        object.position.y >= y &&
+                        object.position.x <= x + width &&
+                        object.position.y <= y + height) {
+                        filtered_objects.getAll().push(object);
+                    }
                 });
                 return (filtered_objects);
             };
@@ -1520,9 +1563,10 @@ window.addEventListener('keyup', function (e) {
     }
     //}
 });
-var $admin_storeys;
+var $admin_world_parts;
 $(function () {
-    $admin_storeys = $('#admin-world');
+    $admin_world_parts = $('#admin-world-parts').find('#admin-world, #admin-world-canvas');
+    r('$admin_world_parts', $admin_world_parts);
 });
 var last = null;
 var keys_tick = function (timestamp) {
@@ -1534,19 +1578,19 @@ var keys_tick = function (timestamp) {
     var speed = progress * 300;
     if (controls_down.UP) {
         window_center.y += speed;
-        $admin_storeys.css('top', '+=' + speed + 'px');
+        $admin_world_parts.css('top', '+=' + speed + 'px');
     }
     if (controls_down.DOWN) {
         window_center.y -= speed;
-        $admin_storeys.css('top', '-=' + speed + 'px');
+        $admin_world_parts.css('top', '-=' + speed + 'px');
     }
     if (controls_down.LEFT) {
         window_center.x += speed;
-        $admin_storeys.css('left', '+=' + speed + 'px');
+        $admin_world_parts.css('left', '+=' + speed + 'px');
     }
     if (controls_down.RIGHT) {
         window_center.x -= speed;
-        $admin_storeys.css('left', '-=' + speed + 'px');
+        $admin_world_parts.css('left', '-=' + speed + 'px');
     }
     if (controls_down.UP || controls_down.DOWN || controls_down.LEFT || controls_down.RIGHT) {
         moving = true;
@@ -1555,7 +1599,7 @@ var keys_tick = function (timestamp) {
     else {
         if (moving) {
             moving = false;
-            $admin_storeys.css('top', '0px').css('left', '0px');
+            $admin_world_parts.css('top', '0px').css('left', '0px');
             createMap();
         }
     }
@@ -1871,6 +1915,16 @@ function cleanWorld() {
         saveAndRedraw();
     }
 }
+function copyStorey() {
+    var storey = prompt('Jaké podlaží chcete zkopírovat?', (parseInt(storey_selected) - 1) + 'NP');
+    var new_objects = objects.filterStorey(storey);
+    new_objects.forEach(function (object) {
+        var new_object = object.clone();
+        new_object.storey = storey_selected;
+        objects.push(new_object);
+    });
+    saveAndRedraw();
+}
 function saveAndRedraw() {
     createMap();
     save();
@@ -1929,6 +1983,82 @@ $(function () {
         save();
     });
 });
+var GALLERY;
+(function (GALLERY) {
+    var ImagesCollection = (function () {
+        /**
+         *
+         * @param {object} files
+         * @param {string} url Prefix of image urls
+         * @constructor
+         */
+        function ImagesCollection() {
+            this.images = {};
+            this.colors = {};
+            this.images_loaded = 0;
+            this.images_count = 0;
+        }
+        ImagesCollection.prototype.addImageAsDOM = function (key, image) {
+            this.images[key] = image;
+            this.images_loaded++;
+            this.images_count++;
+        };
+        ImagesCollection.prototype.addImage = function (key, src) {
+            var image = document.createElement("img");
+            image.src = src;
+            this.addImageAsDOM(key, image);
+        };
+        ImagesCollection.prototype.getOrAdd = function (key, src) {
+            if (typeof this.images[key] === 'undefined') {
+                this.addImage(key, src);
+            }
+            return (this.get(key));
+        };
+        ImagesCollection.prototype.loaded = function () {
+            var percent = this.images_loaded / this.images_count;
+            if (percent > 1)
+                percent = 1;
+            return (percent);
+        };
+        ImagesCollection.prototype.get = function (key) {
+            if (typeof this.images[key] === 'undefined') {
+                console.log(this.images);
+                throw new Error('In this collection is not image with key ' + key + '. There are only these keys.');
+            }
+            return (this.images[key]);
+        };
+        ImagesCollection.prototype.getColor = function (key) {
+            if (this.loaded() !== 1) {
+                throw new Error('Not yet loaded!');
+            }
+            //r(this.colors);
+            if (typeof this.colors[key] === 'undefined') {
+                var image = this.get(key);
+                this.colors[key] = getAverageRGB(image);
+            }
+            return (this.colors[key]);
+        };
+        //todo jsdoc
+        ImagesCollection.prototype.getAll = function (key) {
+            return (this.images);
+        };
+        //todo jsdoc
+        ImagesCollection.prototype.getInput = function (NameOfRadios, AdditionalClass) {
+            if (AdditionalClass === void 0) { AdditionalClass = ''; }
+            var html = '';
+            //r(this.files);
+            for (var key in this.files) {
+                html += "\n            <input type=\"radio\" name=\"" + NameOfRadios + "\" id=\"" + NameOfRadios + "-" + key + "\" value=\"" + key + "\" class=\"" + AdditionalClass + "\" />\n            <label for=\"" + NameOfRadios + "-" + key + "\">\n                <img src=\"" + this.url + this.files[key] + "\">\n            </label>\n            ";
+            }
+            html = '<div class="textures-input">' + html + '</div>';
+            //r(html);
+            //alert(html);//todo purge Towns from commented alert, r, console.log, ect..
+            return (html);
+        };
+        return ImagesCollection;
+    }());
+    GALLERY.ImagesCollection = ImagesCollection;
+})(GALLERY || (GALLERY = {}));
 /// <reference path="reference.ts" />
 //var TOWNS_CDN_URL='http://towns-cdn.local/';
 var TOWNS_CDN_URL = 'http://cdn.pavolhejny.com/';
@@ -2125,7 +2255,9 @@ $(function () {
 });
 //-------------------------------------------------------------
 var BLOCK_MATERIALS = [
-    'color-white',
+    //'color-white',
+    'color-light-gray',
+    'color-dark-gray',
     'clay-bricks',
     'clay-roof',
     'grass',
@@ -2356,6 +2488,7 @@ var GALLERY;
 /// <reference path="10-plugins.ts" />
 /// <reference path="10-position.ts" />
 /// <reference path="10-save.ts" />
+/// <reference path="10-image-collection.ts" />
 /// <reference path="20-filedrop.ts" />
 /// <reference path="20-palette.ts" />
 /// <reference path="50-plugins/generators/simple-garden.ts" />
@@ -2364,10 +2497,16 @@ var objects = new GALLERY.Objects.Array();
 var drawing = false;
 var moving = false;
 var selected_object;
+var window_size = {
+    x: $(window).width(),
+    y: $(window).height()
+};
 var window_center = {
     x: $(window).width() / 2,
     y: $(window).height() / 2
 };
+var materialsImages = new GALLERY.ImagesCollection();
+var shapesImages = new GALLERY.ImagesCollection();
 function createMap() {
     WORLDS = [];
     objects.forEach(function (object) {
@@ -2376,20 +2515,53 @@ function createMap() {
         }
     });
     createWorldsPallete();
-    var $admin_world_basement = $('#admin-world-basement');
-    $admin_world_basement.html('');
-    var objects_world = objects.filterWorld(world_selected);
-    var storey_selected_basement = (parseInt(storey_selected) - 1) + 'NP';
-    objects_world.forEach(function (object) {
-        if (object.storey !== storey_selected_basement)
-            return;
-        $admin_world_basement.append('\n').append(createObject$(GALLERY.Objects.Object.init(object)));
+    var x = (-window_center.x) / zoom_selected;
+    var y = (-window_center.y) / zoom_selected;
+    var width = window_size.x / zoom_selected;
+    var height = window_size.y / zoom_selected;
+    width -= 5;
+    //r(x,y,width,height);
+    var objects_world = objects.filterWorld(world_selected).filterStorey(storey_selected).filterSquare(x, y, width, height);
+    //let objects_world = objects.filterWorld(world_selected).filterSquare(x+5,y+5,width,height-10);
+    var objects_world_ = objects_world.splitTypes('block');
+    //r(objects_world_);
+    objects_world = objects_world_[1];
+    var objects_world_blocks = objects_world_[0];
+    var canvas = document.getElementById("admin-world-canvas");
+    var $canvas = $(canvas);
+    $canvas.css('width', '100vw');
+    $canvas.css('height', '100vh');
+    $canvas.attr('width', $canvas.width());
+    $canvas.attr('height', $canvas.height());
+    var ctx = canvas.getContext("2d");
+    //let img = imageCollection.getOrAdd('/media/images/textures/grass.jpg');
+    //let door = imageCollection.getOrAdd('/media/images/icons/door.jpg');
+    objects_world_blocks.forEach(function (block) {
+        var x = (block.position.x - 0.5) * zoom_selected + window_center.x;
+        var y = (block.position.y - 0.5) * zoom_selected + window_center.y;
+        ctx.drawImage(materialsImages.getOrAdd(block.material, '/media/images/textures/' + block.material + '.jpg'), x, y, zoom_selected, zoom_selected);
+        if (block.shape !== 'room') {
+            ctx.drawImage(shapesImages.getOrAdd(block.shape, '/media/images/shapes/' + block.shape + '.png'), x, y, zoom_selected, zoom_selected);
+        }
+        /*ctx.rect(
+            x,
+            y,
+            zoom_selected,
+            zoom_selected
+        );*/
+        ctx.stroke();
     });
+    /*let $admin_world_basement = $('#admin-world-basement');
+    $admin_world_basement.html('');
+    let storey_selected_basement = (parseInt(storey_selected)-1)+'NP';
+    objects_world.forEach(function (object) {
+        if(object.storey!==storey_selected_basement)return;
+        $admin_world_basement.append('\n').append(createObject$(GALLERY.Objects.Object.init(object)));
+    });*/
     var $admin_world = $('#admin-world');
     $admin_world.html('');
     objects_world.forEach(function (object) {
-        if (object.storey !== storey_selected)
-            return;
+        //if(object.storey!==storey_selected)return;
         $admin_world.append('\n').append(createObject$(GALLERY.Objects.Object.init(object)));
     });
     $admin_world.disableSelection();

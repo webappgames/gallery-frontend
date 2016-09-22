@@ -13,6 +13,7 @@
 /// <reference path="10-plugins.ts" />
 /// <reference path="10-position.ts" />
 /// <reference path="10-save.ts" />
+/// <reference path="10-image-collection.ts" />
 /// <reference path="20-filedrop.ts" />
 /// <reference path="20-palette.ts" />
 

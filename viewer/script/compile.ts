@@ -82,7 +82,7 @@ function compileObjects(objects){
         //position.z +=BLOCK_SIZE/2;
 
 
-        r(level);
+        //r(level);
         for(var i=0,l=vertical.length;i<l;i++){
 
 

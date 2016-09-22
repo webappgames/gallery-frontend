@@ -13,10 +13,27 @@ var selected_object;
 
 
 
+
+var window_size = {
+    x: $(window).width(),
+    y: $(window).height()
+};
+
 var window_center = {
     x: $(window).width()  /2,
     y: $(window).height() /2
 };
+
+
+
+
+
+
+
+
+
+var materialsImages = new GALLERY.ImagesCollection();
+var shapesImages = new GALLERY.ImagesCollection();
 
 
 
@@ -38,29 +55,131 @@ function createMap() {
 
 
 
-    let $admin_world_basement = $('#admin-world-basement');
+    let x = (-window_center.x )/zoom_selected;
+    let y = (-window_center.y )/zoom_selected;
+
+    let width  = window_size.x/zoom_selected;
+    let height = window_size.y/zoom_selected;
+    width -= 5;
+
+
+
+    //r(x,y,width,height);
+    let objects_world = objects.filterWorld(world_selected).filterStorey(storey_selected).filterSquare(x,y,width,height);
+    //let objects_world = objects.filterWorld(world_selected).filterSquare(x+5,y+5,width,height-10);
+
+
+
+
+
+
+    let objects_world_ = objects_world.splitTypes('block');
+    //r(objects_world_);
+    objects_world = objects_world_[1];
+    let objects_world_blocks = objects_world_[0];
+
+
+
+
+
+
+    let canvas = document.getElementById("admin-world-canvas");
+    let $canvas = $(canvas);
+
+    $canvas.css('width','100vw');
+    $canvas.css('height','100vh');
+
+    $canvas.attr('width',$canvas.width());
+    $canvas.attr('height',$canvas.height());
+
+
+    let ctx = canvas.getContext("2d");
+
+
+
+
+
+    //let img = imageCollection.getOrAdd('/media/images/textures/grass.jpg');
+    //let door = imageCollection.getOrAdd('/media/images/icons/door.jpg');
+
+
+
+
+    objects_world_blocks.forEach(function (block) {
+
+
+        let x = (block.position.x-0.5)*zoom_selected + window_center.x;
+        let y = (block.position.y-0.5)*zoom_selected + window_center.y;
+
+
+
+
+
+        ctx.drawImage(
+            materialsImages.getOrAdd(block.material,'/media/images/textures/'+block.material+'.jpg'),
+            x,
+            y,
+            zoom_selected,
+            zoom_selected
+        );
+
+
+        if(block.shape!=='room') {
+            ctx.drawImage(
+                shapesImages.getOrAdd(block.shape, '/media/images/shapes/' + block.shape + '.png'),
+                x,
+                y,
+                zoom_selected,
+                zoom_selected
+            );
+        }
+
+
+
+
+
+
+        /*ctx.rect(
+            x,
+            y,
+            zoom_selected,
+            zoom_selected
+        );*/
+
+
+        ctx.stroke();
+
+    });
+
+
+
+
+
+
+
+
+
+
+    /*let $admin_world_basement = $('#admin-world-basement');
     $admin_world_basement.html('');
-
-    let objects_world = objects.filterWorld(world_selected);
-
-
-
     let storey_selected_basement = (parseInt(storey_selected)-1)+'NP';
     objects_world.forEach(function (object) {
         if(object.storey!==storey_selected_basement)return;
         $admin_world_basement.append('\n').append(createObject$(GALLERY.Objects.Object.init(object)));
-    });
+    });*/
+
+
 
 
     let $admin_world = $('#admin-world');
     $admin_world.html('');
-
-
-
     objects_world.forEach(function (object) {
-        if(object.storey!==storey_selected)return;
+        //if(object.storey!==storey_selected)return;
         $admin_world.append('\n').append(createObject$(GALLERY.Objects.Object.init(object)));
     });
+
+
+
 
 
 

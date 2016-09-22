@@ -100,7 +100,7 @@ var createScene = function () {
 
     //Then apply collisions and gravity to the active camera
     camera.checkCollisions = true;
-    //camera.applyGravity = true;
+    camera.applyGravity = true;
 
     //Set the ellipsoid around the camera (e.g. your player's size)
     camera.ellipsoid = new BABYLON.Vector3(1, EYE_VERTICAL * BLOCK_SIZE/2, 1);
@@ -109,12 +109,37 @@ var createScene = function () {
 
 
 
+    /*camera._oldPositionForCollisions = camera.position;
+    camera.moveWithCollisions = function(velocity: Vector3): void {
 
+        r(this);
 
+        var globalPosition = this.position;//getAbsolutePosition();
+
+        globalPosition.subtractFromFloatsToRef(0, this.ellipsoid.y, 0, this._oldPositionForCollisions);
+        //this._oldPositionForCollisions.addInPlace(this.ellipsoidOffset);
+        this._collider.radius = this.ellipsoid;
+
+        this.getScene().collisionCoordinator.getNewPosition(this._oldPositionForCollisions, velocity, this._collider, 3, this, this._onCollisionPositionChange, this.uniqueId);
+    };*/
 
 
 
     scene.registerBeforeRender(function () {
+
+
+        camera.cameraDirection.y += 0.01;
+
+
+        //camera.moveWithCollisions(scene.gravity);
+        /*if (!ground.intersectsPoint(camera.position)) {
+            camera.position.addInPlace(scene.gravity);
+        }*/
+
+        /*camera_mesh.position = camera.position;
+        camera_mesh.moveWithCollisions(scene.gravity);
+        camera.position = camera_mesh.position;*/
+
 
         if (camera.rotation.x < -0.5) {//Top
             camera.rotation.x = -0.5;
@@ -125,6 +150,14 @@ var createScene = function () {
     });
     //camera.mode = 1;
 
+
+
+
+    /*var camera_mesh = BABYLON.Mesh.CreateSphere("crate", 16, 1, scene);
+    camera_mesh.checkCollisions = true;
+    camera_mesh.applyGravity = true;
+
+    camera_mesh.scaling.y = EYE_VERTICAL * BLOCK_SIZE/2;*/
 
 
 

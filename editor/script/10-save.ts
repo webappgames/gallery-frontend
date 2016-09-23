@@ -14,7 +14,7 @@ function cleanStorey() {
         var new_objects =
         objects.getAll().filter(function (object) {
 
-            if(object.storey == storey_selected){
+            if(object.storey == storey_selected && object.world == world_selected){
 
                 return(false);
 
@@ -33,10 +33,29 @@ function cleanStorey() {
 }
 
 function cleanWorld() {
-    if(confirm('Opravdu chete vymazat vše a začít znovu?')){
+    if(confirm('Opravdu chete vymazat vše ve světě '+world_selected+' a začít znovu?')){
 
-        objects = new GALLERY.Objects.Array();
+
+        var new_objects =
+            objects.getAll().filter(function (object) {
+
+                if(object.world == world_selected){
+
+                    return(false);
+
+                }else{
+
+                    return(true);
+
+                }
+            });
+
+        objects = new GALLERY.Objects.Array(new_objects);
         saveAndRedraw();
+
+
+        /*objects = new GALLERY.Objects.Array();
+        saveAndRedraw();*/
 
     }
 }
@@ -46,7 +65,7 @@ function copyStorey() {
     let storey = prompt('Jaké podlaží chcete zkopírovat?', (parseInt(storey_selected)-1)+'NP');
 
 
-    let new_objects = objects.filterStorey(storey);
+    let new_objects = objects.filterWorld(world_selected).filterStorey(storey);
 
     new_objects.forEach(function (object) {
 

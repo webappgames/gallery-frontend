@@ -508,7 +508,7 @@ function createMap() {
 
             //r('object',object);
             //r('object.position',object.position);
-            removed_stat += objects.removeBlockOnPosition(object.position,object.storey)?1:0;
+            removed_stat += objects.removeBlockOnPosition(object.position,object.storey,object.world)?1:0;
 
             if(object.shape!=='none'){
                 objects.push(object);

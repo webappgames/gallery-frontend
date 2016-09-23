@@ -308,8 +308,7 @@ body {
   color: #000000;
   margin: 0px;
   padding: 0px;
-  background-color: #88a9a5;
-  overflow: hidden; }
+  background-color: #88a9a5; }
 
 button, .button, input[type="submit"] {
   display: inline-block;

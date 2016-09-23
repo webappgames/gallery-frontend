@@ -79,6 +79,36 @@ document.addEventListener("drop", function(e){
 
     r(files);
 
+
+    //r(files[0].name.substr(-5));
+    if(files.length == 1 && files[0].name.substr(-5)== '.json'){
+
+        //alert('json');
+
+
+        var reader = new FileReader();
+        reader.onloadend = function(e) {
+
+
+            var new_objects = JSON.parse(this.result);
+
+
+            if(confirm('Chcete importovat '+new_objects.length+' objektů a přepsat vše ostatní?')) {
+                objects = new GALLERY.Objects.Array(new_objects);
+                saveAndRedraw();
+            }
+
+
+
+        };
+        reader.readAsText(files[0]);
+
+        return;
+
+    }
+
+
+
     // process all File 05-objects
     var formData = new FormData();
     var files_key = {};

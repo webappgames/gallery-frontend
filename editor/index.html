@@ -120,18 +120,26 @@
         <fieldset class="palette" id="admin-tools">
             <legend>Akce</legend>
 
-            <a href="" id="show-gallery" target="show-gallery"><button>Zobrazit</button></a>
-            <button onclick="logout();">Odhlásit se</button>
-
-            <button onclick="runGenerator(GALLERY.Plugins.Generators.SimpleGarden);">Generátory</button>
 
 
+            <ul>
+                <li><a id="show-gallery" target="show-gallery">Zobrazit</a></li>
+                <li onclick="logout();">Odhlásit se</li>
 
-            <button onclick="cleanStorey();">Vyčistit patro</button>
-            <button onclick="cleanWorld();">Vyčistit svět</button>
+
+                <li onclick="GALLERY.Editor.exportJSON();">Exportovat</li>
+               <!-- <li onclick="GALLERY.Editor.importJSON();">Importovat</li>-->
+
+                <!--<li onclick="runGenerator(GALLERY.Plugins.Generators.SimpleGarden);">Generátory</li>-->
 
 
-            <button onclick="copyStorey();">Kopírovat patro</button>
+
+                <li onclick="cleanStorey();">Vyčistit patro</li>
+                <li onclick="cleanWorld();">Vyčistit svět</li>
+
+
+                <li onclick="copyStorey();">Kopírovat patro</li>
+            </ul>
 
 
 

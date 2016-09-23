@@ -1298,12 +1298,12 @@ var GALLERY;
                 }
                 return false;
             };
-            Array.prototype.removeBlockOnPosition = function (position, storey) {
+            Array.prototype.removeBlockOnPosition = function (position, storey, world) {
                 //r(position);
                 for (var i in this.objects) {
                     if (this.objects[i].type == 'block') {
                         //r(05-objects[i]);
-                        if (this.objects[i].position.x == position.x && this.objects[i].position.y == position.y && this.objects[i].storey == storey) {
+                        if (this.objects[i].position.x == position.x && this.objects[i].position.y == position.y && this.objects[i].storey == storey && this.objects[i].world == world) {
                             this.objects.splice(i, 1);
                             return true;
                         }
@@ -3090,7 +3090,8 @@ var BLOCKS_2D_3D_SHAPES = {
     door: [1, 0, 0, 0, 1, 1, 1, 1, 1],
     gate: [1, 0, 0, 0, 1, 1, 1, 1, 1],
     wall: [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    window: [1, 1, 0, 0, 1, 1, 1, 1, 1]
+    window: [1, 1, 0, 0, 1, 1, 1, 1, 1],
+    floor: [1, 0, 0, 0, 0, 0, 0, 0, 0]
 };
 var BLOCKS_1NP_LEVEL = (0.5 - 0.9);
 var BLOCKS_STOREYS_LEVELS = {

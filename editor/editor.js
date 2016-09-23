@@ -1088,12 +1088,12 @@ var GALLERY;
                 }
                 return false;
             };
-            Array.prototype.removeBlockOnPosition = function (position, storey) {
+            Array.prototype.removeBlockOnPosition = function (position, storey, world) {
                 //r(position);
                 for (var i in this.objects) {
                     if (this.objects[i].type == 'block') {
                         //r(05-objects[i]);
-                        if (this.objects[i].position.x == position.x && this.objects[i].position.y == position.y && this.objects[i].storey == storey) {
+                        if (this.objects[i].position.x == position.x && this.objects[i].position.y == position.y && this.objects[i].storey == storey && this.objects[i].world == world) {
                             this.objects.splice(i, 1);
                             return true;
                         }
@@ -1898,7 +1898,7 @@ var last_objects;
 function cleanStorey() {
     if (confirm('Opravdu chcete vymazat vše v aktuálním podlaží ' + storey_selected + '?')) {
         var new_objects = objects.getAll().filter(function (object) {
-            if (object.storey == storey_selected) {
+            if (object.storey == storey_selected && object.world == world_selected) {
                 return (false);
             }
             else {
@@ -1910,14 +1910,22 @@ function cleanStorey() {
     }
 }
 function cleanWorld() {
-    if (confirm('Opravdu chete vymazat vše a začít znovu?')) {
-        objects = new GALLERY.Objects.Array();
+    if (confirm('Opravdu chete vymazat vše ve světě ' + world_selected + ' a začít znovu?')) {
+        var new_objects = objects.getAll().filter(function (object) {
+            if (object.world == world_selected) {
+                return (false);
+            }
+            else {
+                return (true);
+            }
+        });
+        objects = new GALLERY.Objects.Array(new_objects);
         saveAndRedraw();
     }
 }
 function copyStorey() {
     var storey = prompt('Jaké podlaží chcete zkopírovat?', (parseInt(storey_selected) - 1) + 'NP');
-    var new_objects = objects.filterStorey(storey);
+    var new_objects = objects.filterWorld(world_selected).filterStorey(storey);
     new_objects.forEach(function (object) {
         var new_object = object.clone();
         new_object.storey = storey_selected;
@@ -2099,6 +2107,20 @@ document.addEventListener("drop", function (e) {
         return;
     }
     r(files);
+    //r(files[0].name.substr(-5));
+    if (files.length == 1 && files[0].name.substr(-5) == '.json') {
+        //alert('json');
+        var reader = new FileReader();
+        reader.onloadend = function (e) {
+            var new_objects = JSON.parse(this.result);
+            if (confirm('Chcete importovat ' + new_objects.length + ' objektů a přepsat vše ostatní?')) {
+                objects = new GALLERY.Objects.Array(new_objects);
+                saveAndRedraw();
+            }
+        };
+        reader.readAsText(files[0]);
+        return;
+    }
     // process all File 05-objects
     var formData = new FormData();
     var files_key = {};
@@ -2267,7 +2289,7 @@ var BLOCK_MATERIALS = [
     'wood-boards',
     'wood-fence',
     'wood-raw'];
-var BLOCK_SHAPES = ['none', 'room', 'wall', 'door', 'window'];
+var BLOCK_SHAPES = ['none', 'room', 'wall', 'door', 'window', 'floor'];
 $(function () {
     BLOCK_MATERIALS.forEach(function (material) {
         //r('creating block to pallete');
@@ -2353,6 +2375,38 @@ $(function () {
         $('.select-dot-objects').append($dot_object);
     });
 });
+/*function download(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
+*/
+function download(filename, contentType, content) {
+    if (!contentType)
+        contentType = 'application/octet-stream';
+    var a = document.createElement('a');
+    var blob = new Blob([content], { 'type': contentType });
+    a.href = window.URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+}
+var GALLERY;
+(function (GALLERY) {
+    var Editor;
+    (function (Editor) {
+        function exportJSON() {
+            download(gallery + '.json', 'application/json', JSON.stringify(objects.getAll(), null, 4));
+        }
+        Editor.exportJSON = exportJSON;
+    })(Editor = GALLERY.Editor || (GALLERY.Editor = {}));
+})(GALLERY || (GALLERY = {}));
 var GALLERY;
 (function (GALLERY) {
     var Plugins;
@@ -2491,6 +2545,7 @@ var GALLERY;
 /// <reference path="10-image-collection.ts" />
 /// <reference path="20-filedrop.ts" />
 /// <reference path="20-palette.ts" />
+/// <reference path="20-export.ts" />
 /// <reference path="50-plugins/generators/simple-garden.ts" />
 /// <reference path="reference.ts" />
 var objects = new GALLERY.Objects.Array();
@@ -2758,7 +2813,7 @@ function createMap() {
         drawing_objects.forEach(function (object) {
             //r('object',object);
             //r('object.position',object.position);
-            removed_stat += objects.removeBlockOnPosition(object.position, object.storey) ? 1 : 0;
+            removed_stat += objects.removeBlockOnPosition(object.position, object.storey, object.world) ? 1 : 0;
             if (object.shape !== 'none') {
                 objects.push(object);
             }

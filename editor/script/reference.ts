@@ -16,6 +16,7 @@
 /// <reference path="10-image-collection.ts" />
 /// <reference path="20-filedrop.ts" />
 /// <reference path="20-palette.ts" />
+/// <reference path="20-export.ts" />
 
 
 /// <reference path="50-plugins/generators/simple-garden.ts" />

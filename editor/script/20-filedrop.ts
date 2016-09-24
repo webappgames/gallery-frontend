@@ -199,6 +199,9 @@ document.addEventListener("drop", function(e){
                         src: response[key],
                         height: 2,
                         rotation: 0,
+                        onGround: false,
+                        hasAlpha: false,
+                        isEmitting: true,
                         name: '',
                         uri: ''
 

@@ -215,8 +215,8 @@ function createMap() {
         $this = $(this);
 
 
-        var id = $this.attr('id');
-        var object = objects.getObjectById(id);
+        let id = $this.attr('id');
+        let object = objects.getObjectById(id);
 
         r(object);
 
@@ -229,9 +229,9 @@ function createMap() {
 
 
 
-        var offset = $this.offset();
-        var width = $this.outerWidth();
-        var height = $this.outerHeight();
+        let offset = $this.offset();
+        let width = $this.outerWidth();
+        let height = $this.outerHeight();
 
 
         $admin_world.find('div').addClass('not-selected-object').css('z-index','');
@@ -243,12 +243,18 @@ function createMap() {
         $selected_properties.html('');
         $selected_properties.append('<legend>Objekt</legend>');
 
-        var input_element,$input_element;
+        let input_element,$input_element;
+        let check_element,$check_element;
+
+
         for(var key in object){
 
 
 
-            input_element=false;
+            input_element=null;
+            check_element=null;
+
+
             if(['name','uri','key','href','target','world'].indexOf(key)!==-1){
                 input_element='<input type="text">';
             }else
@@ -270,8 +276,12 @@ function createMap() {
             if(key=='color'){
                 input_element='<input type="color">';
             }else
-            if(key=='rotation' && object.type!=='image'){
+            if(key=='rotation'/* && (object.type!=='image' && object.onGround!=='image' )*/){
                 input_element='<input type="range" min="0" max="360" step="10">';
+            }else
+            if(['onGround','hasAlpha','isEmitting'].indexOf(key)!==-1){
+
+                check_element='<input type="checkbox">';
             }
 
 
@@ -297,23 +307,68 @@ function createMap() {
                     '</div>'
                 );
             }
+
+
+
+
+
+            if(check_element) {
+
+
+                $check_element = $(check_element);
+
+                if(object[key]){
+                    $check_element.attr('checked','checked');
+                }
+                $check_element.attr('data-id',id);
+                $check_element.attr('data-key',key);
+
+                check_element = $check_element.outerHTML();
+
+
+                $selected_properties.append(
+                    '<div class="field">' +
+                    '<label>'+ check_element + key + '</label>' +
+                    '</div>'
+                );
+            }
         }
+
 
 
         $selected_properties.find('input').change(function () {
 
             var $this = $(this);
 
-            var val = $this.val();
-            var id = $this.attr('data-id');
-            var key = $this.attr('data-key');
+            r($this);
 
-            var object = objects.getObjectById(id);
-            object[key] = val;
+            if($this.attr('type')!=='checkbox') {
+
+                var val = $this.val();
+                var id = $this.attr('data-id');
+                var key = $this.attr('data-key');
+
+                var object = objects.getObjectById(id);
+                object[key] = val;
+
+
+            }else{
+
+                var val = $this.prop('checked');
+                var id = $this.attr('data-id');
+                var key = $this.attr('data-key');
+
+                var object = objects.getObjectById(id);
+                object[key] = val;
+
+            }
+
 
             createMap();
             save();
-            //r(object);
+            r(object);
+
+
 
         });
 
@@ -573,16 +628,24 @@ function createMap() {
 
         drag: function(e, ui){
 
-            //ui.position.left = (Math.floor((ui.position.left-window_center.x) / zoom_selected )+0.5) * zoom_selected+window_center.x;
-            //ui.position.top  = (Math.floor((ui.position.top -window_center.y) / zoom_selected )+0.5) * zoom_selected+window_center.y;
 
-            let grid = zoom_selected/2;
-            let offset = -4;//todo wth -4
+            ui.position.left = (Math.floor((ui.position.left-window_center.x) / zoom_selected )+0.5) * zoom_selected+window_center.x;
+            ui.position.top  = (Math.floor((ui.position.top -window_center.y) / zoom_selected )+0.5) * zoom_selected+window_center.y;
 
-            //ui.position.left-=7;
-            ui.position.left = Math.floor((ui.position.left+offset)/grid)*grid-offset;
-            ui.position.top = Math.floor((ui.position.top+offset)/grid)*grid-offset;
-            //ui.position.left+=7;
+
+
+
+
+            /*let grid = zoom_selected/2;
+            let offset = {
+                x: 0,//todo wth -4
+                y: zoom_selected/2
+            };
+
+
+            ui.position.left = Math.floor((ui.position.left+offset.x)/grid)*grid-offset.x;
+            ui.position.top = Math.floor((ui.position.top+offset.y)/grid)*grid-offset.y;*/
+
 
 
 
@@ -618,12 +681,14 @@ function createMap() {
 
         //grid: [ zoom_selected, zoom_selected ],
 
-        snap: ".block[data-shape='wall']",
+        //snap: ".block[data-shape='wall']",
         //snap: ".block",
         //snapMode: "outer",
         //snapTolerance: 10,
 
-        /*drag: function(event,ui){
+        drag: function(event,ui){
+
+            //r('drag');
 
             ui.position.left = (Math.floor((ui.position.left-window_center.x) / zoom_selected )+0.5) * zoom_selected+window_center.x;
             ui.position.top  = (Math.floor((ui.position.top -window_center.y) / zoom_selected )+0.5) * zoom_selected+window_center.y;
@@ -633,10 +698,9 @@ function createMap() {
             var draggable = $(this).data("ui-draggable");
             draggable._trigger("snapped", event, ui);
 
-th
 
 
-        },*/
+        },
         stop: function (event,ui) {
 
 
@@ -662,7 +726,7 @@ th
 
 
 
-        drag: function(event, ui) {
+        /*drag: function(event, ui) {
             var draggable = $(this).data("ui-draggable");
             $.each(draggable.snapElements, function(index, element) {
                 ui = $.extend({}, ui, {
@@ -679,7 +743,7 @@ th
                     draggable._trigger("snapped", event, ui);
                 }
             });
-        },
+        },*/
         snapped: function(event, ui) {
 
 
@@ -696,15 +760,21 @@ th
 
 
 
+            var id = $(this).attr('id');
+            var object = objects.getObjectById(id);
+
+
+            if(object.onGround){
+                return;
+            }
+
+
             var offset = $(this).offset();
             var position = getPositionFromLeftTop(offset.left-7,offset.top);//todo wtf 7
 
             position.x=Math.round(position.x*2)/2;
             position.y=Math.round(position.y*2)/2;
 
-
-            var id = $(this).attr('id');
-            var object = objects.getObjectById(id);
 
             object.position = position;
 

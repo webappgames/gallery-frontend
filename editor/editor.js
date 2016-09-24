@@ -1290,39 +1290,62 @@ var GALLERY;
             Image.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 var object = this;
-                var $image_0 = $('<img>').addClass('image-0').hide();
-                var $image_90 = $('<img>').addClass('image-90').hide();
-                var $image_180 = $('<img>').addClass('image-180').hide();
-                var $image_270 = $('<img>').addClass('image-270').hide();
-                $image_0.css('height', object.height * zoom_selected);
-                $image_180.css('height', object.height * zoom_selected);
-                $image_90.css('width', object.height * zoom_selected);
-                $image_270.css('width', object.height * zoom_selected);
                 var src = object.src;
                 var src_uri = URI(src)
                     .removeSearch("width");
                 var src_normal = src_uri.addSearch({ width: 100 }).toString();
-                $image_0.attr('src', src_normal);
-                $image_90.attr('src', src_normal + '&rotation=90');
-                $image_180.attr('src', src_normal + '&rotation=180');
-                $image_270.attr('src', src_normal + '&rotation=270');
-                //rotateImage($image_90[0],90);
-                //rotateImage($image_180[0],180);
-                //rotateImage($image_270[0],270);
-                if (object.rotation === 0)
-                    $image_0.show();
-                else if (object.rotation === 90)
-                    $image_90.show();
-                else if (object.rotation === 180)
-                    $image_180.show();
-                else if (object.rotation === 270)
-                    $image_270.show();
-                else
-                    $image_0.show();
-                $element.append($image_0);
-                $element.append($image_90);
-                $element.append($image_180);
-                $element.append($image_270);
+                if (object.onGround) {
+                    var $image = $('<img>').addClass('image');
+                    var width = object.width * zoom_selected;
+                    var height = object.height * zoom_selected;
+                    $image.css('width', width);
+                    $image.css('height', height);
+                    $image.attr('src', src_normal);
+                    $image.css('position', 'relative');
+                    $image.css('top', -height / 2);
+                    $image.css('left', -width / 2);
+                    //r(object.rotation);
+                    if (object.rotation) {
+                        $image.css('transform', 'rotate(' + object.rotation + 'deg)');
+                    }
+                    $element.append($image);
+                }
+                else {
+                    var $image_0 = $('<img>').addClass('image-0').hide();
+                    var $image_90 = $('<img>').addClass('image-90').hide();
+                    var $image_180 = $('<img>').addClass('image-180').hide();
+                    var $image_270 = $('<img>').addClass('image-270').hide();
+                    $image_0.css('height', object.height * zoom_selected);
+                    $image_180.css('height', object.height * zoom_selected);
+                    $image_90.css('width', object.height * zoom_selected);
+                    $image_270.css('width', object.height * zoom_selected);
+                    $image_0.attr('src', src_normal);
+                    $image_90.attr('src', src_normal + '&rotation=90');
+                    $image_180.attr('src', src_normal + '&rotation=180');
+                    $image_270.attr('src', src_normal + '&rotation=270');
+                    //rotateImage($image_90[0],90);
+                    //rotateImage($image_180[0],180);
+                    //rotateImage($image_270[0],270);
+                    if (object.rotation === 0) {
+                        $image_0.show();
+                    }
+                    else if (object.rotation === 90) {
+                        $image_90.show();
+                    }
+                    else if (object.rotation === 180) {
+                        $image_180.show();
+                    }
+                    else if (object.rotation === 270) {
+                        $image_270.show();
+                    }
+                    else {
+                        $image_0.show();
+                    }
+                    $element.append($image_0);
+                    $element.append($image_90);
+                    $element.append($image_180);
+                    $element.append($image_270);
+                }
                 return $element;
             };
             return Image;
@@ -2177,6 +2200,9 @@ document.addEventListener("drop", function (e) {
                         src: response[key],
                         height: 2,
                         rotation: 0,
+                        onGround: false,
+                        hasAlpha: false,
+                        isEmitting: true,
                         name: '',
                         uri: ''
                     });
@@ -2650,8 +2676,10 @@ function createMap() {
         $selected_properties.html('');
         $selected_properties.append('<legend>Objekt</legend>');
         var input_element, $input_element;
+        var check_element, $check_element;
         for (var key in object) {
-            input_element = false;
+            input_element = null;
+            check_element = null;
             if (['name', 'uri', 'key', 'href', 'target', 'world'].indexOf(key) !== -1) {
                 input_element = '<input type="text">';
             }
@@ -2674,8 +2702,11 @@ function createMap() {
             if (key == 'color') {
                 input_element = '<input type="color">';
             }
-            else if (key == 'rotation' && object.type !== 'image') {
+            else if (key == 'rotation' /* && (object.type!=='image' && object.onGround!=='image' )*/) {
                 input_element = '<input type="range" min="0" max="360" step="10">';
+            }
+            else if (['onGround', 'hasAlpha', 'isEmitting'].indexOf(key) !== -1) {
+                check_element = '<input type="checkbox">';
             }
             if (input_element) {
                 $input_element = $(input_element);
@@ -2690,17 +2721,39 @@ function createMap() {
                     input_element +
                     '</div>');
             }
+            if (check_element) {
+                $check_element = $(check_element);
+                if (object[key]) {
+                    $check_element.attr('checked', 'checked');
+                }
+                $check_element.attr('data-id', id);
+                $check_element.attr('data-key', key);
+                check_element = $check_element.outerHTML();
+                $selected_properties.append('<div class="field">' +
+                    '<label>' + check_element + key + '</label>' +
+                    '</div>');
+            }
         }
         $selected_properties.find('input').change(function () {
             var $this = $(this);
-            var val = $this.val();
-            var id = $this.attr('data-id');
-            var key = $this.attr('data-key');
-            var object = objects.getObjectById(id);
-            object[key] = val;
+            r($this);
+            if ($this.attr('type') !== 'checkbox') {
+                var val = $this.val();
+                var id = $this.attr('data-id');
+                var key = $this.attr('data-key');
+                var object = objects.getObjectById(id);
+                object[key] = val;
+            }
+            else {
+                var val = $this.prop('checked');
+                var id = $this.attr('data-id');
+                var key = $this.attr('data-key');
+                var object = objects.getObjectById(id);
+                object[key] = val;
+            }
             createMap();
             save();
-            //r(object);
+            r(object);
         });
         $selected_properties.show();
         $delete_button = $('<button>Smazat</button>');
@@ -2846,14 +2899,17 @@ function createMap() {
         //snap: ".block[data-shape='wall']",
         //snapMode: "outer",
         drag: function (e, ui) {
-            //ui.position.left = (Math.floor((ui.position.left-window_center.x) / zoom_selected )+0.5) * zoom_selected+window_center.x;
-            //ui.position.top  = (Math.floor((ui.position.top -window_center.y) / zoom_selected )+0.5) * zoom_selected+window_center.y;
-            var grid = zoom_selected / 2;
-            var offset = -4; //todo wth -4
-            //ui.position.left-=7;
-            ui.position.left = Math.floor((ui.position.left + offset) / grid) * grid - offset;
-            ui.position.top = Math.floor((ui.position.top + offset) / grid) * grid - offset;
-            //ui.position.left+=7;
+            ui.position.left = (Math.floor((ui.position.left - window_center.x) / zoom_selected) + 0.5) * zoom_selected + window_center.x;
+            ui.position.top = (Math.floor((ui.position.top - window_center.y) / zoom_selected) + 0.5) * zoom_selected + window_center.y;
+            /*let grid = zoom_selected/2;
+            let offset = {
+                x: 0,//todo wth -4
+                y: zoom_selected/2
+            };
+
+
+            ui.position.left = Math.floor((ui.position.left+offset.x)/grid)*grid-offset.x;
+            ui.position.top = Math.floor((ui.position.top+offset.y)/grid)*grid-offset.y;*/
         },
         stop: function () {
             var offset = $(this).offset();
@@ -2871,24 +2927,17 @@ function createMap() {
     //----------------------------------------------------------------------------IMAGES
     var drag_snap_options = {
         //grid: [ zoom_selected, zoom_selected ],
-        snap: ".block[data-shape='wall']",
+        //snap: ".block[data-shape='wall']",
         //snap: ".block",
         //snapMode: "outer",
         //snapTolerance: 10,
-        /*drag: function(event,ui){
-
-            ui.position.left = (Math.floor((ui.position.left-window_center.x) / zoom_selected )+0.5) * zoom_selected+window_center.x;
-            ui.position.top  = (Math.floor((ui.position.top -window_center.y) / zoom_selected )+0.5) * zoom_selected+window_center.y;
-
-
-
+        drag: function (event, ui) {
+            //r('drag');
+            ui.position.left = (Math.floor((ui.position.left - window_center.x) / zoom_selected) + 0.5) * zoom_selected + window_center.x;
+            ui.position.top = (Math.floor((ui.position.top - window_center.y) / zoom_selected) + 0.5) * zoom_selected + window_center.y;
             var draggable = $(this).data("ui-draggable");
             draggable._trigger("snapped", event, ui);
-
-th
-
-
-        },*/
+        },
         stop: function (event, ui) {
             var offset = $(this).offset();
             var position = getPositionFromLeftTop(offset.left - 7, offset.top); //todo wth -7
@@ -2900,9 +2949,9 @@ th
             select_callback.call(this);
             save(); //todo refactor to function
         },
-        drag: function (event, ui) {
+        /*drag: function(event, ui) {
             var draggable = $(this).data("ui-draggable");
-            $.each(draggable.snapElements, function (index, element) {
+            $.each(draggable.snapElements, function(index, element) {
                 ui = $.extend({}, ui, {
                     snapElement: $(element.item),
                     snapping: element.snapping
@@ -2912,13 +2961,12 @@ th
                         element.snappingKnown = true;
                         draggable._trigger("snapped", event, ui);
                     }
-                }
-                else if (element.snappingKnown) {
+                } else if (element.snappingKnown) {
                     element.snappingKnown = false;
                     draggable._trigger("snapped", event, ui);
                 }
             });
-        },
+        },*/
         snapped: function (event, ui) {
             /*r(event);
             $(event.toElement).css("border",'1px solid red');
@@ -2930,12 +2978,15 @@ th
                 $(event.toElement).css("z-index",'10');
 
             },3000);*/
+            var id = $(this).attr('id');
+            var object = objects.getObjectById(id);
+            if (object.onGround) {
+                return;
+            }
             var offset = $(this).offset();
             var position = getPositionFromLeftTop(offset.left - 7, offset.top); //todo wtf 7
             position.x = Math.round(position.x * 2) / 2;
             position.y = Math.round(position.y * 2) / 2;
-            var id = $(this).attr('id');
-            var object = objects.getObjectById(id);
             object.position = position;
             var rotation = GALLERY.Objects.Block.wallRotation(objects, position, storey_selected);
             var rotation_rad = rotation / 180 * Math.PI;

@@ -1,7 +1,7 @@
 /// <reference path="../reference.ts" />
 
 
-function createStairsMesh(name, stairs_count, scene){
+function createStairsMesh(name, stairs_count, isFull, scene){
 
 
 
@@ -18,6 +18,7 @@ function createStairsMesh(name, stairs_count, scene){
 
     let i1: number,i2: number;
 
+    let bottom_y:number;
 
     for(let i=0;i<stairs_count;i++){
 
@@ -30,9 +31,20 @@ function createStairsMesh(name, stairs_count, scene){
             i2/stairs_count,
             0);
 
+        if(isFull){
+
+            bottom_y = 0;
+
+        }else{
+
+            bottom_y = i/stairs_count-(2/stairs_count);
+
+        }
+
+
         let bottom = new BABYLON.Vector3(
             1-(i/stairs_count)-0.5,
-            i/stairs_count-(2/stairs_count),
+            bottom_y,
             0);
 
 

@@ -36,31 +36,17 @@ namespace GALLERY.Objects{
             $element.css('background','url("/media/images/textures/'+object.material+'.jpg")');
             $element.css('background-size','cover');
 
-            if(['window','door','gate'].indexOf(object.shape)!=-1) {
-
-                $element.html('<img src="/media/images/icons/' + object.shape + '.svg">');
 
 
-                $element.css('background-color', 'rgba(0,0,0,0.5)');
-                $element.css('background-blend-mode', 'overlay');
-
-            }else
-            if(object.shape=='room'){
-
-                $element.css('background-color','rgba(0,0,0,0.5)');
-                $element.css('background-blend-mode','overlay');
-
-            }else
-            if(object.shape=='none'){
-
-                $element.css('background','none');
-                $element.html('<i class="fa fa-times" aria-hidden="true"></i>');
-                $element.css('background-color','transparent');
-
+            if(object.shape != 'room') {
+                $element.html('<img src="/media/images/shapes/' + object.shape + '.png">');
             }
 
 
+
+
             return $element;
+
 
         }
 

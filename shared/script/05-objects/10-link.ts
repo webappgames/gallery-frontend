@@ -5,6 +5,24 @@ namespace GALLERY.Objects{
     export class Link extends Object{
 
 
+        public radius: number;
+        public href: string;
+        public target: string;
+        public color: string;
+
+
+        constructor(object){
+
+            super(object);
+
+            this.radius = this.radius || 1;
+            this.href = this.href || '/';
+            this.target = this.target || '';
+            this.color = this.color || '#00ff00';
+
+
+        }
+
 
 
         create$Element(){

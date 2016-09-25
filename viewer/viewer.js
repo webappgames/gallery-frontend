@@ -1494,45 +1494,74 @@ var GALLERY;
     (function (Objects) {
         var Image = (function (_super) {
             __extends(Image, _super);
-            function Image() {
-                _super.apply(this, arguments);
+            function Image(object) {
+                _super.call(this, object);
+                this.rotation = this.rotation || 0;
+                this.onGround = this.onGround || false;
+                this.hasAlpha = this.hasAlpha || false;
+                this.isEmitting = this.isEmitting || true;
+                this.checkCollisions = this.checkCollisions || false;
+                this.backFace = this.backFace || false;
             }
             Image.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 var object = this;
-                var $image_0 = $('<img>').addClass('image-0').hide();
-                var $image_90 = $('<img>').addClass('image-90').hide();
-                var $image_180 = $('<img>').addClass('image-180').hide();
-                var $image_270 = $('<img>').addClass('image-270').hide();
-                $image_0.css('height', object.height * zoom_selected);
-                $image_180.css('height', object.height * zoom_selected);
-                $image_90.css('width', object.height * zoom_selected);
-                $image_270.css('width', object.height * zoom_selected);
                 var src = object.src;
                 var src_uri = URI(src)
                     .removeSearch("width");
                 var src_normal = src_uri.addSearch({ width: 100 }).toString();
-                $image_0.attr('src', src_normal);
-                $image_90.attr('src', src_normal + '&rotation=90');
-                $image_180.attr('src', src_normal + '&rotation=180');
-                $image_270.attr('src', src_normal + '&rotation=270');
-                //rotateImage($image_90[0],90);
-                //rotateImage($image_180[0],180);
-                //rotateImage($image_270[0],270);
-                if (object.rotation === 0)
-                    $image_0.show();
-                else if (object.rotation === 90)
-                    $image_90.show();
-                else if (object.rotation === 180)
-                    $image_180.show();
-                else if (object.rotation === 270)
-                    $image_270.show();
-                else
-                    $image_0.show();
-                $element.append($image_0);
-                $element.append($image_90);
-                $element.append($image_180);
-                $element.append($image_270);
+                if (object.onGround) {
+                    var $image = $('<img>').addClass('image');
+                    var width = object.width * zoom_selected;
+                    var height = object.height * zoom_selected;
+                    $image.css('width', width);
+                    $image.css('height', height);
+                    $image.attr('src', src_normal);
+                    $image.css('position', 'relative');
+                    $image.css('top', -height / 2);
+                    $image.css('left', -width / 2);
+                    //r(object.rotation);
+                    if (object.rotation) {
+                        $image.css('transform', 'rotate(' + object.rotation + 'deg)');
+                    }
+                    $element.append($image);
+                }
+                else {
+                    var $image_0 = $('<img>').addClass('image-0').hide();
+                    var $image_90 = $('<img>').addClass('image-90').hide();
+                    var $image_180 = $('<img>').addClass('image-180').hide();
+                    var $image_270 = $('<img>').addClass('image-270').hide();
+                    $image_0.css('height', object.height * zoom_selected);
+                    $image_180.css('height', object.height * zoom_selected);
+                    $image_90.css('width', object.height * zoom_selected);
+                    $image_270.css('width', object.height * zoom_selected);
+                    $image_0.attr('src', src_normal);
+                    $image_90.attr('src', src_normal + '&rotation=90');
+                    $image_180.attr('src', src_normal + '&rotation=180');
+                    $image_270.attr('src', src_normal + '&rotation=270');
+                    //rotateImage($image_90[0],90);
+                    //rotateImage($image_180[0],180);
+                    //rotateImage($image_270[0],270);
+                    if (object.rotation === 0) {
+                        $image_0.show();
+                    }
+                    else if (object.rotation === 90) {
+                        $image_90.show();
+                    }
+                    else if (object.rotation === 180) {
+                        $image_180.show();
+                    }
+                    else if (object.rotation === 270) {
+                        $image_270.show();
+                    }
+                    else {
+                        $image_0.show();
+                    }
+                    $element.append($image_0);
+                    $element.append($image_90);
+                    $element.append($image_180);
+                    $element.append($image_270);
+                }
                 return $element;
             };
             return Image;
@@ -1547,8 +1576,11 @@ var GALLERY;
     (function (Objects) {
         var Label = (function (_super) {
             __extends(Label, _super);
-            function Label() {
-                _super.apply(this, arguments);
+            function Label(object) {
+                _super.call(this, object);
+                this.name = this.name || '';
+                this.uri = this.uri || '';
+                this.rotation = this.rotation || 0;
             }
             Label.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -1570,8 +1602,10 @@ var GALLERY;
     (function (Objects) {
         var Light = (function (_super) {
             __extends(Light, _super);
-            function Light() {
-                _super.apply(this, arguments);
+            function Light(object) {
+                _super.call(this, object);
+                this.color = this.color || '#ffffff';
+                this.intensity = this.intensity || 1;
             }
             Light.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -1591,8 +1625,12 @@ var GALLERY;
     (function (Objects) {
         var Stairs = (function (_super) {
             __extends(Stairs, _super);
-            function Stairs() {
-                _super.apply(this, arguments);
+            function Stairs(object) {
+                _super.call(this, object);
+                this.width = this.width || 10;
+                this.height = this.height || 2;
+                this.rotation = this.rotation || 0;
+                this.isFull = this.isFull || false;
             }
             Stairs.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -1644,8 +1682,12 @@ var GALLERY;
     (function (Objects) {
         var Link = (function (_super) {
             __extends(Link, _super);
-            function Link() {
-                _super.apply(this, arguments);
+            function Link(object) {
+                _super.call(this, object);
+                this.radius = this.radius || 1;
+                this.href = this.href || '/';
+                this.target = this.target || '';
+                this.color = this.color || '#00ff00';
             }
             Link.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -1670,8 +1712,12 @@ var GALLERY;
     (function (Objects) {
         var Gate = (function (_super) {
             __extends(Gate, _super);
-            function Gate() {
-                _super.apply(this, arguments);
+            function Gate(object) {
+                _super.call(this, object);
+                this.size = this.size || 2;
+                this.rotation = this.rotation || 0;
+                this.color = this.color || '#00ff00';
+                this.key = this.key || '#green';
             }
             Gate.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -2720,7 +2766,7 @@ function createTreeMesh(name, size, length, psi, bow, kink, detail, sections, br
     }
 }
 /// <reference path="../reference.ts" />
-function createStairsMesh(name, stairs_count, scene) {
+function createStairsMesh(name, stairs_count, isFull, scene) {
     var pathTopA = [];
     var pathTopB = [];
     var pathBottomA = [];
@@ -2728,11 +2774,18 @@ function createStairsMesh(name, stairs_count, scene) {
     var a = new BABYLON.Vector3(0, 0, 0.5);
     var b = new BABYLON.Vector3(0, 0, -0.5);
     var i1, i2;
+    var bottom_y;
     for (var i = 0; i < stairs_count; i++) {
         i1 = (Math.floor((i - 1) / 2) * 2 + 1);
         i2 = (Math.floor(i / 2) * 2);
         var top_1 = new BABYLON.Vector3(1 - (i1 / stairs_count) - 0.5, i2 / stairs_count, 0);
-        var bottom = new BABYLON.Vector3(1 - (i / stairs_count) - 0.5, i / stairs_count - (2 / stairs_count), 0);
+        if (isFull) {
+            bottom_y = 0;
+        }
+        else {
+            bottom_y = i / stairs_count - (2 / stairs_count);
+        }
+        var bottom = new BABYLON.Vector3(1 - (i / stairs_count) - 0.5, bottom_y, 0);
         pathTopA.push(top_1.add(a));
         pathTopB.push(top_1.add(b));
         pathBottomA.push(bottom.add(a));
@@ -2927,6 +2980,7 @@ function runWorld(objects) {
             meshes.push(light);
         }
         else if (object.type == 'image') {
+            //object.rotation = 200;
             //r('image',object);
             if (typeof object.rotation === 'number') {
                 var rotation_rad = (object.rotation / 180) * Math.PI;
@@ -2935,19 +2989,29 @@ function runWorld(objects) {
                 //box.material = new BABYLON.StandardMaterial("Mat", scene);
                 //box.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
                 var image = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
-                image.material = new BABYLON.StandardMaterial("texture4", scene);
-                //box.material.backFaceCulling = false;
-                image.material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
-                image.material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
-                image.material.specularPower = 32;
-                //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
-                image.material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
-                image.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
-                image.material.freeze();
                 var src = object.src;
                 var src_uri = URI(src)
                     .removeSearch("width");
                 var src_normal = src_uri.addSearch({ width: 512 }).toString();
+                var image_texture = new BABYLON.Texture(src_normal, scene);
+                image_texture.vOffset = 1; //Vertical offset of 10%
+                image_texture.uOffset = 1; //Horizontal offset of 40%
+                image_texture.hasAlpha = object.hasAlpha;
+                image.material = new BABYLON.StandardMaterial("texture4", scene);
+                if (object.isEmitting) {
+                    image.material.emissiveTexture = image_texture;
+                    image.material.backFaceCulling = !(object.backFace);
+                    image.material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
+                    image.material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
+                    image.material.specularPower = 32;
+                    //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
+                    image.material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
+                    image.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+                }
+                else {
+                    image.material.diffuseTexture = image_texture;
+                }
+                image.material.freeze();
                 /*if(!wasVideo) {
 
                     image.material.emissiveTexture = new BABYLON.VideoTexture(src_normal, ['media/images/textures/video.mp4'], scene);
@@ -2959,19 +3023,24 @@ function runWorld(objects) {
 
 
                 }else {}*/
-                image.material.emissiveTexture = new BABYLON.Texture(src_normal, scene);
-                image.material.emissiveTexture.vOffset = 1; //Vertical offset of 10%
-                image.material.emissiveTexture.uOffset = 1; //Horizontal offset of 40%
                 //box.material.emissiveTexture.hasAlpha = true;//Has an alpha
-                position.x += Math.sin(rotation_rad) * BLOCK_SIZE / 100;
-                position.z += Math.cos(rotation_rad) * BLOCK_SIZE / 100;
-                image.position = position;
+                if (object.onGround) {
+                    image.position = position;
+                    image.position.y = 0.05;
+                    image.rotation.x = Math.PI / 2;
+                    image.rotation.y = Math.PI + rotation_rad;
+                }
+                else {
+                    position.x += Math.sin(rotation_rad) * BLOCK_SIZE / 100;
+                    position.z += Math.cos(rotation_rad) * BLOCK_SIZE / 100;
+                    image.position = position;
+                    image.rotation.y = Math.PI + rotation_rad;
+                    image.position.y += EYE_VERTICAL * BLOCK_SIZE;
+                }
                 image.scaling.x = object.width;
                 image.scaling.y = object.height;
                 image.scaling.z = 0.1;
-                image.rotation.y = Math.PI + rotation_rad;
-                image.position.y += EYE_VERTICAL * BLOCK_SIZE;
-                image.checkCollisions = false;
+                image.checkCollisions = object.checkCollisions;
                 meshes.push(image);
             }
         }
@@ -3011,7 +3080,7 @@ function runWorld(objects) {
             meshes.push(tree_mesh);
         }
         else if (object.type == 'stairs') {
-            var stairs_mesh = createStairsMesh(/*object.id*/ 'stairs', 30, scene);
+            var stairs_mesh = createStairsMesh(/*object.id*/ 'stairs', 30, object.isFull, scene);
             //stairs_mesh.position = position;
             //r(position);
             stairs_mesh.scaling.x = object.width * BLOCK_SIZE;
@@ -3091,7 +3160,8 @@ var BLOCKS_2D_3D_SHAPES = {
     gate: [1, 0, 0, 0, 1, 1, 1, 1, 1],
     wall: [1, 1, 1, 1, 1, 1, 1, 1, 1],
     window: [1, 1, 0, 0, 1, 1, 1, 1, 1],
-    floor: [1, 0, 0, 0, 0, 0, 0, 0, 0]
+    floor: [1, 0, 0, 0, 0, 0, 0, 0, 0],
+    ceil: [0, 0, 0, 0, 0, 0, 0, 0, 1]
 };
 var BLOCKS_1NP_LEVEL = (0.5 - 0.9);
 var BLOCKS_STOREYS_LEVELS = {

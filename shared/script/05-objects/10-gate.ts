@@ -5,9 +5,28 @@ namespace GALLERY.Objects{
     export class Gate extends Object{
 
 
-    public size: number;
-    public rotation: number;
-    public color: string;
+
+
+        public size: number;
+        public rotation: number;
+        public color: string;
+        public key: string;
+
+
+
+        constructor(object){
+
+            super(object);
+
+            this.size = this.size || 2;
+            this.rotation = this.rotation || 0;
+            this.color = this.color || '#00ff00';
+            this.key = this.key || '#green';
+
+        }
+
+
+
 
 
         create$Element(){

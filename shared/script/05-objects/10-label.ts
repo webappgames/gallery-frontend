@@ -6,6 +6,20 @@ namespace GALLERY.Objects{
 
 
 
+        public name: string;
+        public uri: string;
+        public rotation: number;
+
+
+        constructor(object){
+
+            super(object);
+
+            this.name = this.name || '';
+            this.uri = this.uri || '';
+            this.rotation = this.rotation || 0;
+
+        }
 
         create$Element(){
 

@@ -1210,19 +1210,8 @@ var GALLERY;
                 object.material = object.material || 'stone-plain';
                 $element.css('background', 'url("/media/images/textures/' + object.material + '.jpg")');
                 $element.css('background-size', 'cover');
-                if (['window', 'door', 'gate'].indexOf(object.shape) != -1) {
-                    $element.html('<img src="/media/images/icons/' + object.shape + '.svg">');
-                    $element.css('background-color', 'rgba(0,0,0,0.5)');
-                    $element.css('background-blend-mode', 'overlay');
-                }
-                else if (object.shape == 'room') {
-                    $element.css('background-color', 'rgba(0,0,0,0.5)');
-                    $element.css('background-blend-mode', 'overlay');
-                }
-                else if (object.shape == 'none') {
-                    $element.css('background', 'none');
-                    $element.html('<i class="fa fa-times" aria-hidden="true"></i>');
-                    $element.css('background-color', 'transparent');
+                if (object.shape != 'room') {
+                    $element.html('<img src="/media/images/shapes/' + object.shape + '.png">');
                 }
                 return $element;
             };
@@ -1284,8 +1273,14 @@ var GALLERY;
     (function (Objects) {
         var Image = (function (_super) {
             __extends(Image, _super);
-            function Image() {
-                _super.apply(this, arguments);
+            function Image(object) {
+                _super.call(this, object);
+                this.rotation = this.rotation || 0;
+                this.onGround = this.onGround || false;
+                this.hasAlpha = this.hasAlpha || false;
+                this.isEmitting = this.isEmitting || true;
+                this.checkCollisions = this.checkCollisions || false;
+                this.backFace = this.backFace || false;
             }
             Image.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -1360,8 +1355,11 @@ var GALLERY;
     (function (Objects) {
         var Label = (function (_super) {
             __extends(Label, _super);
-            function Label() {
-                _super.apply(this, arguments);
+            function Label(object) {
+                _super.call(this, object);
+                this.name = this.name || '';
+                this.uri = this.uri || '';
+                this.rotation = this.rotation || 0;
             }
             Label.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -1383,8 +1381,10 @@ var GALLERY;
     (function (Objects) {
         var Light = (function (_super) {
             __extends(Light, _super);
-            function Light() {
-                _super.apply(this, arguments);
+            function Light(object) {
+                _super.call(this, object);
+                this.color = this.color || '#ffffff';
+                this.intensity = this.intensity || 1;
             }
             Light.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -1404,8 +1404,12 @@ var GALLERY;
     (function (Objects) {
         var Stairs = (function (_super) {
             __extends(Stairs, _super);
-            function Stairs() {
-                _super.apply(this, arguments);
+            function Stairs(object) {
+                _super.call(this, object);
+                this.width = this.width || 10;
+                this.height = this.height || 2;
+                this.rotation = this.rotation || 0;
+                this.isFull = this.isFull || false;
             }
             Stairs.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -1457,8 +1461,12 @@ var GALLERY;
     (function (Objects) {
         var Link = (function (_super) {
             __extends(Link, _super);
-            function Link() {
-                _super.apply(this, arguments);
+            function Link(object) {
+                _super.call(this, object);
+                this.radius = this.radius || 1;
+                this.href = this.href || '/';
+                this.target = this.target || '';
+                this.color = this.color || '#00ff00';
             }
             Link.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -1483,8 +1491,12 @@ var GALLERY;
     (function (Objects) {
         var Gate = (function (_super) {
             __extends(Gate, _super);
-            function Gate() {
-                _super.apply(this, arguments);
+            function Gate(object) {
+                _super.call(this, object);
+                this.size = this.size || 2;
+                this.rotation = this.rotation || 0;
+                this.color = this.color || '#00ff00';
+                this.key = this.key || '#green';
             }
             Gate.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -2315,13 +2327,13 @@ var BLOCK_MATERIALS = [
     'wood-boards',
     'wood-fence',
     'wood-raw'];
-var BLOCK_SHAPES = ['none', 'room', 'wall', 'door', 'window', 'floor'];
+var BLOCK_SHAPES = ['none', 'room', 'wall', 'door', 'window', 'floor', 'ceil'];
 $(function () {
     BLOCK_MATERIALS.forEach(function (material) {
         //r('creating block to pallete');
         $('.select-materials').append(createObject$(GALLERY.Objects.Object.init({
             type: 'block',
-            shape: 'wall',
+            shape: 'room',
             material: material
         })));
     });
@@ -2361,34 +2373,43 @@ $(function () {
                     world: world_selected,
                     storey: storey_selected
                 };
-                if (type == 'light') {
+                /*if(type == 'light'){
                     object.color = '#ffffff';
                     object.intensity = 1;
-                }
-                else if (type == 'label') {
+                }else
+                if(type == 'label'){
                     object.name = '';
                     object.uri = '';
                     object.rotation = 0;
                 }
-                if (type == 'stairs') {
+                if(type == 'stairs'){
                     object.width = 10;
                     object.height = 2;
                     object.rotation = 0;
-                }
-                else if (type == 'link') {
+                    object.isFull = false;
+
+                }else
+                if(type == 'link'){
+
+
                     object.radius = 1;
                     object.href = '/';
                     object.target = '';
+
+
                     object.color = '#00ff00';
                     object.opacity = '0.9';
-                }
-                else if (type == 'gate') {
+
+
+
+                }else
+                if(type == 'gate'){
                     object.size = 2;
                     object.rotation = 0;
                     object.color = '#00ff00';
                     object.opacity = '0.9';
                     object.key = '#red';
-                }
+                }*/
                 objects.push(object);
                 createMap();
                 save();
@@ -2695,17 +2716,16 @@ function createMap() {
             else if (key == 'size') {
                 input_element = '<input type="range" min="0.2" max="10" step="0.02">';
             }
-            else 
-            /*if(key=='width' || key=='height'){
-                input_element='<input type="range" min="0.2" max="10" step="0.02">';
-            }else*/
-            if (key == 'color') {
+            else if (key == 'width' || key == 'height') {
+                input_element = '<input type="range" min="0.2" max="16" step="0.02">';
+            }
+            else if (key == 'color') {
                 input_element = '<input type="color">';
             }
             else if (key == 'rotation' /* && (object.type!=='image' && object.onGround!=='image' )*/) {
                 input_element = '<input type="range" min="0" max="360" step="10">';
             }
-            else if (['onGround', 'hasAlpha', 'isEmitting'].indexOf(key) !== -1) {
+            else if (typeof object[key] === "boolean") {
                 check_element = '<input type="checkbox">';
             }
             if (input_element) {
@@ -2739,6 +2759,9 @@ function createMap() {
             r($this);
             if ($this.attr('type') !== 'checkbox') {
                 var val = $this.val();
+                if (val / 1 == val) {
+                    val = val / 1;
+                }
                 var id = $this.attr('data-id');
                 var key = $this.attr('data-key');
                 var object = objects.getObjectById(id);

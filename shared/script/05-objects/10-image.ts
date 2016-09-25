@@ -5,6 +5,35 @@ namespace GALLERY.Objects{
     export class Image extends Object{
 
 
+        public name:string;
+
+        public uri:string;
+        public width:number;
+        public height: number;
+
+        public rotation: number;
+        public onGround: boolean;
+        public hasAlpha: boolean;
+        public isEmitting: boolean;
+        public checkCollisions: boolean;
+        public backFace: boolean;
+
+
+
+        constructor(object){
+
+            super(object);
+
+            this.rotation = this.rotation || 0;
+            this.onGround = this.onGround || false;
+            this.hasAlpha = this.hasAlpha || false;
+            this.isEmitting = this.isEmitting || true;
+            this.checkCollisions = this.checkCollisions || false;
+            this.backFace = this.backFace || false;
+
+        }
+
+
 
 
         create$Element() {

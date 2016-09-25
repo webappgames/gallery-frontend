@@ -260,6 +260,7 @@ function runWorld(objects){
         }else
         if(object.type=='image'){
 
+            //object.rotation = 200;
             //r('image',object);
 
             if(typeof object.rotation === 'number') {
@@ -274,15 +275,7 @@ function runWorld(objects){
                 var image = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
 
 
-                image.material = new BABYLON.StandardMaterial("texture4", scene);
-                //box.material.backFaceCulling = false;
-                image.material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
-                image.material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
-                image.material.specularPower = 32;
-                //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
-                image.material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
-                image.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
-                image.material.freeze();
+
 
 
                 var src = object.src;
@@ -290,6 +283,44 @@ function runWorld(objects){
                     .removeSearch("width");
                 var src_normal = src_uri.addSearch({ width: 512 }).toString();
 
+
+                let image_texture = new BABYLON.Texture(src_normal, scene);
+                image_texture.vOffset = 1;//Vertical offset of 10%
+                image_texture.uOffset = 1;//Horizontal offset of 40%
+                image_texture.hasAlpha = object.hasAlpha;
+
+
+
+
+
+                image.material = new BABYLON.StandardMaterial("texture4", scene);
+
+
+
+
+                if(object.isEmitting) {
+
+
+                    image.material.emissiveTexture = image_texture;
+
+
+                    image.material.backFaceCulling = !(object.backFace);
+                    image.material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
+                    image.material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
+                    image.material.specularPower = 32;
+                    //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
+                    image.material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
+                    image.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+
+
+
+                }else{
+
+                    image.material.diffuseTexture = image_texture;
+
+                }
+
+                image.material.freeze();
 
 
 
@@ -306,20 +337,40 @@ function runWorld(objects){
                 }else {}*/
 
 
-                image.material.emissiveTexture = new BABYLON.Texture(src_normal, scene);
-                image.material.emissiveTexture.vOffset = 1;//Vertical offset of 10%
-                image.material.emissiveTexture.uOffset = 1;//Horizontal offset of 40%
+
                 //box.material.emissiveTexture.hasAlpha = true;//Has an alpha
 
 
 
 
 
+                if(object.onGround){
 
 
-                position.x += Math.sin(rotation_rad)*BLOCK_SIZE/100;
-                position.z += Math.cos(rotation_rad)*BLOCK_SIZE/100;
-                image.position = position;
+                    image.position = position;
+                    image.position.y = 0.05;
+
+                    image.rotation.x = Math.PI/2;
+                    image.rotation.y = Math.PI + rotation_rad;
+
+
+
+                }else{
+
+                    position.x += Math.sin(rotation_rad)*BLOCK_SIZE/100;
+                    position.z += Math.cos(rotation_rad)*BLOCK_SIZE/100;
+                    image.position = position;
+
+
+                    image.rotation.y = Math.PI + rotation_rad;
+                    image.position.y += EYE_VERTICAL * BLOCK_SIZE;
+
+                }
+
+
+
+
+
 
 
                 image.scaling.x = object.width;
@@ -327,12 +378,8 @@ function runWorld(objects){
                 image.scaling.z = 0.1;
 
 
-                image.rotation.y = Math.PI + rotation_rad;
 
-
-                image.position.y += EYE_VERTICAL * BLOCK_SIZE;
-
-                image.checkCollisions = false;
+                image.checkCollisions = object.checkCollisions;
 
                 meshes.push(image);
                 //r(object);
@@ -395,7 +442,7 @@ function runWorld(objects){
         if(object.type=='stairs') {
 
 
-            var stairs_mesh =  createStairsMesh(/*object.id*/'stairs', 30, scene);
+            var stairs_mesh =  createStairsMesh(/*object.id*/'stairs', 30, object.isFull, scene);
 
             //stairs_mesh.position = position;
             //r(position);

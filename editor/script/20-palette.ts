@@ -165,7 +165,7 @@ var BLOCK_MATERIALS = [
     'wood-fence',
     'wood-raw'];
 
-var BLOCK_SHAPES = ['none','room','wall','door','window','floor'];
+var BLOCK_SHAPES = ['none','room','wall','door','window','floor','ceil'];
 
 
 
@@ -179,7 +179,7 @@ $(function () {
 
         $('.select-materials').append(createObject$(GALLERY.Objects.Object.init({
             type: 'block',
-            shape: 'wall',
+            shape: 'room',
             material: material
         })));
 
@@ -264,7 +264,7 @@ $(function () {
                     storey: storey_selected
                 };
 
-                if(type == 'light'){
+                /*if(type == 'light'){
                     object.color = '#ffffff';
                     object.intensity = 1;
                 }else
@@ -277,6 +277,8 @@ $(function () {
                     object.width = 10;
                     object.height = 2;
                     object.rotation = 0;
+                    object.isFull = false;
+
                 }else
                 if(type == 'link'){
 
@@ -298,7 +300,7 @@ $(function () {
                     object.color = '#00ff00';
                     object.opacity = '0.9';
                     object.key = '#red';
-                }
+                }*/
 
 
                 objects.push(object);

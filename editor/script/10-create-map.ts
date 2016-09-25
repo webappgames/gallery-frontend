@@ -270,16 +270,16 @@ function createMap() {
             if(key=='size'){
                 input_element='<input type="range" min="0.2" max="10" step="0.02">';
             }else
-            /*if(key=='width' || key=='height'){
-                input_element='<input type="range" min="0.2" max="10" step="0.02">';
-            }else*/
+            if(key=='width' || key=='height'){
+                input_element='<input type="range" min="0.2" max="16" step="0.02">';
+            }else
             if(key=='color'){
                 input_element='<input type="color">';
             }else
             if(key=='rotation'/* && (object.type!=='image' && object.onGround!=='image' )*/){
                 input_element='<input type="range" min="0" max="360" step="10">';
             }else
-            if(['onGround','hasAlpha','isEmitting'].indexOf(key)!==-1){
+            if(/*['onGround','hasAlpha','isEmitting','checkCollisions','isFull'].indexOf(key)!==-1*/typeof object[key] === "boolean"){
 
                 check_element='<input type="checkbox">';
             }
@@ -345,6 +345,12 @@ function createMap() {
             if($this.attr('type')!=='checkbox') {
 
                 var val = $this.val();
+
+                if(val/1 == val){
+                    val = val/1;
+                }
+
+
                 var id = $this.attr('data-id');
                 var key = $this.attr('data-key');
 

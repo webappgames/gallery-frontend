@@ -5,6 +5,24 @@ namespace GALLERY.Objects{
     export class Stairs extends Object{
 
 
+        public width: number;
+        public height: number;
+        public rotation: number;
+        public isFull: boolean;
+
+
+
+        constructor(object){
+
+            super(object);
+
+            this.width = this.width || 10;
+            this.height = this.height || 2;
+            this.rotation = this.rotation || 0;
+            this.isFull = this.isFull || false;
+
+        }
+
 
 
         create$Element(){

@@ -5,6 +5,19 @@ namespace GALLERY.Objects{
     export class Light extends Object{
 
 
+        public color: string;
+        public intensity: number;
+
+
+        constructor(object){
+
+            super(object);
+
+            this.color = this.color || '#ffffff';
+            this.intensity = this.intensity || 1;
+
+        }
+
 
 
         create$Element(){

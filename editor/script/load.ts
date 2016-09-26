@@ -67,7 +67,7 @@ function loginOrCreate(testing_gallery,testing_password){
 
 
 
-        $('#show-gallery').attr('href','../viewer?gallery='+gallery);
+        //$('#show-gallery').attr('href','../viewer?gallery='+gallery);
         createMap();
 
         $('#select-gallery').hide();
@@ -108,7 +108,7 @@ function loginOrCreate(testing_gallery,testing_password){
 
 
                     objects = new GALLERY.Objects.Array();
-                    $('#show-gallery').attr('href','../viewer?gallery='+gallery);
+                    //$('#show-gallery').attr('href','../viewer?gallery='+gallery);
                     createMap();
 
                     $('#select-gallery').hide();

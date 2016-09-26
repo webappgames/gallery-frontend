@@ -88,17 +88,29 @@ namespace GALLERY.Objects {
 
         static compile(objects: Array){
 
+            r('Compilation started');
 
             var compiled_objects = new CompiledArray();
+
+
 
 
             let [blocks, non_blocks] =  objects.splitTypes('block');
 
 
+
+            r('Working on '+non_blocks.getAll().length+' non block objects!');
+
             non_blocks.forEach(function (object) {
                 compiled_objects.push(object);
             });
 
+
+            var block_stat = {
+                all: blocks.getAll().length,
+                done: 0
+            };
+            r('Working on '+blocks.getAll().length+' non block objects!');
 
 
 
@@ -108,6 +120,9 @@ namespace GALLERY.Objects {
 
 
             worlds.forEach(function (world) {
+
+
+                r('Compiling world '+world);
 
                 //=========================================================================BEGIN WORLD PROCESSING
                 var boxes_materials = {};
@@ -175,10 +190,19 @@ namespace GALLERY.Objects {
                     }
 
 
-                    blocks.removeObjectById(object.id);
+                    //blocks.removeObjectById(object.id);
+                    block_stat.done++;
+
+                    if(block_stat.done%500===500-1){
+                        r((Math.round(block_stat.done/block_stat.all*100*100)/100)+'% Converting blocks to boxes ('+world+')');
+                    }
+
 
 
                 });
+
+
+                r('In world '+world+' are all blocks converted.');
 
 
 
@@ -186,12 +210,31 @@ namespace GALLERY.Objects {
 
                     var boxes = boxes_materials[material];
 
-                    //r(boxes);
 
-                    boxes.forEach(function (box) {
-                        if(box.processed===false){
+
+
+
+
+                    while(boxes.length!==0){
+                    //boxes.forEach(function (box, box_i) {
+
+
+                        //if (box_i % 1000 === 1000 - 1) {
+                        //    r(world + '[' + material + ']: ' + (Math.round(box_i / boxes.length * 100 * 100) / 100) + '% Making  multiblocks from ' + boxes.length + ' boxes.');
+                        //}
+
+                        if (boxes.length % 1000 === 1000 - 1) {
+                            r(world + '[' + material + ']: ' +' Making  multiblocks from remaining ' + boxes.length + ' boxes.');
+                        }
+
+
+
+                        //if (box.processed === false) {
 
                             //r(1);
+
+
+                            var box = boxes[0];
 
                             var range = {
                                 x: {start: box.x, end: box.x},
@@ -205,52 +248,80 @@ namespace GALLERY.Objects {
                             //ee();
 
 
-
-
-                            [1,2,3,4,5,6].forEach(function (operation) {
+                            [1, 2, 3, 4, 5, 6].forEach(function (operation) {
 
 
                                 var limit = 100;
-                                while(isAllRangeOn(boxes,range) && limit>0){
+                                while (isAllRangeOn(boxes, range) && limit > 0) {
                                     limit--;
 
                                     //r(operation);
 
-                                    if(operation === 0){}
-                                    else if(operation === 1){range.x.end++;}
-                                    else if(operation === 2){range.x.start--;}
+                                    if (operation === 0) {
+                                    }
+                                    else if (operation === 1) {
+                                        range.x.end++;
+                                    }
+                                    else if (operation === 2) {
+                                        range.x.start--;
+                                    }
 
-                                    else if(operation === 3){range.y.end++;}
-                                    else if(operation === 4){range.y.start--;}
+                                    else if (operation === 3) {
+                                        range.y.end++;
+                                    }
+                                    else if (operation === 4) {
+                                        range.y.start--;
+                                    }
 
-                                    else if(operation === 5){range.z.end++;}
-                                    else if(operation === 6){range.z.start--;}
+                                    else if (operation === 5) {
+                                        range.z.end++;
+                                    }
+                                    else if (operation === 6) {
+                                        range.z.start--;
+                                    }
 
 
                                 }
 
-                                if(limit==100){
+                                if (limit == 100) {
                                     //r(range);
                                     throw new Error('wtf');
                                 }
 
 
-                                if(operation === 0){}
-                                else if(operation === 1){range.x.end--;}
-                                else if(operation === 2){range.x.start++;}
+                                if (operation === 0) {
+                                }
+                                else if (operation === 1) {
+                                    range.x.end--;
+                                }
+                                else if (operation === 2) {
+                                    range.x.start++;
+                                }
 
-                                else if(operation === 3){range.y.end--;}
-                                else if(operation === 4){range.y.start++;}
+                                else if (operation === 3) {
+                                    range.y.end--;
+                                }
+                                else if (operation === 4) {
+                                    range.y.start++;
+                                }
 
-                                else if(operation === 5){range.z.end--;}
-                                else if(operation === 6){range.z.start++;}
+                                else if (operation === 5) {
+                                    range.z.end--;
+                                }
+                                else if (operation === 6) {
+                                    range.z.start++;
+                                }
 
 
                             });
 
                             //r(range);
-                            processAllRange(boxes,range);
+                            processAllRange(boxes, range);
+                            boxes = boxes.filter(function(box){
 
+                                return(!box.processed);
+
+                            });
 
 
                             compiled_objects.push({
@@ -258,31 +329,37 @@ namespace GALLERY.Objects {
                                 type: 'multiblock',
                                 material: material,
                                 position: {
-                                    x: (range.x.start+range.x.end)/2,
-                                    y: (range.y.start+range.y.end)/2,
-                                    z: (range.z.start+range.z.end)/2
+                                    x: (range.x.start + range.x.end) / 2,
+                                    y: (range.y.start + range.y.end) / 2,
+                                    z: (range.z.start + range.z.end) / 2
                                 },
                                 size: {
-                                    x: Math.abs(range.x.end-range.x.start)+1,
-                                    y: Math.abs(range.y.end-range.y.start)+1,
-                                    z: Math.abs(range.z.end-range.z.start)+1,
+                                    x: Math.abs(range.x.end - range.x.start) + 1,
+                                    y: Math.abs(range.y.end - range.y.start) + 1,
+                                    z: Math.abs(range.z.end - range.z.start) + 1,
                                 }
 
                             });
 
 
-                        }
-                    });
+                        //}
+
+                    };
+                    //});
+
+
 
                 }
                 //=========================================================================END OF WORLD PROCESSING
+
+                r('World '+world+' compiled');
+
+
             });
 
 
 
-
-
-
+            r('Created '+compiled_objects.getAll().length+' compiled objects from '+objects.getAll().length+' objects!');
 
 
             return(compiled_objects);

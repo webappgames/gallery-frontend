@@ -57,7 +57,7 @@ gulp.task('compile-viewer', function () {
     var tsResult = tsProject.src() // instead of gulp.src(...)
         .pipe(ts(tsProject));
 
-    return tsResult.js.pipe(gulp.dest('./viewer/'));
+    return tsResult.js.pipe(gulp.dest('./viewer/script/'));
 
 
 
@@ -69,7 +69,7 @@ gulp.task('compile-viewer', function () {
 
 
 
-
+/*
 var uglify = require('gulp-uglify');
 var pump = require('pump');
 
@@ -83,7 +83,7 @@ gulp.task('compress-viewer', function (cb) {
         ],
         cb
     );
-});
+});*/
 
 
 

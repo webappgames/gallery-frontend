@@ -16,7 +16,7 @@
 }
 */
 
-
+/*
 function download(filename, contentType, content)
 {
     if(!contentType) contentType = 'application/octet-stream';
@@ -25,7 +25,7 @@ function download(filename, contentType, content)
     a.href = window.URL.createObjectURL(blob);
     a.download = filename;
     a.click();
-}
+}*/
 
 
 
@@ -38,7 +38,13 @@ namespace GALLERY.Editor{
 
     export function exportJSON(){
 
-        download(gallery+'.json','application/json',JSON.stringify(objects.getAll(),null,4));
+        saveAs(
+            new Blob([JSON.stringify(objects.getAll(),null,4)], {type: "application/json;charset=utf-8"})
+            , gallery+".json"
+        );
+
+
+        //download(gallery+'.json','application/json',JSON.stringify(objects.getAll(),null,4));
 
     }
 
@@ -49,8 +55,6 @@ namespace GALLERY.Editor{
 
     }
 */
-
-
 
 
 }

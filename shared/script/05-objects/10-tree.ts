@@ -6,6 +6,7 @@ namespace GALLERY.Objects{
     export class Tree extends Object{
 
 
+        public storey: string;
 
 
         create$Element(){

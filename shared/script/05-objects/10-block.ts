@@ -7,7 +7,7 @@ namespace GALLERY.Objects{
 
     export class Block extends Object{
 
-
+        public storey: string;
         public shape: string;
         public material: string;
 

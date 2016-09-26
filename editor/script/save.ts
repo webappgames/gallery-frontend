@@ -70,6 +70,7 @@ function copyStorey() {
     new_objects.forEach(function (object) {
 
         let new_object = object.clone();
+        new_object.id = createGuid();
         new_object.storey = storey_selected;
         objects.push(new_object);
 
@@ -103,16 +104,41 @@ function undo() {
 
 
 
+function save(force = false) {
 
-function save() {
-
-
-    //last_objects = JSON.parse(JSON.stringify(objects.getAll()));
 
     if(!loaded){
         console.warn('Cant save because not yet loaded!');
         return;
     }
+
+
+    if(!force && objects.getAll().length > 1000){
+
+
+        $button = $('#save');
+        $button.addClass('unsaved');
+        $button.html('<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Uložit');//todo fa
+
+    }else{
+
+        $button.removeClass('unsaved');
+        putToServer();
+
+    }
+
+
+}
+
+
+
+
+function putToServer() {
+
+
+    //last_objects = JSON.parse(JSON.stringify(objects.getAll()));
+
+
 
 
     $button = $('#save');
@@ -179,7 +205,7 @@ $(function () {
 
 
     $('#save').click(function () {
-        save();
+        save(true);
     });
 
 

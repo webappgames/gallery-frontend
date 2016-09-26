@@ -55,6 +55,24 @@ function moveTo(x,y,rotation,world,storey,immediately=true) {
 
 
 
+function moveToBegining(immediately=true){
+
+    objects.filterTypes('label').forEach(function (label) {
+        if(label.uri == '/'){
+
+            moveTo(label.position.x,label.position.y,label.rotation/1,label.world,label.storey,immediately);
+            return;
+
+        }
+    })
+
+    throw new Error('There is no label with uri "/"!');
+}
+
+
+
+
+
 function moveToBabylon(babylon_position,babylon_rotation,immediately) {
 
 

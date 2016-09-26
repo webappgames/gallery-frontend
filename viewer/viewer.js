@@ -3,189 +3,6 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-function compileObjects(objects) {
-    boxes_materials = {};
-    var stone_plain = new BABYLON.StandardMaterial("Mat", scene);
-    stone_plain.diffuseTexture = new BABYLON.Texture("../media/images/textures/stone-plain.jpg", scene);
-    stone_plain.diffuseTexture.uScale = 1; //Vertical offset of 10%
-    stone_plain.diffuseTexture.vScale = 1; //Horizontal offset of 40%
-    stone_plain.freeze();
-    var bark = new BABYLON.StandardMaterial("Mat", scene);
-    bark.diffuseTexture = new BABYLON.Texture("../media/images/textures/bark.jpg", scene);
-    bark.diffuseTexture.uScale = 1; //Vertical offset of 10%
-    bark.diffuseTexture.vScale = 1; //Horizontal offset of 40%
-    bark.freeze();
-    var sunShadowGenerator = new BABYLON.ShadowGenerator(1024, sun);
-    sunShadowGenerator.useVarianceShadowMap = true;
-    var wasVideo = false;
-    var building_blocks = [];
-    var lights = [];
-    var blocks = '';
-    objects.filterTypes('block').forEach(function (object) {
-        object.storey = object.storey || '1NP';
-        var level = BLOCKS_STOREYS_LEVELS[object.storey];
-        var position = new BABYLON.Vector3(object.position.x * -BLOCK_SIZE, (level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
-        object.position.y * BLOCK_SIZE);
-        object.material = object.material || 'stone-plain';
-        //var position_vertical = new BABYLON.Vector3(0, BLOCK_SIZE*1.00001, 0);
-        var vertical = BLOCKS_2D_3D_SHAPES[object.shape];
-        var box;
-        //position.x -=BLOCK_SIZE/2;
-        //position.z +=BLOCK_SIZE/2;
-        //r(level);
-        for (var i = 0, l = vertical.length; i < l; i++) {
-            if (vertical[i]) {
-                /*block =  box_prototypes[object.material].createInstance("room");
-                 block.isPickable = true;
-                 block.checkCollisions = true;
-                 block.position = position;*/
-                boxes_materials[object.material] = boxes_materials[object.material] || [];
-                boxes_materials[object.material].push({
-                    x: object.position.x,
-                    y: object.position.y,
-                    z: i + level,
-                    processed: false
-                });
-            }
-        }
-        objects.removeObjectById(object.id);
-    });
-    blocks_box_prototypes = {};
-    blocks_materials_groups = {};
-    //r(boxes_materials);
-    function isBlockOn(boxes, x, y, z) {
-        for (var i = 0, l = boxes.length; i < l; i++) {
-            if (boxes[i].x === x && boxes[i].y === y && boxes[i].z === z && boxes[i].processed === false) {
-                return (true);
-            }
-        }
-        return (false);
-    }
-    function getBlockOn(boxes, x, y, z) {
-        for (var i = 0, l = boxes.length; i < l; i++) {
-            if (boxes[i].x === x && boxes[i].y === y && boxes[i].z === z && boxes[i].processed === false) {
-                return (boxes[i]);
-            }
-        }
-        return (null);
-    }
-    function processAllBlocksOn(boxes, x, y, z) {
-        for (var i = 0, l = boxes.length; i < l; i++) {
-            if (boxes[i].x === x && boxes[i].y === y && boxes[i].z === z && boxes[i].processed === false) {
-                boxes[i].processed = true;
-            }
-        }
-    }
-    function isAllRangeOn(boxes, range) {
-        //r('isAllRangeOn');
-        for (var x = range.x.start; x <= range.x.end; x++) {
-            for (var y = range.y.start; y <= range.y.end; y++) {
-                for (var z = range.z.start; z <= range.z.end; z++) {
-                    //r(x,y,z);
-                    if (!isBlockOn(boxes, x, y, z)) {
-                        //r('Empty place',isBlockOn(boxes,x,y,z),boxes);
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-    function processAllRange(boxes, range) {
-        for (var x = range.x.start; x <= range.x.end; x++) {
-            for (var y = range.y.start; y <= range.y.end; y++) {
-                for (var z = range.z.start; z <= range.z.end; z++) {
-                    processAllBlocksOn(boxes, x, y, z);
-                }
-            }
-        }
-    }
-    for (var material in boxes_materials) {
-        var boxes = boxes_materials[material];
-        //r(boxes);
-        boxes.forEach(function (box) {
-            if (box.processed === false) {
-                //r(1);
-                var range = {
-                    x: { start: box.x, end: box.x },
-                    y: { start: box.y, end: box.y },
-                    z: { start: box.z, end: box.z }
-                };
-                //r(range);
-                //ee();
-                [1, 2, 3, 4, 5, 6].forEach(function (operation) {
-                    var limit = 100;
-                    while (isAllRangeOn(boxes, range) && limit > 0) {
-                        limit--;
-                        //r(operation);
-                        if (operation === 0) { }
-                        else if (operation === 1) {
-                            range.x.end++;
-                        }
-                        else if (operation === 2) {
-                            range.x.start--;
-                        }
-                        else if (operation === 3) {
-                            range.y.end++;
-                        }
-                        else if (operation === 4) {
-                            range.y.start--;
-                        }
-                        else if (operation === 5) {
-                            range.z.end++;
-                        }
-                        else if (operation === 6) {
-                            range.z.start--;
-                        }
-                    }
-                    if (limit == 100) {
-                        //r(range);
-                        throw new Error('wtf');
-                    }
-                    if (operation === 0) { }
-                    else if (operation === 1) {
-                        range.x.end--;
-                    }
-                    else if (operation === 2) {
-                        range.x.start++;
-                    }
-                    else if (operation === 3) {
-                        range.y.end--;
-                    }
-                    else if (operation === 4) {
-                        range.y.start++;
-                    }
-                    else if (operation === 5) {
-                        range.z.end--;
-                    }
-                    else if (operation === 6) {
-                        range.z.start++;
-                    }
-                });
-                //r(range);
-                processAllRange(boxes, range);
-                blocks_materials_groups[material] = blocks_materials_groups[material] || [];
-                blocks_materials_groups[material].push({
-                    position: {
-                        x: (range.x.start + range.x.end) / 2,
-                        y: (range.y.start + range.y.end) / 2,
-                        z: (range.z.start + range.z.end) / 2
-                    },
-                    size: {
-                        x: Math.abs(range.x.end - range.x.start) + 1,
-                        y: Math.abs(range.y.end - range.y.start) + 1,
-                        z: Math.abs(range.z.end - range.z.start) + 1,
-                    }
-                });
-            }
-        });
-    }
-    //r(blocks_materials_groups);
-    return ({
-        objects: objects,
-        blocks_materials_groups: blocks_materials_groups
-    });
-}
 var gates, keys;
 function unlockGatesAndActivateKeys() {
     var opening = 0, closing = 0;
@@ -1316,6 +1133,188 @@ var GALLERY;
         Objects.Array = Array;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        var CompiledArray = (function (_super) {
+            __extends(CompiledArray, _super);
+            function CompiledArray() {
+                _super.apply(this, arguments);
+            }
+            CompiledArray.compile = function (objects) {
+                var compiled_objects = new CompiledArray();
+                var _a = objects.splitTypes('block'), blocks = _a[0], non_blocks = _a[1];
+                non_blocks.forEach(function (object) {
+                    compiled_objects.push(object);
+                });
+                blocks.forEach(function (object) {
+                    object.storey = object.storey || '1NP';
+                    var level = BLOCKS_STOREYS_LEVELS[object.storey];
+                    var position = new BABYLON.Vector3(object.position.x * -BLOCK_SIZE, (level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
+                    object.position.y * BLOCK_SIZE);
+                    object.material = object.material || 'stone-plain';
+                    //var position_vertical = new BABYLON.Vector3(0, BLOCK_SIZE*1.00001, 0);
+                    var vertical = BLOCKS_2D_3D_SHAPES[object.shape];
+                    var box;
+                    //position.x -=BLOCK_SIZE/2;
+                    //position.z +=BLOCK_SIZE/2;
+                    //r(level);
+                    for (var i = 0, l = vertical.length; i < l; i++) {
+                        if (vertical[i]) {
+                            /*block =  box_prototypes[object.material].createInstance("room");
+                             block.isPickable = true;
+                             block.checkCollisions = true;
+                             block.position = position;*/
+                            boxes_materials[object.material] = boxes_materials[object.material] || [];
+                            boxes_materials[object.material].push({
+                                x: object.position.x,
+                                y: object.position.y,
+                                z: i + level,
+                                processed: false
+                            });
+                        }
+                    }
+                    objects.removeObjectById(object.id);
+                });
+                blocks_box_prototypes = {};
+                blocks_materials_groups = {};
+                //r(boxes_materials);
+                function isBlockOn(boxes, x, y, z) {
+                    for (var i = 0, l = boxes.length; i < l; i++) {
+                        if (boxes[i].x === x && boxes[i].y === y && boxes[i].z === z && boxes[i].processed === false) {
+                            return (true);
+                        }
+                    }
+                    return (false);
+                }
+                function getBlockOn(boxes, x, y, z) {
+                    for (var i = 0, l = boxes.length; i < l; i++) {
+                        if (boxes[i].x === x && boxes[i].y === y && boxes[i].z === z && boxes[i].processed === false) {
+                            return (boxes[i]);
+                        }
+                    }
+                    return (null);
+                }
+                function processAllBlocksOn(boxes, x, y, z) {
+                    for (var i = 0, l = boxes.length; i < l; i++) {
+                        if (boxes[i].x === x && boxes[i].y === y && boxes[i].z === z && boxes[i].processed === false) {
+                            boxes[i].processed = true;
+                        }
+                    }
+                }
+                function isAllRangeOn(boxes, range) {
+                    //r('isAllRangeOn');
+                    for (var x = range.x.start; x <= range.x.end; x++) {
+                        for (var y = range.y.start; y <= range.y.end; y++) {
+                            for (var z = range.z.start; z <= range.z.end; z++) {
+                                //r(x,y,z);
+                                if (!isBlockOn(boxes, x, y, z)) {
+                                    //r('Empty place',isBlockOn(boxes,x,y,z),boxes);
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                    return true;
+                }
+                function processAllRange(boxes, range) {
+                    for (var x = range.x.start; x <= range.x.end; x++) {
+                        for (var y = range.y.start; y <= range.y.end; y++) {
+                            for (var z = range.z.start; z <= range.z.end; z++) {
+                                processAllBlocksOn(boxes, x, y, z);
+                            }
+                        }
+                    }
+                }
+                for (var material in boxes_materials) {
+                    var boxes = boxes_materials[material];
+                    //r(boxes);
+                    boxes.forEach(function (box) {
+                        if (box.processed === false) {
+                            //r(1);
+                            var range = {
+                                x: { start: box.x, end: box.x },
+                                y: { start: box.y, end: box.y },
+                                z: { start: box.z, end: box.z }
+                            };
+                            //r(range);
+                            //ee();
+                            [1, 2, 3, 4, 5, 6].forEach(function (operation) {
+                                var limit = 100;
+                                while (isAllRangeOn(boxes, range) && limit > 0) {
+                                    limit--;
+                                    //r(operation);
+                                    if (operation === 0) { }
+                                    else if (operation === 1) {
+                                        range.x.end++;
+                                    }
+                                    else if (operation === 2) {
+                                        range.x.start--;
+                                    }
+                                    else if (operation === 3) {
+                                        range.y.end++;
+                                    }
+                                    else if (operation === 4) {
+                                        range.y.start--;
+                                    }
+                                    else if (operation === 5) {
+                                        range.z.end++;
+                                    }
+                                    else if (operation === 6) {
+                                        range.z.start--;
+                                    }
+                                }
+                                if (limit == 100) {
+                                    //r(range);
+                                    throw new Error('wtf');
+                                }
+                                if (operation === 0) { }
+                                else if (operation === 1) {
+                                    range.x.end--;
+                                }
+                                else if (operation === 2) {
+                                    range.x.start++;
+                                }
+                                else if (operation === 3) {
+                                    range.y.end--;
+                                }
+                                else if (operation === 4) {
+                                    range.y.start++;
+                                }
+                                else if (operation === 5) {
+                                    range.z.end--;
+                                }
+                                else if (operation === 6) {
+                                    range.z.start++;
+                                }
+                            });
+                            //r(range);
+                            processAllRange(boxes, range);
+                            compiled_objects.push({
+                                type: 'multiblock',
+                                material: material,
+                                position: {
+                                    x: (range.x.start + range.x.end) / 2,
+                                    y: (range.y.start + range.y.end) / 2,
+                                    z: (range.z.start + range.z.end) / 2
+                                },
+                                size: {
+                                    x: Math.abs(range.x.end - range.x.start) + 1,
+                                    y: Math.abs(range.y.end - range.y.start) + 1,
+                                    z: Math.abs(range.z.end - range.z.start) + 1,
+                                }
+                            });
+                        }
+                    });
+                }
+                return (compiled_objects);
+            };
+            return CompiledArray;
+        }(Objects.Array));
+        Objects.CompiledArray = CompiledArray;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
 /// <reference path="../../reference.ts" />
 var GALLERY;
 (function (GALLERY) {
@@ -1338,8 +1337,10 @@ var GALLERY;
                 }
                 //----------------------------------
                 if (object.type == 'block') {
-                    //r(GALLERY);
                     object = new GALLERY.Objects.Block(object);
+                }
+                else if (object.type == 'multiblock') {
+                    object = new GALLERY.Objects.MultiBlock(object);
                 }
                 else if (object.type == 'light') {
                     object = new GALLERY.Objects.Light(object);
@@ -1420,19 +1421,8 @@ var GALLERY;
                 object.material = object.material || 'stone-plain';
                 $element.css('background', 'url("/media/images/textures/' + object.material + '.jpg")');
                 $element.css('background-size', 'cover');
-                if (['window', 'door', 'gate'].indexOf(object.shape) != -1) {
-                    $element.html('<img src="/media/images/icons/' + object.shape + '.svg">');
-                    $element.css('background-color', 'rgba(0,0,0,0.5)');
-                    $element.css('background-blend-mode', 'overlay');
-                }
-                else if (object.shape == 'room') {
-                    $element.css('background-color', 'rgba(0,0,0,0.5)');
-                    $element.css('background-blend-mode', 'overlay');
-                }
-                else if (object.shape == 'none') {
-                    $element.css('background', 'none');
-                    $element.html('<i class="fa fa-times" aria-hidden="true"></i>');
-                    $element.css('background-color', 'transparent');
+                if (object.shape != 'room') {
+                    $element.html('<img src="/media/images/shapes/' + object.shape + '.png">');
                 }
                 return $element;
             };
@@ -1485,6 +1475,23 @@ var GALLERY;
             return Block;
         }(Objects.Object));
         Objects.Block = Block;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="../../reference.ts" />
+//r('created block');
+//r(GALLERY.Objects.Object);
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        var MultiBlock = (function (_super) {
+            __extends(MultiBlock, _super);
+            function MultiBlock() {
+                _super.apply(this, arguments);
+            }
+            return MultiBlock;
+        }(Objects.Object));
+        Objects.MultiBlock = MultiBlock;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
 /// <reference path="../../reference.ts" />
@@ -1747,13 +1754,41 @@ var GALLERY;
         Objects.Gate = Gate;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
+var BLOCK_SIZE = 5;
+//var BLOCK_SIZE_VERTICAL=10;
+//var BLOCK_SIZE_DOOR=2;
+var EYE_VERTICAL = 2.5;
+var LIGHT_VERTICAL = 3;
+var SPEED = 7;
+var SPEED_INERTIA = 0.5;
+var SPEED_ROTATION = Math.PI / 2;
+var BLOCKS_2D_3D_SHAPES = {
+    room: [1, 0, 0, 0, 0, 0, 0, 0, 1],
+    door: [1, 0, 0, 0, 1, 1, 1, 1, 1],
+    gate: [1, 0, 0, 0, 1, 1, 1, 1, 1],
+    wall: [1, 1, 1, 1, 1, 1, 1, 1, 1],
+    window: [1, 1, 0, 0, 1, 1, 1, 1, 1],
+    floor: [1, 0, 0, 0, 0, 0, 0, 0, 0],
+    ceil: [0, 0, 0, 0, 0, 0, 0, 0, 1]
+};
+var BLOCKS_1NP_LEVEL = (0.5 - 0.9);
+var BLOCKS_STOREYS_LEVELS = {
+    '1NP': 0 * 8,
+    '2NP': 1 * 8,
+    '3NP': 2 * 8,
+    '4NP': 3 * 8,
+    '5NP': 4 * 8,
+    '6NP': 5 * 8,
+};
 /// <reference path="../reference.ts" />
 var r = console.log.bind(console);
 /// <reference path="lib/jquery.d.ts" />
 /// <reference path="script/uri-plugin.ts" />
 /// <reference path="script/05-objects/00-array.ts" />
+/// <reference path="script/05-objects/05-compiled-array.ts" />
 /// <reference path="script/05-objects/05-object.ts" />
 /// <reference path="script/05-objects/10-block.ts" />
+/// <reference path="script/05-objects/10-multiblock.ts" />
 /// <reference path="script/05-objects/10-image.ts" />
 /// <reference path="script/05-objects/10-label.ts" />
 /// <reference path="script/05-objects/10-light.ts" />
@@ -1761,6 +1796,7 @@ var r = console.log.bind(console);
 /// <reference path="script/05-objects/10-tree.ts" />
 /// <reference path="script/05-objects/10-link.ts" />
 /// <reference path="script/05-objects/10-gate.ts" />
+/// <reference path="script/scene-config.ts" />
 /// <reference path="script/00-common.ts" />
 /**
  * Ion.Sound
@@ -2838,116 +2874,14 @@ function createStairsMesh(name, stairs_count, isFull, scene) {
 var meshes = [];
 function runWorld(objects) {
     //r('Running gallery with world '+world);
-    var compiled = compileObjects(objects);
-    objects = compiled.objects;
-    var blocks_materials_groups = compiled.blocks_materials_groups;
+    //let compiled = compileObjects(objects);
+    //objects = compiled.objects;
+    //var blocks_materials_groups = compiled.blocks_materials_groups;
     var sunShadowGenerator = new BABYLON.ShadowGenerator(1024, sun);
     sunShadowGenerator.useVarianceShadowMap = true;
     var building_blocks = [];
     var lights = [];
-    //-----------------------------------------------------------------------ROOM
-    for (var material_key in blocks_materials_groups) {
-        /**/
-        var material = new BABYLON.StandardMaterial("Mat", scene);
-        material.diffuseTexture = new BABYLON.Texture("../media/images/textures/" + material_key + ".jpg", scene);
-        //material.bumpTexture = material.diffuseTexture;
-        material.diffuseTexture.uScale = 10; //Vertical offset of 10%
-        material.diffuseTexture.vScale = 10; //Horizontal offset of 40%
-        //material.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-        material.freeze(); /**/
-        blocks_materials_groups[material_key].forEach(function (box_group) {
-            var position = new BABYLON.Vector3(box_group.position.x * -BLOCK_SIZE, (box_group.position.z + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
-            box_group.position.y * BLOCK_SIZE);
-            //position.x -=BLOCK_SIZE/2;
-            //position.z +=BLOCK_SIZE/2;
-            //var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
-            //box.showBoundingBox=false;
-            //Define a material
-            /*
-             var material_x=new BABYLON.StandardMaterial("material",scene);
-             material_x.diffuseTexture = new BABYLON.Texture("media/images/textures/"+material_key+".jpg", scene);
-             material_x.diffuseTexture.uScale = box_group.size.y;
-             material_x.diffuseTexture.vScale = box_group.size.z;
-
-
-
-             var material_y=new BABYLON.StandardMaterial("material",scene);
-             material_y.diffuseTexture = new BABYLON.Texture("media/images/textures/"+material_key+".jpg", scene);
-             material_y.diffuseTexture.uScale = box_group.size.x;
-             material_y.diffuseTexture.vScale = box_group.size.z;
-
-
-             var material_z=new BABYLON.StandardMaterial("material",scene);
-             material_z.diffuseTexture = new BABYLON.Texture("media/images/textures/"+material_key+".jpg", scene);
-             material_z.diffuseTexture.uScale = box_group.size.x;
-             material_z.diffuseTexture.vScale = box_group.size.y;
-
-
-
-
-
-
-
-             var x_mesh_1 = BABYLON.Mesh.CreatePlane('room', BLOCK_SIZE, scene);
-             x_mesh_1.scaling.x = box_group.size.y;
-             x_mesh_1.scaling.y = box_group.size.z;
-             x_mesh_1.rotation.y=Math.PI*(1/2);
-             x_mesh_1.position = position.add(new BABYLON.Vector3(BLOCK_SIZE/-2,0,0));
-
-
-
-
-             var x_mesh_2 = BABYLON.Mesh.CreatePlane('room', BLOCK_SIZE, scene);
-             x_mesh_2.scaling.x = box_group.size.y;
-             x_mesh_2.scaling.y = box_group.size.z;
-             x_mesh_2.rotation.y=Math.PI*(3/2);
-             x_mesh_2.position = position.add(new BABYLON.Vector3(BLOCK_SIZE/2,0,0));
-
-
-
-
-
-             var y_mesh_1 = BABYLON.Mesh.CreatePlane('room', BLOCK_SIZE, scene);
-             y_mesh_1.scaling.x = box_group.size.x;
-             y_mesh_1.scaling.y = box_group.size.z;
-             y_mesh_1.rotation.y=Math.PI*(0/2);
-             y_mesh_1.position = position.add(new BABYLON.Vector3(0,0,BLOCK_SIZE/2));
-
-
-
-
-             var y_mesh_2 = BABYLON.Mesh.CreatePlane('room', BLOCK_SIZE, scene);
-             y_mesh_2.scaling.x = box_group.size.x;
-             y_mesh_2.scaling.y = box_group.size.z;
-             y_mesh_2.rotation.y=Math.PI*(2/2);
-             y_mesh_2.position = position.add(new BABYLON.Vector3(0,0,BLOCK_SIZE/-2));
-             /**/
-            /*var paths = [[],[]];
-             paths[0].push(new BABYLON.Vector3(0.5, -0.5, 0.5));
-             paths[0].push(new BABYLON.Vector3(0.5, -0.5, -0.5));
-             paths[0].push(new BABYLON.Vector3(-0.5, -0.5, -0.5));
-             paths[0].push(new BABYLON.Vector3(-0.5, -0.5, 0.5));
-             paths[0].push(new BABYLON.Vector3(0.5, -0.5, 0.5));
-             paths[1].push(new BABYLON.Vector3(0.5, 0.5, 0.5));
-             paths[1].push(new BABYLON.Vector3(0.5, 0.5, -0.5));
-             paths[1].push(new BABYLON.Vector3(-0.5, 0.5, -0.5));
-             paths[1].push(new BABYLON.Vector3(-0.5, 0.5, 0.5));
-             paths[1].push(new BABYLON.Vector3(0.5, 0.5, 0.5));*/
-            //var box = BABYLON.Mesh.CreateRibbon("room", paths, false, true ,  0, scene);
-            //var box = BABYLON.Mesh.CreateSphere("room", 3, BLOCK_SIZE, scene);
-            var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
-            box.material = material;
-            box.isPickable = true;
-            box.checkCollisions = true;
-            box.position = position;
-            box.scaling.x = box_group.size.x;
-            box.scaling.y = box_group.size.z;
-            box.scaling.z = box_group.size.y;
-            sunShadowGenerator.getShadowMap().renderList.push(box);
-            meshes.push(box);
-        });
-    }
-    //-----------------------------------------------------------------------
+    var multiblock_materials = {};
     var stone_plain = new BABYLON.StandardMaterial("Mat", scene);
     stone_plain.diffuseTexture = new BABYLON.Texture("../media/images/textures/stone-plain.jpg", scene);
     stone_plain.diffuseTexture.uScale = 1; //Vertical offset of 10%
@@ -2968,6 +2902,30 @@ function runWorld(objects) {
         object.position.y * BLOCK_SIZE);
         if (object.type == 'block') {
             throw new Error('Block should not be in compiled objects.');
+        }
+        else if (object.type == 'multiblock') {
+            if (typeof multiblock_materials[object.material] == 'undefined') {
+                var material = new BABYLON.StandardMaterial("Mat", scene);
+                material.diffuseTexture = new BABYLON.Texture("../media/images/textures/" + material_key + ".jpg", scene);
+                //material.bumpTexture = material.diffuseTexture;
+                material.diffuseTexture.uScale = 10; //Vertical offset of 10%
+                material.diffuseTexture.vScale = 10; //Horizontal offset of 40%
+                //material.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+                material.freeze();
+                multiblock_materials[object.material] = material;
+            }
+            var position = new BABYLON.Vector3(object.position.x * -BLOCK_SIZE, (object.position.z + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
+            object.position.y * BLOCK_SIZE);
+            var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
+            box.material = multiblock_materials[object.material];
+            box.isPickable = true;
+            box.checkCollisions = true;
+            box.position = position;
+            box.scaling.x = object.size.x;
+            box.scaling.y = object.size.z;
+            box.scaling.z = object.size.y;
+            sunShadowGenerator.getShadowMap().renderList.push(box);
+            meshes.push(box);
         }
         else if (object.type == 'light') {
             //r('creating light');
@@ -3146,32 +3104,6 @@ function clearWorld() {
     meshes = [];
 }
 /// <reference path="reference.ts" />
-var BLOCK_SIZE = 5;
-//var BLOCK_SIZE_VERTICAL=10;
-//var BLOCK_SIZE_DOOR=2;
-var EYE_VERTICAL = 2.5;
-var LIGHT_VERTICAL = 3;
-var SPEED = 7;
-var SPEED_INERTIA = 0.5;
-var SPEED_ROTATION = Math.PI / 2;
-var BLOCKS_2D_3D_SHAPES = {
-    room: [1, 0, 0, 0, 0, 0, 0, 0, 1],
-    door: [1, 0, 0, 0, 1, 1, 1, 1, 1],
-    gate: [1, 0, 0, 0, 1, 1, 1, 1, 1],
-    wall: [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    window: [1, 1, 0, 0, 1, 1, 1, 1, 1],
-    floor: [1, 0, 0, 0, 0, 0, 0, 0, 0],
-    ceil: [0, 0, 0, 0, 0, 0, 0, 0, 1]
-};
-var BLOCKS_1NP_LEVEL = (0.5 - 0.9);
-var BLOCKS_STOREYS_LEVELS = {
-    '1NP': 0 * 8,
-    '2NP': 1 * 8,
-    '3NP': 2 * 8,
-    '4NP': 3 * 8,
-    '5NP': 4 * 8,
-    '6NP': 5 * 8,
-};
 var canvas = document.getElementById("scene");
 var engine = new BABYLON.Engine(canvas, true);
 var createScene = function () {
@@ -3431,6 +3363,16 @@ function moveTo(x, y, rotation, world, storey, immediately) {
     var level = BLOCKS_STOREYS_LEVELS[storey];
     var babylon_position = new BABYLON.Vector3(x * -BLOCK_SIZE, (level + EYE_VERTICAL) * BLOCK_SIZE, y * BLOCK_SIZE);
     moveToBabylon(babylon_position, babylon_rotation, immediately);
+}
+function moveToBegining(immediately) {
+    if (immediately === void 0) { immediately = true; }
+    objects.filterTypes('label').forEach(function (label) {
+        if (label.uri == '/') {
+            moveTo(label.position.x, label.position.y, label.rotation / 1, label.world, label.storey, immediately);
+            return;
+        }
+    });
+    throw new Error('There is no label with uri "/"!');
 }
 function moveToBabylon(babylon_position, babylon_rotation, immediately) {
     if (immediately) {

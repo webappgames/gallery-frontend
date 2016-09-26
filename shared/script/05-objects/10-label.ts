@@ -5,7 +5,7 @@ namespace GALLERY.Objects{
     export class Label extends Object{
 
 
-
+        public storey: string;
         public name: string;
         public uri: string;
         public rotation: number;

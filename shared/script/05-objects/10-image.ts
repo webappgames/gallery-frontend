@@ -4,7 +4,7 @@ namespace GALLERY.Objects{
 
     export class Image extends Object{
 
-
+        public storey: string;
         public name:string;
 
         public uri:string;

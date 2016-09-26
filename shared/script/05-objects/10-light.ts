@@ -4,7 +4,7 @@ namespace GALLERY.Objects{
 
     export class Light extends Object{
 
-
+        public storey: string;
         public color: string;
         public intensity: number;
 

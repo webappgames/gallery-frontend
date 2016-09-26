@@ -34,7 +34,7 @@ namespace GALLERY.Objects{
         }
 
 
-        push(object:GALLERY.Objects.Object): void {
+        push(object:Object): void {
             this.objects.push(GALLERY.Objects.Object.init(object));
         }
 
@@ -52,6 +52,22 @@ namespace GALLERY.Objects{
 
             return (filtered_objects);
         }
+
+
+        getAllWorlds(): Array{
+
+            var worlds = [];
+
+            this.forEach(function (object) {
+
+                if(worlds.indexOf(object.world) === -1){
+                    worlds.push(object.world);
+                }
+            });
+
+            return(worlds);
+        }
+
 
 
         filterWorld(world: string): Array {

@@ -4,7 +4,7 @@ namespace GALLERY.Objects{
 
     export class Link extends Object{
 
-
+        public storey: string;
         public radius: number;
         public href: string;
         public target: string;

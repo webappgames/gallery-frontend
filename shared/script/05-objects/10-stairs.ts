@@ -4,7 +4,7 @@ namespace GALLERY.Objects{
 
     export class Stairs extends Object{
 
-
+        public storey: string;
         public width: number;
         public height: number;
         public rotation: number;

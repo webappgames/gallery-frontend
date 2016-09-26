@@ -164,6 +164,11 @@ main {
   color: #555;
   cursor: Pointer; }
 
+.unsaved {
+  background-color: #f7ff2b;
+  border: 2px solid #ff9100;
+  font-weight: bold; }
+
 #menu-left, #menu-right {
   background-color: #fff;
   width: 230px; }

@@ -6,7 +6,7 @@ namespace GALLERY.Objects{
 
 
 
-
+        public storey: string;
         public size: number;
         public rotation: number;
         public color: string;

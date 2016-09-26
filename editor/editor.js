@@ -3,6 +3,43 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+function compileObjects(objects) {
+    throw new Error('deprecated');
+    /*
+
+
+    var stone_plain = new BABYLON.StandardMaterial("Mat", scene);
+    stone_plain.diffuseTexture = new BABYLON.Texture("../media/images/textures/stone-plain.jpg", scene);
+    stone_plain.diffuseTexture.uScale = 1;//Vertical offset of 10%
+    stone_plain.diffuseTexture.vScale = 1;//Horizontal offset of 40%
+    stone_plain.freeze();
+
+
+
+    var bark = new BABYLON.StandardMaterial("Mat", scene);
+    bark.diffuseTexture = new BABYLON.Texture("../media/images/textures/bark.jpg", scene);
+    bark.diffuseTexture.uScale = 1;//Vertical offset of 10%
+    bark.diffuseTexture.vScale = 1;//Horizontal offset of 40%
+    bark.freeze();
+
+
+
+
+
+    var sunShadowGenerator = new BABYLON.ShadowGenerator(1024, sun);
+    sunShadowGenerator.useVarianceShadowMap = true;
+
+
+    var wasVideo = false;
+
+    var building_blocks = [];
+    var lights = [];
+
+    var blocks = '';
+
+
+    */
+}
 /*! URI.js v1.17.1 http://medialize.github.io/URI.js/ */
 /* build contains: IPv6.js, punycode.js, SecondLevelDomains.js, URI.js */
 /* jshint ignore:start */
@@ -1006,6 +1043,15 @@ var GALLERY;
                 });
                 return (filtered_objects);
             };
+            Array.prototype.getAllWorlds = function () {
+                var worlds = [];
+                this.forEach(function (object) {
+                    if (worlds.indexOf(object.world) === -1) {
+                        worlds.push(object.world);
+                    }
+                });
+                return (worlds);
+            };
             Array.prototype.filterWorld = function (world) {
                 var filtered_objects = new Array();
                 this.forEach(function (object) {
@@ -1106,6 +1152,196 @@ var GALLERY;
         Objects.Array = Array;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
+//todo to separate file
+function isBlockOn(boxes, x, y, z) {
+    for (var i = 0, l = boxes.length; i < l; i++) {
+        if (boxes[i].x === x && boxes[i].y === y && boxes[i].z === z && boxes[i].processed === false) {
+            return (true);
+        }
+    }
+    return (false);
+}
+function getBlockOn(boxes, x, y, z) {
+    for (var i = 0, l = boxes.length; i < l; i++) {
+        if (boxes[i].x === x && boxes[i].y === y && boxes[i].z === z && boxes[i].processed === false) {
+            return (boxes[i]);
+        }
+    }
+    return (null);
+}
+function processAllBlocksOn(boxes, x, y, z) {
+    for (var i = 0, l = boxes.length; i < l; i++) {
+        if (boxes[i].x === x && boxes[i].y === y && boxes[i].z === z && boxes[i].processed === false) {
+            boxes[i].processed = true;
+        }
+    }
+}
+function isAllRangeOn(boxes, range) {
+    //r('isAllRangeOn');
+    for (var x = range.x.start; x <= range.x.end; x++) {
+        for (var y = range.y.start; y <= range.y.end; y++) {
+            for (var z = range.z.start; z <= range.z.end; z++) {
+                //r(x,y,z);
+                if (!isBlockOn(boxes, x, y, z)) {
+                    //r('Empty place',isBlockOn(boxes,x,y,z),boxes);
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+function processAllRange(boxes, range) {
+    for (var x = range.x.start; x <= range.x.end; x++) {
+        for (var y = range.y.start; y <= range.y.end; y++) {
+            for (var z = range.z.start; z <= range.z.end; z++) {
+                processAllBlocksOn(boxes, x, y, z);
+            }
+        }
+    }
+}
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        var CompiledArray = (function (_super) {
+            __extends(CompiledArray, _super);
+            function CompiledArray() {
+                _super.apply(this, arguments);
+            }
+            CompiledArray.compile = function (objects) {
+                var compiled_objects = new CompiledArray();
+                var _a = objects.splitTypes('block'), blocks = _a[0], non_blocks = _a[1];
+                non_blocks.forEach(function (object) {
+                    compiled_objects.push(object);
+                });
+                var worlds = blocks.getAllWorlds();
+                r('Compiling blocks of these worlds: ' + worlds.join(', '));
+                worlds.forEach(function (world) {
+                    //=========================================================================BEGIN WORLD PROCESSING
+                    var boxes_materials = {};
+                    blocks.filterWorld(world).forEach(function (object) {
+                        object.storey = object.storey || '1NP';
+                        var level = BLOCKS_STOREYS_LEVELS[object.storey];
+                        /*var position = new BABYLON.Vector3(
+                         object.position.x * -BLOCK_SIZE,
+                         (level+BLOCKS_1NP_LEVEL) * BLOCK_SIZE,//(0.5 - 0.9) * BLOCK_SIZE,
+                         object.position.y * BLOCK_SIZE
+                         );*/
+                        object.material = object.material || 'stone-plain';
+                        //var position_vertical = new BABYLON.Vector3(0, BLOCK_SIZE*1.00001, 0);
+                        var vertical = BLOCKS_2D_3D_SHAPES[object.shape];
+                        var box;
+                        //position.x -=BLOCK_SIZE/2;
+                        //position.z +=BLOCK_SIZE/2;
+                        //r(level);
+                        for (var i = 0, l = vertical.length; i < l; i++) {
+                            if (vertical[i]) {
+                                /*block =  box_prototypes[object.material].createInstance("room");
+                                 block.isPickable = true;
+                                 block.checkCollisions = true;
+                                 block.position = position;*/
+                                boxes_materials[object.material] = boxes_materials[object.material] || [];
+                                boxes_materials[object.material].push({
+                                    x: object.position.x,
+                                    y: object.position.y,
+                                    z: i + level,
+                                    processed: false
+                                });
+                            }
+                        }
+                        blocks.removeObjectById(object.id);
+                    });
+                    for (var material in boxes_materials) {
+                        var boxes = boxes_materials[material];
+                        //r(boxes);
+                        boxes.forEach(function (box) {
+                            if (box.processed === false) {
+                                //r(1);
+                                var range = {
+                                    x: { start: box.x, end: box.x },
+                                    y: { start: box.y, end: box.y },
+                                    z: { start: box.z, end: box.z }
+                                };
+                                //r(range);
+                                //ee();
+                                [1, 2, 3, 4, 5, 6].forEach(function (operation) {
+                                    var limit = 100;
+                                    while (isAllRangeOn(boxes, range) && limit > 0) {
+                                        limit--;
+                                        //r(operation);
+                                        if (operation === 0) { }
+                                        else if (operation === 1) {
+                                            range.x.end++;
+                                        }
+                                        else if (operation === 2) {
+                                            range.x.start--;
+                                        }
+                                        else if (operation === 3) {
+                                            range.y.end++;
+                                        }
+                                        else if (operation === 4) {
+                                            range.y.start--;
+                                        }
+                                        else if (operation === 5) {
+                                            range.z.end++;
+                                        }
+                                        else if (operation === 6) {
+                                            range.z.start--;
+                                        }
+                                    }
+                                    if (limit == 100) {
+                                        //r(range);
+                                        throw new Error('wtf');
+                                    }
+                                    if (operation === 0) { }
+                                    else if (operation === 1) {
+                                        range.x.end--;
+                                    }
+                                    else if (operation === 2) {
+                                        range.x.start++;
+                                    }
+                                    else if (operation === 3) {
+                                        range.y.end--;
+                                    }
+                                    else if (operation === 4) {
+                                        range.y.start++;
+                                    }
+                                    else if (operation === 5) {
+                                        range.z.end--;
+                                    }
+                                    else if (operation === 6) {
+                                        range.z.start++;
+                                    }
+                                });
+                                //r(range);
+                                processAllRange(boxes, range);
+                                compiled_objects.push({
+                                    type: 'multiblock',
+                                    material: material,
+                                    position: {
+                                        x: (range.x.start + range.x.end) / 2,
+                                        y: (range.y.start + range.y.end) / 2,
+                                        z: (range.z.start + range.z.end) / 2
+                                    },
+                                    size: {
+                                        x: Math.abs(range.x.end - range.x.start) + 1,
+                                        y: Math.abs(range.y.end - range.y.start) + 1,
+                                        z: Math.abs(range.z.end - range.z.start) + 1,
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    //=========================================================================END OF WORLD PROCESSING
+                });
+                return (compiled_objects);
+            };
+            return CompiledArray;
+        }(Objects.Array));
+        Objects.CompiledArray = CompiledArray;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
 /// <reference path="../../reference.ts" />
 var GALLERY;
 (function (GALLERY) {
@@ -1128,8 +1364,10 @@ var GALLERY;
                 }
                 //----------------------------------
                 if (object.type == 'block') {
-                    //r(GALLERY);
                     object = new GALLERY.Objects.Block(object);
+                }
+                else if (object.type == 'multiblock') {
+                    object = new GALLERY.Objects.MultiBlock(object);
                 }
                 else if (object.type == 'light') {
                     object = new GALLERY.Objects.Light(object);
@@ -1264,6 +1502,23 @@ var GALLERY;
             return Block;
         }(Objects.Object));
         Objects.Block = Block;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="../../reference.ts" />
+//r('created block');
+//r(GALLERY.Objects.Object);
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        var MultiBlock = (function (_super) {
+            __extends(MultiBlock, _super);
+            function MultiBlock() {
+                _super.apply(this, arguments);
+            }
+            return MultiBlock;
+        }(Objects.Object));
+        Objects.MultiBlock = MultiBlock;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
 /// <reference path="../../reference.ts" />
@@ -1526,13 +1781,41 @@ var GALLERY;
         Objects.Gate = Gate;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
+var BLOCK_SIZE = 5;
+//var BLOCK_SIZE_VERTICAL=10;
+//var BLOCK_SIZE_DOOR=2;
+var EYE_VERTICAL = 2.5;
+var LIGHT_VERTICAL = 3;
+var SPEED = 7;
+var SPEED_INERTIA = 0.5;
+var SPEED_ROTATION = Math.PI / 2;
+var BLOCKS_2D_3D_SHAPES = {
+    room: [1, 0, 0, 0, 0, 0, 0, 0, 1],
+    door: [1, 0, 0, 0, 1, 1, 1, 1, 1],
+    gate: [1, 0, 0, 0, 1, 1, 1, 1, 1],
+    wall: [1, 1, 1, 1, 1, 1, 1, 1, 1],
+    window: [1, 1, 0, 0, 1, 1, 1, 1, 1],
+    floor: [1, 0, 0, 0, 0, 0, 0, 0, 0],
+    ceil: [0, 0, 0, 0, 0, 0, 0, 0, 1]
+};
+var BLOCKS_1NP_LEVEL = (0.5 - 0.9);
+var BLOCKS_STOREYS_LEVELS = {
+    '1NP': 0 * 8,
+    '2NP': 1 * 8,
+    '3NP': 2 * 8,
+    '4NP': 3 * 8,
+    '5NP': 4 * 8,
+    '6NP': 5 * 8,
+};
 /// <reference path="../reference.ts" />
 var r = console.log.bind(console);
 /// <reference path="lib/jquery.d.ts" />
 /// <reference path="script/uri-plugin.ts" />
 /// <reference path="script/05-objects/00-array.ts" />
+/// <reference path="script/05-objects/05-compiled-array.ts" />
 /// <reference path="script/05-objects/05-object.ts" />
 /// <reference path="script/05-objects/10-block.ts" />
+/// <reference path="script/05-objects/10-multiblock.ts" />
 /// <reference path="script/05-objects/10-image.ts" />
 /// <reference path="script/05-objects/10-label.ts" />
 /// <reference path="script/05-objects/10-light.ts" />
@@ -1540,6 +1823,7 @@ var r = console.log.bind(console);
 /// <reference path="script/05-objects/10-tree.ts" />
 /// <reference path="script/05-objects/10-link.ts" />
 /// <reference path="script/05-objects/10-gate.ts" />
+/// <reference path="script/scene-config.ts" />
 /// <reference path="script/00-common.ts" />
 /// <reference path="reference.ts" />
 function createObject$(object) {
@@ -1963,6 +2247,7 @@ function copyStorey() {
     var new_objects = objects.filterWorld(world_selected).filterStorey(storey);
     new_objects.forEach(function (object) {
         var new_object = object.clone();
+        new_object.id = createGuid();
         new_object.storey = storey_selected;
         objects.push(new_object);
     });
@@ -1977,12 +2262,24 @@ function undo() {
     //objects = last_objects;
     //createMap();
 }
-function save() {
-    //last_objects = JSON.parse(JSON.stringify(objects.getAll()));
+function save(force) {
+    if (force === void 0) { force = false; }
     if (!loaded) {
         console.warn('Cant save because not yet loaded!');
         return;
     }
+    if (!force && objects.getAll().length > 1000) {
+        $button = $('#save');
+        $button.addClass('unsaved');
+        $button.html('<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Uložit'); //todo fa
+    }
+    else {
+        $button.removeClass('unsaved');
+        putToServer();
+    }
+}
+function putToServer() {
+    //last_objects = JSON.parse(JSON.stringify(objects.getAll()));
     $button = $('#save');
     $button.html('<i class="fa fa-refresh fa-spin fa-fw"></i>Ukládání'); //todo fa
     /*blocks = [];
@@ -2023,7 +2320,7 @@ function save() {
 ;
 $(function () {
     $('#save').click(function () {
-        save();
+        save(true);
     });
 });
 var GALLERY;
@@ -2435,23 +2732,134 @@ $(function () {
     document.body.removeChild(element);
 }
 */
-function download(filename, contentType, content) {
-    if (!contentType)
-        contentType = 'application/octet-stream';
+/*
+function download(filename, contentType, content)
+{
+    if(!contentType) contentType = 'application/octet-stream';
     var a = document.createElement('a');
-    var blob = new Blob([content], { 'type': contentType });
+    var blob = new Blob([content], {'type':contentType});
     a.href = window.URL.createObjectURL(blob);
     a.download = filename;
     a.click();
-}
+}*/
 var GALLERY;
 (function (GALLERY) {
     var Editor;
     (function (Editor) {
         function exportJSON() {
-            download(gallery + '.json', 'application/json', JSON.stringify(objects.getAll(), null, 4));
+            saveAs(new Blob([JSON.stringify(objects.getAll(), null, 4)], { type: "application/json;charset=utf-8" }), gallery + ".json");
+            //download(gallery+'.json','application/json',JSON.stringify(objects.getAll(),null,4));
         }
         Editor.exportJSON = exportJSON;
+    })(Editor = GALLERY.Editor || (GALLERY.Editor = {}));
+})(GALLERY || (GALLERY = {}));
+/*<?php
+
+    error_reporting(E_ALL & ~E_NOTICE);
+
+$config = json_decode(file_get_contents('../config.json'),true);
+
+
+if(isset($_GET['gallery'])) {
+
+    $gallery = $_GET['gallery'];
+
+}else{
+
+    http_response_code(404);
+    die('Galerie neexistuje!');
+
+}
+
+
+
+
+$response = file_get_contents($config['GALLERY_API_URL'].'galleries/'.($gallery));
+if($response) {
+
+    $objects = json_decode($response, true);
+
+}else{
+
+    http_response_code(404);
+    die('Galerie neexistuje!');
+
+}
+
+
+$page = array();
+foreach($objects as $object) {
+
+    if ($object['uri'] == '/') {
+
+        $page['name'] = $object['name'];
+        $index_label = $object;
+
+    }
+    if ($object['name'] == 'favicon') {
+
+        $page['favicon'] = $object['src'];
+
+    }
+}
+
+
+?>
+*/
+var GALLERY;
+(function (GALLERY) {
+    var Editor;
+    (function (Editor) {
+        function publishHTML() {
+            /*let promises =
+    
+            [
+                '../viewer/index.template.html',
+                '../viewer/viewer.js'
+    
+    
+            ].map(function(url){
+    
+                return new Promise(function(resolve, reject){
+                    $.ajax(url).done(resolve).fail(reject);
+                });
+    
+            });
+    
+            r(promises);
+    
+    
+            Promise.all(promises).then(function (responses) {
+    
+                r(responses);
+    
+            });*/
+            $.when($.ajax({ url: '../viewer/index.template.html', dataType: "text" }), $.ajax({ url: '../viewer/style/viewer.css', dataType: "text" }), $.ajax({ url: '../viewer/script/lib/babylon.js', dataType: "text" }), $.ajax({ url: '../viewer/viewer.js', dataType: "text" })) /*.then(function (a,b) {
+    
+                r('then');
+                r(a,b);
+    
+            })*/
+                .done(function (html, viewercss, babylonjs, viewerjs) {
+                var compiled_objects = new GALLERY.Objects.CompiledArray.compile(objects);
+                r('Publishing ' + compiled_objects.getAll().length + ' objects created from ' + objects.getAll().length + ' objects.');
+                html = html[0]
+                    .split('{{title}}').join('Ahoj')
+                    .split('{{objects}}').join(JSON.stringify(compiled_objects.getAll()));
+                var zip = new JSZip();
+                var root = zip.folder(gallery);
+                root.file("index.html", html);
+                root.file("babylon.js", babylonjs[0]);
+                root.file("viewer.js", viewerjs[0]);
+                root.file("viewer.css", viewercss[0]);
+                zip.generateAsync({ type: "blob" })
+                    .then(function (content) {
+                    // see FileSaver.js
+                    saveAs(content, gallery + ".zip");
+                });
+            });
+        }
+        Editor.publishHTML = publishHTML;
     })(Editor = GALLERY.Editor || (GALLERY.Editor = {}));
 })(GALLERY || (GALLERY = {}));
 var GALLERY;
@@ -2579,21 +2987,23 @@ var GALLERY;
     })(Plugins = GALLERY.Plugins || (GALLERY.Plugins = {}));
 })(GALLERY || (GALLERY = {}));
 /// <reference path="../../shared/reference.ts" />
-/// <reference path="10-create-map.ts" />
-/// <reference path="10-create-object.ts" />
-/// <reference path="10-keys.ts" />
-/// <reference path="10-load.ts" />
-/// <reference path="10-message.ts" />
-/// <reference path="10-new.ts" />
-/// <reference path="10-outer-html.ts" />
-/// <reference path="10-plugins.ts" />
-/// <reference path="10-position.ts" />
-/// <reference path="10-save.ts" />
-/// <reference path="10-image-collection.ts" />
-/// <reference path="20-filedrop.ts" />
-/// <reference path="20-palette.ts" />
-/// <reference path="20-export.ts" />
-/// <reference path="50-plugins/generators/simple-garden.ts" />
+/// <reference path="create-map.ts" />
+/// <reference path="create-object.ts" />
+/// <reference path="keys.ts" />
+/// <reference path="load.ts" />
+/// <reference path="message.ts" />
+/// <reference path="new.ts" />
+/// <reference path="outer-html.ts" />
+/// <reference path="plugins.ts" />
+/// <reference path="position.ts" />
+/// <reference path="save.ts" />
+/// <reference path="image-collection.ts" />
+/// <reference path="filedrop.ts" />
+/// <reference path="palette.ts" />
+/// <reference path="export.ts" />
+/// <reference path="publish.ts" />
+/// <reference path="compile.ts" />
+/// <reference path="plugins/generators/simple-garden.ts" />
 /// <reference path="reference.ts" />
 var objects = new GALLERY.Objects.Array();
 var drawing = false;

@@ -1,0 +1,36 @@
+
+
+
+
+
+const BLOCK_SIZE=5;
+//var BLOCK_SIZE_VERTICAL=10;
+//var BLOCK_SIZE_DOOR=2;
+
+const EYE_VERTICAL = 2.5;
+const LIGHT_VERTICAL = 3;
+
+const SPEED = 7;
+const SPEED_INERTIA = 0.5;
+const SPEED_ROTATION = Math.PI/2;
+
+
+const BLOCKS_2D_3D_SHAPES = {
+    room:   [1,0,0,0,0,0,0,0,1],
+    door:   [1,0,0,0,1,1,1,1,1],
+    gate:   [1,0,0,0,1,1,1,1,1],
+    wall:   [1,1,1,1,1,1,1,1,1],
+    window: [1,1,0,0,1,1,1,1,1],
+    floor : [1,0,0,0,0,0,0,0,0],
+    ceil  : [0,0,0,0,0,0,0,0,1]
+};
+
+const BLOCKS_1NP_LEVEL = (0.5 - 0.9);
+const BLOCKS_STOREYS_LEVELS = {
+    '1NP':  0*8,
+    '2NP':  1*8,
+    '3NP':  2*8,
+    '4NP':  3*8,
+    '5NP':  4*8,
+    '6NP':  5*8,
+};

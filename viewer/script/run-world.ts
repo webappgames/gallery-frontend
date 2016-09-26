@@ -13,11 +13,9 @@ function runWorld(objects){
 
 
 
-    let compiled = compileObjects(objects);
-
-
-    objects = compiled.objects;
-    var blocks_materials_groups = compiled.blocks_materials_groups;
+    //let compiled = compileObjects(objects);
+    //objects = compiled.objects;
+    //var blocks_materials_groups = compiled.blocks_materials_groups;
 
 
 
@@ -29,157 +27,7 @@ function runWorld(objects){
 
 
 
-
-
-    //-----------------------------------------------------------------------ROOM
-    for(var material_key in blocks_materials_groups){
-
-
-        /**/
-        var material = new BABYLON.StandardMaterial("Mat", scene);
-        material.diffuseTexture = new BABYLON.Texture("../media/images/textures/"+material_key+".jpg", scene);
-        //material.bumpTexture = material.diffuseTexture;
-        material.diffuseTexture.uScale = 10;//Vertical offset of 10%
-        material.diffuseTexture.vScale = 10;//Horizontal offset of 40%
-        //material.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-        material.freeze();/**/
-
-
-
-
-        blocks_materials_groups[material_key].forEach(function (box_group) {
-
-
-            var position = new BABYLON.Vector3(
-                box_group.position.x * -BLOCK_SIZE,
-                (box_group.position.z+BLOCKS_1NP_LEVEL) * BLOCK_SIZE,//(0.5 - 0.9) * BLOCK_SIZE,
-                box_group.position.y * BLOCK_SIZE
-            );
-
-            //position.x -=BLOCK_SIZE/2;
-            //position.z +=BLOCK_SIZE/2;
-
-
-
-            //var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
-            //box.showBoundingBox=false;
-            //Define a material
-
-
-
-            /*
-             var material_x=new BABYLON.StandardMaterial("material",scene);
-             material_x.diffuseTexture = new BABYLON.Texture("media/images/textures/"+material_key+".jpg", scene);
-             material_x.diffuseTexture.uScale = box_group.size.y;
-             material_x.diffuseTexture.vScale = box_group.size.z;
-
-
-
-             var material_y=new BABYLON.StandardMaterial("material",scene);
-             material_y.diffuseTexture = new BABYLON.Texture("media/images/textures/"+material_key+".jpg", scene);
-             material_y.diffuseTexture.uScale = box_group.size.x;
-             material_y.diffuseTexture.vScale = box_group.size.z;
-
-
-             var material_z=new BABYLON.StandardMaterial("material",scene);
-             material_z.diffuseTexture = new BABYLON.Texture("media/images/textures/"+material_key+".jpg", scene);
-             material_z.diffuseTexture.uScale = box_group.size.x;
-             material_z.diffuseTexture.vScale = box_group.size.y;
-
-
-
-
-
-
-
-             var x_mesh_1 = BABYLON.Mesh.CreatePlane('room', BLOCK_SIZE, scene);
-             x_mesh_1.scaling.x = box_group.size.y;
-             x_mesh_1.scaling.y = box_group.size.z;
-             x_mesh_1.rotation.y=Math.PI*(1/2);
-             x_mesh_1.position = position.add(new BABYLON.Vector3(BLOCK_SIZE/-2,0,0));
-
-
-
-
-             var x_mesh_2 = BABYLON.Mesh.CreatePlane('room', BLOCK_SIZE, scene);
-             x_mesh_2.scaling.x = box_group.size.y;
-             x_mesh_2.scaling.y = box_group.size.z;
-             x_mesh_2.rotation.y=Math.PI*(3/2);
-             x_mesh_2.position = position.add(new BABYLON.Vector3(BLOCK_SIZE/2,0,0));
-
-
-
-
-
-             var y_mesh_1 = BABYLON.Mesh.CreatePlane('room', BLOCK_SIZE, scene);
-             y_mesh_1.scaling.x = box_group.size.x;
-             y_mesh_1.scaling.y = box_group.size.z;
-             y_mesh_1.rotation.y=Math.PI*(0/2);
-             y_mesh_1.position = position.add(new BABYLON.Vector3(0,0,BLOCK_SIZE/2));
-
-
-
-
-             var y_mesh_2 = BABYLON.Mesh.CreatePlane('room', BLOCK_SIZE, scene);
-             y_mesh_2.scaling.x = box_group.size.x;
-             y_mesh_2.scaling.y = box_group.size.z;
-             y_mesh_2.rotation.y=Math.PI*(2/2);
-             y_mesh_2.position = position.add(new BABYLON.Vector3(0,0,BLOCK_SIZE/-2));
-             /**/
-
-
-
-
-
-
-
-
-            /*var paths = [[],[]];
-             paths[0].push(new BABYLON.Vector3(0.5, -0.5, 0.5));
-             paths[0].push(new BABYLON.Vector3(0.5, -0.5, -0.5));
-             paths[0].push(new BABYLON.Vector3(-0.5, -0.5, -0.5));
-             paths[0].push(new BABYLON.Vector3(-0.5, -0.5, 0.5));
-             paths[0].push(new BABYLON.Vector3(0.5, -0.5, 0.5));
-             paths[1].push(new BABYLON.Vector3(0.5, 0.5, 0.5));
-             paths[1].push(new BABYLON.Vector3(0.5, 0.5, -0.5));
-             paths[1].push(new BABYLON.Vector3(-0.5, 0.5, -0.5));
-             paths[1].push(new BABYLON.Vector3(-0.5, 0.5, 0.5));
-             paths[1].push(new BABYLON.Vector3(0.5, 0.5, 0.5));*/
-
-
-
-
-            //var box = BABYLON.Mesh.CreateRibbon("room", paths, false, true ,  0, scene);
-            //var box = BABYLON.Mesh.CreateSphere("room", 3, BLOCK_SIZE, scene);
-
-
-
-            var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
-            box.material = material;
-
-
-            box.isPickable = true;
-            box.checkCollisions = true;
-
-            box.position=position;
-
-            box.scaling.x=box_group.size.x;
-            box.scaling.y=box_group.size.z;
-            box.scaling.z=box_group.size.y;
-
-            sunShadowGenerator.getShadowMap().renderList.push(box);
-            meshes.push(box);
-
-
-        });
-
-
-
-
-    }
-
-    //-----------------------------------------------------------------------
-
+    var multiblock_materials = {};
 
 
 
@@ -196,13 +44,6 @@ function runWorld(objects){
 
 
 
-
-
-
-
-
-
-
     var bark = new BABYLON.StandardMaterial("Mat", scene);
     bark.diffuseTexture = new BABYLON.Texture("../media/images/textures/bark.jpg", scene);
     bark.diffuseTexture.uScale = 1;//Vertical offset of 10%
@@ -212,10 +53,6 @@ function runWorld(objects){
 
     gates = [];
     links = [];
-
-
-
-
 
 
 
@@ -240,6 +77,54 @@ function runWorld(objects){
         if(object.type=='block') {
 
             throw new Error('Block should not be in compiled objects.')
+
+        }else
+        if(object.type=='multiblock') {
+
+
+
+
+            if(typeof multiblock_materials[object.material] == 'undefined') {
+
+                let material = new BABYLON.StandardMaterial("Mat", scene);
+                material.diffuseTexture = new BABYLON.Texture("../media/images/textures/" + object.material + ".jpg", scene);
+                //material.bumpTexture = material.diffuseTexture;
+                material.diffuseTexture.uScale = 10;//Vertical offset of 10%
+                material.diffuseTexture.vScale = 10;//Horizontal offset of 40%
+                //material.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+                material.freeze();
+
+                multiblock_materials[object.material] = material;
+                /**/
+
+            }
+
+
+            var position = new BABYLON.Vector3(
+                object.position.x * -BLOCK_SIZE,
+                (object.position.z+BLOCKS_1NP_LEVEL) * BLOCK_SIZE,//(0.5 - 0.9) * BLOCK_SIZE,
+                object.position.y * BLOCK_SIZE
+            );
+
+
+            var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
+            box.material = multiblock_materials[object.material];
+
+
+            box.isPickable = true;
+            box.checkCollisions = true;
+
+            box.position=position;
+
+            box.scaling.x=object.size.x;
+            box.scaling.y=object.size.z;
+            box.scaling.z=object.size.y;
+
+            sunShadowGenerator.getShadowMap().renderList.push(box);
+            meshes.push(box);
+
+
+
 
         }else
         if(object.type=='light'){

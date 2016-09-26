@@ -7,7 +7,6 @@ namespace GALLERY.Objects{
 
         public id: string;
         public type: string;
-        public storey: string;
         public world: string;
         public position: {
           x: number,
@@ -46,8 +45,11 @@ namespace GALLERY.Objects{
             //----------------------------------
             if (object.type == 'block') {
 
-                //r(GALLERY);
                 object = new GALLERY.Objects.Block(object);
+
+            } else if (object.type == 'multiblock') {
+
+                object = new GALLERY.Objects.MultiBlock(object);
 
             } else if (object.type == 'light') {
 

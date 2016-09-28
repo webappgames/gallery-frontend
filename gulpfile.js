@@ -24,7 +24,7 @@ gulp.task('build', function() {
 
 
 
-gulp.task('compile',['compile-editor','compile-viewer','compress-viewer']);
+gulp.task('compile',['compile-editor','compile-viewer'/*,'compress-viewer'*/]);
 
 
 

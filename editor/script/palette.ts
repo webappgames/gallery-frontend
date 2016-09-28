@@ -66,14 +66,6 @@ $(function () {
 
 var storey_selected;
 
-var STOREYS = [
-    '1NP',
-    '2NP',
-    '3NP',
-    '4NP',
-    '5NP',
-    '6NP'
-];
 
 
 $(function () {
@@ -113,13 +105,6 @@ $(function () {
 
 var zoom_selected;
 
-var ZOOMS = [
-    '5',
-    '10',
-    '20',
-    '30',
-    '50'
-];
 
 
 $(function () {
@@ -148,24 +133,6 @@ $(function () {
 
 //-------------------------------------------------------------
 
-
-
-
-var BLOCK_MATERIALS = [
-    //'color-white',
-    'color-light-gray',
-    'color-dark-gray',
-    'clay-bricks',
-    'clay-roof',
-    'grass',
-    'iron-plates',
-    'stone-bricks',
-    'stone-plain',
-    'wood-boards',
-    'wood-fence',
-    'wood-raw'];
-
-var BLOCK_SHAPES = ['none','room','wall','door','window','floor','ceil'];
 
 
 
@@ -236,7 +203,7 @@ $(function () {
 $(function () {
 
 
-    ['light','label','tree','stairs','link','gate'].forEach(function (type) {
+    OBJECT_TYPES.forEach(function (type) {
 
 
         let $dot_object = createObject$(GALLERY.Objects.Object.init({

@@ -45,6 +45,28 @@ namespace GALLERY.Objects{
         }
 
 
+        findBy(key:string, value:string | number | boolean):GALLERY.Objects.Object {
+
+            r('findBy',key,value);
+
+            let value_: any;
+
+            for(let i=0,l=this.objects.length;i<l;i++){
+
+                value_ = this.objects[i][key];
+                if(typeof value_ !== 'undefined') {
+                    if (value_ == value) {
+                        return(this.objects[i]);
+                    }
+                }
+
+
+            }
+
+            return null;
+        }
+
+
 
         filter(callback: (object: Object) => boolean): Array {
 

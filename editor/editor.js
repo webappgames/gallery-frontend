@@ -1038,6 +1038,19 @@ var GALLERY;
             Array.prototype.push = function (object) {
                 this.objects.push(GALLERY.Objects.Object.init(object));
             };
+            Array.prototype.findBy = function (key, value) {
+                r('findBy', key, value);
+                var value_;
+                for (var i = 0, l = this.objects.length; i < l; i++) {
+                    value_ = this.objects[i][key];
+                    if (typeof value_ !== 'undefined') {
+                        if (value_ == value) {
+                            return (this.objects[i]);
+                        }
+                    }
+                }
+                return null;
+            };
             Array.prototype.filter = function (callback) {
                 var filtered_objects = new Array();
                 this.forEach(function (object) {
@@ -1608,6 +1621,9 @@ var GALLERY;
                 this.checkCollisions = this.checkCollisions || false;
                 this.backFace = this.backFace || false;
             }
+            Image.prototype.getTexture = function () {
+                return (this.src);
+            };
             Image.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 var object = this;
@@ -1853,6 +1869,7 @@ var GALLERY;
         Objects.Gate = Gate;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
+var OBJECT_TYPES = ['light', 'label', 'tree', 'stairs', 'link', 'gate'];
 var BLOCK_SIZE = 5;
 //var BLOCK_SIZE_VERTICAL=10;
 //var BLOCK_SIZE_DOOR=2;
@@ -1861,15 +1878,28 @@ var LIGHT_VERTICAL = 3;
 var SPEED = 7;
 var SPEED_INERTIA = 0.5;
 var SPEED_ROTATION = Math.PI / 2;
+var BLOCK_SHAPES = ['none', 'room', 'wall', 'door', 'window', 'low-window', 'floor', 'ceil', 'small-fence', 'medium-fence', 'big-fence'];
 var BLOCKS_2D_3D_SHAPES = {
     room: [1, 0, 0, 0, 0, 0, 0, 0, 1],
     door: [1, 0, 0, 0, 1, 1, 1, 1, 1],
     gate: [1, 0, 0, 0, 1, 1, 1, 1, 1],
     wall: [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    window: [1, 1, 0, 0, 1, 1, 1, 1, 1],
+    window: [1, 1, 1, 0, 0, 1, 1, 1, 1],
+    'low-window': [1, 1, 0, 0, 1, 1, 1, 1, 1],
     floor: [1, 0, 0, 0, 0, 0, 0, 0, 0],
-    ceil: [0, 0, 0, 0, 0, 0, 0, 0, 1]
+    ceil: [0, 0, 0, 0, 0, 0, 0, 0, 1],
+    'small-fence': [1, 1, 0, 0, 0, 0, 0, 0, 0],
+    'medium-fence': [1, 1, 1, 0, 0, 0, 0, 0, 0],
+    'big-fence': [1, 1, 1, 1, 0, 0, 0, 0, 0]
 };
+var STOREYS = [
+    '1NP',
+    '2NP',
+    '3NP',
+    '4NP',
+    '5NP',
+    '6NP'
+];
 var BLOCKS_1NP_LEVEL = (0.5 - 0.9);
 var BLOCKS_STOREYS_LEVELS = {
     '1NP': 0 * 8,
@@ -1879,6 +1909,27 @@ var BLOCKS_STOREYS_LEVELS = {
     '5NP': 4 * 8,
     '6NP': 5 * 8,
 };
+var BLOCK_MATERIALS = [
+    //'color-white',
+    'color-light-gray',
+    'color-dark-gray',
+    'clay-bricks',
+    'clay-roof',
+    'grass',
+    'iron-plates',
+    'stone-bricks',
+    'stone-plain',
+    'wood-boards',
+    'wood-fence',
+    'wood-raw'];
+//--------------------------------------------------------------Only for Editor
+var ZOOMS = [
+    '5',
+    '10',
+    '20',
+    '30',
+    '50'
+];
 /// <reference path="../reference.ts" />
 var r = console.log.bind(console);
 /// <reference path="lib/jquery.d.ts" />
@@ -2577,6 +2628,7 @@ document.addEventListener("drop", function (e) {
                         type: 'image',
                         position: position,
                         storey: storey_selected,
+                        world: world_selected,
                         name: files_key[key].name,
                         src: response[key],
                         height: 2,
@@ -2637,14 +2689,6 @@ $(function () {
 });
 //-------------------------------------------------------------
 var storey_selected;
-var STOREYS = [
-    '1NP',
-    '2NP',
-    '3NP',
-    '4NP',
-    '5NP',
-    '6NP'
-];
 $(function () {
     STOREYS.forEach(function (storey) {
         $('.select-storeys').find('ul').append($('<li></li>').text(storey).attr('data-storey', storey));
@@ -2663,13 +2707,6 @@ $(function () {
 });
 //-------------------------------------------------------------
 var zoom_selected;
-var ZOOMS = [
-    '5',
-    '10',
-    '20',
-    '30',
-    '50'
-];
 $(function () {
     ZOOMS.forEach(function (zoom) {
         $('.select-zooms').find('ul').append($('<li></li>').text(zoom).attr('data-zoom', zoom));
@@ -2683,20 +2720,6 @@ $(function () {
     }).first().next().next().next().trigger('click'); //todo better
 });
 //-------------------------------------------------------------
-var BLOCK_MATERIALS = [
-    //'color-white',
-    'color-light-gray',
-    'color-dark-gray',
-    'clay-bricks',
-    'clay-roof',
-    'grass',
-    'iron-plates',
-    'stone-bricks',
-    'stone-plain',
-    'wood-boards',
-    'wood-fence',
-    'wood-raw'];
-var BLOCK_SHAPES = ['none', 'room', 'wall', 'door', 'window', 'floor', 'ceil'];
 $(function () {
     BLOCK_MATERIALS.forEach(function (material) {
         //r('creating block to pallete');
@@ -2726,7 +2749,7 @@ $(function () {
 });
 //===================================================================================================
 $(function () {
-    ['light', 'label', 'tree', 'stairs', 'link', 'gate'].forEach(function (type) {
+    OBJECT_TYPES.forEach(function (type) {
         var $dot_object = createObject$(GALLERY.Objects.Object.init({
             type: type
         }));

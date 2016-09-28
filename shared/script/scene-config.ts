@@ -1,6 +1,6 @@
 
 
-
+const OBJECT_TYPES = ['light','label','tree','stairs','link','gate'];
 
 
 const BLOCK_SIZE=5;
@@ -15,15 +15,38 @@ const SPEED_INERTIA = 0.5;
 const SPEED_ROTATION = Math.PI/2;
 
 
+
+
+var BLOCK_SHAPES = ['none','room','wall','door','window','low-window','floor','ceil','small-fence','medium-fence','big-fence'];
+
+
 const BLOCKS_2D_3D_SHAPES = {
-    room:   [1,0,0,0,0,0,0,0,1],
-    door:   [1,0,0,0,1,1,1,1,1],
-    gate:   [1,0,0,0,1,1,1,1,1],
-    wall:   [1,1,1,1,1,1,1,1,1],
-    window: [1,1,0,0,1,1,1,1,1],
-    floor : [1,0,0,0,0,0,0,0,0],
-    ceil  : [0,0,0,0,0,0,0,0,1]
+    room:           [1,0,0,0,0,0,0,0,1],
+    door:           [1,0,0,0,1,1,1,1,1],
+    gate:           [1,0,0,0,1,1,1,1,1],
+    wall:           [1,1,1,1,1,1,1,1,1],
+    window:         [1,1,1,0,0,1,1,1,1],
+    'low-window':   [1,1,0,0,1,1,1,1,1],
+    floor:          [1,0,0,0,0,0,0,0,0],
+    ceil:           [0,0,0,0,0,0,0,0,1],
+    'small-fence':  [1,1,0,0,0,0,0,0,0],
+    'medium-fence': [1,1,1,0,0,0,0,0,0],
+    'big-fence':    [1,1,1,1,0,0,0,0,0]
 };
+
+
+
+
+
+const STOREYS = [
+    '1NP',
+    '2NP',
+    '3NP',
+    '4NP',
+    '5NP',
+    '6NP'
+];
+
 
 const BLOCKS_1NP_LEVEL = (0.5 - 0.9);
 const BLOCKS_STOREYS_LEVELS = {
@@ -34,3 +57,36 @@ const BLOCKS_STOREYS_LEVELS = {
     '5NP':  4*8,
     '6NP':  5*8,
 };
+
+
+
+
+
+
+const BLOCK_MATERIALS = [//todo maybe TEXTURES or MATERIALS
+    //'color-white',
+    'color-light-gray',
+    'color-dark-gray',
+    'clay-bricks',
+    'clay-roof',
+    'grass',
+    'iron-plates',
+    'stone-bricks',
+    'stone-plain',
+    'wood-boards',
+    'wood-fence',
+    'wood-raw'];
+
+
+
+
+
+
+//--------------------------------------------------------------Only for Editor
+const ZOOMS = [
+    '5',
+    '10',
+    '20',
+    '30',
+    '50'
+];

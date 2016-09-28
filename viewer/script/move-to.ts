@@ -13,7 +13,7 @@ function moveTo(x,y,rotation,world,storey,immediately=true) {
         document.getElementById("scene").focus();
 
         clearWorld();
-        runWorld(objects.filterWorld(world));
+        runWorld(objects.filterWorld(world),objects.filterWorld('textures')/*todo cache this*/);
         world_selected = world;
 
 

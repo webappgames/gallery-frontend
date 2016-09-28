@@ -10,6 +10,7 @@ namespace GALLERY.Objects{
         public uri:string;
         public width:number;
         public height: number;
+        public src: string;
 
         public rotation: number;
         public onGround: boolean;
@@ -33,6 +34,11 @@ namespace GALLERY.Objects{
 
         }
 
+
+
+        getTexture(){
+            return(this.src);
+        }
 
 
 

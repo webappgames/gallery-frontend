@@ -7,7 +7,7 @@
 var meshes = [];
 
 
-function runWorld(objects){
+function runWorld(objects,textures){
 
     r('Running gallery with '+objects.getAll().length+' objects.');
     r(objects);
@@ -44,8 +44,30 @@ function runWorld(objects){
 
         if(typeof materials[key] === 'undefined') {
 
+            let url: string;
+            if(BLOCK_MATERIALS.indexOf(key)!==-1){
+                url = "../media/images/textures/" + key + ".jpg";
+                r('Creating native texture '+key+'.');
+
+            }else{
+
+                let image = textures.findBy('name',key);
+                r('finded',image);
+                if(image){
+
+                    url = image.getTexture();
+                    r('Creating texture '+key+' from '+url+'.');
+
+                }else{
+
+                    console.warn('There is no texture image with name '+key+'!');
+                }
+            }
+
+
+
             let material = new BABYLON.StandardMaterial("Mat", scene);
-            material.diffuseTexture = new BABYLON.Texture("../media/images/textures/" + key + ".jpg", scene);
+            material.diffuseTexture = new BABYLON.Texture(url, scene);
             //material.bumpTexture = material.diffuseTexture;
             material.diffuseTexture.uScale = 10;//Vertical offset of 10%
             material.diffuseTexture.vScale = 10;//Horizontal offset of 40%

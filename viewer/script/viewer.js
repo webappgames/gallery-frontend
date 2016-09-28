@@ -1028,6 +1028,19 @@ var GALLERY;
             Array.prototype.push = function (object) {
                 this.objects.push(GALLERY.Objects.Object.init(object));
             };
+            Array.prototype.findBy = function (key, value) {
+                r('findBy', key, value);
+                var value_;
+                for (var i = 0, l = this.objects.length; i < l; i++) {
+                    value_ = this.objects[i][key];
+                    if (typeof value_ !== 'undefined') {
+                        if (value_ == value) {
+                            return (this.objects[i]);
+                        }
+                    }
+                }
+                return null;
+            };
             Array.prototype.filter = function (callback) {
                 var filtered_objects = new Array();
                 this.forEach(function (object) {
@@ -1598,6 +1611,9 @@ var GALLERY;
                 this.checkCollisions = this.checkCollisions || false;
                 this.backFace = this.backFace || false;
             }
+            Image.prototype.getTexture = function () {
+                return (this.src);
+            };
             Image.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 var object = this;
@@ -1843,6 +1859,7 @@ var GALLERY;
         Objects.Gate = Gate;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
+var OBJECT_TYPES = ['light', 'label', 'tree', 'stairs', 'link', 'gate'];
 var BLOCK_SIZE = 5;
 //var BLOCK_SIZE_VERTICAL=10;
 //var BLOCK_SIZE_DOOR=2;
@@ -1851,15 +1868,28 @@ var LIGHT_VERTICAL = 3;
 var SPEED = 7;
 var SPEED_INERTIA = 0.5;
 var SPEED_ROTATION = Math.PI / 2;
+var BLOCK_SHAPES = ['none', 'room', 'wall', 'door', 'window', 'low-window', 'floor', 'ceil', 'small-fence', 'medium-fence', 'big-fence'];
 var BLOCKS_2D_3D_SHAPES = {
     room: [1, 0, 0, 0, 0, 0, 0, 0, 1],
     door: [1, 0, 0, 0, 1, 1, 1, 1, 1],
     gate: [1, 0, 0, 0, 1, 1, 1, 1, 1],
     wall: [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    window: [1, 1, 0, 0, 1, 1, 1, 1, 1],
+    window: [1, 1, 1, 0, 0, 1, 1, 1, 1],
+    'low-window': [1, 1, 0, 0, 1, 1, 1, 1, 1],
     floor: [1, 0, 0, 0, 0, 0, 0, 0, 0],
-    ceil: [0, 0, 0, 0, 0, 0, 0, 0, 1]
+    ceil: [0, 0, 0, 0, 0, 0, 0, 0, 1],
+    'small-fence': [1, 1, 0, 0, 0, 0, 0, 0, 0],
+    'medium-fence': [1, 1, 1, 0, 0, 0, 0, 0, 0],
+    'big-fence': [1, 1, 1, 1, 0, 0, 0, 0, 0]
 };
+var STOREYS = [
+    '1NP',
+    '2NP',
+    '3NP',
+    '4NP',
+    '5NP',
+    '6NP'
+];
 var BLOCKS_1NP_LEVEL = (0.5 - 0.9);
 var BLOCKS_STOREYS_LEVELS = {
     '1NP': 0 * 8,
@@ -1869,6 +1899,27 @@ var BLOCKS_STOREYS_LEVELS = {
     '5NP': 4 * 8,
     '6NP': 5 * 8,
 };
+var BLOCK_MATERIALS = [
+    //'color-white',
+    'color-light-gray',
+    'color-dark-gray',
+    'clay-bricks',
+    'clay-roof',
+    'grass',
+    'iron-plates',
+    'stone-bricks',
+    'stone-plain',
+    'wood-boards',
+    'wood-fence',
+    'wood-raw'];
+//--------------------------------------------------------------Only for Editor
+var ZOOMS = [
+    '5',
+    '10',
+    '20',
+    '30',
+    '50'
+];
 /// <reference path="../reference.ts" />
 var r = console.log.bind(console);
 /// <reference path="lib/jquery.d.ts" />
@@ -2961,7 +3012,7 @@ function createStairsMesh(name, stairs_count, isFull, scene) {
 /// <reference path="reference.ts" />
 //var objects;
 var meshes = [];
-function runWorld(objects) {
+function runWorld(objects, textures) {
     r('Running gallery with ' + objects.getAll().length + ' objects.');
     r(objects);
     var sunShadowGenerator = new BABYLON.ShadowGenerator(1024, sun);
@@ -2978,8 +3029,24 @@ function runWorld(objects) {
     var materials = {};
     function getMaterial(key) {
         if (typeof materials[key] === 'undefined') {
+            var url = void 0;
+            if (BLOCK_MATERIALS.indexOf(key) !== -1) {
+                url = "../media/images/textures/" + key + ".jpg";
+                r('Creating native texture ' + key + '.');
+            }
+            else {
+                var image = textures.findBy('name', key);
+                r('finded', image);
+                if (image) {
+                    url = image.getTexture();
+                    r('Creating texture ' + key + ' from ' + url + '.');
+                }
+                else {
+                    console.warn('There is no texture image with name ' + key + '!');
+                }
+            }
             var material = new BABYLON.StandardMaterial("Mat", scene);
-            material.diffuseTexture = new BABYLON.Texture("../media/images/textures/" + key + ".jpg", scene);
+            material.diffuseTexture = new BABYLON.Texture(url, scene);
             //material.bumpTexture = material.diffuseTexture;
             material.diffuseTexture.uScale = 10; //Vertical offset of 10%
             material.diffuseTexture.vScale = 10; //Horizontal offset of 40%
@@ -3274,7 +3341,7 @@ var createScene = function () {
     ground.material = new BABYLON.StandardMaterial("groundMat", scene);
     //ground.material.diffuseColor = new BABYLON.Color3(0.5, 0.9, 0.7);
     //ground.material.backFaceCulling = false;
-    ground.material.diffuseTexture = new BABYLON.Texture("../media/images/textures/stone-plain.jpg", scene);
+    ground.material.diffuseTexture = new BABYLON.Texture("../media/images/textures/grass.jpg", scene);
     ground.material.diffuseTexture.opacity = 0.5;
     ground.material.diffuseTexture.uScale = 100; //Vertical offset of 10%
     ground.material.diffuseTexture.vScale = 100; //Horizontal offset of 40%
@@ -3452,7 +3519,7 @@ function moveTo(x, y, rotation, world, storey, immediately) {
         r('Moving to new world "' + world + '" from world "' + world_selected + '"');
         document.getElementById("scene").focus();
         clearWorld();
-        runWorld(objects.filterWorld(world));
+        runWorld(objects.filterWorld(world), objects.filterWorld('textures') /*todo cache this*/);
         world_selected = world;
         immediately = true;
     }

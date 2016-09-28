@@ -43,7 +43,11 @@ namespace GALLERY.Objects{
             }
 
             //----------------------------------
-            if (object.type == 'block') {
+            if (object.type == 'environment') {
+
+                object = new GALLERY.Objects.Environment(object);
+
+            } else if (object.type == 'block') {
 
                 object = new GALLERY.Objects.Block(object);
 

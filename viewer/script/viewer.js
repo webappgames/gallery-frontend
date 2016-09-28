@@ -1437,7 +1437,10 @@ var GALLERY;
                     return (object);
                 }
                 //----------------------------------
-                if (object.type == 'block') {
+                if (object.type == 'environment') {
+                    object = new GALLERY.Objects.Environment(object);
+                }
+                else if (object.type == 'block') {
                     object = new GALLERY.Objects.Block(object);
                 }
                 else if (object.type == 'multiblock') {
@@ -1497,6 +1500,29 @@ var GALLERY;
             return Object;
         }());
         Objects.Object = Object;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="../../reference.ts" />
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        var Environment = (function (_super) {
+            __extends(Environment, _super);
+            function Environment(object) {
+                _super.call(this, object);
+                this.ground = this.ground || 'grass';
+                this.skybox = this.skybox || 'TropicalSunnyDay';
+            }
+            Environment.prototype.create$Element = function () {
+                var $element = this._create$Element();
+                var object = this;
+                $element.html('<i class="fa fa-cube" aria-hidden="true"></i>');
+                return $element;
+            };
+            return Environment;
+        }(Objects.Object));
+        Objects.Environment = Environment;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
 /// <reference path="../../reference.ts" />
@@ -1859,7 +1885,7 @@ var GALLERY;
         Objects.Gate = Gate;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-var OBJECT_TYPES = ['light', 'label', 'tree', 'stairs', 'link', 'gate'];
+var OBJECT_TYPES = ['environment', 'light', 'label', 'tree', 'stairs', 'link', 'gate'];
 var BLOCK_SIZE = 5;
 //var BLOCK_SIZE_VERTICAL=10;
 //var BLOCK_SIZE_DOOR=2;
@@ -1927,6 +1953,7 @@ var r = console.log.bind(console);
 /// <reference path="script/05-objects/00-array.ts" />
 /// <reference path="script/05-objects/05-compiled-array.ts" />
 /// <reference path="script/05-objects/05-object.ts" />
+/// <reference path="script/05-objects/10-environment.ts" />
 /// <reference path="script/05-objects/10-block.ts" />
 /// <reference path="script/05-objects/10-multiblock.ts" />
 /// <reference path="script/05-objects/10-image.ts" />
@@ -3026,27 +3053,30 @@ function runWorld(objects, textures) {
     bark.freeze();
     gates = [];
     links = [];
+    function getTextureUrl(key) {
+        var url;
+        if (BLOCK_MATERIALS.indexOf(key) !== -1) {
+            url = "../media/images/textures/" + key + ".jpg";
+            r('Creating native texture ' + key + '.');
+        }
+        else {
+            var image = textures.findBy('name', key);
+            r('finded', image);
+            if (image) {
+                url = image.getTexture();
+                r('Creating texture ' + key + ' from ' + url + '.');
+            }
+            else {
+                console.warn('There is no texture image with name ' + key + '!');
+            }
+        }
+        return (url);
+    }
     var materials = {};
     function getMaterial(key) {
         if (typeof materials[key] === 'undefined') {
-            var url = void 0;
-            if (BLOCK_MATERIALS.indexOf(key) !== -1) {
-                url = "../media/images/textures/" + key + ".jpg";
-                r('Creating native texture ' + key + '.');
-            }
-            else {
-                var image = textures.findBy('name', key);
-                r('finded', image);
-                if (image) {
-                    url = image.getTexture();
-                    r('Creating texture ' + key + ' from ' + url + '.');
-                }
-                else {
-                    console.warn('There is no texture image with name ' + key + '!');
-                }
-            }
             var material = new BABYLON.StandardMaterial("Mat", scene);
-            material.diffuseTexture = new BABYLON.Texture(url, scene);
+            material.diffuseTexture = new BABYLON.Texture(getTextureUrl(key), scene);
             //material.bumpTexture = material.diffuseTexture;
             material.diffuseTexture.uScale = 10; //Vertical offset of 10%
             material.diffuseTexture.vScale = 10; //Horizontal offset of 40%
@@ -3062,7 +3092,44 @@ function runWorld(objects, textures) {
         var level = BLOCKS_STOREYS_LEVELS[object.storey];
         var position = new BABYLON.Vector3(object.position.x * -BLOCK_SIZE, (level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
         object.position.y * BLOCK_SIZE);
-        if (object.type == 'block') {
+        if (object.type == 'environment') {
+            if (object.ground !== 'none') {
+                //todo position
+                /**/
+                //Ground
+                var ground = BABYLON.Mesh.CreatePlane("ground", 10000, scene);
+                ground.material = new BABYLON.StandardMaterial("groundMat", scene);
+                //ground.material.diffuseColor = new BABYLON.Color3(0.5, 0.9, 0.7);
+                //ground.material.backFaceCulling = false;
+                ground.material.diffuseTexture = new BABYLON.Texture(getTextureUrl(object.ground), scene);
+                ground.material.diffuseTexture.opacity = 0.5;
+                ground.material.diffuseTexture.uScale = 100; //Vertical offset of 10%
+                ground.material.diffuseTexture.vScale = 100; //Horizontal offset of 40%
+                ground.material.reflectionColor = new BABYLON.Color3(0, 0, 0);
+                ground.material.specularColor = new BABYLON.Color3(0, 0, 0);
+                ground.position = new BABYLON.Vector3(0, 0, 0);
+                ground.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
+                ground.receiveShadows = true;
+                ground.isPickable = true;
+                ground.checkCollisions = true;
+                meshes.push(ground);
+            }
+            var url = object.skybox + '/' + object.skybox;
+            // Skybox
+            var skybox = BABYLON.Mesh.CreateBox("skyBox", 10000, scene);
+            var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+            skyboxMaterial.backFaceCulling = false;
+            skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../media/images/skyboxes/" + url, scene, ["_ft.jpg", "_up.jpg", "_rt.jpg", "_bk.jpg", "_dn.jpg", "_lf.jpg"]);
+            skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+            skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+            skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+            skyboxMaterial.disableLighting = true;
+            skybox.material = skyboxMaterial;
+            skybox.position = new BABYLON.Vector3(0, 0, 0);
+            skybox.isPickable = false;
+            meshes.push(skybox);
+        }
+        else if (object.type == 'block') {
             throw new Error('Block should not be in compiled objects.');
         }
         else if (object.type == 'multiblock') {
@@ -3335,24 +3402,6 @@ var createScene = function () {
 
     };*/
     var sun = new BABYLON.DirectionalLight("Dir0", new BABYLON.Vector3(-0.7, -1, -0.5), scene);
-    /**/
-    //Ground
-    var ground = BABYLON.Mesh.CreatePlane("ground", 10000, scene);
-    ground.material = new BABYLON.StandardMaterial("groundMat", scene);
-    //ground.material.diffuseColor = new BABYLON.Color3(0.5, 0.9, 0.7);
-    //ground.material.backFaceCulling = false;
-    ground.material.diffuseTexture = new BABYLON.Texture("../media/images/textures/grass.jpg", scene);
-    ground.material.diffuseTexture.opacity = 0.5;
-    ground.material.diffuseTexture.uScale = 100; //Vertical offset of 10%
-    ground.material.diffuseTexture.vScale = 100; //Horizontal offset of 40%
-    ground.material.reflectionColor = new BABYLON.Color3(0, 0, 0);
-    ground.material.specularColor = new BABYLON.Color3(0, 0, 0);
-    ground.position = new BABYLON.Vector3(0, 0, 0);
-    ground.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
-    ground.receiveShadows = true;
-    ground.isPickable = true;
-    ground.checkCollisions = true;
-    /**/
     /*
     // Skybox
     var skybox = BABYLON.Mesh.CreateBox("skyBox", 10000, scene);
@@ -3367,19 +3416,6 @@ var createScene = function () {
     skybox.position = new BABYLON.Vector3(0, 0, 0);
     skybox.isPickable = false;
     /**/
-    var url = 'ely_darkcity/darkcity';
-    // Skybox
-    var skybox = BABYLON.Mesh.CreateBox("skyBox", 10000, scene);
-    var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
-    skyboxMaterial.backFaceCulling = false;
-    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../media/images/skyboxes/" + url, scene, ["_ft.jpg", "_up.jpg", "_rt.jpg", "_bk.jpg", "_dn.jpg", "_lf.jpg"]);
-    skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-    skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-    skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-    skyboxMaterial.disableLighting = true;
-    skybox.material = skyboxMaterial;
-    skybox.position = new BABYLON.Vector3(0, 0, 0);
-    skybox.isPickable = false;
     /*$( canvas ).keydown(function( event ) {
 
         console.log(event.which);

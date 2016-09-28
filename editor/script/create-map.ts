@@ -193,7 +193,7 @@ function createMap() {
 
 
 
-    let $dot_objects= $admin_world.find('.light, .label, .tree, .link, .gate');
+    let $dot_objects= $admin_world.find('.environment, .light, .label, .tree, .link, .gate');
 
 
     /*$admin_world.mousemove(function (e) {
@@ -255,7 +255,7 @@ function createMap() {
             check_element=null;
 
 
-            if(['name','uri','key','href','target','world','material'].indexOf(key)!==-1){
+            if(['name','uri','key','href','target','world','material','skybox','ground'].indexOf(key)!==-1){
                 input_element='<input type="text">';
             }else
             if(key=='intensity'){

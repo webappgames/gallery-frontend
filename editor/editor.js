@@ -1447,7 +1447,10 @@ var GALLERY;
                     return (object);
                 }
                 //----------------------------------
-                if (object.type == 'block') {
+                if (object.type == 'environment') {
+                    object = new GALLERY.Objects.Environment(object);
+                }
+                else if (object.type == 'block') {
                     object = new GALLERY.Objects.Block(object);
                 }
                 else if (object.type == 'multiblock') {
@@ -1507,6 +1510,29 @@ var GALLERY;
             return Object;
         }());
         Objects.Object = Object;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="../../reference.ts" />
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        var Environment = (function (_super) {
+            __extends(Environment, _super);
+            function Environment(object) {
+                _super.call(this, object);
+                this.ground = this.ground || 'grass';
+                this.skybox = this.skybox || 'TropicalSunnyDay';
+            }
+            Environment.prototype.create$Element = function () {
+                var $element = this._create$Element();
+                var object = this;
+                $element.html('<i class="fa fa-cube" aria-hidden="true"></i>');
+                return $element;
+            };
+            return Environment;
+        }(Objects.Object));
+        Objects.Environment = Environment;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
 /// <reference path="../../reference.ts" />
@@ -1869,7 +1895,7 @@ var GALLERY;
         Objects.Gate = Gate;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-var OBJECT_TYPES = ['light', 'label', 'tree', 'stairs', 'link', 'gate'];
+var OBJECT_TYPES = ['environment', 'light', 'label', 'tree', 'stairs', 'link', 'gate'];
 var BLOCK_SIZE = 5;
 //var BLOCK_SIZE_VERTICAL=10;
 //var BLOCK_SIZE_DOOR=2;
@@ -1937,6 +1963,7 @@ var r = console.log.bind(console);
 /// <reference path="script/05-objects/00-array.ts" />
 /// <reference path="script/05-objects/05-compiled-array.ts" />
 /// <reference path="script/05-objects/05-object.ts" />
+/// <reference path="script/05-objects/10-environment.ts" />
 /// <reference path="script/05-objects/10-block.ts" />
 /// <reference path="script/05-objects/10-multiblock.ts" />
 /// <reference path="script/05-objects/10-image.ts" />
@@ -3293,7 +3320,7 @@ function createMap() {
     var $blocks_gates = $admin_world.find('.block[data-shape="gate"]');
     var $images = $admin_world.find('.image');
     var $stairs = $admin_world.find('.stairs');
-    var $dot_objects = $admin_world.find('.light, .label, .tree, .link, .gate');
+    var $dot_objects = $admin_world.find('.environment, .light, .label, .tree, .link, .gate');
     /*$admin_world.mousemove(function (e) {
         var position = getPositionFromLeftTop(e.clientX,e.clientY);
         document.title = isWallOn(05-objects,position);
@@ -3323,7 +3350,7 @@ function createMap() {
         for (var key in object) {
             input_element = null;
             check_element = null;
-            if (['name', 'uri', 'key', 'href', 'target', 'world', 'material'].indexOf(key) !== -1) {
+            if (['name', 'uri', 'key', 'href', 'target', 'world', 'material', 'skybox', 'ground'].indexOf(key) !== -1) {
                 input_element = '<input type="text">';
             }
             else if (key == 'intensity') {

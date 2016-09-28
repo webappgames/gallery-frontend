@@ -36,7 +36,30 @@ function runWorld(objects,textures){
 
 
 
+    function getTextureUrl(key){
 
+        let url: string;
+        if(BLOCK_MATERIALS.indexOf(key)!==-1){
+            url = "../media/images/textures/" + key + ".jpg";
+            r('Creating native texture '+key+'.');
+
+        }else{
+
+            let image = textures.findBy('name',key);
+            r('finded',image);
+            if(image){
+
+                url = image.getTexture();
+                r('Creating texture '+key+' from '+url+'.');
+
+            }else{
+
+                console.warn('There is no texture image with name '+key+'!');
+            }
+        }
+        return(url);
+
+    }
 
 
     var materials = {};
@@ -44,30 +67,9 @@ function runWorld(objects,textures){
 
         if(typeof materials[key] === 'undefined') {
 
-            let url: string;
-            if(BLOCK_MATERIALS.indexOf(key)!==-1){
-                url = "../media/images/textures/" + key + ".jpg";
-                r('Creating native texture '+key+'.');
-
-            }else{
-
-                let image = textures.findBy('name',key);
-                r('finded',image);
-                if(image){
-
-                    url = image.getTexture();
-                    r('Creating texture '+key+' from '+url+'.');
-
-                }else{
-
-                    console.warn('There is no texture image with name '+key+'!');
-                }
-            }
-
-
 
             let material = new BABYLON.StandardMaterial("Mat", scene);
-            material.diffuseTexture = new BABYLON.Texture(url, scene);
+            material.diffuseTexture = new BABYLON.Texture(getTextureUrl(key), scene);
             //material.bumpTexture = material.diffuseTexture;
             material.diffuseTexture.uScale = 10;//Vertical offset of 10%
             material.diffuseTexture.vScale = 10;//Horizontal offset of 40%
@@ -103,7 +105,56 @@ function runWorld(objects,textures){
 
 
 
+        if(object.type=='environment') {
 
+
+            if(object.ground!=='none'){
+                //todo position
+                /**/
+                //Ground
+                var ground = BABYLON.Mesh.CreatePlane("ground", 10000, scene);
+                ground.material = new BABYLON.StandardMaterial("groundMat", scene);
+                //ground.material.diffuseColor = new BABYLON.Color3(0.5, 0.9, 0.7);
+                //ground.material.backFaceCulling = false;
+                ground.material.diffuseTexture = new BABYLON.Texture(getTextureUrl(object.ground), scene);
+                ground.material.diffuseTexture.opacity = 0.5;
+                ground.material.diffuseTexture.uScale = 100;//Vertical offset of 10%
+                ground.material.diffuseTexture.vScale = 100;//Horizontal offset of 40%
+                ground.material.reflectionColor = new BABYLON.Color3(0, 0, 0);
+                ground.material.specularColor = new BABYLON.Color3(0, 0, 0);
+
+
+                ground.position = new BABYLON.Vector3(0, 0, 0);
+                ground.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
+                ground.receiveShadows = true;
+                ground.isPickable = true;
+
+                ground.checkCollisions = true;
+                meshes.push(ground);
+                /**/
+            }
+
+
+
+
+            let url = object.skybox+'/'+object.skybox;
+
+            // Skybox
+            var skybox = BABYLON.Mesh.CreateBox("skyBox", 10000, scene);
+            var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+            skyboxMaterial.backFaceCulling = false;
+            skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../media/images/skyboxes/"+url, scene, ["_ft.jpg", "_up.jpg", "_rt.jpg", "_bk.jpg", "_dn.jpg", "_lf.jpg"]);
+            skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+            skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+            skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+            skyboxMaterial.disableLighting = true;
+            skybox.material = skyboxMaterial;
+            skybox.position = new BABYLON.Vector3(0, 0, 0);
+            skybox.isPickable = false;
+            meshes.push(skybox);
+
+
+        }else
         if(object.type=='block') {
 
             throw new Error('Block should not be in compiled objects.')

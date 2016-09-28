@@ -255,7 +255,7 @@ function createMap() {
             check_element=null;
 
 
-            if(['name','uri','key','href','target','world'].indexOf(key)!==-1){
+            if(['name','uri','key','href','target','world','material'].indexOf(key)!==-1){
                 input_element='<input type="text">';
             }else
             if(key=='intensity'){

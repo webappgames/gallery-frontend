@@ -34,6 +34,12 @@ namespace GALLERY.Objects{
         }
 
 
+        sort(callback: (object1:GALLERY.Objects.Object,object2:GALLERY.Objects.Object)=>void): Array {
+            this.objects.sort(callback);
+            return this;
+        }
+
+
         push(object:Object): void {
             this.objects.push(GALLERY.Objects.Object.init(object));
         }

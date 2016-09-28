@@ -5,6 +5,7 @@ namespace GALLERY.Objects{
     export class Stairs extends Object{
 
         public storey: string;
+        public material: string;
         public width: number;
         public height: number;
         public rotation: number;
@@ -16,6 +17,7 @@ namespace GALLERY.Objects{
 
             super(object);
 
+            this.material = this.material || 'stone-plain';
             this.width = this.width || 10;
             this.height = this.height || 2;
             this.rotation = this.rotation || 0;

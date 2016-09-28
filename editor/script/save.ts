@@ -112,11 +112,12 @@ function save(force = false) {
         return;
     }
 
+    $button = $('#save');
 
     if(!force && objects.getAll().length > 1000){
 
 
-        $button = $('#save');
+
         $button.addClass('unsaved');
         $button.html('<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Uložit');//todo fa
 

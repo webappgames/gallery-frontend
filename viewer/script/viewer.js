@@ -1021,6 +1021,10 @@ var GALLERY;
             Array.prototype.forEach = function (callback) {
                 return this.objects.forEach(callback);
             };
+            Array.prototype.sort = function (callback) {
+                this.objects.sort(callback);
+                return this;
+            };
             Array.prototype.push = function (object) {
                 this.objects.push(GALLERY.Objects.Object.init(object));
             };
@@ -1142,10 +1146,18 @@ var GALLERY;
         Objects.Array = Array;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-//todo to separate file
+//todo to other place
 function isBlockOn(boxes, x, y, z) {
     for (var i = 0, l = boxes.length; i < l; i++) {
         if (boxes[i].x === x && boxes[i].y === y && boxes[i].z === z && boxes[i].processed === false) {
+            return (true);
+        }
+    }
+    return (false);
+}
+function isBlockOnSearchAllMaterials(boxes_materials, x, y, z) {
+    for (var material in boxes_materials) {
+        if (isBlockOn(boxes_materials[material], x, y, z)) {
             return (true);
         }
     }
@@ -1200,17 +1212,32 @@ var GALLERY;
                 _super.apply(this, arguments);
             }
             CompiledArray.compile = function (objects) {
+                var start = new Date().getTime();
+                function time() {
+                    var end = new Date().getTime();
+                    return (Math.round((end - start) / 1000 * 10) / 10 + 's');
+                }
+                r('Compilation started');
                 var compiled_objects = new CompiledArray();
                 var _a = objects.splitTypes('block'), blocks = _a[0], non_blocks = _a[1];
+                r('Working on ' + non_blocks.getAll().length + ' non block objects!');
                 non_blocks.forEach(function (object) {
                     compiled_objects.push(object);
                 });
+                var block_stat = {
+                    all: blocks.getAll().length,
+                    done: 0
+                };
+                r('Working on ' + blocks.getAll().length + ' non block objects!');
                 var worlds = blocks.getAllWorlds();
                 r('Compiling blocks of these worlds: ' + worlds.join(', '));
                 worlds.forEach(function (world) {
+                    r('Compiling world ' + world + ' at ' + time());
                     //=========================================================================BEGIN WORLD PROCESSING
                     var boxes_materials = {};
-                    blocks.filterWorld(world).forEach(function (object) {
+                    blocks.filterWorld(world).sort(function (blockA, blockB) {
+                        return (BLOCKS_STOREYS_LEVELS[blockA.storey] - BLOCKS_STOREYS_LEVELS[blockB.storey]);
+                    }).forEach(function (object) {
                         object.storey = object.storey || '1NP';
                         var level = BLOCKS_STOREYS_LEVELS[object.storey];
                         /*var position = new BABYLON.Vector3(
@@ -1231,100 +1258,144 @@ var GALLERY;
                                  block.isPickable = true;
                                  block.checkCollisions = true;
                                  block.position = position;*/
-                                boxes_materials[object.material] = boxes_materials[object.material] || [];
-                                boxes_materials[object.material].push({
-                                    x: object.position.x,
-                                    y: object.position.y,
-                                    z: i + level,
-                                    processed: false
-                                });
+                                //todo check if there is box on that position
+                                var x = object.position.x, y = object.position.y, z = i + level;
+                                if (isBlockOnSearchAllMaterials(boxes_materials, x, y, z)) {
+                                }
+                                else {
+                                    boxes_materials[object.material] = boxes_materials[object.material] || [];
+                                    boxes_materials[object.material].push({
+                                        x: x,
+                                        y: y,
+                                        z: z,
+                                        processed: false
+                                    });
+                                }
                             }
                         }
-                        blocks.removeObjectById(object.id);
+                        //blocks.removeObjectById(object.id);
+                        block_stat.done++;
+                        if (block_stat.done % 500 === 500 - 1) {
+                            r((Math.round(block_stat.done / block_stat.all * 100 * 100) / 100) + '% Converting blocks to boxes (' + world + ')');
+                        }
                     });
+                    r('In world ' + world + ' are all blocks converted to boxes.');
                     for (var material in boxes_materials) {
                         var boxes = boxes_materials[material];
-                        //r(boxes);
-                        boxes.forEach(function (box) {
-                            if (box.processed === false) {
-                                //r(1);
-                                var range = {
-                                    x: { start: box.x, end: box.x },
-                                    y: { start: box.y, end: box.y },
-                                    z: { start: box.z, end: box.z }
-                                };
-                                //r(range);
-                                //ee();
-                                [1, 2, 3, 4, 5, 6].forEach(function (operation) {
-                                    var limit = 100;
-                                    while (isAllRangeOn(boxes, range) && limit > 0) {
-                                        limit--;
-                                        //r(operation);
-                                        if (operation === 0) { }
-                                        else if (operation === 1) {
-                                            range.x.end++;
-                                        }
-                                        else if (operation === 2) {
-                                            range.x.start--;
-                                        }
-                                        else if (operation === 3) {
-                                            range.y.end++;
-                                        }
-                                        else if (operation === 4) {
-                                            range.y.start--;
-                                        }
-                                        else if (operation === 5) {
-                                            range.z.end++;
-                                        }
-                                        else if (operation === 6) {
-                                            range.z.start--;
-                                        }
+                        //---------------------------------------
+                        r(world + '[' + material + ']: ' + ' Sorting boxes.');
+                        boxes.sort(function (boxA, boxB) {
+                            return (boxB.z - boxA.z);
+                        });
+                        r(world + '[' + material + ']: ' + ' Boxes sorted');
+                        //---------------------------------------
+                        var last_boxes_length = boxes.length;
+                        while (boxes.length !== 0) {
+                            //boxes.forEach(function (box, box_i) {
+                            //if (box_i % 1000 === 1000 - 1) {
+                            //    r(world + '[' + material + ']: ' + (Math.round(box_i / boxes.length * 100 * 100) / 100) + '% Making  multiblocks from ' + boxes.length + ' boxes.');
+                            //}
+                            if (boxes.length + 1000 < last_boxes_length) {
+                                last_boxes_length = boxes.length;
+                                r(world + '[' + material + ']: ' + ' Making  multiblocks from remaining ' + boxes.length + ' boxes.');
+                            }
+                            //if (box.processed === false) {
+                            //r(1);
+                            var box = boxes[0];
+                            var range = {
+                                x: { start: box.x, end: box.x },
+                                y: { start: box.y, end: box.y },
+                                z: { start: box.z, end: box.z }
+                            };
+                            //r(range);
+                            //ee();
+                            [1, 2, 3, 4, 5, 6].forEach(function (operation) {
+                                var limit = 100;
+                                while (isAllRangeOn(boxes, range) && limit > 0) {
+                                    limit--;
+                                    //r(operation);
+                                    if (operation === 0) {
                                     }
-                                    if (limit == 100) {
-                                        //r(range);
-                                        throw new Error('wtf');
-                                    }
-                                    if (operation === 0) { }
                                     else if (operation === 1) {
-                                        range.x.end--;
+                                        range.x.end++;
                                     }
                                     else if (operation === 2) {
-                                        range.x.start++;
+                                        range.x.start--;
                                     }
                                     else if (operation === 3) {
-                                        range.y.end--;
+                                        range.y.end++;
                                     }
                                     else if (operation === 4) {
-                                        range.y.start++;
+                                        range.y.start--;
                                     }
                                     else if (operation === 5) {
-                                        range.z.end--;
+                                        range.z.end++;
                                     }
                                     else if (operation === 6) {
-                                        range.z.start++;
+                                        range.z.start--;
                                     }
-                                });
-                                //r(range);
-                                processAllRange(boxes, range);
-                                compiled_objects.push({
-                                    type: 'multiblock',
-                                    material: material,
-                                    position: {
-                                        x: (range.x.start + range.x.end) / 2,
-                                        y: (range.y.start + range.y.end) / 2,
-                                        z: (range.z.start + range.z.end) / 2
-                                    },
-                                    size: {
-                                        x: Math.abs(range.x.end - range.x.start) + 1,
-                                        y: Math.abs(range.y.end - range.y.start) + 1,
-                                        z: Math.abs(range.z.end - range.z.start) + 1,
-                                    }
-                                });
-                            }
-                        });
+                                }
+                                if (limit == 100) {
+                                    //r(range);
+                                    throw new Error('wtf');
+                                }
+                                if (operation === 0) {
+                                }
+                                else if (operation === 1) {
+                                    range.x.end--;
+                                }
+                                else if (operation === 2) {
+                                    range.x.start++;
+                                }
+                                else if (operation === 3) {
+                                    range.y.end--;
+                                }
+                                else if (operation === 4) {
+                                    range.y.start++;
+                                }
+                                else if (operation === 5) {
+                                    range.z.end--;
+                                }
+                                else if (operation === 6) {
+                                    range.z.start++;
+                                }
+                            });
+                            //r(range);
+                            processAllRange(boxes, range);
+                            boxes = boxes.filter(function (box) {
+                                return (!box.processed);
+                            });
+                            compiled_objects.push({
+                                type: 'multiblock',
+                                world: world,
+                                material: material,
+                                position: {
+                                    x: (range.x.start + range.x.end) / 2,
+                                    y: (range.y.start + range.y.end) / 2,
+                                    z: (range.z.start + range.z.end) / 2
+                                },
+                                size: {
+                                    x: Math.abs(range.x.end - range.x.start) + 1,
+                                    y: Math.abs(range.y.end - range.y.start) + 1,
+                                    z: Math.abs(range.z.end - range.z.start) + 1,
+                                }
+                            });
+                        }
+                        ;
                     }
                     //=========================================================================END OF WORLD PROCESSING
+                    r('World ' + world + ' compiled at ' + time());
                 });
+                r('Final sorting at ' + time());
+                compiled_objects.getAll().sort(function (objectA, objectB) {
+                    var indexA = 0, indexB = 0;
+                    if (objectA.type == 'link')
+                        indexA = -1;
+                    if (objectB.type == 'link')
+                        indexB = -1;
+                    return (indexB - indexA);
+                });
+                r('Created ' + compiled_objects.getAll().length + ' compiled objects from ' + objects.getAll().length + ' objects in time of ' + time() + '!');
                 return (compiled_objects);
             };
             return CompiledArray;
@@ -1651,6 +1722,7 @@ var GALLERY;
             __extends(Stairs, _super);
             function Stairs(object) {
                 _super.call(this, object);
+                this.material = this.material || 'stone-plain';
                 this.width = this.width || 10;
                 this.height = this.height || 2;
                 this.rotation = this.rotation || 0;
@@ -2890,20 +2962,12 @@ function createStairsMesh(name, stairs_count, isFull, scene) {
 //var objects;
 var meshes = [];
 function runWorld(objects) {
-    //r('Running gallery with world '+world);
-    //let compiled = compileObjects(objects);
-    //objects = compiled.objects;
-    //var blocks_materials_groups = compiled.blocks_materials_groups;
+    r('Running gallery with ' + objects.getAll().length + ' objects.');
+    r(objects);
     var sunShadowGenerator = new BABYLON.ShadowGenerator(1024, sun);
     sunShadowGenerator.useVarianceShadowMap = true;
     var building_blocks = [];
     var lights = [];
-    var multiblock_materials = {};
-    var stone_plain = new BABYLON.StandardMaterial("Mat", scene);
-    stone_plain.diffuseTexture = new BABYLON.Texture("../media/images/textures/stone-plain.jpg", scene);
-    stone_plain.diffuseTexture.uScale = 1; //Vertical offset of 10%
-    stone_plain.diffuseTexture.vScale = 1; //Horizontal offset of 40%
-    stone_plain.freeze();
     var bark = new BABYLON.StandardMaterial("Mat", scene);
     bark.diffuseTexture = new BABYLON.Texture("../media/images/textures/bark.jpg", scene);
     bark.diffuseTexture.uScale = 1; //Vertical offset of 10%
@@ -2911,6 +2975,20 @@ function runWorld(objects) {
     bark.freeze();
     gates = [];
     links = [];
+    var materials = {};
+    function getMaterial(key) {
+        if (typeof materials[key] === 'undefined') {
+            var material = new BABYLON.StandardMaterial("Mat", scene);
+            material.diffuseTexture = new BABYLON.Texture("../media/images/textures/" + key + ".jpg", scene);
+            //material.bumpTexture = material.diffuseTexture;
+            material.diffuseTexture.uScale = 10; //Vertical offset of 10%
+            material.diffuseTexture.vScale = 10; //Horizontal offset of 40%
+            //material.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+            material.freeze();
+            materials[key] = material;
+        }
+        return (materials[key]);
+    }
     //var wasVideo = false;
     objects.forEach(function (object) {
         object.storey = object.storey || '1NP';
@@ -2921,20 +2999,10 @@ function runWorld(objects) {
             throw new Error('Block should not be in compiled objects.');
         }
         else if (object.type == 'multiblock') {
-            if (typeof multiblock_materials[object.material] == 'undefined') {
-                var material = new BABYLON.StandardMaterial("Mat", scene);
-                material.diffuseTexture = new BABYLON.Texture("../media/images/textures/" + object.material + ".jpg", scene);
-                //material.bumpTexture = material.diffuseTexture;
-                material.diffuseTexture.uScale = 10; //Vertical offset of 10%
-                material.diffuseTexture.vScale = 10; //Horizontal offset of 40%
-                //material.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-                material.freeze();
-                multiblock_materials[object.material] = material;
-            }
             var position = new BABYLON.Vector3(object.position.x * -BLOCK_SIZE, (object.position.z + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
             object.position.y * BLOCK_SIZE);
             var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
-            box.material = multiblock_materials[object.material];
+            box.material = getMaterial(object.material);
             box.isPickable = true;
             box.checkCollisions = true;
             box.position = position;
@@ -3065,7 +3133,7 @@ function runWorld(objects) {
             stairs_mesh.position = position;
             //stairs_mesh.position.y = -BLOCK_SIZE;
             stairs_mesh.rotation.y = (object.rotation) / 180 * Math.PI;
-            stairs_mesh.material = stone_plain;
+            stairs_mesh.material = getMaterial(object.material);
             /**/
             stairs_mesh.checkCollisions = true;
             sunShadowGenerator.getShadowMap().renderList.push(stairs_mesh);
@@ -3199,12 +3267,15 @@ var createScene = function () {
         r(event);
 
     };*/
+    var sun = new BABYLON.DirectionalLight("Dir0", new BABYLON.Vector3(-0.7, -1, -0.5), scene);
+    /**/
     //Ground
     var ground = BABYLON.Mesh.CreatePlane("ground", 10000, scene);
     ground.material = new BABYLON.StandardMaterial("groundMat", scene);
     //ground.material.diffuseColor = new BABYLON.Color3(0.5, 0.9, 0.7);
     //ground.material.backFaceCulling = false;
-    ground.material.diffuseTexture = new BABYLON.Texture("../media/images/textures/grass.jpg", scene);
+    ground.material.diffuseTexture = new BABYLON.Texture("../media/images/textures/stone-plain.jpg", scene);
+    ground.material.diffuseTexture.opacity = 0.5;
     ground.material.diffuseTexture.uScale = 100; //Vertical offset of 10%
     ground.material.diffuseTexture.vScale = 100; //Horizontal offset of 40%
     ground.material.reflectionColor = new BABYLON.Color3(0, 0, 0);
@@ -3214,12 +3285,27 @@ var createScene = function () {
     ground.receiveShadows = true;
     ground.isPickable = true;
     ground.checkCollisions = true;
-    var sun = new BABYLON.DirectionalLight("Dir0", new BABYLON.Vector3(-0.7, -1, -0.5), scene);
+    /**/
+    /*
     // Skybox
     var skybox = BABYLON.Mesh.CreateBox("skyBox", 10000, scene);
     var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
     skyboxMaterial.backFaceCulling = false;
-    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../media/images/skybox/TropicalSunnyDay", scene);
+    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../media/images/skyboxes/tropical-sunny-day/TropicalSunnyDay", scene);
+    skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+    skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+    skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+    skyboxMaterial.disableLighting = true;
+    skybox.material = skyboxMaterial;
+    skybox.position = new BABYLON.Vector3(0, 0, 0);
+    skybox.isPickable = false;
+    /**/
+    var url = 'ely_darkcity/darkcity';
+    // Skybox
+    var skybox = BABYLON.Mesh.CreateBox("skyBox", 10000, scene);
+    var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+    skyboxMaterial.backFaceCulling = false;
+    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../media/images/skyboxes/" + url, scene, ["_ft.jpg", "_up.jpg", "_rt.jpg", "_bk.jpg", "_dn.jpg", "_lf.jpg"]);
     skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
     skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
     skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
@@ -3288,7 +3374,7 @@ function onCollide(collidedMesh) {
     }
     var object = objects.getObjectById(collidedMesh.name);
     if (object) {
-        //r('collide',object);
+        r('collide', object);
         if (object.type == 'link') {
             if (object.href.substr(0, 1) === '#') {
                 if (window.location.hash != object.href) {
@@ -3339,6 +3425,7 @@ function onPointerDown(evt, pickResult) {
         }
         else {
             var object = objects.getObjectById(pickResult.pickedMesh.name);
+            r('pick', object);
             /*var rotation_rad = (object.rotation / 180) * Math.PI;
 
              var x = object.position.x + Math.sin(-rotation_rad) * 3;

@@ -102,20 +102,32 @@ $.ajaxTransport("+binary", function(options, originalOptions, jqXHR){
 
 
 
+var compiled_objects;
+
+
 
 
 namespace GALLERY.Editor{
 
 
-    export function previewHTML(){
+    export function compile(){
 
-        var compiled_objects = new GALLERY.Objects.CompiledArray.compile(objects);
+        compiled_objects = new GALLERY.Objects.CompiledArray.compile(objects);
+        r(compiled_objects);
+
+        previewHTML();
+
+    }
+
+
+
+    export function previewHTML(){
 
 
         var preview = window.open("../viewer", "gallery-preview");
 
 
-        r(preview.moveToBegining);
+        //r(preview.moveToBegining);
 
 
         setTimeout(function () {

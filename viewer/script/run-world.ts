@@ -9,14 +9,8 @@ var meshes = [];
 
 function runWorld(objects){
 
-    //r('Running gallery with world '+world);
-
-
-
-    //let compiled = compileObjects(objects);
-    //objects = compiled.objects;
-    //var blocks_materials_groups = compiled.blocks_materials_groups;
-
+    r('Running gallery with '+objects.getAll().length+' objects.');
+    r(objects);
 
 
 
@@ -24,21 +18,6 @@ function runWorld(objects){
     sunShadowGenerator.useVarianceShadowMap = true;
     var building_blocks = [];
     var lights = [];
-
-
-
-    var multiblock_materials = {};
-
-
-
-
-    var stone_plain = new BABYLON.StandardMaterial("Mat", scene);
-    stone_plain.diffuseTexture = new BABYLON.Texture("../media/images/textures/stone-plain.jpg", scene);
-    stone_plain.diffuseTexture.uScale = 1;//Vertical offset of 10%
-    stone_plain.diffuseTexture.vScale = 1;//Horizontal offset of 40%
-    stone_plain.freeze();
-
-
 
 
 
@@ -53,6 +32,35 @@ function runWorld(objects){
 
     gates = [];
     links = [];
+
+
+
+
+
+
+
+    var materials = {};
+    function getMaterial(key: string){
+
+        if(typeof materials[key] === 'undefined') {
+
+            let material = new BABYLON.StandardMaterial("Mat", scene);
+            material.diffuseTexture = new BABYLON.Texture("../media/images/textures/" + key + ".jpg", scene);
+            //material.bumpTexture = material.diffuseTexture;
+            material.diffuseTexture.uScale = 10;//Vertical offset of 10%
+            material.diffuseTexture.vScale = 10;//Horizontal offset of 40%
+            //material.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+            material.freeze();
+
+            materials[key] = material;
+            /**/
+
+        }
+
+        return(materials[key]);
+
+    }
+
 
 
 
@@ -84,22 +92,6 @@ function runWorld(objects){
 
 
 
-            if(typeof multiblock_materials[object.material] == 'undefined') {
-
-                let material = new BABYLON.StandardMaterial("Mat", scene);
-                material.diffuseTexture = new BABYLON.Texture("../media/images/textures/" + object.material + ".jpg", scene);
-                //material.bumpTexture = material.diffuseTexture;
-                material.diffuseTexture.uScale = 10;//Vertical offset of 10%
-                material.diffuseTexture.vScale = 10;//Horizontal offset of 40%
-                //material.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-                material.freeze();
-
-                multiblock_materials[object.material] = material;
-                /**/
-
-            }
-
-
             var position = new BABYLON.Vector3(
                 object.position.x * -BLOCK_SIZE,
                 (object.position.z+BLOCKS_1NP_LEVEL) * BLOCK_SIZE,//(0.5 - 0.9) * BLOCK_SIZE,
@@ -108,7 +100,7 @@ function runWorld(objects){
 
 
             var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
-            box.material = multiblock_materials[object.material];
+            box.material = getMaterial(object.material);
 
 
             box.isPickable = true;
@@ -347,7 +339,7 @@ function runWorld(objects){
 
             //stairs_mesh.position.y = -BLOCK_SIZE;
             stairs_mesh.rotation.y = (object.rotation)/180*Math.PI;
-            stairs_mesh.material = stone_plain;
+            stairs_mesh.material = getMaterial(object.material);
             /**/
 
             stairs_mesh.checkCollisions = true;

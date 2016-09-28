@@ -1031,6 +1031,10 @@ var GALLERY;
             Array.prototype.forEach = function (callback) {
                 return this.objects.forEach(callback);
             };
+            Array.prototype.sort = function (callback) {
+                this.objects.sort(callback);
+                return this;
+            };
             Array.prototype.push = function (object) {
                 this.objects.push(GALLERY.Objects.Object.init(object));
             };
@@ -1152,10 +1156,18 @@ var GALLERY;
         Objects.Array = Array;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-//todo to separate file
+//todo to other place
 function isBlockOn(boxes, x, y, z) {
     for (var i = 0, l = boxes.length; i < l; i++) {
         if (boxes[i].x === x && boxes[i].y === y && boxes[i].z === z && boxes[i].processed === false) {
+            return (true);
+        }
+    }
+    return (false);
+}
+function isBlockOnSearchAllMaterials(boxes_materials, x, y, z) {
+    for (var material in boxes_materials) {
+        if (isBlockOn(boxes_materials[material], x, y, z)) {
             return (true);
         }
     }
@@ -1210,6 +1222,11 @@ var GALLERY;
                 _super.apply(this, arguments);
             }
             CompiledArray.compile = function (objects) {
+                var start = new Date().getTime();
+                function time() {
+                    var end = new Date().getTime();
+                    return (Math.round((end - start) / 1000 * 10) / 10 + 's');
+                }
                 r('Compilation started');
                 var compiled_objects = new CompiledArray();
                 var _a = objects.splitTypes('block'), blocks = _a[0], non_blocks = _a[1];
@@ -1225,10 +1242,12 @@ var GALLERY;
                 var worlds = blocks.getAllWorlds();
                 r('Compiling blocks of these worlds: ' + worlds.join(', '));
                 worlds.forEach(function (world) {
-                    r('Compiling world ' + world);
+                    r('Compiling world ' + world + ' at ' + time());
                     //=========================================================================BEGIN WORLD PROCESSING
                     var boxes_materials = {};
-                    blocks.filterWorld(world).forEach(function (object) {
+                    blocks.filterWorld(world).sort(function (blockA, blockB) {
+                        return (BLOCKS_STOREYS_LEVELS[blockA.storey] - BLOCKS_STOREYS_LEVELS[blockB.storey]);
+                    }).forEach(function (object) {
                         object.storey = object.storey || '1NP';
                         var level = BLOCKS_STOREYS_LEVELS[object.storey];
                         /*var position = new BABYLON.Vector3(
@@ -1249,13 +1268,19 @@ var GALLERY;
                                  block.isPickable = true;
                                  block.checkCollisions = true;
                                  block.position = position;*/
-                                boxes_materials[object.material] = boxes_materials[object.material] || [];
-                                boxes_materials[object.material].push({
-                                    x: object.position.x,
-                                    y: object.position.y,
-                                    z: i + level,
-                                    processed: false
-                                });
+                                //todo check if there is box on that position
+                                var x = object.position.x, y = object.position.y, z = i + level;
+                                if (isBlockOnSearchAllMaterials(boxes_materials, x, y, z)) {
+                                }
+                                else {
+                                    boxes_materials[object.material] = boxes_materials[object.material] || [];
+                                    boxes_materials[object.material].push({
+                                        x: x,
+                                        y: y,
+                                        z: z,
+                                        processed: false
+                                    });
+                                }
                             }
                         }
                         //blocks.removeObjectById(object.id);
@@ -1264,15 +1289,24 @@ var GALLERY;
                             r((Math.round(block_stat.done / block_stat.all * 100 * 100) / 100) + '% Converting blocks to boxes (' + world + ')');
                         }
                     });
-                    r('In world ' + world + ' are all blocks converted.');
+                    r('In world ' + world + ' are all blocks converted to boxes.');
                     for (var material in boxes_materials) {
                         var boxes = boxes_materials[material];
+                        //---------------------------------------
+                        r(world + '[' + material + ']: ' + ' Sorting boxes.');
+                        boxes.sort(function (boxA, boxB) {
+                            return (boxB.z - boxA.z);
+                        });
+                        r(world + '[' + material + ']: ' + ' Boxes sorted');
+                        //---------------------------------------
+                        var last_boxes_length = boxes.length;
                         while (boxes.length !== 0) {
                             //boxes.forEach(function (box, box_i) {
                             //if (box_i % 1000 === 1000 - 1) {
                             //    r(world + '[' + material + ']: ' + (Math.round(box_i / boxes.length * 100 * 100) / 100) + '% Making  multiblocks from ' + boxes.length + ' boxes.');
                             //}
-                            if (boxes.length % 1000 === 1000 - 1) {
+                            if (boxes.length + 1000 < last_boxes_length) {
+                                last_boxes_length = boxes.length;
                                 r(world + '[' + material + ']: ' + ' Making  multiblocks from remaining ' + boxes.length + ' boxes.');
                             }
                             //if (box.processed === false) {
@@ -1343,6 +1377,7 @@ var GALLERY;
                             });
                             compiled_objects.push({
                                 type: 'multiblock',
+                                world: world,
                                 material: material,
                                 position: {
                                     x: (range.x.start + range.x.end) / 2,
@@ -1359,9 +1394,18 @@ var GALLERY;
                         ;
                     }
                     //=========================================================================END OF WORLD PROCESSING
-                    r('World ' + world + ' compiled');
+                    r('World ' + world + ' compiled at ' + time());
                 });
-                r('Created ' + compiled_objects.getAll().length + ' compiled objects from ' + objects.getAll().length + ' objects!');
+                r('Final sorting at ' + time());
+                compiled_objects.getAll().sort(function (objectA, objectB) {
+                    var indexA = 0, indexB = 0;
+                    if (objectA.type == 'link')
+                        indexA = -1;
+                    if (objectB.type == 'link')
+                        indexB = -1;
+                    return (indexB - indexA);
+                });
+                r('Created ' + compiled_objects.getAll().length + ' compiled objects from ' + objects.getAll().length + ' objects in time of ' + time() + '!');
                 return (compiled_objects);
             };
             return CompiledArray;
@@ -1688,6 +1732,7 @@ var GALLERY;
             __extends(Stairs, _super);
             function Stairs(object) {
                 _super.call(this, object);
+                this.material = this.material || 'stone-plain';
                 this.width = this.width || 10;
                 this.height = this.height || 2;
                 this.rotation = this.rotation || 0;
@@ -2295,8 +2340,8 @@ function save(force) {
         console.warn('Cant save because not yet loaded!');
         return;
     }
+    $button = $('#save');
     if (!force && objects.getAll().length > 1000) {
-        $button = $('#save');
         $button.addClass('unsaved');
         $button.html('<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Uložit'); //todo fa
     }
@@ -2863,14 +2908,20 @@ $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
         };
     }
 });
+var compiled_objects;
 var GALLERY;
 (function (GALLERY) {
     var Editor;
     (function (Editor) {
+        function compile() {
+            compiled_objects = new GALLERY.Objects.CompiledArray.compile(objects);
+            r(compiled_objects);
+            previewHTML();
+        }
+        Editor.compile = compile;
         function previewHTML() {
-            var compiled_objects = new GALLERY.Objects.CompiledArray.compile(objects);
             var preview = window.open("../viewer", "gallery-preview");
-            r(preview.moveToBegining);
+            //r(preview.moveToBegining);
             setTimeout(function () {
                 preview.objects = compiled_objects;
                 preview.moveToBegining.call(preview);
@@ -3249,7 +3300,7 @@ function createMap() {
         for (var key in object) {
             input_element = null;
             check_element = null;
-            if (['name', 'uri', 'key', 'href', 'target', 'world'].indexOf(key) !== -1) {
+            if (['name', 'uri', 'key', 'href', 'target', 'world', 'material'].indexOf(key) !== -1) {
                 input_element = '<input type="text">';
             }
             else if (key == 'intensity') {

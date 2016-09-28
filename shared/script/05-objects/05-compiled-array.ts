@@ -1,7 +1,7 @@
 
 
 
-//todo to separate file
+//todo to other place
 function isBlockOn(boxes,x,y,z){
     for(var i=0,l = boxes.length;i<l;i++){
         if(boxes[i].x===x && boxes[i].y===y && boxes[i].z===z && boxes[i].processed===false){
@@ -9,6 +9,19 @@ function isBlockOn(boxes,x,y,z){
         }
     }
     return(false);
+}
+
+
+
+function isBlockOnSearchAllMaterials(boxes_materials,x,y,z){
+
+    for(let material in boxes_materials){
+        if(isBlockOn(boxes_materials[material],x,y,z)){
+            return(true);
+        }
+    }
+    return(false);
+
 }
 
 
@@ -88,7 +101,15 @@ namespace GALLERY.Objects {
 
         static compile(objects: Array){
 
+            var start = new Date().getTime();
+            function time(){
+                var end = new Date().getTime();
+                return(Math.round((end - start)/1000*10)/10+'s');
+            }
             r('Compilation started');
+
+
+
 
             var compiled_objects = new CompiledArray();
 
@@ -122,11 +143,15 @@ namespace GALLERY.Objects {
             worlds.forEach(function (world) {
 
 
-                r('Compiling world '+world);
+                r('Compiling world '+world+' at '+time());
 
                 //=========================================================================BEGIN WORLD PROCESSING
                 var boxes_materials = {};
-                blocks.filterWorld(world).forEach(function (object) {
+                blocks.filterWorld(world).sort(function (blockA,blockB) {
+
+                    return(BLOCKS_STOREYS_LEVELS[blockA.storey]-BLOCKS_STOREYS_LEVELS[blockB.storey]);
+
+                }).forEach(function (object) {
 
 
 
@@ -168,15 +193,33 @@ namespace GALLERY.Objects {
                              block.checkCollisions = true;
                              block.position = position;*/
 
-                            boxes_materials[object.material] = boxes_materials[object.material] || [];
 
-                            boxes_materials[object.material].push({
-                                x: object.position.x,
-                                y: object.position.y,
-                                z: i + level,
-                                processed: false
-                            });
 
+                            //todo check if there is box on that position
+
+
+                            let x = object.position.x,
+                                y= object.position.y,
+                                z= i + level;
+
+
+                            if(isBlockOnSearchAllMaterials(boxes_materials,x,y,z)){
+
+
+                            }else {
+
+
+                                boxes_materials[object.material] = boxes_materials[object.material] || [];
+
+                                boxes_materials[object.material].push({
+                                    x: x,
+                                    y: y,
+                                    z: z,
+                                    processed: false
+                                });
+
+
+                            }
                             //r(i,level);
 
 
@@ -202,7 +245,14 @@ namespace GALLERY.Objects {
                 });
 
 
-                r('In world '+world+' are all blocks converted.');
+                r('In world '+world+' are all blocks converted to boxes.');
+
+
+
+
+
+
+
 
 
 
@@ -211,8 +261,20 @@ namespace GALLERY.Objects {
                     var boxes = boxes_materials[material];
 
 
+                    //---------------------------------------
+                    r(world + '[' + material + ']: ' +' Sorting boxes.');
+
+                    boxes.sort(function (boxA,boxB) {
+                        return(boxB.z - boxA.z)
+                    });
 
 
+                    r(world + '[' + material + ']: ' +' Boxes sorted');
+                    //---------------------------------------
+
+
+
+                    var last_boxes_length = boxes.length;
 
 
                     while(boxes.length!==0){
@@ -223,7 +285,8 @@ namespace GALLERY.Objects {
                         //    r(world + '[' + material + ']: ' + (Math.round(box_i / boxes.length * 100 * 100) / 100) + '% Making  multiblocks from ' + boxes.length + ' boxes.');
                         //}
 
-                        if (boxes.length % 1000 === 1000 - 1) {
+                        if (boxes.length+1000 < last_boxes_length) {
+                            last_boxes_length = boxes.length;
                             r(world + '[' + material + ']: ' +' Making  multiblocks from remaining ' + boxes.length + ' boxes.');
                         }
 
@@ -327,6 +390,7 @@ namespace GALLERY.Objects {
                             compiled_objects.push({
 
                                 type: 'multiblock',
+                                world: world,
                                 material: material,
                                 position: {
                                     x: (range.x.start + range.x.end) / 2,
@@ -352,14 +416,29 @@ namespace GALLERY.Objects {
                 }
                 //=========================================================================END OF WORLD PROCESSING
 
-                r('World '+world+' compiled');
+                r('World '+world+' compiled at '+time());
 
 
             });
 
 
 
-            r('Created '+compiled_objects.getAll().length+' compiled objects from '+objects.getAll().length+' objects!');
+            r('Final sorting at '+time());
+            compiled_objects.getAll().sort(function(objectA,objectB){
+
+                let indexA = 0, indexB = 0;
+
+                if(objectA.type == 'link')indexA=-1;
+                if(objectB.type == 'link')indexB=-1;
+
+
+                return(indexB-indexA);
+            });
+
+
+
+
+            r('Created '+compiled_objects.getAll().length+' compiled objects from '+objects.getAll().length+' objects in time of '+time()+'!');
 
 
             return(compiled_objects);

@@ -20,7 +20,7 @@ function onCollide(collidedMesh) {
     var object = objects.getObjectById(collidedMesh.name);
     if(object){
 
-        //r('collide',object);
+        r('collide',object);
 
         if(object.type=='link'){
 

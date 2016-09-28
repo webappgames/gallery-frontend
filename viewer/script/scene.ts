@@ -138,12 +138,20 @@ var createScene = function () {
 
 
 
+
+    var sun = new BABYLON.DirectionalLight("Dir0", new BABYLON.Vector3(-0.7, -1, -0.5), scene);
+
+
+
+
+    /**/
     //Ground
     var ground = BABYLON.Mesh.CreatePlane("ground", 10000, scene);
     ground.material = new BABYLON.StandardMaterial("groundMat", scene);
     //ground.material.diffuseColor = new BABYLON.Color3(0.5, 0.9, 0.7);
     //ground.material.backFaceCulling = false;
-    ground.material.diffuseTexture = new BABYLON.Texture("../media/images/textures/grass.jpg", scene);
+    ground.material.diffuseTexture = new BABYLON.Texture("../media/images/textures/stone-plain.jpg", scene);
+    ground.material.diffuseTexture.opacity = 0.5;
     ground.material.diffuseTexture.uScale = 100;//Vertical offset of 10%
     ground.material.diffuseTexture.vScale = 100;//Horizontal offset of 40%
     ground.material.reflectionColor = new BABYLON.Color3(0, 0, 0);
@@ -156,18 +164,17 @@ var createScene = function () {
     ground.isPickable = true;
 
     ground.checkCollisions = true;
+    /**/
 
 
 
-    var sun = new BABYLON.DirectionalLight("Dir0", new BABYLON.Vector3(-0.7, -1, -0.5), scene);
 
-
-
+    /*
     // Skybox
     var skybox = BABYLON.Mesh.CreateBox("skyBox", 10000, scene);
     var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
     skyboxMaterial.backFaceCulling = false;
-    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../media/images/skybox/TropicalSunnyDay", scene);
+    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../media/images/skyboxes/tropical-sunny-day/TropicalSunnyDay", scene);
     skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
     skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
     skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
@@ -175,6 +182,27 @@ var createScene = function () {
     skybox.material = skyboxMaterial;
     skybox.position = new BABYLON.Vector3(0, 0, 0);
     skybox.isPickable = false;
+    /**/
+
+
+    let url = 'ely_darkcity/darkcity';
+
+    // Skybox
+    var skybox = BABYLON.Mesh.CreateBox("skyBox", 10000, scene);
+    var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+    skyboxMaterial.backFaceCulling = false;
+    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../media/images/skyboxes/"+url, scene, ["_ft.jpg", "_up.jpg", "_rt.jpg", "_bk.jpg", "_dn.jpg", "_lf.jpg"]);
+    skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+    skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+    skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+    skyboxMaterial.disableLighting = true;
+    skybox.material = skyboxMaterial;
+    skybox.position = new BABYLON.Vector3(0, 0, 0);
+    skybox.isPickable = false;
+
+
+
+
 
 
 

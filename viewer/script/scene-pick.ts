@@ -46,6 +46,8 @@ function onPointerDown(evt, pickResult) {
         }else{
 
             var object = objects.getObjectById(pickResult.pickedMesh.name);
+
+            r('pick',object);
             /*var rotation_rad = (object.rotation / 180) * Math.PI;
 
              var x = object.position.x + Math.sin(-rotation_rad) * 3;

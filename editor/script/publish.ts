@@ -124,15 +124,16 @@ namespace GALLERY.Editor{
     export function previewHTML(){
 
 
-        var preview = window.open("../viewer", "gallery-preview");
+        var preview = window.open("../", "gallery-preview");
 
 
         //r(preview.moveToBegining);
 
 
         setTimeout(function () {
-            preview.objects = compiled_objects;
-            preview.moveToBegining.call(preview);
+
+            preview.GALLERY.Viewer.run.call(preview,compiled_objects);
+
         },1000);
 
 

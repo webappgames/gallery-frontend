@@ -6,14 +6,14 @@ var gates,keys;
 
 
 
-function unlockGatesAndActivateKeys(){
+function unlockGatesAndActivateKeys(key:string){
 
 
     let opening=0,closing=0;
 
     gates.forEach(function (gate) {
 
-        if(gate.object.key==location.hash){
+        if(gate.object.key==key){
             gate.mesh.checkCollisions = false;
             gate.mesh.material.alpha=0.1;
 
@@ -29,26 +29,29 @@ function unlockGatesAndActivateKeys(){
     });
 
 
-    r('Opening '+opening+' gates, Closing '+closing+' gates. ');
-
+    let activating=0,inactivating=0;
 
     links.forEach(function (link) {
 
-        if(link.object.href==location.hash){
+        //r(link.object.href,key);
+
+        if(link.object.href==key){
             link.mesh.checkCollisions = false;
             link.mesh.material.alpha=0.1;
+
+            inactivating++;
         }else{
 
             link.mesh.checkCollisions = true;
             link.mesh.material.alpha=0.95;
+
+            activating++;
         }
 
     });
 
 
-
-
-
+    r('Opening '+opening+' gates, closing '+closing+' gates. Activating '+activating+' keys, inactivating '+inactivating+' keys.');
 
 
 }

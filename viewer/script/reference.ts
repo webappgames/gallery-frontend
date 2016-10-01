@@ -8,11 +8,11 @@
 
 
 
-/// <reference path="lib/babylon.ts" />
 /// <reference path="babylon-plugins/babylon-tree.ts" />
 /// <reference path="babylon-plugins/babylon-stairs.ts" />
 
 
+/// <reference path="run-viewer.ts" />
 /// <reference path="run-world.ts" />
 /// <reference path="keys.ts" />
 /// <reference path="scene.ts" />
@@ -27,3 +27,5 @@
 
 
 /// <reference path="pointer-lock.ts" />
+
+

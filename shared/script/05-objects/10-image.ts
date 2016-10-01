@@ -28,7 +28,7 @@ namespace GALLERY.Objects{
             this.rotation = this.rotation || 0;
             this.onGround = this.onGround || false;
             this.hasAlpha = this.hasAlpha || false;
-            this.isEmitting = this.isEmitting || true;
+            if(typeof this.isEmitting == 'undefined'){this.isEmitting=true;}
             this.checkCollisions = this.checkCollisions || false;
             this.backFace = this.backFace || false;
 

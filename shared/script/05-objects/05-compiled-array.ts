@@ -432,6 +432,11 @@ namespace GALLERY.Objects {
                 if(objectB.type == 'link')indexB=-1;
 
 
+                if(objectA.type == 'environment')indexA=1;
+                if(objectB.type == 'environment')indexB=1;
+
+
+
                 return(indexB-indexA);
             });
 

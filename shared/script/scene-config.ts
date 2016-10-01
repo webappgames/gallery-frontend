@@ -7,6 +7,7 @@ const BLOCK_SIZE=5;
 //var BLOCK_SIZE_VERTICAL=10;
 //var BLOCK_SIZE_DOOR=2;
 
+const RESPAWN_VERTICAL = -30;
 const EYE_VERTICAL = 2.5;
 const LIGHT_VERTICAL = 3;
 

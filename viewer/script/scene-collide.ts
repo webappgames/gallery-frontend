@@ -28,8 +28,11 @@ function onCollide(collidedMesh) {
 
                 if (window.location.hash != object.href){
 
-                    window.location.hash = object.href;
-                    unlockGatesAndActivateKeys();
+
+                    GALLERY.Viewer.appState( '/:'+object.id+object.href,true);
+
+                    //window.location.hash = object.href;
+                    //unlockGatesAndActivateKeys(object.href);
 
                     ion.sound.play("link-key");
                     //history.pushState(null, "Galerie", "bar.html");
@@ -49,7 +52,12 @@ function onCollide(collidedMesh) {
                     //r(object.uri,object.href);
                     if(label.uri == object.href){
 
-                        moveTo(label.position.x,label.position.y,parseInt(label.rotation),label.world,label.storey,true);
+
+                        GALLERY.Viewer.appState(label.uri+window.location.hash);
+
+
+                        //todo processStateFromLocation
+                        //moveTo(label.position.x,label.position.y,parseInt(label.rotation),label.world,label.storey,true);
                         ion.sound.play("link-teleport");
 
 

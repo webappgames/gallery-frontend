@@ -21,7 +21,7 @@ function moveTo(x,y,rotation,world,storey,immediately=true) {
 
     }
 
-    r(x,y,world,storey,rotation,immediately);
+    r('Moving to ',x,y,world,storey,rotation,immediately);
 
 
     /*camera.rotation.y = -Math.PI/2 - rotation/180*Math.PI;
@@ -54,19 +54,30 @@ function moveTo(x,y,rotation,world,storey,immediately=true) {
 
 
 
+function moveToObject(object: GALLERY.Objects.Object,immediately=true){//todo use this
 
-function moveToBegining(immediately=true){
+    object.rotation = object.rotation || 0;//todo better
+    moveTo(object.position.x, object.position.y, object.rotation / 1, object.world, object.storey, immediately);
+}
 
-    objects.filterTypes('label').forEach(function (label) {
-        if(label.uri == '/'){
 
-            moveTo(label.position.x,label.position.y,label.rotation/1,label.world,label.storey,immediately);
-            return;
 
-        }
-    })
 
-    throw new Error('There is no label with uri "/"!');
+function moveToURI(uri: string,immediately=true){//todo use this
+
+    let label = objects.filterTypes('label').findBy('uri',uri);
+
+    if(label) {
+
+        moveToObject(label, immediately);
+        //moveTo(label.position.x, label.position.y, label.rotation / 1, label.world, label.storey, immediately);
+        return(true);
+    }else {
+        console.warn('There is no label with uri "'+uri+'".');
+        return(false);
+    }
+
+
 }
 
 

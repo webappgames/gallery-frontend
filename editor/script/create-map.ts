@@ -273,7 +273,10 @@ function createMap() {
             if(key=='width' || key=='height'){
                 input_element='<input type="range" min="0.2" max="16" step="0.02">';
             }else
-            if(key=='color'){
+            if(key=='fogDensity'){
+                input_element='<input type="range" min="0" max="0.05" step="0.0001">';
+            }else
+            if(key=='color' || key=='fogColor'){
                 input_element='<input type="color">';
             }else
             if(key=='rotation'/* && (object.type!=='image' && object.onGround!=='image' )*/){

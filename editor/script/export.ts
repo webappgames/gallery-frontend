@@ -49,6 +49,24 @@ namespace GALLERY.Editor{
     }
 
 
+
+
+
+    export function exportJSONCompiled(){
+
+        compiled_objects = new GALLERY.Objects.CompiledArray.compile(objects);
+
+        saveAs(
+            new Blob([JSON.stringify(compiled_objects.getAll(),null,4)], {type: "application/json;charset=utf-8"})
+            , gallery+".compiled.json"
+        );
+
+
+        //download(gallery+'.json','application/json',JSON.stringify(objects.getAll(),null,4));
+
+    }
+
+
 /*
     export function importJSON(){
 

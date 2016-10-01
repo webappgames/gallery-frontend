@@ -4,10 +4,10 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var gates, keys;
-function unlockGatesAndActivateKeys() {
+function unlockGatesAndActivateKeys(key) {
     var opening = 0, closing = 0;
     gates.forEach(function (gate) {
-        if (gate.object.key == location.hash) {
+        if (gate.object.key == key) {
             gate.mesh.checkCollisions = false;
             gate.mesh.material.alpha = 0.1;
             opening++;
@@ -18,17 +18,21 @@ function unlockGatesAndActivateKeys() {
             closing++;
         }
     });
-    r('Opening ' + opening + ' gates, Closing ' + closing + ' gates. ');
+    var activating = 0, inactivating = 0;
     links.forEach(function (link) {
-        if (link.object.href == location.hash) {
+        //r(link.object.href,key);
+        if (link.object.href == key) {
             link.mesh.checkCollisions = false;
             link.mesh.material.alpha = 0.1;
+            inactivating++;
         }
         else {
             link.mesh.checkCollisions = true;
             link.mesh.material.alpha = 0.95;
+            activating++;
         }
     });
+    r('Opening ' + opening + ' gates, closing ' + closing + ' gates. Activating ' + activating + ' keys, inactivating ' + inactivating + ' keys.');
 }
 /*! URI.js v1.17.1 http://medialize.github.io/URI.js/ */
 /* build contains: IPv6.js, punycode.js, SecondLevelDomains.js, URI.js */
@@ -1406,6 +1410,10 @@ var GALLERY;
                         indexA = -1;
                     if (objectB.type == 'link')
                         indexB = -1;
+                    if (objectA.type == 'environment')
+                        indexA = 1;
+                    if (objectB.type == 'environment')
+                        indexB = 1;
                     return (indexB - indexA);
                 });
                 r('Created ' + compiled_objects.getAll().length + ' compiled objects from ' + objects.getAll().length + ' objects in time of ' + time() + '!');
@@ -1513,6 +1521,9 @@ var GALLERY;
                 _super.call(this, object);
                 this.ground = this.ground || 'grass';
                 this.skybox = this.skybox || 'TropicalSunnyDay';
+                this.skybox_reverse = this.skybox_reverse || false;
+                this.fogDensity = this.fogDensity || 0;
+                this.fogColor = this.fogColor || '#ffffff';
             }
             Environment.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -1633,7 +1644,9 @@ var GALLERY;
                 this.rotation = this.rotation || 0;
                 this.onGround = this.onGround || false;
                 this.hasAlpha = this.hasAlpha || false;
-                this.isEmitting = this.isEmitting || true;
+                if (typeof this.isEmitting == 'undefined') {
+                    this.isEmitting = true;
+                }
                 this.checkCollisions = this.checkCollisions || false;
                 this.backFace = this.backFace || false;
             }
@@ -1889,6 +1902,7 @@ var OBJECT_TYPES = ['environment', 'light', 'label', 'tree', 'stairs', 'link', '
 var BLOCK_SIZE = 5;
 //var BLOCK_SIZE_VERTICAL=10;
 //var BLOCK_SIZE_DOOR=2;
+var RESPAWN_VERTICAL = -30;
 var EYE_VERTICAL = 2.5;
 var LIGHT_VERTICAL = 3;
 var SPEED = 7;
@@ -3036,6 +3050,67 @@ function createStairsMesh(name, stairs_count, isFull, scene) {
      */
     return stairs_mesh;
 }
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        Viewer.running = false;
+        function run(compiled_objects) {
+            Viewer.running = true;
+            objects = compiled_objects;
+            r('Running gallery with ' + objects.getAll().length + ' objects.');
+            window.onpopstate = function (event) {
+                //r("location: " + document.location + ", state: " + JSON.stringify(event.state));
+                processStateFromLocation(window.document.location);
+            };
+            appState(window.document.location.toString());
+            //processStateFromLocation(window.document.location);
+            //console.log(getStateFromLocation(document.location.toString()));
+            /*alert("location: " + document.location);
+            history.pushState({page: 1}, "title 1", "?page=1");
+            history.pushState({page: 2}, "title 2", "?page=2");
+            history.replaceState({page: 3}, "title 3", "?page=3");
+            history.back(); // alerts "location: http://example.com/example.html?page=1, state: {"page":1}"
+            history.back(); // alerts "location: http://example.com/example.html, state: null
+            history.go(2);  // alerts "location: http://example.com/example.html?page=3, state: {"page":3}
+            */
+        }
+        Viewer.run = run;
+        function appState(location, standGround) {
+            if (standGround === void 0) { standGround = false; }
+            history.replaceState(null, "Gallery", location); //todo normal name
+            history.pushState(null, "Gallery", location); //todo normal name
+            GALLERY.Viewer.processStateFromLocation(window.document.location, standGround);
+        }
+        Viewer.appState = appState;
+        function appStateBack(location, standGround) {
+            if (standGround === void 0) { standGround = false; }
+            history.back();
+            appState(window.document.location.toString());
+        }
+        Viewer.appStateBack = appStateBack;
+        function processStateFromLocation(location, standGround) {
+            if (standGround === void 0) { standGround = false; }
+            r('Processing location...');
+            var uri = new URI(location);
+            var pathname = uri.pathname();
+            if (!standGround) {
+                if (pathname.substr(0, 2) === '/:') {
+                    var objectId = pathname.substr(2);
+                    moveToObject(objects.getObjectById(objectId));
+                }
+                else {
+                    if (!moveToURI(pathname)) {
+                        moveToURI('/');
+                    }
+                }
+            }
+            unlockGatesAndActivateKeys(uri.hash());
+            //r(uri);
+        }
+        Viewer.processStateFromLocation = processStateFromLocation;
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
 /// <reference path="reference.ts" />
 //var objects;
 var meshes = [];
@@ -3072,7 +3147,7 @@ function runWorld(objects, textures) {
         }
         return (url);
     }
-    var materials = {};
+    var materials = {}; //todo DI
     function getMaterial(key) {
         if (typeof materials[key] === 'undefined') {
             var material = new BABYLON.StandardMaterial("Mat", scene);
@@ -3086,7 +3161,40 @@ function runWorld(objects, textures) {
         }
         return (materials[key]);
     }
+    var imagesMaterials = {}; //todo DI
+    function getImageMaterial(src, isEmitting, hasAlpha, backFace) {
+        var key = src + isEmitting + hasAlpha + backFace; //todo better - maybe hash
+        if (typeof imagesMaterials[key] === 'undefined') {
+            var src = src;
+            var src_uri = URI(src) //todo Di
+                .removeSearch("width");
+            var src_normal = src_uri.addSearch({ width: 512 }).toString();
+            var image_texture = new BABYLON.Texture(src_normal, scene);
+            image_texture.vOffset = 1; //Vertical offset of 10%
+            image_texture.uOffset = 1; //Horizontal offset of 40%
+            image_texture.hasAlpha = hasAlpha;
+            var material = new BABYLON.StandardMaterial("texture4", scene);
+            if (isEmitting) {
+                material.emissiveTexture = image_texture;
+                material.backFaceCulling = !(backFace);
+                material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
+                material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
+                material.specularPower = 32;
+                //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
+                material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
+                material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+            }
+            else {
+                material.diffuseTexture = image_texture;
+            }
+            material.freeze();
+            imagesMaterials[key] = material;
+        }
+        return (imagesMaterials[key]);
+    }
+    var endless = false;
     //var wasVideo = false;
+    //==================================================================================================================
     objects.forEach(function (object) {
         object.storey = object.storey || '1NP';
         var level = BLOCKS_STOREYS_LEVELS[object.storey];
@@ -3114,6 +3222,10 @@ function runWorld(objects, textures) {
                 ground.checkCollisions = true;
                 meshes.push(ground);
             }
+            else {
+                endless = true;
+                r('Activating endless multiblocks.');
+            }
             var url = object.skybox + '/' + object.skybox;
             // Skybox
             var skybox = BABYLON.Mesh.CreateBox("skyBox", 10000, scene);
@@ -3128,11 +3240,33 @@ function runWorld(objects, textures) {
             skybox.position = new BABYLON.Vector3(0, 0, 0);
             skybox.isPickable = false;
             meshes.push(skybox);
+            if (object.skybox_reverse) {
+                skybox.rotation.z = Math.PI;
+            }
+            if (object.fogDensity) {
+                scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
+                scene.fogDensity = object.fogDensity;
+                scene.fogColor = BABYLON.Color3.FromHexString(object.fogColor);
+            }
+            else {
+                scene.fogMode = BABYLON.Scene.FOGMODE_NONE;
+            }
         }
         else if (object.type == 'block') {
             throw new Error('Block should not be in compiled objects.');
         }
         else if (object.type == 'multiblock') {
+            //--------------------------------------Endless
+            if (endless) {
+                var bottom = object.position.z - object.size.z / 2;
+                if (bottom <= 0) {
+                    var top_2 = object.position.z + object.size.z / 2;
+                    bottom -= 1000;
+                    object.position.z = (top_2 + bottom) / 2;
+                    object.size.z = top_2 - bottom;
+                }
+            }
+            //--------------------------------------
             var position = new BABYLON.Vector3(object.position.x * -BLOCK_SIZE, (object.position.z + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
             object.position.y * BLOCK_SIZE);
             var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
@@ -3157,53 +3291,13 @@ function runWorld(objects, textures) {
             meshes.push(light);
         }
         else if (object.type == 'image') {
-            //object.rotation = 200;
-            //r('image',object);
             if (typeof object.rotation === 'number') {
                 var rotation_rad = (object.rotation / 180) * Math.PI;
-                //Simple crate
-                //var box = new BABYLON.Mesh.CreateBox("image", BLOCK_SIZE, scene);
-                //box.material = new BABYLON.StandardMaterial("Mat", scene);
-                //box.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
                 var image = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
-                var src = object.src;
-                var src_uri = URI(src)
-                    .removeSearch("width");
-                var src_normal = src_uri.addSearch({ width: 512 }).toString();
-                var image_texture = new BABYLON.Texture(src_normal, scene);
-                image_texture.vOffset = 1; //Vertical offset of 10%
-                image_texture.uOffset = 1; //Horizontal offset of 40%
-                image_texture.hasAlpha = object.hasAlpha;
-                image.material = new BABYLON.StandardMaterial("texture4", scene);
-                if (object.isEmitting) {
-                    image.material.emissiveTexture = image_texture;
-                    image.material.backFaceCulling = !(object.backFace);
-                    image.material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
-                    image.material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
-                    image.material.specularPower = 32;
-                    //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
-                    image.material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
-                    image.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
-                }
-                else {
-                    image.material.diffuseTexture = image_texture;
-                }
-                image.material.freeze();
-                /*if(!wasVideo) {
-
-                    image.material.emissiveTexture = new BABYLON.VideoTexture(src_normal, ['media/images/textures/video.mp4'], scene);
-                    //image.material.emissiveTexture.vOffset = 1;//Vertical offset of 10%
-                    //image.material.emissiveTexture.uOffset = 1;//Horizontal offset of 40%
-
-                    //image.rotation.z = Math.PI;
-                    wasVideo=true;
-
-
-                }else {}*/
-                //box.material.emissiveTexture.hasAlpha = true;//Has an alpha
+                image.material = getImageMaterial(object.src, object.isEmitting, object.hasAlpha, object.backFace);
                 if (object.onGround) {
                     image.position = position;
-                    image.position.y = 0.05;
+                    image.position.y = (level + BLOCKS_1NP_LEVEL + 0.5) * BLOCK_SIZE + 0.1;
                     image.rotation.x = Math.PI / 2;
                     image.rotation.y = Math.PI + rotation_rad;
                 }
@@ -3314,7 +3408,7 @@ function runWorld(objects, textures) {
             console.warn('Unknown object type "' + object.type + '", maybe version mismatch between editor and this viewer.');
         }
     });
-    unlockGatesAndActivateKeys();
+    //unlockGatesAndActivateKeys();
 }
 function clearWorld() {
     meshes.forEach(function (mesh) {
@@ -3331,7 +3425,9 @@ var createScene = function () {
     //var light0 = new BABYLON.DirectionalLight("Omni", new BABYLON.Vector3(-2, -5, 2), scene);
     //var light1 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(2, -5, -2), scene);
     // Need a free camera for collisions
-    var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, EYE_VERTICAL * BLOCK_SIZE, 30 * BLOCK_SIZE), scene);
+    var camera = new BABYLON.VirtualJoysticksCamera("VJC", BABYLON.Vector3.Zero(), scene);
+    //var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, EYE_VERTICAL * BLOCK_SIZE, 30*BLOCK_SIZE), scene);
+    scene.activeCamera = camera;
     camera.rotation.y = Math.PI;
     camera.attachControl(canvas, true);
     camera.angularSensibility = 1000;
@@ -3384,11 +3480,17 @@ var createScene = function () {
         /*camera_mesh.position = camera.position;
         camera_mesh.moveWithCollisions(scene.gravity);
         camera.position = camera_mesh.position;*/
-        if (camera.rotation.x < -0.5) {
-            camera.rotation.x = -0.5;
+        if (camera.position.y < RESPAWN_VERTICAL * BLOCK_SIZE) {
+            if (GALLERY.Viewer.running) {
+                GALLERY.Viewer.appStateBack();
+            }
         }
-        if (camera.rotation.x > 0.5) {
-            camera.rotation.x = 0.5;
+        var limit = (Math.PI / 2) * (3 / 4);
+        if (camera.rotation.x < -limit) {
+            camera.rotation.x = -limit;
+        }
+        if (camera.rotation.x > limit) {
+            camera.rotation.x = limit;
         }
     });
     //camera.mode = 1;
@@ -3402,6 +3504,8 @@ var createScene = function () {
 
     };*/
     var sun = new BABYLON.DirectionalLight("Dir0", new BABYLON.Vector3(-0.7, -1, -0.5), scene);
+    var sun2 = new BABYLON.DirectionalLight("Dir0", new BABYLON.Vector3(0.7, -1, 0.5), scene);
+    sun2.intensity = 0.5;
     /*
     // Skybox
     var skybox = BABYLON.Mesh.CreateBox("skyBox", 10000, scene);
@@ -3481,8 +3585,9 @@ function onCollide(collidedMesh) {
         if (object.type == 'link') {
             if (object.href.substr(0, 1) === '#') {
                 if (window.location.hash != object.href) {
-                    window.location.hash = object.href;
-                    unlockGatesAndActivateKeys();
+                    GALLERY.Viewer.appState('/:' + object.id + object.href, true);
+                    //window.location.hash = object.href;
+                    //unlockGatesAndActivateKeys(object.href);
                     ion.sound.play("link-key");
                 } /*else{
 
@@ -3494,7 +3599,9 @@ function onCollide(collidedMesh) {
                 objects.filterTypes('label').forEach(function (label) {
                     //r(object.uri,object.href);
                     if (label.uri == object.href) {
-                        moveTo(label.position.x, label.position.y, parseInt(label.rotation), label.world, label.storey, true);
+                        GALLERY.Viewer.appState(label.uri + window.location.hash);
+                        //todo processStateFromLocation
+                        //moveTo(label.position.x,label.position.y,parseInt(label.rotation),label.world,label.storey,true);
                         ion.sound.play("link-teleport");
                     }
                 });
@@ -3559,7 +3666,7 @@ function moveTo(x, y, rotation, world, storey, immediately) {
         world_selected = world;
         immediately = true;
     }
-    r(x, y, world, storey, rotation, immediately);
+    r('Moving to ', x, y, world, storey, rotation, immediately);
     /*camera.rotation.y = -Math.PI/2 - rotation/180*Math.PI;
     camera.rotation.x = 0;
     camera.rotation.z = 0;
@@ -3571,15 +3678,23 @@ function moveTo(x, y, rotation, world, storey, immediately) {
     var babylon_position = new BABYLON.Vector3(x * -BLOCK_SIZE, (level + EYE_VERTICAL) * BLOCK_SIZE, y * BLOCK_SIZE);
     moveToBabylon(babylon_position, babylon_rotation, immediately);
 }
-function moveToBegining(immediately) {
+function moveToObject(object, immediately) {
     if (immediately === void 0) { immediately = true; }
-    objects.filterTypes('label').forEach(function (label) {
-        if (label.uri == '/') {
-            moveTo(label.position.x, label.position.y, label.rotation / 1, label.world, label.storey, immediately);
-            return;
-        }
-    });
-    throw new Error('There is no label with uri "/"!');
+    object.rotation = object.rotation || 0; //todo better
+    moveTo(object.position.x, object.position.y, object.rotation / 1, object.world, object.storey, immediately);
+}
+function moveToURI(uri, immediately) {
+    if (immediately === void 0) { immediately = true; }
+    var label = objects.filterTypes('label').findBy('uri', uri);
+    if (label) {
+        moveToObject(label, immediately);
+        //moveTo(label.position.x, label.position.y, label.rotation / 1, label.world, label.storey, immediately);
+        return (true);
+    }
+    else {
+        console.warn('There is no label with uri "' + uri + '".');
+        return (false);
+    }
 }
 function moveToBabylon(babylon_position, babylon_rotation, immediately) {
     if (immediately) {
@@ -3730,6 +3845,7 @@ canvas.requestPointerLock = canvas.requestPointerLock ||
     canvas.mozRequestPointerLock;
 document.exitPointerLock = document.exitPointerLock ||
     document.mozExitPointerLock;
+//canvas.requestPointerLock();
 pointer_lock.onclick = function (e) {
     e.preventDefault();
     //setTimeout(//todo is there a better solution?
@@ -3745,13 +3861,13 @@ function lockChangeAlert() {
     if (document.pointerLockElement === canvas ||
         document.mozPointerLockElement === canvas) {
         console.log('The pointer lock status is now locked');
-        //document.addEventListener("mousemove", mouseMove, false);
+        document.addEventListener("mousemove", mouseMove, false);
         canvas.focus();
         pointer_lock.innerHTML = '<p>Esc</p>';
     }
     else {
         console.log('The pointer lock status is now unlocked');
-        //document.removeEventListener("mousemove", mouseMove, false);
+        document.removeEventListener("mousemove", mouseMove, false);
         pointer_lock.innerHTML = '<p><i class="fa fa-arrows" aria-hidden="true"></i></p>';
         camera.detachControl(canvas);
         setTimeout(function () {
@@ -3759,30 +3875,22 @@ function lockChangeAlert() {
         }, IMMEDIATELY_MS);
     }
 }
-/*
-function mouseMove (e) {
-
-    r('mousemove');
-
+function mouseMove(e) {
+    //r('mousemove');
     var movementX = e.movementX ||
-        e.mozMovementX          ||
+        e.mozMovementX ||
         0;
-
     var movementY = e.movementY ||
-        e.mozMovementY      ||
+        e.mozMovementY ||
         0;
-
-
-    camera.rotation.y+=(movementX/10)/180*Math.PI;
-    camera.rotation.x+=(movementY/10)/180*Math.PI;
-
-
-}*/ 
+    camera.rotation.y += (movementX / 10) / 180 * Math.PI;
+    camera.rotation.x += (movementY / 10) / 180 * Math.PI;
+}
 /// <reference path="../../shared/reference.ts" />
 /// <reference path="lib/ion.sound.ts" />
-/// <reference path="lib/babylon.ts" />
 /// <reference path="babylon-plugins/babylon-tree.ts" />
 /// <reference path="babylon-plugins/babylon-stairs.ts" />
+/// <reference path="run-viewer.ts" />
 /// <reference path="run-world.ts" />
 /// <reference path="keys.ts" />
 /// <reference path="scene.ts" />
@@ -3793,7 +3901,7 @@ function mouseMove (e) {
 /// <reference path="popup-window.ts" />
 /// <reference path="gates.ts" />
 /// <reference path="sounds.ts" />
-/// <reference path="pointer-lock.ts" /> 
+/// <reference path="pointer-lock.ts" />
 /// <reference path="reference.ts" />
 var controls_keys = {
     'UP': [38, 87],
@@ -3885,9 +3993,6 @@ var keys_tick = function (timestamp) {
         }
     }
     if (controls_down.JUMP) {
-        //on_air=true;
-        //if(!on_air) {
-        camera.position.y += 1.6;
     }
     if (controls_down.REFRESH) {
         runGallery(objects);

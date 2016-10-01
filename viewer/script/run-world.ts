@@ -62,7 +62,7 @@ function runWorld(objects,textures){
     }
 
 
-    var materials = {};
+    var materials = {};//todo DI
     function getMaterial(key: string){
 
         if(typeof materials[key] === 'undefined') {
@@ -87,9 +87,75 @@ function runWorld(objects,textures){
 
 
 
+    var imagesMaterials = {};//todo DI
+    function getImageMaterial(src: string,isEmitting: boolean,hasAlpha: boolean,backFace: boolean){
+
+        let key = src+isEmitting+hasAlpha+backFace;//todo better - maybe hash
+
+        if(typeof imagesMaterials[key] === 'undefined') {
 
 
+            var src = src;
+            var src_uri = URI(src)//todo Di
+                .removeSearch("width");
+            var src_normal = src_uri.addSearch({width: 512}).toString();
+
+
+            let image_texture = new BABYLON.Texture(src_normal, scene);
+            image_texture.vOffset = 1;//Vertical offset of 10%
+            image_texture.uOffset = 1;//Horizontal offset of 40%
+            image_texture.hasAlpha = hasAlpha;
+
+
+            let material = new BABYLON.StandardMaterial("texture4", scene);
+
+
+            if (isEmitting) {
+
+
+                material.emissiveTexture = image_texture;
+
+
+                material.backFaceCulling = !(backFace);
+                material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
+                material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
+                material.specularPower = 32;
+                //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
+                material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
+                material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+
+
+            } else {
+
+                material.diffuseTexture = image_texture;
+
+            }
+
+            material.freeze();
+            imagesMaterials[key] = material;
+
+        }
+
+
+        return(imagesMaterials[key]);
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+    let endless = false;
     //var wasVideo = false;
+
+
+    //==================================================================================================================
 
     objects.forEach(function (object) {
 
@@ -132,12 +198,19 @@ function runWorld(objects,textures){
                 ground.checkCollisions = true;
                 meshes.push(ground);
                 /**/
+            }else{
+                endless = true;
+                r('Activating endless multiblocks.');
+
             }
 
 
 
 
             let url = object.skybox+'/'+object.skybox;
+
+
+
 
             // Skybox
             var skybox = BABYLON.Mesh.CreateBox("skyBox", 10000, scene);
@@ -153,6 +226,22 @@ function runWorld(objects,textures){
             skybox.isPickable = false;
             meshes.push(skybox);
 
+            if(object.skybox_reverse){
+
+                skybox.rotation.z = Math.PI;
+
+            }
+
+            if(object.fogDensity) {
+                scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
+                scene.fogDensity = object.fogDensity;
+                scene.fogColor = BABYLON.Color3.FromHexString(object.fogColor);
+            }else{
+                scene.fogMode = BABYLON.Scene.FOGMODE_NONE;
+            }
+
+
+
 
         }else
         if(object.type=='block') {
@@ -162,6 +251,23 @@ function runWorld(objects,textures){
         }else
         if(object.type=='multiblock') {
 
+
+            //--------------------------------------Endless
+            if(endless) {
+                let bottom = object.position.z - object.size.z / 2;
+                if (bottom <= 0) {
+
+                    let top = object.position.z + object.size.z / 2;
+
+
+                    bottom -= 1000;
+
+
+                    object.position.z = (top + bottom ) / 2;
+                    object.size.z = top - bottom;
+                }
+            }
+            //--------------------------------------
 
 
 
@@ -185,9 +291,10 @@ function runWorld(objects,textures){
             box.scaling.y=object.size.z;
             box.scaling.z=object.size.y;
 
+
+
             sunShadowGenerator.getShadowMap().renderList.push(box);
             meshes.push(box);
-
 
 
 
@@ -210,87 +317,13 @@ function runWorld(objects,textures){
         }else
         if(object.type=='image'){
 
-            //object.rotation = 200;
-            //r('image',object);
-
             if(typeof object.rotation === 'number') {
 
 
                 var rotation_rad = (object.rotation / 180) * Math.PI;
-                //Simple crate
-                //var box = new BABYLON.Mesh.CreateBox("image", BLOCK_SIZE, scene);
-                //box.material = new BABYLON.StandardMaterial("Mat", scene);
-                //box.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
 
                 var image = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
-
-
-
-
-
-                var src = object.src;
-                var src_uri = URI(src)
-                    .removeSearch("width");
-                var src_normal = src_uri.addSearch({ width: 512 }).toString();
-
-
-                let image_texture = new BABYLON.Texture(src_normal, scene);
-                image_texture.vOffset = 1;//Vertical offset of 10%
-                image_texture.uOffset = 1;//Horizontal offset of 40%
-                image_texture.hasAlpha = object.hasAlpha;
-
-
-
-
-
-                image.material = new BABYLON.StandardMaterial("texture4", scene);
-
-
-
-
-                if(object.isEmitting) {
-
-
-                    image.material.emissiveTexture = image_texture;
-
-
-                    image.material.backFaceCulling = !(object.backFace);
-                    image.material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
-                    image.material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
-                    image.material.specularPower = 32;
-                    //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
-                    image.material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
-                    image.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
-
-
-
-                }else{
-
-                    image.material.diffuseTexture = image_texture;
-
-                }
-
-                image.material.freeze();
-
-
-
-                /*if(!wasVideo) {
-
-                    image.material.emissiveTexture = new BABYLON.VideoTexture(src_normal, ['media/images/textures/video.mp4'], scene);
-                    //image.material.emissiveTexture.vOffset = 1;//Vertical offset of 10%
-                    //image.material.emissiveTexture.uOffset = 1;//Horizontal offset of 40%
-
-                    //image.rotation.z = Math.PI;
-                    wasVideo=true;
-
-
-                }else {}*/
-
-
-
-                //box.material.emissiveTexture.hasAlpha = true;//Has an alpha
-
-
+                image.material = getImageMaterial(object.src,object.isEmitting,object.hasAlpha,object.backFace);
 
 
 
@@ -298,7 +331,8 @@ function runWorld(objects,textures){
 
 
                     image.position = position;
-                    image.position.y = 0.05;
+                    image.position.y = (level+BLOCKS_1NP_LEVEL+0.5) * BLOCK_SIZE + 0.1;
+
 
                     image.rotation.x = Math.PI/2;
                     image.rotation.y = Math.PI + rotation_rad;
@@ -499,11 +533,7 @@ function runWorld(objects,textures){
     });
 
 
-
-    unlockGatesAndActivateKeys();
-
-
-
+    //unlockGatesAndActivateKeys();
 
 
 

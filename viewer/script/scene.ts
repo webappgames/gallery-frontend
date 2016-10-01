@@ -18,7 +18,12 @@ var createScene = function () {
     //var light1 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(2, -5, -2), scene);
 
     // Need a free camera for collisions
-    var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, EYE_VERTICAL * BLOCK_SIZE, 30*BLOCK_SIZE), scene);
+
+    var camera = new BABYLON.VirtualJoysticksCamera("VJC", BABYLON.Vector3.Zero(), scene);
+    //var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, EYE_VERTICAL * BLOCK_SIZE, 30*BLOCK_SIZE), scene);
+
+
+    scene.activeCamera = camera;
     camera.rotation.y=Math.PI;
     camera.attachControl(canvas, true);
     camera.angularSensibility = 1000;
@@ -109,12 +114,28 @@ var createScene = function () {
         camera.position = camera_mesh.position;*/
 
 
-        if (camera.rotation.x < -0.5) {//Top
-            camera.rotation.x = -0.5;
+
+        if(camera.position.y < RESPAWN_VERTICAL * BLOCK_SIZE){
+            if(GALLERY.Viewer.running){
+                GALLERY.Viewer.appStateBack();
+            }
         }
-        if (camera.rotation.x > 0.5) {//Bottom
-            camera.rotation.x = 0.5;
+
+
+
+
+        const limit = (Math.PI/2)*(3/4);
+
+        if (camera.rotation.x < -limit) {//Top
+            camera.rotation.x = -limit;
         }
+        if (camera.rotation.x > limit) {//Bottom
+            camera.rotation.x = limit;
+        }
+
+
+
+
     });
     //camera.mode = 1;
 
@@ -138,8 +159,10 @@ var createScene = function () {
 
 
 
-
     var sun = new BABYLON.DirectionalLight("Dir0", new BABYLON.Vector3(-0.7, -1, -0.5), scene);
+    var sun2 = new BABYLON.DirectionalLight("Dir0", new BABYLON.Vector3(0.7, -1, 0.5), scene);
+    sun2.intensity = 0.5;
+
 
 
 

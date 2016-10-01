@@ -150,7 +150,7 @@ var keys_tick = function (timestamp) {
         //on_air=true;
 
         //if(!on_air) {
-            camera.position.y += 1.6;
+            //camera.position.y += 1.6;
         //}
        /*if(camera.position.y<15){
            movement.z = 5;

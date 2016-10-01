@@ -1416,6 +1416,10 @@ var GALLERY;
                         indexA = -1;
                     if (objectB.type == 'link')
                         indexB = -1;
+                    if (objectA.type == 'environment')
+                        indexA = 1;
+                    if (objectB.type == 'environment')
+                        indexB = 1;
                     return (indexB - indexA);
                 });
                 r('Created ' + compiled_objects.getAll().length + ' compiled objects from ' + objects.getAll().length + ' objects in time of ' + time() + '!');
@@ -1523,6 +1527,9 @@ var GALLERY;
                 _super.call(this, object);
                 this.ground = this.ground || 'grass';
                 this.skybox = this.skybox || 'TropicalSunnyDay';
+                this.skybox_reverse = this.skybox_reverse || false;
+                this.fogDensity = this.fogDensity || 0;
+                this.fogColor = this.fogColor || '#ffffff';
             }
             Environment.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -1643,7 +1650,9 @@ var GALLERY;
                 this.rotation = this.rotation || 0;
                 this.onGround = this.onGround || false;
                 this.hasAlpha = this.hasAlpha || false;
-                this.isEmitting = this.isEmitting || true;
+                if (typeof this.isEmitting == 'undefined') {
+                    this.isEmitting = true;
+                }
                 this.checkCollisions = this.checkCollisions || false;
                 this.backFace = this.backFace || false;
             }
@@ -1899,6 +1908,7 @@ var OBJECT_TYPES = ['environment', 'light', 'label', 'tree', 'stairs', 'link', '
 var BLOCK_SIZE = 5;
 //var BLOCK_SIZE_VERTICAL=10;
 //var BLOCK_SIZE_DOOR=2;
+var RESPAWN_VERTICAL = -30;
 var EYE_VERTICAL = 2.5;
 var LIGHT_VERTICAL = 3;
 var SPEED = 7;
@@ -2873,6 +2883,12 @@ var GALLERY;
             //download(gallery+'.json','application/json',JSON.stringify(objects.getAll(),null,4));
         }
         Editor.exportJSON = exportJSON;
+        function exportJSONCompiled() {
+            compiled_objects = new GALLERY.Objects.CompiledArray.compile(objects);
+            saveAs(new Blob([JSON.stringify(compiled_objects.getAll(), null, 4)], { type: "application/json;charset=utf-8" }), gallery + ".compiled.json");
+            //download(gallery+'.json','application/json',JSON.stringify(objects.getAll(),null,4));
+        }
+        Editor.exportJSONCompiled = exportJSONCompiled;
     })(Editor = GALLERY.Editor || (GALLERY.Editor = {}));
 })(GALLERY || (GALLERY = {}));
 /*<?php
@@ -2970,11 +2986,10 @@ var GALLERY;
         }
         Editor.compile = compile;
         function previewHTML() {
-            var preview = window.open("../viewer", "gallery-preview");
+            var preview = window.open("../", "gallery-preview");
             //r(preview.moveToBegining);
             setTimeout(function () {
-                preview.objects = compiled_objects;
-                preview.moveToBegining.call(preview);
+                preview.GALLERY.Viewer.run.call(preview, compiled_objects);
             }, 1000);
             /*var theWindow = window.open("../viewer", "gallery-preview"),
                 theDoc = theWindow.document,
@@ -3368,7 +3383,10 @@ function createMap() {
             else if (key == 'width' || key == 'height') {
                 input_element = '<input type="range" min="0.2" max="16" step="0.02">';
             }
-            else if (key == 'color') {
+            else if (key == 'fogDensity') {
+                input_element = '<input type="range" min="0" max="0.05" step="0.0001">';
+            }
+            else if (key == 'color' || key == 'fogColor') {
                 input_element = '<input type="color">';
             }
             else if (key == 'rotation' /* && (object.type!=='image' && object.onGround!=='image' )*/) {

@@ -12,6 +12,7 @@ document.exitPointerLock = document.exitPointerLock ||
 
 
 
+//canvas.requestPointerLock();
 pointer_lock.onclick = function(e) {
 
     e.preventDefault();
@@ -34,7 +35,7 @@ function lockChangeAlert() {
     if(document.pointerLockElement === canvas ||
         document.mozPointerLockElement === canvas) {
         console.log('The pointer lock status is now locked');
-        //document.addEventListener("mousemove", mouseMove, false);
+        document.addEventListener("mousemove", mouseMove, false);
 
         canvas.focus();
         pointer_lock.innerHTML='<p>Esc</p>';
@@ -44,7 +45,7 @@ function lockChangeAlert() {
 
     } else {
         console.log('The pointer lock status is now unlocked');
-        //document.removeEventListener("mousemove", mouseMove, false);
+        document.removeEventListener("mousemove", mouseMove, false);
 
         pointer_lock.innerHTML='<p><i class="fa fa-arrows" aria-hidden="true"></i></p>';
 
@@ -64,10 +65,10 @@ function lockChangeAlert() {
 }
 
 
-/*
+
 function mouseMove (e) {
 
-    r('mousemove');
+    //r('mousemove');
 
     var movementX = e.movementX ||
         e.mozMovementX          ||
@@ -82,4 +83,4 @@ function mouseMove (e) {
     camera.rotation.x+=(movementY/10)/180*Math.PI;
 
 
-}*/
+}

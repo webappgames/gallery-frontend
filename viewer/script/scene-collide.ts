@@ -69,6 +69,13 @@ function onCollide(collidedMesh) {
 
             }
 
+            if(object.script){
+
+                collidedMesh.dispose();
+                eval(object.script);
+
+            }
+
 
 
             /*

@@ -7,7 +7,8 @@ namespace GALLERY.Objects{
 
         public ground: string;
         public skybox: string;
-        public skybox_reverse: boolean;
+        public skyboxSize: number;
+        public skybox_reverse: boolean;//todo camelCase
         public fogDensity: number;
         public fogColor: string;
 
@@ -19,6 +20,7 @@ namespace GALLERY.Objects{
 
             this.ground = this.ground || 'grass';
             this.skybox = this.skybox || 'TropicalSunnyDay';
+            this.skyboxSize = this.skyboxSize || 10000;
             this.skybox_reverse = this.skybox_reverse || false;
             this.fogDensity = this.fogDensity || 0;
             this.fogColor = this.fogColor || '#ffffff';

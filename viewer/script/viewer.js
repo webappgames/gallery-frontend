@@ -3,6 +3,41 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        var Effects;
+        (function (Effects) {
+            function nuke() {
+                scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
+                scene.fogDensity = 0.5;
+                scene.fogColor = BABYLON.Color3.FromHexString('#ffffff');
+                scene.registerBeforeRender(function () {
+                    scene.fogDensity = scene.fogDensity * 0.995;
+                });
+                ion.sound.play("nuke");
+                /*var easingFunction = new BABYLON.CircleEase();
+                easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
+        
+        
+                BABYLON.Animation.CreateAndStartAnimation(
+                    "anim",
+                    scene,
+                    "fogDensity",
+                    30,
+                    60,
+                    camera.position,
+                    0.02,
+        
+                    BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE,
+                    easingFunction
+                );*/
+            }
+            Effects.nuke = nuke;
+        })(Effects = Viewer.Effects || (Viewer.Effects = {}));
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
 var gates, keys;
 function unlockGatesAndActivateKeys(key) {
     var opening = 0, closing = 0;
@@ -20,16 +55,18 @@ function unlockGatesAndActivateKeys(key) {
     });
     var activating = 0, inactivating = 0;
     links.forEach(function (link) {
-        //r(link.object.href,key);
-        if (link.object.href == key) {
-            link.mesh.checkCollisions = false;
-            link.mesh.material.alpha = 0.1;
-            inactivating++;
-        }
-        else {
-            link.mesh.checkCollisions = true;
-            link.mesh.material.alpha = 0.95;
-            activating++;
+        //r(link.object.href.substr(0,1));
+        if (link.object.href.substr(0, 1) === '#') {
+            if (link.object.href == key) {
+                link.mesh.checkCollisions = false;
+                link.mesh.material.alpha = 0.1;
+                inactivating++;
+            }
+            else {
+                link.mesh.checkCollisions = true;
+                link.mesh.material.alpha = 0.95;
+                activating++;
+            }
         }
     });
     r('Opening ' + opening + ' gates, closing ' + closing + ' gates. Activating ' + activating + ' keys, inactivating ' + inactivating + ' keys.');
@@ -1521,6 +1558,7 @@ var GALLERY;
                 _super.call(this, object);
                 this.ground = this.ground || 'grass';
                 this.skybox = this.skybox || 'TropicalSunnyDay';
+                this.skyboxSize = this.skyboxSize || 10000;
                 this.skybox_reverse = this.skybox_reverse || false;
                 this.fogDensity = this.fogDensity || 0;
                 this.fogColor = this.fogColor || '#ffffff';
@@ -1837,8 +1875,10 @@ var GALLERY;
                 _super.call(this, object);
                 this.radius = this.radius || 1;
                 this.href = this.href || '/';
+                this.script = this.script || '';
                 this.target = this.target || '';
                 this.color = this.color || '#00ff00';
+                this.hidden = this.hidden || false;
             }
             Link.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -2992,10 +3032,11 @@ function createStairsMesh(name, stairs_count, isFull, scene) {
     var b = new BABYLON.Vector3(0, 0, -0.5);
     var i1, i2;
     var bottom_y;
+    r('v1');
     for (var i = 0; i < stairs_count; i++) {
-        i1 = (Math.floor((i - 1) / 2) * 2 + 1);
+        i1 = (Math.floor((i - 1) / 2) * 2 + 2);
         i2 = (Math.floor(i / 2) * 2);
-        var top_1 = new BABYLON.Vector3(1 - (i1 / stairs_count) - 0.5, i2 / stairs_count, 0);
+        var top_1 = new BABYLON.Vector3(1 - (i1 / stairs_count) - 0.5, (i2) / stairs_count, 0);
         if (isFull) {
             bottom_y = 0;
         }
@@ -3226,22 +3267,25 @@ function runWorld(objects, textures) {
                 endless = true;
                 r('Activating endless multiblocks.');
             }
-            var url = object.skybox + '/' + object.skybox;
-            // Skybox
-            var skybox = BABYLON.Mesh.CreateBox("skyBox", 10000, scene);
-            var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
-            skyboxMaterial.backFaceCulling = false;
-            skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../media/images/skyboxes/" + url, scene, ["_ft.jpg", "_up.jpg", "_rt.jpg", "_bk.jpg", "_dn.jpg", "_lf.jpg"]);
-            skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-            skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-            skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-            skyboxMaterial.disableLighting = true;
-            skybox.material = skyboxMaterial;
-            skybox.position = new BABYLON.Vector3(0, 0, 0);
-            skybox.isPickable = false;
-            meshes.push(skybox);
-            if (object.skybox_reverse) {
-                skybox.rotation.z = Math.PI;
+            if (object.skybox !== 'none') {
+                var url = object.skybox + '/' + object.skybox;
+                // Skybox
+                var skybox = BABYLON.Mesh.CreateBox("skyBox", object.skyboxSize, scene);
+                var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+                skyboxMaterial.backFaceCulling = false;
+                skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../media/images/skyboxes/" + url, scene, ["_ft.jpg", "_up.jpg", "_rt.jpg", "_bk.jpg", "_dn.jpg", "_lf.jpg"]);
+                skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+                skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+                skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+                skyboxMaterial.disableLighting = true;
+                skybox.material = skyboxMaterial;
+                skybox.position = position; //new BABYLON.Vector3(0, 0, 0);
+                skybox.position.y = 0;
+                skybox.isPickable = false;
+                meshes.push(skybox);
+                if (object.skybox_reverse) {
+                    skybox.rotation.z = Math.PI;
+                }
             }
             if (object.fogDensity) {
                 scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
@@ -3373,7 +3417,10 @@ function runWorld(objects, textures) {
             link.position.y += EYE_VERTICAL * BLOCK_SIZE;
             link.material = new BABYLON.StandardMaterial("texture2", scene);
             link.material.diffuseColor = BABYLON.Color3.FromHexString(object.color);
-            link.material.alpha = object.opacity;
+            //link.material.alpha = object.opacity;
+            if (object.hidden) {
+                link.material.alpha = 0;
+            }
             link.checkCollisions = true;
             //light.position.y = LIGHT_VERTICAL * BLOCK_SIZE;
             links.push({
@@ -3606,6 +3653,10 @@ function onCollide(collidedMesh) {
                     }
                 });
             }
+            if (object.script) {
+                collidedMesh.dispose();
+                eval(object.script);
+            }
         }
         else if (object.type == 'gate') {
             //camera.position.x -= Math.sin(camera.rotation.y)*5;
@@ -3832,6 +3883,7 @@ ion.sound({
         { name: "link-key" },
         //{name: "link-key-none"},
         { name: "gate-locked", multiplay: false },
+        { name: "nuke", multiplay: false },
     ],
     // main config
     path: "../media/sound/",

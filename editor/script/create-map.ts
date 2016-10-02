@@ -258,6 +258,9 @@ function createMap() {
             if(['name','uri','key','href','target','world','material','skybox','ground'].indexOf(key)!==-1){
                 input_element='<input type="text">';
             }else
+            if(['script'].indexOf(key)!==-1){
+                input_element=' <textarea></textarea>';
+            }else
             if(key=='intensity'){
                 input_element='<input type="range" min="0.1" max="5" step="0.1">';
             }else
@@ -279,6 +282,9 @@ function createMap() {
             if(key=='color' || key=='fogColor'){
                 input_element='<input type="color">';
             }else
+            if(key=='skyboxSize'){
+                input_element='<input type="number">';
+            }else
             if(key=='rotation'/* && (object.type!=='image' && object.onGround!=='image' )*/){
                 input_element='<input type="range" min="0" max="360" step="10">';
             }else
@@ -294,8 +300,17 @@ function createMap() {
 
                 $input_element = $(input_element);
 
+                //r($input_element,object[key]);
                 //r(object[key]);
-                $input_element.attr('value',object[key]);
+                //$input_element.val(object[key]);
+
+                if($input_element.prop("tagName")=='INPUT'){//todo better
+                    $input_element.attr('value',object[key]);
+                }else{
+                    $input_element.text(object[key]);
+                }
+
+
                 $input_element.attr('data-id',id);
                 $input_element.attr('data-key',key);
 
@@ -339,7 +354,7 @@ function createMap() {
 
 
 
-        $selected_properties.find('input').change(function () {
+        $selected_properties.find('input, textarea').change(function () {
 
             var $this = $(this);
 

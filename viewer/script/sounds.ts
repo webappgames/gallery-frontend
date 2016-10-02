@@ -15,6 +15,9 @@ ion.sound({
         {name: "link-key"},
         //{name: "link-key-none"},
         {name: "gate-locked",multiplay: false},
+
+
+        {name: "nuke",multiplay: false},
     ],
 
     // main config

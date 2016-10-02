@@ -20,15 +20,16 @@ function createStairsMesh(name, stairs_count, isFull, scene){
 
     let bottom_y:number;
 
+
     for(let i=0;i<stairs_count;i++){
 
 
-        i1 = (Math.floor((i-1)/2)*2+1);
+        i1 = (Math.floor((i-1)/2)*2+2);
         i2 = (Math.floor(i/2)*2);
 
         let top = new BABYLON.Vector3(
             1-(i1/stairs_count)-0.5,
-            i2/stairs_count,
+            (i2)/stairs_count,
             0);
 
         if(isFull){

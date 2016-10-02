@@ -207,28 +207,31 @@ function runWorld(objects,textures){
 
 
 
-            let url = object.skybox+'/'+object.skybox;
+            if(object.skybox!=='none') {
+
+                let url = object.skybox + '/' + object.skybox;
 
 
+                // Skybox
+                var skybox = BABYLON.Mesh.CreateBox("skyBox", object.skyboxSize, scene);
+                var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+                skyboxMaterial.backFaceCulling = false;
+                skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../media/images/skyboxes/" + url, scene, ["_ft.jpg", "_up.jpg", "_rt.jpg", "_bk.jpg", "_dn.jpg", "_lf.jpg"]);
+                skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+                skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+                skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+                skyboxMaterial.disableLighting = true;
+                skybox.material = skyboxMaterial;
+                skybox.position = position;//new BABYLON.Vector3(0, 0, 0);
+                skybox.position.y = 0;
+                skybox.isPickable = false;
+                meshes.push(skybox);
 
+                if (object.skybox_reverse) {
 
-            // Skybox
-            var skybox = BABYLON.Mesh.CreateBox("skyBox", 10000, scene);
-            var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
-            skyboxMaterial.backFaceCulling = false;
-            skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../media/images/skyboxes/"+url, scene, ["_ft.jpg", "_up.jpg", "_rt.jpg", "_bk.jpg", "_dn.jpg", "_lf.jpg"]);
-            skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-            skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-            skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-            skyboxMaterial.disableLighting = true;
-            skybox.material = skyboxMaterial;
-            skybox.position = new BABYLON.Vector3(0, 0, 0);
-            skybox.isPickable = false;
-            meshes.push(skybox);
+                    skybox.rotation.z = Math.PI;
 
-            if(object.skybox_reverse){
-
-                skybox.rotation.z = Math.PI;
+                }
 
             }
 
@@ -466,7 +469,11 @@ function runWorld(objects,textures){
 
             link.material = new BABYLON.StandardMaterial("texture2", scene);
             link.material.diffuseColor = BABYLON.Color3.FromHexString(object.color);
-            link.material.alpha = object.opacity;
+            //link.material.alpha = object.opacity;
+
+            if(object.hidden){
+                link.material.alpha = 0;
+            }
 
 
             link.checkCollisions = true;

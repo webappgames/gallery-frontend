@@ -7,8 +7,10 @@ namespace GALLERY.Objects{
         public storey: string;
         public radius: number;
         public href: string;
+        public script: string;
         public target: string;
         public color: string;
+        public hidden: boolean;
 
 
         constructor(object){
@@ -17,8 +19,10 @@ namespace GALLERY.Objects{
 
             this.radius = this.radius || 1;
             this.href = this.href || '/';
+            this.script = this.script || '';
             this.target = this.target || '';
             this.color = this.color || '#00ff00';
+            this.hidden = this.hidden || false;
 
 
         }

@@ -33,19 +33,21 @@ function unlockGatesAndActivateKeys(key:string){
 
     links.forEach(function (link) {
 
-        //r(link.object.href,key);
+        //r(link.object.href.substr(0,1));
 
-        if(link.object.href==key){
-            link.mesh.checkCollisions = false;
-            link.mesh.material.alpha=0.1;
+        if(link.object.href.substr(0,1)==='#') {
+            if (link.object.href == key) {
+                link.mesh.checkCollisions = false;
+                link.mesh.material.alpha = 0.1;
 
-            inactivating++;
-        }else{
+                inactivating++;
+            } else {
 
-            link.mesh.checkCollisions = true;
-            link.mesh.material.alpha=0.95;
+                link.mesh.checkCollisions = true;
+                link.mesh.material.alpha = 0.95;
 
-            activating++;
+                activating++;
+            }
         }
 
     });

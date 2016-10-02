@@ -13,10 +13,19 @@ var GALLERY;
                 scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
                 scene.fogDensity = 0.5;
                 scene.fogColor = BABYLON.Color3.FromHexString('#ffffff');
+                Viewer.running = true;
                 scene.registerBeforeRender(function () {
+                    if (!Viewer.running)
+                        return;
                     scene.fogDensity = scene.fogDensity * 0.995;
+                    if (scene.fogDensity < 0.02) {
+                        scene.fogDensity = 0.02;
+                        Viewer.running = false;
+                    }
                 });
-                ion.sound.play("nuke");
+                setTimeout(function () {
+                    ion.sound.play("nuke");
+                }, 300);
                 /*var easingFunction = new BABYLON.CircleEase();
                 easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
         
@@ -3032,7 +3041,6 @@ function createStairsMesh(name, stairs_count, isFull, scene) {
     var b = new BABYLON.Vector3(0, 0, -0.5);
     var i1, i2;
     var bottom_y;
-    r('v1');
     for (var i = 0; i < stairs_count; i++) {
         i1 = (Math.floor((i - 1) / 2) * 2 + 2);
         i2 = (Math.floor(i / 2) * 2);
@@ -3915,12 +3923,14 @@ function lockChangeAlert() {
         console.log('The pointer lock status is now locked');
         document.addEventListener("mousemove", mouseMove, false);
         canvas.focus();
-        pointer_lock.innerHTML = '<p>Esc</p>';
+        //pointer_lock.innerHTML='<p>Esc</p>';
+        $(pointer_lock).hide();
     }
     else {
         console.log('The pointer lock status is now unlocked');
         document.removeEventListener("mousemove", mouseMove, false);
-        pointer_lock.innerHTML = '<p><i class="fa fa-arrows" aria-hidden="true"></i></p>';
+        //pointer_lock.innerHTML='<p><i class="fa fa-arrows" aria-hidden="true"></i></p>';
+        $(pointer_lock).show();
         camera.detachControl(canvas);
         setTimeout(function () {
             camera.attachControl(canvas);

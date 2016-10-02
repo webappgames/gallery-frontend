@@ -38,7 +38,8 @@ function lockChangeAlert() {
         document.addEventListener("mousemove", mouseMove, false);
 
         canvas.focus();
-        pointer_lock.innerHTML='<p>Esc</p>';
+        //pointer_lock.innerHTML='<p>Esc</p>';
+        $(pointer_lock).hide();
 
         //triggerMouseEvent (canvas, "mousedown");
 
@@ -47,8 +48,8 @@ function lockChangeAlert() {
         console.log('The pointer lock status is now unlocked');
         document.removeEventListener("mousemove", mouseMove, false);
 
-        pointer_lock.innerHTML='<p><i class="fa fa-arrows" aria-hidden="true"></i></p>';
-
+        //pointer_lock.innerHTML='<p><i class="fa fa-arrows" aria-hidden="true"></i></p>';
+        $(pointer_lock).show();
 
         camera.detachControl(canvas);
 

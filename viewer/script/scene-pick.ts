@@ -2,6 +2,11 @@
 
 
 function onPointerDown(evt, pickResult) {
+
+
+    canvas.requestPointerLock();
+
+    /*
     // if the click hits the ground object, we change the impact position
     if (pickResult.hit) {
 
@@ -48,13 +53,6 @@ function onPointerDown(evt, pickResult) {
             var object = objects.getObjectById(pickResult.pickedMesh.name);
 
             r('pick',object);
-            /*var rotation_rad = (object.rotation / 180) * Math.PI;
-
-             var x = object.position.x + Math.sin(-rotation_rad) * 3;
-             var y = object.position.y + Math.cos(-rotation_rad) * 3;
-
-
-             moveTo(x, y, object.rotation);*/
 
             var src = object.src;
             var src_uri = URI(src)
@@ -75,4 +73,7 @@ function onPointerDown(evt, pickResult) {
         //r(object);
 
     }
+
+    */
 };
+

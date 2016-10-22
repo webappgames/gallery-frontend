@@ -359,6 +359,8 @@ namespace GALLERY.Editor{
 
             var formData = new FormData();
             formData.append('compiled', JSON.stringify(compiled_objects.getAll()));
+            formData.append('script', VIEWER_SCRIPT);
+            formData.append('style', VIEWER_STYLE);
             xmlHttpRequest.send(formData);
 
 

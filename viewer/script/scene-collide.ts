@@ -72,11 +72,13 @@ function onCollide(collidedMesh) {
 
                 r('opening new tab...');
 
-                function openInNewTab(url) {
+                /*function openInNewTab(url) {
                     var win = window.open(url, '_blank');
                     win.focus();
                 }
-                openInNewTab(object.href);
+                openInNewTab(object.href);*/
+
+                Window.open(object.name, '<iframe src="'+object.href+'"></iframe>', function(){}, 'NORMAL');
                 collidedMesh.dispose();
 
 
@@ -88,7 +90,14 @@ function onCollide(collidedMesh) {
             if(object.script){
 
                 collidedMesh.dispose();
-                eval(object.script);
+
+                try {
+                    eval(object.script);
+                }
+                catch(error) {
+                    console.warn(error);
+                }
+
 
             }
 

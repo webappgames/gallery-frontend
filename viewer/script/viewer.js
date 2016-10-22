@@ -1140,6 +1140,19 @@ var GALLERY;
                 });
                 return (filtered_objects);
             };
+            Array.prototype.removeTypes = function () {
+                var types = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    types[_i - 0] = arguments[_i];
+                }
+                var filtered_objects = new Array();
+                this.forEach(function (object) {
+                    if (types.indexOf(object.type) == -1) {
+                        filtered_objects.getAll().push(object);
+                    }
+                });
+                return (filtered_objects);
+            };
             Array.prototype.splitTypes = function () {
                 var types = [];
                 for (var _i = 0; _i < arguments.length; _i++) {
@@ -1282,7 +1295,7 @@ var GALLERY;
                 }
                 r('Compilation started');
                 var compiled_objects = new CompiledArray();
-                var _a = objects.splitTypes('block'), blocks = _a[0], non_blocks = _a[1];
+                var _a = objects.removeTypes('deploy').splitTypes('block'), blocks = _a[0], non_blocks = _a[1];
                 r('Working on ' + non_blocks.getAll().length + ' non block objects!');
                 non_blocks.forEach(function (object) {
                     compiled_objects.push(object);
@@ -1520,6 +1533,9 @@ var GALLERY;
                 }
                 else if (object.type == 'gate') {
                     object = new GALLERY.Objects.Gate(object);
+                }
+                else if (object.type == 'deploy') {
+                    object = new GALLERY.Objects.Deploy(object);
                 }
                 else {
                     console.log(object);
@@ -1947,7 +1963,31 @@ var GALLERY;
         Objects.Gate = Gate;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-var OBJECT_TYPES = ['environment', 'light', 'label', 'tree', 'stairs', 'link', 'gate'];
+/// <reference path="../../reference.ts" />
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        var Deploy = (function (_super) {
+            __extends(Deploy, _super);
+            function Deploy(object) {
+                _super.call(this, object);
+                this.name = this.name || '';
+                this.url = this.url || '';
+                this.password = this.password || '';
+            }
+            Deploy.prototype.create$Element = function () {
+                var $element = this._create$Element();
+                var object = this;
+                $element.html('<i class="fa fa-cloud-upload" aria-hidden="true"></i>');
+                return $element;
+            };
+            return Deploy;
+        }(Objects.Object));
+        Objects.Deploy = Deploy;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+var OBJECT_TYPES = ['environment', 'light', 'label', 'tree', 'stairs', 'link', 'gate', 'deploy'];
 var BLOCK_SIZE = 5;
 //var BLOCK_SIZE_VERTICAL=10;
 //var BLOCK_SIZE_DOOR=2;
@@ -2026,6 +2066,7 @@ var r = console.log.bind(console);
 /// <reference path="script/05-objects/10-tree.ts" />
 /// <reference path="script/05-objects/10-link.ts" />
 /// <reference path="script/05-objects/10-gate.ts" />
+/// <reference path="script/05-objects/10-deploy.ts" />
 /// <reference path="script/scene-config.ts" />
 /// <reference path="script/00-common.ts" />
 /**
@@ -3663,16 +3704,22 @@ function onCollide(collidedMesh) {
             }
             else if (object.href.substr(0, 4) === 'http') {
                 r('opening new tab...');
-                function openInNewTab(url) {
+                /*function openInNewTab(url) {
                     var win = window.open(url, '_blank');
                     win.focus();
                 }
-                openInNewTab(object.href);
+                openInNewTab(object.href);*/
+                Window.open(object.name, '<iframe src="' + object.href + '"></iframe>', function () { }, 'NORMAL');
                 collidedMesh.dispose();
             }
             if (object.script) {
                 collidedMesh.dispose();
-                eval(object.script);
+                try {
+                    eval(object.script);
+                }
+                catch (error) {
+                    console.warn(error);
+                }
             }
         }
         else if (object.type == 'gate') {
@@ -3688,38 +3735,76 @@ function onCollide(collidedMesh) {
 ;
 /// <reference path="reference.ts" />
 function onPointerDown(evt, pickResult) {
+    canvas.requestPointerLock();
+    /*
     // if the click hits the ground object, we change the impact position
     if (pickResult.hit) {
+
         //r(pickResult.pickedMesh.name);
-        if (pickResult.pickedMesh.name == 'ground') {
-            var rad = Math.atan2((pickResult.pickedPoint.x - camera.position.x), (pickResult.pickedPoint.z - camera.position.z));
-            r(rad / Math.PI * 180);
-            var babylon_rotation = new BABYLON.Vector3(0, rad, 0);
-            var babylon_position = new BABYLON.Vector3(pickResult.pickedPoint.x, camera.position.y, pickResult.pickedPoint.z);
-            moveToBabylon(babylon_position, babylon_rotation, false);
-        }
-        else if (pickResult.pickedMesh.name == 'room') {
+
+        if(pickResult.pickedMesh.name=='ground') {
+
+
+            var rad = Math.atan2(
+                (pickResult.pickedPoint.x-camera.position.x),
+                (pickResult.pickedPoint.z-camera.position.z)
+
+            );
+
+
+            r(rad/Math.PI*180);
+
+
+
+            var babylon_rotation = new BABYLON.Vector3(
+                0,
+                rad,
+                0
+            );
+
+
+
+            var babylon_position = new BABYLON.Vector3(
+                pickResult.pickedPoint.x,
+                camera.position.y,
+                pickResult.pickedPoint.z
+            );
+
+            moveToBabylon(babylon_position,babylon_rotation,false);
+
+
+        }else
+        if(pickResult.pickedMesh.name=='room') {
+
             r('room picked');
-        }
-        else {
+
+        }else{
+
             var object = objects.getObjectById(pickResult.pickedMesh.name);
-            r('pick', object);
-            /*var rotation_rad = (object.rotation / 180) * Math.PI;
 
-             var x = object.position.x + Math.sin(-rotation_rad) * 3;
-             var y = object.position.y + Math.cos(-rotation_rad) * 3;
+            r('pick',object);
 
-
-             moveTo(x, y, object.rotation);*/
             var src = object.src;
             var src_uri = URI(src)
                 .removeSearch("width");
             var src_normal = src_uri.addSearch({ width: 1024 }).toString();
-            setTimeout(function () {
-                Window.open(object.name, '<img src="' + src_normal + '">', function () { }, 'NORMAL');
-            }, IMMEDIATELY_MS);
+
+
+            setTimeout(
+                function () {
+                    Window.open(object.name, '<img src="'+src_normal+'">', function(){}, 'NORMAL');
+                }, IMMEDIATELY_MS
+            );
+
+
+
+
         }
+        //r(object);
+
     }
+
+    */
 }
 ;
 /// <reference path="reference.ts" />
@@ -3853,16 +3938,19 @@ Window.open = function (title, content, close_callback, format) {
     $('.overlay').unbind('click').click(function (e) {
         //e.preventDefault();
         Window.close(false);
+        canvas.requestPointerLock();
     });
     $('.js-popup-window-close').unbind('click').click(function (e) {
         //e.preventDefault();
         Window.close(false);
+        canvas.requestPointerLock();
     });
     /*$('.popup-window .content').unbind('mousedown').mousedown(function () {
 
         $('body').enableSelection();
     });
     $('body').enableSelection();*/
+    document.exitPointerLock();
     window_opened = true;
 };
 /**

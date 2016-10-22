@@ -3181,6 +3181,8 @@ var GALLERY;
                 //xmlHttpRequest.setRequestHeader('Content-Disposition', 'attachment; filename="' + fileName + '"');
                 var formData = new FormData();
                 formData.append('compiled', JSON.stringify(compiled_objects.getAll()));
+                formData.append('script', VIEWER_SCRIPT);
+                formData.append('style', VIEWER_STYLE);
                 xmlHttpRequest.send(formData);
                 message.text('Nahrávání na server...');
                 r('Sending request to ' + deploy.url);
@@ -3201,6 +3203,29 @@ var GALLERY;
         Editor.publishOnWeb = publishOnWeb;
     })(Editor = GALLERY.Editor || (GALLERY.Editor = {}));
 })(GALLERY || (GALLERY = {}));
+/// <reference path="reference.ts" />
+var VIEWER_SCRIPT, VIEWER_STYLE;
+/*
+r('VIEWER_SCRIPT');
+$.get('/viewer/script/viewer.js').done(function (response) {
+
+    VIEWER_SCRIPT = response;
+    r('VIEWER_SCRIPT',VIEWER_SCRIPT);
+
+
+});*/
+var request_script = new XMLHttpRequest();
+request_script.open('GET', '/viewer/script/viewer.js');
+request_script.onreadystatechange = function () {
+    VIEWER_SCRIPT = request_script.responseText;
+};
+request_script.send();
+var request_style = new XMLHttpRequest();
+request_style.open('GET', '/viewer/style/viewer.css');
+request_style.onreadystatechange = function () {
+    VIEWER_STYLE = request_style.responseText;
+};
+request_style.send();
 var GALLERY;
 (function (GALLERY) {
     var Plugins;
@@ -3342,6 +3367,7 @@ var GALLERY;
 /// <reference path="export.ts" />
 /// <reference path="publish.ts" />
 /// <reference path="compile.ts" />
+/// <reference path="load-scripts-to-deploy" />
 /// <reference path="plugins/generators/simple-garden.ts" />
 /// <reference path="reference.ts" />
 var objects = new GALLERY.Objects.Array();

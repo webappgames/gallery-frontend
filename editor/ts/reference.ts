@@ -19,6 +19,7 @@
 /// <reference path="export.ts" />
 /// <reference path="publish.ts" />
 /// <reference path="compile.ts" />
+/// <reference path="load-scripts-to-deploy" />
 
 
 /// <reference path="plugins/generators/simple-garden.ts" />

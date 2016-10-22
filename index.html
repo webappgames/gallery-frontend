@@ -31,62 +31,49 @@
 
 
 
-<nav id="menu">
 
-    <!--
-        <a onclick="moveTo(<?=$index_label['position']['x']?>,<?=$index_label['position']['y']?>,<?=$index_label['rotation']?>,'<?=$index_label['world']?>','<?=$index_label['storey']?>',false);" id="menu-title">
-            <img src="<?=htmlspecialchars($page['favicon'])?>" alt="<?=htmlspecialchars($page['name'])?>">
-            <h1><?=htmlspecialchars($page['name'])?></h1>
-        </a>
-
-
-
-
-        <ul>
-
-            <?php
-
-
-
-            foreach($objects as $object) {
-
-
-                if($object['type']=='label') {
-
-                    if ($object['uri'] == '/')continue;
-
-                    ?>
-
-                    <li>
-                        <a onclick="moveTo(<?=$object['position']['x']?>,<?=$object['position']['y']?>,<?=$object['rotation']?>,'<?=$object['world']?>','<?=$object['storey']?>',false);"><?=$object['name']?></a>
-                     </li>
-
-                    <?php
-
-                }
-            }
-
-
-
-            ?>
-
-        </ul>
-
-        <!--<div id="languages" >
-            <a href="http://pavolhejny.com" class="selected"><img src="images/locale/en.png" alt="en flag" title="English"></a>
-            <a href="http://pavolhejny.cz" class=""><img src="images/locale/cs.png" alt="cs flag" title="Čeština"></a>
-        </div>-->
-
-</nav>
+<canvas id="scene"></canvas>
 
 
 
 
 
-<div class="key topleft" id="pointer-lock"><p><i class="fa fa-arrows" aria-hidden="true"></i></p></div>
+
+
+<div class="key topleft hints" id="pointer-lock">
+    <p><i class="fa fa-arrows" aria-hidden="true"></i></p>
+
+    <img src="/media/images/ui/mouse-lock.png" width="200">
+
+</div>
 
 
 
+<div class="bottomright hints" id="wasd">
+
+
+    <img src="/media/images/ui/keys-text.png" width="200">
+    <table>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><div class="key"><p>W</p></div></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><div class="key"><p>A</p></div></td>
+            <td><div class="key"><p>S</p></div></td>
+            <td><div class="key"><p>D</p></div></td>
+        </tr>
+    </table>
+
+
+
+</div>
 
 
 
@@ -110,17 +97,18 @@
 
 
 
-<canvas id="scene"></canvas>
+
+<!--=================================================================================================================-->
+
+
+
+
 
 
 
 <script src="viewer/script/lib/babylon.js"></script>
 <script src="node_modules/handjs/hand.min.js"></script>
-
-
 <script src="viewer/script/viewer.js"></script>
-
-
 <script>
     //todo
 </script>

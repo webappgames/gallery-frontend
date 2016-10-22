@@ -83,6 +83,10 @@ namespace GALLERY.Objects{
 
                 object = new GALLERY.Objects.Gate(object);
 
+            }else if (object.type == 'deploy') {
+
+                object = new GALLERY.Objects.Deploy(object);
+
             }
             else {
 

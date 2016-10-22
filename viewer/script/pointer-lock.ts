@@ -2,6 +2,7 @@
 
 
 var pointer_lock = document.getElementById("pointer-lock");
+var $hints = $('.hints');
 
 
 canvas.requestPointerLock = canvas.requestPointerLock ||
@@ -39,7 +40,7 @@ function lockChangeAlert() {
 
         canvas.focus();
         //pointer_lock.innerHTML='<p>Esc</p>';
-        $(pointer_lock).hide();
+        $hints.hide();
 
         //triggerMouseEvent (canvas, "mousedown");
 
@@ -49,7 +50,7 @@ function lockChangeAlert() {
         document.removeEventListener("mousemove", mouseMove, false);
 
         //pointer_lock.innerHTML='<p><i class="fa fa-arrows" aria-hidden="true"></i></p>';
-        $(pointer_lock).show();
+        $hints.show();
 
         camera.detachControl(canvas);
 

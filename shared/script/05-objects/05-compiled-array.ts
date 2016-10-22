@@ -116,7 +116,7 @@ namespace GALLERY.Objects {
 
 
 
-            let [blocks, non_blocks] =  objects.splitTypes('block');
+            let [blocks, non_blocks] =  objects.removeTypes('deploy').splitTypes('block');
 
 
 

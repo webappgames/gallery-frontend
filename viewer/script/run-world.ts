@@ -389,7 +389,7 @@ function runWorld(objects,textures){
 
 
 
-            var PHI = 2/(1+Math.sqrt(5)); //golden ratio for scale
+            const PHI = 2/(1+Math.sqrt(5)); //golden ratio for scale
 
             /*{
              size:1

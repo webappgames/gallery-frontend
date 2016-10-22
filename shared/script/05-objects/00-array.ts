@@ -147,6 +147,24 @@ namespace GALLERY.Objects{
             return (filtered_objects);
         }
 
+        removeTypes(...types: string[]): Array {
+
+
+            var filtered_objects = new Array();
+
+            this.forEach(function (object) {
+
+                if ((types as [any]).indexOf(object.type) == -1) {
+
+                    filtered_objects.getAll().push(object);
+
+                }
+
+            });
+
+            return (filtered_objects);
+        }
+
         splitTypes(...types: string[]): Array {
 
 

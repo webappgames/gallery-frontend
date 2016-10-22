@@ -3661,6 +3661,15 @@ function onCollide(collidedMesh) {
                     }
                 });
             }
+            else if (object.href.substr(0, 4) === 'http') {
+                r('opening new tab...');
+                function openInNewTab(url) {
+                    var win = window.open(url, '_blank');
+                    win.focus();
+                }
+                openInNewTab(object.href);
+                collidedMesh.dispose();
+            }
             if (object.script) {
                 collidedMesh.dispose();
                 eval(object.script);
@@ -3901,6 +3910,7 @@ ion.sound({
 });
 /// <reference path="reference.ts" />
 var pointer_lock = document.getElementById("pointer-lock");
+var $hints = $('.hints');
 canvas.requestPointerLock = canvas.requestPointerLock ||
     canvas.mozRequestPointerLock;
 document.exitPointerLock = document.exitPointerLock ||
@@ -3924,13 +3934,13 @@ function lockChangeAlert() {
         document.addEventListener("mousemove", mouseMove, false);
         canvas.focus();
         //pointer_lock.innerHTML='<p>Esc</p>';
-        $(pointer_lock).hide();
+        $hints.hide();
     }
     else {
         console.log('The pointer lock status is now unlocked');
         document.removeEventListener("mousemove", mouseMove, false);
         //pointer_lock.innerHTML='<p><i class="fa fa-arrows" aria-hidden="true"></i></p>';
-        $(pointer_lock).show();
+        $hints.show();
         camera.detachControl(canvas);
         setTimeout(function () {
             camera.attachControl(canvas);

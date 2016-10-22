@@ -20,6 +20,7 @@
 
     <script src="../node_modules/jszip/dist/jszip.min.js"></script>
     <script src="../node_modules/file-saver/FileSaver.min.js"></script>
+    <!--<script src="../node_modules/superagent/superagent.js"></script>-->
 
 
 
@@ -44,7 +45,7 @@
 
             <div>
                 <label>Galerie:</label>
-                <input type="text" name="gallery" pattern="([a-z]|[A-Z]|[0-9]|-){2,15}" title="Zadejte název pouze z písmen, čísel a pomlček, který má 2-15 znaků." >
+                <input type="text" name="gallery" pattern="([a-z]|[A-Z]|[0-9]|-|\.){2,150}" title="Zadejte název pouze z písmen, čísel, teček a pomlček, který má 2-150 znaků." >
             </div>
             <div>
                 <label>Heslo:</label>
@@ -137,7 +138,10 @@
 
                 <li onclick="GALLERY.Editor.exportJSON();">Exportovat</li>
                 <li onclick="GALLERY.Editor.exportJSONCompiled();">Exportovat kompilované</li>
-                <li onclick="GALLERY.Editor.publishHTML();">Publikovat</li>
+
+
+                <li onclick="GALLERY.Editor.publishOnWeb();">Publikovat na web</li>
+                <!--<li onclick="GALLERY.Editor.publishHTML();">Publikovat</li>-->
 
                <!-- <li onclick="GALLERY.Editor.importJSON();">Importovat</li>-->
 
@@ -225,14 +229,16 @@
 
 
 
+    </nav>
+
+
+
+    <section class="top-panel">
         <div id="message-zone">
         </div>
+    </section>
 
 
-
-
-
-    </nav>
 
 
 

@@ -67,6 +67,22 @@ function onCollide(collidedMesh) {
                 });
 
 
+            }else
+            if(object.href.substr(0,4)==='http') {
+
+                r('opening new tab...');
+
+                function openInNewTab(url) {
+                    var win = window.open(url, '_blank');
+                    win.focus();
+                }
+                openInNewTab(object.href);
+                collidedMesh.dispose();
+
+
+
+
+
             }
 
             if(object.script){

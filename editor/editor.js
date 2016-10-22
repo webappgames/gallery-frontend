@@ -1100,6 +1100,19 @@ var GALLERY;
                 });
                 return (filtered_objects);
             };
+            Array.prototype.removeTypes = function () {
+                var types = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    types[_i - 0] = arguments[_i];
+                }
+                var filtered_objects = new Array();
+                this.forEach(function (object) {
+                    if (types.indexOf(object.type) == -1) {
+                        filtered_objects.getAll().push(object);
+                    }
+                });
+                return (filtered_objects);
+            };
             Array.prototype.splitTypes = function () {
                 var types = [];
                 for (var _i = 0; _i < arguments.length; _i++) {
@@ -1242,7 +1255,7 @@ var GALLERY;
                 }
                 r('Compilation started');
                 var compiled_objects = new CompiledArray();
-                var _a = objects.splitTypes('block'), blocks = _a[0], non_blocks = _a[1];
+                var _a = objects.removeTypes('deploy').splitTypes('block'), blocks = _a[0], non_blocks = _a[1];
                 r('Working on ' + non_blocks.getAll().length + ' non block objects!');
                 non_blocks.forEach(function (object) {
                     compiled_objects.push(object);
@@ -1480,6 +1493,9 @@ var GALLERY;
                 }
                 else if (object.type == 'gate') {
                     object = new GALLERY.Objects.Gate(object);
+                }
+                else if (object.type == 'deploy') {
+                    object = new GALLERY.Objects.Deploy(object);
                 }
                 else {
                     console.log(object);
@@ -1907,7 +1923,31 @@ var GALLERY;
         Objects.Gate = Gate;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-var OBJECT_TYPES = ['environment', 'light', 'label', 'tree', 'stairs', 'link', 'gate'];
+/// <reference path="../../reference.ts" />
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        var Deploy = (function (_super) {
+            __extends(Deploy, _super);
+            function Deploy(object) {
+                _super.call(this, object);
+                this.name = this.name || '';
+                this.url = this.url || '';
+                this.password = this.password || '';
+            }
+            Deploy.prototype.create$Element = function () {
+                var $element = this._create$Element();
+                var object = this;
+                $element.html('<i class="fa fa-cloud-upload" aria-hidden="true"></i>');
+                return $element;
+            };
+            return Deploy;
+        }(Objects.Object));
+        Objects.Deploy = Deploy;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+var OBJECT_TYPES = ['environment', 'light', 'label', 'tree', 'stairs', 'link', 'gate', 'deploy'];
 var BLOCK_SIZE = 5;
 //var BLOCK_SIZE_VERTICAL=10;
 //var BLOCK_SIZE_DOOR=2;
@@ -1986,6 +2026,7 @@ var r = console.log.bind(console);
 /// <reference path="script/05-objects/10-tree.ts" />
 /// <reference path="script/05-objects/10-link.ts" />
 /// <reference path="script/05-objects/10-gate.ts" />
+/// <reference path="script/05-objects/10-deploy.ts" />
 /// <reference path="script/scene-config.ts" />
 /// <reference path="script/00-common.ts" />
 /// <reference path="reference.ts" />
@@ -2947,36 +2988,47 @@ foreach($objects as $object) {
 
 ?>
 */
-$.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
+/*$.ajaxTransport("+binary", function(options, originalOptions, jqXHR){
     // check for conditions and support for blob / arraybuffer response type
-    if (window.FormData && ((options.dataType && (options.dataType == 'binary')) || (options.data && ((window.ArrayBuffer && options.data instanceof ArrayBuffer) || (window.Blob && options.data instanceof Blob))))) {
+    if (window.FormData && ((options.dataType && (options.dataType == 'binary')) || (options.data && ((window.ArrayBuffer && options.data instanceof ArrayBuffer) || (window.Blob && options.data instanceof Blob)))))
+    {
         return {
             // create new XMLHttpRequest
-            send: function (headers, callback) {
+            send: function(headers, callback){
                 // setup all variables
-                var xhr = new XMLHttpRequest(), url = options.url, type = options.type, async = options.async || true, 
-                // blob or arraybuffer. Default is blob
-                dataType = options.responseType || "blob", data = options.data || null, username = options.username || null, password = options.password || null;
-                xhr.addEventListener('load', function () {
+                var xhr = new XMLHttpRequest(),
+                    url = options.url,
+                    type = options.type,
+                    async = options.async || true,
+                    // blob or arraybuffer. Default is blob
+                    dataType = options.responseType || "blob",
+                    data = options.data || null,
+                    username = options.username || null,
+                    password = options.password || null;
+
+                xhr.addEventListener('load', function(){
                     var data = {};
                     data[options.dataType] = xhr.response;
                     // make callback and send data
                     callback(xhr.status, xhr.statusText, data, xhr.getAllResponseHeaders());
                 });
+
                 xhr.open(type, url, async, username, password);
+
                 // setup custom headers
-                for (var i in headers) {
-                    xhr.setRequestHeader(i, headers[i]);
+                for (var i in headers ) {
+                    xhr.setRequestHeader(i, headers[i] );
                 }
+
                 xhr.responseType = dataType;
                 xhr.send(data);
             },
-            abort: function () {
+            abort: function(){
                 jqXHR.abort();
             }
         };
     }
-});
+});*/
 var compiled_objects;
 var GALLERY;
 (function (GALLERY) {
@@ -3117,6 +3169,36 @@ var GALLERY;
             });
         }
         Editor.publishHTML = publishHTML;
+        function publishOnWeb() {
+            var deploys = objects.filterTypes('deploy');
+            if (deploys.getAll().length == 1) {
+                var message = Message.info();
+                var deploy = deploys.getAll()[0];
+                compiled_objects = new GALLERY.Objects.CompiledArray.compile(objects);
+                var xmlHttpRequest = new XMLHttpRequest();
+                xmlHttpRequest.open('POST', deploy.url + '/update.php?password=' + deploy.password, true);
+                //xmlHttpRequest.setRequestHeader('Content-Type', mimeType);
+                //xmlHttpRequest.setRequestHeader('Content-Disposition', 'attachment; filename="' + fileName + '"');
+                var formData = new FormData();
+                formData.append('compiled', JSON.stringify(compiled_objects.getAll()));
+                xmlHttpRequest.send(formData);
+                message.text('Nahrávání na server...');
+                r('Sending request to ' + deploy.url);
+                xmlHttpRequest.onload = function () {
+                    r('Status of request changed to ' + xmlHttpRequest.status);
+                    if (xmlHttpRequest.status == 200) {
+                        message.text('Uploaded!', 'success').close();
+                    }
+                    else {
+                        message.text('Error when deploying, maybe wrong password or url.', 'error').close();
+                    }
+                };
+            }
+            else {
+                alert('There is ' + deploys.getAll().length + ' deploy objects!');
+            }
+        }
+        Editor.publishOnWeb = publishOnWeb;
     })(Editor = GALLERY.Editor || (GALLERY.Editor = {}));
 })(GALLERY || (GALLERY = {}));
 var GALLERY;
@@ -3338,7 +3420,7 @@ function createMap() {
     var $blocks_gates = $admin_world.find('.block[data-shape="gate"]');
     var $images = $admin_world.find('.image');
     var $stairs = $admin_world.find('.stairs');
-    var $dot_objects = $admin_world.find('.environment, .light, .label, .tree, .link, .gate');
+    var $dot_objects = $admin_world.find('.environment, .light, .label, .tree, .link, .gate, .deploy');
     /*$admin_world.mousemove(function (e) {
         var position = getPositionFromLeftTop(e.clientX,e.clientY);
         document.title = isWallOn(05-objects,position);
@@ -3368,7 +3450,7 @@ function createMap() {
         for (var key in object) {
             input_element = null;
             check_element = null;
-            if (['name', 'uri', 'key', 'href', 'target', 'world', 'material', 'skybox', 'ground'].indexOf(key) !== -1) {
+            if (['name', 'uri', 'key', 'href', 'target', 'world', 'material', 'skybox', 'ground', 'url', 'password'].indexOf(key) !== -1) {
                 input_element = '<input type="text">';
             }
             else if (['script'].indexOf(key) !== -1) {
@@ -3639,8 +3721,8 @@ function createMap() {
         //snapTolerance: 10,
         drag: function (event, ui) {
             //r('drag');
-            ui.position.left = (Math.floor((ui.position.left - window_center.x) / zoom_selected) + 0.5) * zoom_selected + window_center.x;
-            ui.position.top = (Math.floor((ui.position.top - window_center.y) / zoom_selected) + 0.5) * zoom_selected + window_center.y;
+            ui.position.left = (Math.floor((ui.position.left - window_center.x) / zoom_selected * 2) / 2 + 0.5) * zoom_selected + window_center.x;
+            ui.position.top = (Math.floor((ui.position.top - window_center.y) / zoom_selected * 2) / 2 + 0.5) * zoom_selected + window_center.y;
             var draggable = $(this).data("ui-draggable");
             draggable._trigger("snapped", event, ui);
         },

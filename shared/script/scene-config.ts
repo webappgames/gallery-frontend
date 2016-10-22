@@ -1,6 +1,6 @@
 
 
-const OBJECT_TYPES = ['environment','light','label','tree','stairs','link','gate'];
+const OBJECT_TYPES = ['environment','light','label','tree','stairs','link','gate','deploy'];
 
 
 const BLOCK_SIZE=5;

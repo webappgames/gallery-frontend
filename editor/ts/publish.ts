@@ -53,10 +53,7 @@ foreach($objects as $object) {
 */
 
 
-
-
-
-$.ajaxTransport("+binary", function(options, originalOptions, jqXHR){
+/*$.ajaxTransport("+binary", function(options, originalOptions, jqXHR){
     // check for conditions and support for blob / arraybuffer response type
     if (window.FormData && ((options.dataType && (options.dataType == 'binary')) || (options.data && ((window.ArrayBuffer && options.data instanceof ArrayBuffer) || (window.Blob && options.data instanceof Blob)))))
     {
@@ -96,7 +93,7 @@ $.ajaxTransport("+binary", function(options, originalOptions, jqXHR){
             }
         };
     }
-});
+});*/
 
 
 
@@ -321,6 +318,78 @@ namespace GALLERY.Editor{
 
 
         });
+
+
+
+    }
+
+
+
+
+
+
+    export function publishOnWeb(){
+
+
+        var deploys = objects.filterTypes('deploy');
+        if(deploys.getAll().length == 1){
+
+
+            var message = Message.info();
+
+
+
+
+            var deploy = deploys.getAll()[0];
+            compiled_objects = new GALLERY.Objects.CompiledArray.compile(objects);
+
+
+            var xmlHttpRequest = new XMLHttpRequest();
+
+
+
+
+            xmlHttpRequest.open('POST', deploy.url+'/update.php?password='+deploy.password, true);
+            //xmlHttpRequest.setRequestHeader('Content-Type', mimeType);
+            //xmlHttpRequest.setRequestHeader('Content-Disposition', 'attachment; filename="' + fileName + '"');
+
+
+
+
+
+            var formData = new FormData();
+            formData.append('compiled', JSON.stringify(compiled_objects.getAll()));
+            xmlHttpRequest.send(formData);
+
+
+            message.text('Nahrávání na server...');
+            r('Sending request to '+deploy.url);
+
+
+
+            xmlHttpRequest.onload = function () {
+                r('Status of request changed to '+xmlHttpRequest.status);
+
+                if (xmlHttpRequest.status == 200) {
+
+                    message.text('Uploaded!','success').close();
+
+                }else{
+
+                    message.text('Error when deploying, maybe wrong password or url.','error').close();
+
+                }
+            };
+
+
+        }else{
+
+            alert('There is '+deploys.getAll().length+' deploy objects!');
+        }
+
+
+
+
 
 
 

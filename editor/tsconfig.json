@@ -15,7 +15,7 @@
   "include": [
 
     "../shared/script",
-    "script"
+    "ts"
 
   ]
 }

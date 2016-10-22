@@ -205,6 +205,14 @@ nav {
     margin: 2px;
     border: 1px solid #ccc; }
 
+.top-panel {
+  z-index: 2000;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  align: center; }
+
 .palette div {
   display: inline-block; }
   .palette div i {
@@ -238,6 +246,17 @@ nav {
 #selected-properties {
   display: none;
   border: 2px solid #ff4e41; }
+  #selected-properties .field {
+    display: block;
+    border-bottom: 1px solid #cccccc; }
+    #selected-properties .field label {
+      display: inline-block;
+      width: 80px;
+      font-weight: bold; }
+    #selected-properties .field input {
+      display: inline-block;
+      width: 80px;
+      border: none; }
 
 #message-zone {
   width: 100%; }

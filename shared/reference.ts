@@ -22,6 +22,7 @@
 /// <reference path="script/05-objects/10-tree.ts" />
 /// <reference path="script/05-objects/10-link.ts" />
 /// <reference path="script/05-objects/10-gate.ts" />
+/// <reference path="script/05-objects/10-deploy.ts" />
 
 
 /// <reference path="script/scene-config.ts" />

@@ -12,4 +12,26 @@
 #selected-properties{
   display: none;
   border: 2px solid $selected;
+
+
+  .field{
+
+    display: block;
+    border-bottom: 1px solid #cccccc;
+
+    label{
+      //border: 2px solid $selected;
+      display: inline-block;
+      width: 80px;
+      font-weight: bold;
+    }
+    input{
+      display: inline-block;
+      width: 80px;
+      border: none;
+    }
+
+
+
+  }
 }

@@ -193,8 +193,7 @@ function createMap() {
 
 
 
-    let $dot_objects= $admin_world.find('.environment, .light, .label, .tree, .link, .gate');
-
+    let $dot_objects= $admin_world.find('.environment, .light, .label, .tree, .link, .gate, .deploy');
 
     /*$admin_world.mousemove(function (e) {
         var position = getPositionFromLeftTop(e.clientX,e.clientY);
@@ -255,7 +254,7 @@ function createMap() {
             check_element=null;
 
 
-            if(['name','uri','key','href','target','world','material','skybox','ground'].indexOf(key)!==-1){
+            if(['name','uri','key','href','target','world','material','skybox','ground','url','password'].indexOf(key)!==-1){
                 input_element='<input type="text">';
             }else
             if(['script'].indexOf(key)!==-1){
@@ -714,8 +713,8 @@ function createMap() {
 
             //r('drag');
 
-            ui.position.left = (Math.floor((ui.position.left-window_center.x) / zoom_selected )+0.5) * zoom_selected+window_center.x;
-            ui.position.top  = (Math.floor((ui.position.top -window_center.y) / zoom_selected )+0.5) * zoom_selected+window_center.y;
+            ui.position.left = (Math.floor((ui.position.left-window_center.x) / zoom_selected *2 )/2+0.5) * zoom_selected+window_center.x;
+            ui.position.top  = (Math.floor((ui.position.top -window_center.y) / zoom_selected *2 )/2+0.5) * zoom_selected+window_center.y;
 
 
 

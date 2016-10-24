@@ -209,9 +209,9 @@ namespace GALLERY.Objects {
                             }else {
 
 
-                                boxes_materials[object.material] = boxes_materials[object.material] || [];
+                                boxes_materials[object.material+'|'+object.opacity] = boxes_materials[object.material+'|'+object.opacity] || [];
 
-                                boxes_materials[object.material].push({
+                                boxes_materials[object.material+'|'+object.opacity].push({
                                     x: x,
                                     y: y,
                                     z: z,
@@ -314,7 +314,7 @@ namespace GALLERY.Objects {
                             [1, 2, 3, 4, 5, 6].forEach(function (operation) {
 
 
-                                var limit = 100;
+                                var limit = 1000;
                                 while (isAllRangeOn(boxes, range) && limit > 0) {
                                     limit--;
 
@@ -346,7 +346,7 @@ namespace GALLERY.Objects {
 
                                 }
 
-                                if (limit == 100) {
+                                if (limit == 1000) {
                                     //r(range);
                                     throw new Error('wtf');
                                 }
@@ -386,12 +386,14 @@ namespace GALLERY.Objects {
 
                             });
 
+                            let extMaterial = material.split('|');
 
                             compiled_objects.push({
 
                                 type: 'multiblock',
                                 world: world,
-                                material: material,
+                                material: extMaterial[0],
+                                opacity: parseFloat(extMaterial[1]),
                                 position: {
                                     x: (range.x.start + range.x.end) / 2,
                                     y: (range.y.start + range.y.end) / 2,

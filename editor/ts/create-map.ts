@@ -113,15 +113,26 @@ function createMap() {
 
 
 
+        if(block.material.substr(0,1)=='#') {
+
+            ctx.fillStyle=block.material;
+            ctx.fillRect(x,y,zoom_selected,zoom_selected);
 
 
-        ctx.drawImage(
-            materialsImages.getOrAdd(block.material,'/media/images/textures/'+block.material+'.jpg'),
-            x,
-            y,
-            zoom_selected,
-            zoom_selected
-        );
+        }else {
+
+
+            ctx.drawImage(
+                materialsImages.getOrAdd(block.material, '/media/images/textures/' + block.material + '.jpg'),
+                x,
+                y,
+                zoom_selected,
+                zoom_selected
+            );
+
+        }
+
+
 
 
         if(block.shape!=='room') {
@@ -135,6 +146,8 @@ function createMap() {
         }
 
 
+        ctx.fillStyle='rgba(255,255,255,'+(1-block.opacity)+')';
+        ctx.fillRect(x,y,zoom_selected,zoom_selected);
 
 
 
@@ -547,6 +560,7 @@ function createMap() {
                     world: world_selected,
                     storey: storey_selected,
                     material: material_selected,
+                    opacity: opacity_selected,
                     shape: shape_selected!='wall'?shape_selected:((x==0 || y==0 || x==size_x || y==size_y)?'wall':'room')
 
                 };
@@ -584,13 +598,29 @@ function createMap() {
         r(drawing_objects);
         drawing_objects.forEach(function (object) {
 
-            //r('object',object);
-            //r('object.position',object.position);
-            removed_stat += objects.removeBlockOnPosition(object.position,object.storey,object.world)?1:0;
 
-            if(object.shape!=='none'){
-                objects.push(object);
+
+            if(object.shape=='current'){
+
+                let object_on_position = objects.getBlockOnPosition(object.position,object.storey,object.world);
+                if(object_on_position) {
+                    object_on_position.material = object.material;
+                    object_on_position.opacity = object.opacity;
+                }
+
+            }else{
+
+                removed_stat += objects.removeBlockOnPosition(object.position,object.storey,object.world)?1:0;
+
+                if(object.shape!=='none'){
+                    objects.push(object);
+                }
+
             }
+
+
+
+
 
 
         });

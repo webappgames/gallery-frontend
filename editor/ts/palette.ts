@@ -134,7 +134,7 @@ $(function () {
 //-------------------------------------------------------------
 
 
-
+var material_selected, shape_selected,opacity_selected;
 
 
 
@@ -144,7 +144,7 @@ $(function () {
 
         //r('creating block to pallete');
 
-        $('.select-materials').append(createObject$(GALLERY.Objects.Object.init({
+        $('.select-textures').append(createObject$(GALLERY.Objects.Object.init({
             type: 'block',
             shape: 'room',
             material: material
@@ -154,6 +154,28 @@ $(function () {
 
     });
 
+    ['#cccccc','#444444'].forEach(function (material) {
+
+        //r('creating block to pallete');
+
+        $('.select-colors').append(createObject$(GALLERY.Objects.Object.init({
+            type: 'block',
+            shape: 'room',
+            material: material
+        })));
+
+    });
+    $('.select-colors').find('input').change(function () {
+
+        $('.select-colors').append(createObject$(GALLERY.Objects.Object.init({
+            type: 'block',
+            shape: 'room',
+            material: $(this).val()
+        })));
+
+        materialClick();
+
+    });
 
 
 
@@ -163,7 +185,7 @@ $(function () {
         $('.select-shapes').append(createObject$(GALLERY.Objects.Object.init({
             type: 'block',
             shape: shape,
-            material: 'stone-plain'
+            material: 'stone-plain',
         })));
 
 
@@ -173,16 +195,29 @@ $(function () {
 
 
 
+    for(var opacity=1;opacity>0;opacity-=0.1){
+        $('.select-opacity').append(createObject$(GALLERY.Objects.Object.init({
+            type: 'block',
+            shape: 'room',
+            material: 'stone-plain',
+            opacity: opacity
+        })));
+    }
 
 
-    $('.palette').find('.select-materials').find('.block').click(function () {
 
-        $('.palette').find('.select-materials').find('.block').removeClass('selected');
-        $(this).addClass('selected');
 
-        material_selected = $(this).attr('data-material');
-    }).first().trigger('click');
 
+    function materialClick() {
+        $('.palette').find('.select-materials').find('.block').click(function () {
+
+            $('.palette').find('.select-materials').find('.block').removeClass('selected');
+            $(this).addClass('selected');
+
+            material_selected = $(this).attr('data-material');
+        }).last().trigger('click');
+    }
+    materialClick();
 
 
     $('.palette').find('.select-shapes').find('.block').click(function () {
@@ -192,6 +227,20 @@ $(function () {
 
         shape_selected = $(this).attr('data-shape');
     }).first().trigger('click');
+
+
+
+
+    $('.palette').find('.select-opacity').find('.block').click(function () {
+
+        $('.palette').find('.select-opacity').find('.block').removeClass('selected');
+        $(this).addClass('selected');
+
+        opacity_selected = parseFloat($(this).attr('data-opacity'));
+        r(opacity_selected);
+    }).first().trigger('click');
+
+
 
 
 });

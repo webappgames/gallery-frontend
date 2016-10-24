@@ -10,6 +10,7 @@ namespace GALLERY.Objects{
         public height: number;
         public rotation: number;
         public isFull: boolean;
+        public opacity: number;
 
 
 
@@ -22,6 +23,7 @@ namespace GALLERY.Objects{
             this.height = this.height || 2;
             this.rotation = this.rotation || 0;
             this.isFull = this.isFull || false;
+            this.opacity = this.opacity || 1;
 
         }
 

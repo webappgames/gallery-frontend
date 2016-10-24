@@ -265,6 +265,25 @@ namespace GALLERY.Objects{
 
 
 
+        getBlockOnPosition(position,storey,world){
+            //r(position);
+
+            for (var i in this.objects) {
+
+                if (this.objects[i].type == 'block'){
+                    //r(05-objects[i]);
+                    if(this.objects[i].position.x==position.x && this.objects[i].position.y==position.y && this.objects[i].storey==storey && this.objects[i].world==world){
+
+                        return this.objects[i];
+
+                    }
+                }
+            }
+            return null;
+        }
+
+
+
 
 
     }

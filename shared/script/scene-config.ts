@@ -18,7 +18,7 @@ const SPEED_ROTATION = Math.PI/2;
 
 
 
-var BLOCK_SHAPES = ['none','room','wall','door','window','low-window','floor','ceil','small-fence','medium-fence','big-fence'];
+var BLOCK_SHAPES = ['none','current','room','wall','door','window','low-window','floor','ceil','small-fence','medium-fence','big-fence'];
 
 
 const BLOCKS_2D_3D_SHAPES = {
@@ -77,9 +77,6 @@ const BLOCK_MATERIALS = [//todo maybe TEXTURES or MATERIALS
     'wood-boards',
     'wood-fence',
     'wood-raw'];
-
-
-
 
 
 

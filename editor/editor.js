@@ -1177,6 +1177,18 @@ var GALLERY;
                 }
                 return false;
             };
+            Array.prototype.getBlockOnPosition = function (position, storey, world) {
+                //r(position);
+                for (var i in this.objects) {
+                    if (this.objects[i].type == 'block') {
+                        //r(05-objects[i]);
+                        if (this.objects[i].position.x == position.x && this.objects[i].position.y == position.y && this.objects[i].storey == storey && this.objects[i].world == world) {
+                            return this.objects[i];
+                        }
+                    }
+                }
+                return null;
+            };
             return Array;
         }());
         Objects.Array = Array;
@@ -1299,8 +1311,8 @@ var GALLERY;
                                 if (isBlockOnSearchAllMaterials(boxes_materials, x, y, z)) {
                                 }
                                 else {
-                                    boxes_materials[object.material] = boxes_materials[object.material] || [];
-                                    boxes_materials[object.material].push({
+                                    boxes_materials[object.material + '|' + object.opacity] = boxes_materials[object.material + '|' + object.opacity] || [];
+                                    boxes_materials[object.material + '|' + object.opacity].push({
                                         x: x,
                                         y: y,
                                         z: z,
@@ -1346,7 +1358,7 @@ var GALLERY;
                             //r(range);
                             //ee();
                             [1, 2, 3, 4, 5, 6].forEach(function (operation) {
-                                var limit = 100;
+                                var limit = 1000;
                                 while (isAllRangeOn(boxes, range) && limit > 0) {
                                     limit--;
                                     //r(operation);
@@ -1371,7 +1383,7 @@ var GALLERY;
                                         range.z.start--;
                                     }
                                 }
-                                if (limit == 100) {
+                                if (limit == 1000) {
                                     //r(range);
                                     throw new Error('wtf');
                                 }
@@ -1401,10 +1413,12 @@ var GALLERY;
                             boxes = boxes.filter(function (box) {
                                 return (!box.processed);
                             });
+                            var extMaterial = material.split('|');
                             compiled_objects.push({
                                 type: 'multiblock',
                                 world: world,
-                                material: material,
+                                material: extMaterial[0],
+                                opacity: parseFloat(extMaterial[1]),
                                 position: {
                                     x: (range.x.start + range.x.end) / 2,
                                     y: (range.y.start + range.y.end) / 2,
@@ -1568,8 +1582,9 @@ var GALLERY;
     (function (Objects) {
         var Block = (function (_super) {
             __extends(Block, _super);
-            function Block() {
-                _super.apply(this, arguments);
+            function Block(object) {
+                _super.call(this, object);
+                this.opacity = this.opacity || 1;
             }
             Block.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -1577,11 +1592,18 @@ var GALLERY;
                 var object = this;
                 $element.attr('data-shape', object.shape);
                 $element.attr('data-material', object.material);
+                $element.attr('data-opacity', object.opacity);
+                $element.css('opacity', object.opacity);
                 $element.css('top', '-=' + 0.5 * zoom_selected);
                 $element.css('left', '-=' + 0.5 * zoom_selected);
                 object.material = object.material || 'stone-plain';
-                $element.css('background', 'url("/media/images/textures/' + object.material + '.jpg")');
-                $element.css('background-size', 'cover');
+                if (object.material.substr(0, 1) == '#') {
+                    $element.css('background-color', object.material);
+                }
+                else {
+                    $element.css('background', 'url("/media/images/textures/' + object.material + '.jpg")');
+                    $element.css('background-size', 'cover');
+                }
                 if (object.shape != 'room') {
                     $element.html('<img src="/media/images/shapes/' + object.shape + '.png">');
                 }
@@ -1805,6 +1827,7 @@ var GALLERY;
                 this.height = this.height || 2;
                 this.rotation = this.rotation || 0;
                 this.isFull = this.isFull || false;
+                this.opacity = this.opacity || 1;
             }
             Stairs.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -1957,7 +1980,7 @@ var LIGHT_VERTICAL = 3;
 var SPEED = 7;
 var SPEED_INERTIA = 0.5;
 var SPEED_ROTATION = Math.PI / 2;
-var BLOCK_SHAPES = ['none', 'room', 'wall', 'door', 'window', 'low-window', 'floor', 'ceil', 'small-fence', 'medium-fence', 'big-fence'];
+var BLOCK_SHAPES = ['none', 'current', 'room', 'wall', 'door', 'window', 'low-window', 'floor', 'ceil', 'small-fence', 'medium-fence', 'big-fence'];
 var BLOCKS_2D_3D_SHAPES = {
     room: [1, 0, 0, 0, 0, 0, 0, 0, 1],
     door: [1, 0, 0, 0, 1, 1, 1, 1, 1],
@@ -2801,31 +2824,65 @@ $(function () {
     }).first().next().next().next().trigger('click'); //todo better
 });
 //-------------------------------------------------------------
+var material_selected, shape_selected, opacity_selected;
 $(function () {
     BLOCK_MATERIALS.forEach(function (material) {
         //r('creating block to pallete');
-        $('.select-materials').append(createObject$(GALLERY.Objects.Object.init({
+        $('.select-textures').append(createObject$(GALLERY.Objects.Object.init({
             type: 'block',
             shape: 'room',
             material: material
         })));
     });
+    ['#cccccc', '#444444'].forEach(function (material) {
+        //r('creating block to pallete');
+        $('.select-colors').append(createObject$(GALLERY.Objects.Object.init({
+            type: 'block',
+            shape: 'room',
+            material: material
+        })));
+    });
+    $('.select-colors').find('input').change(function () {
+        $('.select-colors').append(createObject$(GALLERY.Objects.Object.init({
+            type: 'block',
+            shape: 'room',
+            material: $(this).val()
+        })));
+        materialClick();
+    });
     BLOCK_SHAPES.forEach(function (shape) {
         $('.select-shapes').append(createObject$(GALLERY.Objects.Object.init({
             type: 'block',
             shape: shape,
-            material: 'stone-plain'
+            material: 'stone-plain',
         })));
     });
-    $('.palette').find('.select-materials').find('.block').click(function () {
-        $('.palette').find('.select-materials').find('.block').removeClass('selected');
-        $(this).addClass('selected');
-        material_selected = $(this).attr('data-material');
-    }).first().trigger('click');
+    for (var opacity = 1; opacity > 0; opacity -= 0.1) {
+        $('.select-opacity').append(createObject$(GALLERY.Objects.Object.init({
+            type: 'block',
+            shape: 'room',
+            material: 'stone-plain',
+            opacity: opacity
+        })));
+    }
+    function materialClick() {
+        $('.palette').find('.select-materials').find('.block').click(function () {
+            $('.palette').find('.select-materials').find('.block').removeClass('selected');
+            $(this).addClass('selected');
+            material_selected = $(this).attr('data-material');
+        }).last().trigger('click');
+    }
+    materialClick();
     $('.palette').find('.select-shapes').find('.block').click(function () {
         $('.palette').find('.select-shapes').find('.block').removeClass('selected');
         $(this).addClass('selected');
         shape_selected = $(this).attr('data-shape');
+    }).first().trigger('click');
+    $('.palette').find('.select-opacity').find('.block').click(function () {
+        $('.palette').find('.select-opacity').find('.block').removeClass('selected');
+        $(this).addClass('selected');
+        opacity_selected = parseFloat($(this).attr('data-opacity'));
+        r(opacity_selected);
     }).first().trigger('click');
 });
 //===================================================================================================
@@ -3416,10 +3473,18 @@ function createMap() {
     objects_world_blocks.forEach(function (block) {
         var x = (block.position.x - 0.5) * zoom_selected + window_center.x;
         var y = (block.position.y - 0.5) * zoom_selected + window_center.y;
-        ctx.drawImage(materialsImages.getOrAdd(block.material, '/media/images/textures/' + block.material + '.jpg'), x, y, zoom_selected, zoom_selected);
+        if (block.material.substr(0, 1) == '#') {
+            ctx.fillStyle = block.material;
+            ctx.fillRect(x, y, zoom_selected, zoom_selected);
+        }
+        else {
+            ctx.drawImage(materialsImages.getOrAdd(block.material, '/media/images/textures/' + block.material + '.jpg'), x, y, zoom_selected, zoom_selected);
+        }
         if (block.shape !== 'room') {
             ctx.drawImage(shapesImages.getOrAdd(block.shape, '/media/images/shapes/' + block.shape + '.png'), x, y, zoom_selected, zoom_selected);
         }
+        ctx.fillStyle = 'rgba(255,255,255,' + (1 - block.opacity) + ')';
+        ctx.fillRect(x, y, zoom_selected, zoom_selected);
         /*ctx.rect(
             x,
             y,
@@ -3659,6 +3724,7 @@ function createMap() {
                     world: world_selected,
                     storey: storey_selected,
                     material: material_selected,
+                    opacity: opacity_selected,
                     shape: shape_selected != 'wall' ? shape_selected : ((x == 0 || y == 0 || x == size_x || y == size_y) ? 'wall' : 'room')
                 };
                 if (shape_selected == 'gate') {
@@ -3678,11 +3744,18 @@ function createMap() {
         var removed_stat = 0;
         r(drawing_objects);
         drawing_objects.forEach(function (object) {
-            //r('object',object);
-            //r('object.position',object.position);
-            removed_stat += objects.removeBlockOnPosition(object.position, object.storey, object.world) ? 1 : 0;
-            if (object.shape !== 'none') {
-                objects.push(object);
+            if (object.shape == 'current') {
+                var object_on_position = objects.getBlockOnPosition(object.position, object.storey, object.world);
+                if (object_on_position) {
+                    object_on_position.material = object.material;
+                    object_on_position.opacity = object.opacity;
+                }
+            }
+            else {
+                removed_stat += objects.removeBlockOnPosition(object.position, object.storey, object.world) ? 1 : 0;
+                if (object.shape !== 'none') {
+                    objects.push(object);
+                }
             }
         });
         r('removed ' + removed_stat + ' objects');

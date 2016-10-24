@@ -1217,6 +1217,18 @@ var GALLERY;
                 }
                 return false;
             };
+            Array.prototype.getBlockOnPosition = function (position, storey, world) {
+                //r(position);
+                for (var i in this.objects) {
+                    if (this.objects[i].type == 'block') {
+                        //r(05-objects[i]);
+                        if (this.objects[i].position.x == position.x && this.objects[i].position.y == position.y && this.objects[i].storey == storey && this.objects[i].world == world) {
+                            return this.objects[i];
+                        }
+                    }
+                }
+                return null;
+            };
             return Array;
         }());
         Objects.Array = Array;
@@ -1339,8 +1351,8 @@ var GALLERY;
                                 if (isBlockOnSearchAllMaterials(boxes_materials, x, y, z)) {
                                 }
                                 else {
-                                    boxes_materials[object.material] = boxes_materials[object.material] || [];
-                                    boxes_materials[object.material].push({
+                                    boxes_materials[object.material + '|' + object.opacity] = boxes_materials[object.material + '|' + object.opacity] || [];
+                                    boxes_materials[object.material + '|' + object.opacity].push({
                                         x: x,
                                         y: y,
                                         z: z,
@@ -1386,7 +1398,7 @@ var GALLERY;
                             //r(range);
                             //ee();
                             [1, 2, 3, 4, 5, 6].forEach(function (operation) {
-                                var limit = 100;
+                                var limit = 1000;
                                 while (isAllRangeOn(boxes, range) && limit > 0) {
                                     limit--;
                                     //r(operation);
@@ -1411,7 +1423,7 @@ var GALLERY;
                                         range.z.start--;
                                     }
                                 }
-                                if (limit == 100) {
+                                if (limit == 1000) {
                                     //r(range);
                                     throw new Error('wtf');
                                 }
@@ -1441,10 +1453,12 @@ var GALLERY;
                             boxes = boxes.filter(function (box) {
                                 return (!box.processed);
                             });
+                            var extMaterial = material.split('|');
                             compiled_objects.push({
                                 type: 'multiblock',
                                 world: world,
-                                material: material,
+                                material: extMaterial[0],
+                                opacity: parseFloat(extMaterial[1]),
                                 position: {
                                     x: (range.x.start + range.x.end) / 2,
                                     y: (range.y.start + range.y.end) / 2,
@@ -1608,8 +1622,9 @@ var GALLERY;
     (function (Objects) {
         var Block = (function (_super) {
             __extends(Block, _super);
-            function Block() {
-                _super.apply(this, arguments);
+            function Block(object) {
+                _super.call(this, object);
+                this.opacity = this.opacity || 1;
             }
             Block.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -1617,11 +1632,18 @@ var GALLERY;
                 var object = this;
                 $element.attr('data-shape', object.shape);
                 $element.attr('data-material', object.material);
+                $element.attr('data-opacity', object.opacity);
+                $element.css('opacity', object.opacity);
                 $element.css('top', '-=' + 0.5 * zoom_selected);
                 $element.css('left', '-=' + 0.5 * zoom_selected);
                 object.material = object.material || 'stone-plain';
-                $element.css('background', 'url("/media/images/textures/' + object.material + '.jpg")');
-                $element.css('background-size', 'cover');
+                if (object.material.substr(0, 1) == '#') {
+                    $element.css('background-color', object.material);
+                }
+                else {
+                    $element.css('background', 'url("/media/images/textures/' + object.material + '.jpg")');
+                    $element.css('background-size', 'cover');
+                }
                 if (object.shape != 'room') {
                     $element.html('<img src="/media/images/shapes/' + object.shape + '.png">');
                 }
@@ -1845,6 +1867,7 @@ var GALLERY;
                 this.height = this.height || 2;
                 this.rotation = this.rotation || 0;
                 this.isFull = this.isFull || false;
+                this.opacity = this.opacity || 1;
             }
             Stairs.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -1997,7 +2020,7 @@ var LIGHT_VERTICAL = 3;
 var SPEED = 7;
 var SPEED_INERTIA = 0.5;
 var SPEED_ROTATION = Math.PI / 2;
-var BLOCK_SHAPES = ['none', 'room', 'wall', 'door', 'window', 'low-window', 'floor', 'ceil', 'small-fence', 'medium-fence', 'big-fence'];
+var BLOCK_SHAPES = ['none', 'current', 'room', 'wall', 'door', 'window', 'low-window', 'floor', 'ceil', 'small-fence', 'medium-fence', 'big-fence'];
 var BLOCKS_2D_3D_SHAPES = {
     room: [1, 0, 0, 0, 0, 0, 0, 0, 1],
     door: [1, 0, 0, 0, 1, 1, 1, 1, 1],
@@ -3238,14 +3261,18 @@ function runWorld(objects, textures) {
         return (url);
     }
     var materials = {}; //todo DI
-    function getMaterial(key) {
+    function getMaterial(key, opacity) {
         if (typeof materials[key] === 'undefined') {
             var material = new BABYLON.StandardMaterial("Mat", scene);
-            material.diffuseTexture = new BABYLON.Texture(getTextureUrl(key), scene);
-            //material.bumpTexture = material.diffuseTexture;
-            material.diffuseTexture.uScale = 10; //Vertical offset of 10%
-            material.diffuseTexture.vScale = 10; //Horizontal offset of 40%
-            //material.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+            if (key.substr(0, 1) == '#') {
+                material.diffuseColor = BABYLON.Color3.FromHexString(key);
+            }
+            else {
+                material.diffuseTexture = new BABYLON.Texture(getTextureUrl(key), scene);
+                material.diffuseTexture.uScale = 10; //Vertical offset of 10%
+                material.diffuseTexture.vScale = 10; //Horizontal offset of 40%
+            }
+            material.alpha = opacity;
             material.freeze();
             materials[key] = material;
         }
@@ -3363,7 +3390,7 @@ function runWorld(objects, textures) {
             var position = new BABYLON.Vector3(object.position.x * -BLOCK_SIZE, (object.position.z + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
             object.position.y * BLOCK_SIZE);
             var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
-            box.material = getMaterial(object.material);
+            box.material = getMaterial(object.material, object.opacity);
             box.isPickable = true;
             box.checkCollisions = true;
             box.position = position;
@@ -3454,7 +3481,7 @@ function runWorld(objects, textures) {
             stairs_mesh.position = position;
             //stairs_mesh.position.y = -BLOCK_SIZE;
             stairs_mesh.rotation.y = (object.rotation) / 180 * Math.PI;
-            stairs_mesh.material = getMaterial(object.material);
+            stairs_mesh.material = getMaterial(object.material, object.opacity);
             /**/
             stairs_mesh.checkCollisions = true;
             sunShadowGenerator.getShadowMap().renderList.push(stairs_mesh);

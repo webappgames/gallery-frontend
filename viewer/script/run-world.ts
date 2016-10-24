@@ -63,17 +63,25 @@ function runWorld(objects,textures){
 
 
     var materials = {};//todo DI
-    function getMaterial(key: string){
+    function getMaterial(key: string,opacity:number){
 
         if(typeof materials[key] === 'undefined') {
 
 
             let material = new BABYLON.StandardMaterial("Mat", scene);
-            material.diffuseTexture = new BABYLON.Texture(getTextureUrl(key), scene);
-            //material.bumpTexture = material.diffuseTexture;
-            material.diffuseTexture.uScale = 10;//Vertical offset of 10%
-            material.diffuseTexture.vScale = 10;//Horizontal offset of 40%
-            //material.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+
+
+            if(key.substr(0,1)=='#') {
+                material.diffuseColor = BABYLON.Color3.FromHexString(key);
+
+            }else{
+                material.diffuseTexture = new BABYLON.Texture(getTextureUrl(key), scene);.
+                material.diffuseTexture.uScale = 10;//Vertical offset of 10%
+                material.diffuseTexture.vScale = 10;//Horizontal offset of 40%
+            }
+
+
+            material.alpha = opacity;
             material.freeze();
 
             materials[key] = material;
@@ -282,7 +290,7 @@ function runWorld(objects,textures){
 
 
             var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
-            box.material = getMaterial(object.material);
+            box.material = getMaterial(object.material,object.opacity);
 
 
             box.isPickable = true;
@@ -449,7 +457,7 @@ function runWorld(objects,textures){
 
             //stairs_mesh.position.y = -BLOCK_SIZE;
             stairs_mesh.rotation.y = (object.rotation)/180*Math.PI;
-            stairs_mesh.material = getMaterial(object.material);
+            stairs_mesh.material = getMaterial(object.material,object.opacity);
             /**/
 
             stairs_mesh.checkCollisions = true;

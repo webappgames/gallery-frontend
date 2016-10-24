@@ -14,6 +14,7 @@ namespace GALLERY.Objects{
             y: number,
             z: number,
         };
+        public opacity: number;
 
 
 

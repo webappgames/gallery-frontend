@@ -10,6 +10,19 @@ namespace GALLERY.Objects{
         public storey: string;
         public shape: string;
         public material: string;
+        public opacity: number;
+
+
+
+        constructor(object){
+
+            super(object);
+
+            this.opacity = this.opacity || 1;
+
+
+        }
+
 
 
         create$Element(){
@@ -24,6 +37,8 @@ namespace GALLERY.Objects{
 
             $element.attr('data-shape',object.shape);
             $element.attr('data-material',object.material);
+            $element.attr('data-opacity',object.opacity);
+            $element.css('opacity',object.opacity);
 
 
             $element.css('top', '-='+ 0.5 * zoom_selected);
@@ -33,15 +48,22 @@ namespace GALLERY.Objects{
 
             object.material = object.material || 'stone-plain';
 
-            $element.css('background','url("/media/images/textures/'+object.material+'.jpg")');
-            $element.css('background-size','cover');
 
+            if(object.material.substr(0,1)=='#'){
 
+                $element.css('background-color', object.material);
+            }else {
 
-            if(object.shape != 'room') {
-                $element.html('<img src="/media/images/shapes/' + object.shape + '.png">');
+                $element.css('background', 'url("/media/images/textures/' + object.material + '.jpg")');
+                $element.css('background-size', 'cover');
+
             }
 
+
+
+            if (object.shape != 'room') {
+                $element.html('<img src="/media/images/shapes/' + object.shape + '.png">');
+            }
 
 
 

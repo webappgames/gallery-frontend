@@ -16,6 +16,35 @@ namespace GALLERY.Viewer{
 
 
 
+        /*
+        todo
+        var $zones = $('#zones');
+        $zones.html('');
+
+        objects.filterTypes('zone').forEach(function (zone) {
+
+            let $zone = $('<div></div>');
+            $zone.addClass('zone');
+            $zone.attr('id','zone-'+zone.id);
+            //$zone.css('display','none');
+            $zone.html(zone.html);
+
+            $zones.append($zone);
+
+
+        });*/
+
+
+
+
+
+
+
+        //r('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+        //r($zones.html());
+
+
+
 
 
 

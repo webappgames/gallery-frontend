@@ -5,12 +5,20 @@
 //var objects;
 
 var meshes = [];
+var meshes_zones = [];
+
+
 
 
 function runWorld(objects,textures){
 
     r('Running gallery with '+objects.getAll().length+' objects.');
     r(objects);
+
+
+    meshes = [];
+    meshes_zones = [];
+
 
 
 
@@ -167,7 +175,7 @@ function runWorld(objects,textures){
 
     objects.forEach(function (object) {
 
-
+        //todo use getBabylonPosition
         object.storey = object.storey || '1NP';
         var level = BLOCKS_STOREYS_LEVELS[object.storey];
 
@@ -182,7 +190,7 @@ function runWorld(objects,textures){
         if(object.type=='environment') {
 
 
-            if(object.ground!=='none'){
+            if (object.ground !== 'none') {
                 //todo position
                 /**/
                 //Ground
@@ -206,16 +214,14 @@ function runWorld(objects,textures){
                 ground.checkCollisions = true;
                 meshes.push(ground);
                 /**/
-            }else{
+            } else {
                 endless = true;
                 r('Activating endless multiblocks.');
 
             }
 
 
-
-
-            if(object.skybox!=='none') {
+            if (object.skybox !== 'none') {
 
                 let url = object.skybox + '/' + object.skybox;
 
@@ -243,15 +249,50 @@ function runWorld(objects,textures){
 
             }
 
-            if(object.fogDensity) {
+            if (object.fogDensity) {
                 scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
                 scene.fogDensity = object.fogDensity;
                 scene.fogColor = BABYLON.Color3.FromHexString(object.fogColor);
-            }else{
+            } else {
                 scene.fogMode = BABYLON.Scene.FOGMODE_NONE;
             }
 
 
+        }else
+        if(object.type=='zone'){
+
+
+            let mesh = BABYLON.Mesh.CreateBox(object.id, BLOCK_SIZE, scene);
+
+
+            mesh.material = new BABYLON.StandardMaterial("texture1", scene);
+            mesh.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+            mesh.material.alpha = 0;
+
+
+            //mesh.material = getMaterial('stone-plain',0.5);
+            mesh.position = position;
+
+            position.y += BLOCK_SIZE * BLOCKS_2D_3D_SHAPES.room.length / 2;
+            mesh.scaling.y = BLOCKS_2D_3D_SHAPES.room.length;
+
+            mesh.scaling.x = object.width;
+            mesh.scaling.z = object.height;
+
+
+
+
+            mesh.checkCollisions = false;
+
+            //r(mesh);
+
+            meshes_zones.push(mesh);
+            meshes.push(mesh);
+
+            /*return(mesh);
+            r(object);
+            var mesh = object.createBabylonMesh(BABYLON);
+            meshes_zones.push(mesh);*/
 
 
         }else

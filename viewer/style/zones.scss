@@ -1,0 +1,59 @@
+
+
+
+
+section#zones{
+
+  z-index: 6000;
+
+  display: block;
+  position: fixed;
+
+  bottom: 20px;
+  //right: 0px;
+  left: 5px;
+
+  text-align: center;
+
+  //border: 2px solod red;
+
+
+  div.zone{
+
+
+
+    h1{
+      margin: 0px;
+      font-size: 1em;
+
+      width:calc(100% - 12px);
+
+      background-color: #ddd;
+      padding: 6px;
+      margin-bottom: 10px;
+
+    }
+
+    h1.important{
+      font-size: 1.5em;
+    }
+
+
+    display: block;
+
+    width: 250px;
+
+    background-color: #fff;
+    border-radius: 3px;
+
+    margin: 4px;
+    padding: 4px;
+    //border: 2px solod red;
+
+  }
+
+
+
+
+
+}

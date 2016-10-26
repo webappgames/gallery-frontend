@@ -1508,6 +1508,9 @@ var GALLERY;
                 else if (object.type == 'gate') {
                     object = new GALLERY.Objects.Gate(object);
                 }
+                else if (object.type == 'zone') {
+                    object = new GALLERY.Objects.Zone(object);
+                }
                 else if (object.type == 'deploy') {
                     object = new GALLERY.Objects.Deploy(object);
                 }
@@ -1540,6 +1543,12 @@ var GALLERY;
                 $element.css('width', zoom_selected);
                 $element.css('height', zoom_selected);
                 return ($element);
+            };
+            Object.prototype.getBabylonPosition = function () {
+                var level = BLOCKS_STOREYS_LEVELS[object.storey];
+                var position = new BABYLON.Vector3(object.position.x * -BLOCK_SIZE, (level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
+                object.position.y * BLOCK_SIZE);
+                return (position);
             };
             return Object;
         }());
@@ -1970,7 +1979,44 @@ var GALLERY;
         Objects.Deploy = Deploy;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-var OBJECT_TYPES = ['environment', 'light', 'label', 'tree', 'stairs', 'link', 'gate', 'deploy'];
+/// <reference path="../../reference.ts" />
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        var Zone = (function (_super) {
+            __extends(Zone, _super);
+            function Zone(object) {
+                _super.call(this, object);
+                this.width = this.width || 5;
+                this.height = this.height || 5;
+                this.html = this.html || '';
+                this.selector = this.selector || '';
+            }
+            Zone.prototype.create$Element = function () {
+                var $element = this._create$Element();
+                var object = this;
+                var $block = $('<div>').addClass('image');
+                var width = object.width * zoom_selected;
+                var height = object.height * zoom_selected;
+                $block.css('width', width);
+                $block.css('height', height);
+                $block.css('background-color', 'rgba(0,0,0,0.5)');
+                $block.css('position', 'relative');
+                $block.css('top', -height / 2);
+                $block.css('left', -width / 2);
+                $block.css('transform', 'rotate(' + object.rotation + 'deg)');
+                $element.append($block);
+                //$element.css('transform','rotate('+object.rotation+'deg)');
+                return $element;
+            };
+            return Zone;
+        }(Objects.Object));
+        Objects.Zone = Zone;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+var OBJECT_TYPES = ['environment', 'light', 'label', 'tree', 'stairs', 'link', 'gate', 'zone', 'deploy'];
+var DOT_OBJECTS = ['environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'zone'];
 var BLOCK_SIZE = 5;
 //var BLOCK_SIZE_VERTICAL=10;
 //var BLOCK_SIZE_DOOR=2;
@@ -2050,6 +2096,7 @@ var r = console.log.bind(console);
 /// <reference path="script/05-objects/10-link.ts" />
 /// <reference path="script/05-objects/10-gate.ts" />
 /// <reference path="script/05-objects/10-deploy.ts" />
+/// <reference path="script/05-objects/10-zone.ts" />
 /// <reference path="script/scene-config.ts" />
 /// <reference path="script/00-common.ts" />
 /// <reference path="reference.ts" />
@@ -3102,7 +3149,7 @@ var GALLERY;
             //r(preview.moveToBegining);
             setTimeout(function () {
                 preview.GALLERY.Viewer.run.call(preview, compiled_objects);
-            }, 1000);
+            }, 500);
             /*var theWindow = window.open("../viewer", "gallery-preview"),
                 theDoc = theWindow.document,
                 theScript = document.createElement('script');
@@ -3511,7 +3558,7 @@ function createMap() {
     var $blocks_gates = $admin_world.find('.block[data-shape="gate"]');
     var $images = $admin_world.find('.image');
     var $stairs = $admin_world.find('.stairs');
-    var $dot_objects = $admin_world.find('.environment, .light, .label, .tree, .link, .gate, .deploy');
+    var $dot_objects = $admin_world.find(DOT_OBJECTS.map(function (item) { return ('.' + item); }).join(', '));
     /*$admin_world.mousemove(function (e) {
         var position = getPositionFromLeftTop(e.clientX,e.clientY);
         document.title = isWallOn(05-objects,position);
@@ -3544,7 +3591,7 @@ function createMap() {
             if (['name', 'uri', 'key', 'href', 'target', 'world', 'material', 'skybox', 'ground', 'url', 'password'].indexOf(key) !== -1) {
                 input_element = '<input type="text">';
             }
-            else if (['script'].indexOf(key) !== -1) {
+            else if (['script', 'html', 'selector'].indexOf(key) !== -1) {
                 input_element = ' <textarea></textarea>';
             }
             else if (key == 'intensity') {

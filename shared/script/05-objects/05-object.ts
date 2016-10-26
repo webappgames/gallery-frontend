@@ -83,6 +83,10 @@ namespace GALLERY.Objects{
 
                 object = new GALLERY.Objects.Gate(object);
 
+            }else if (object.type == 'zone') {
+
+                object = new GALLERY.Objects.Zone(object);
+
             }else if (object.type == 'deploy') {
 
                 object = new GALLERY.Objects.Deploy(object);
@@ -151,6 +155,23 @@ namespace GALLERY.Objects{
             $element.css('height',zoom_selected);
 
             return($element);
+
+        }
+
+
+
+        getBabylonPosition(){
+
+            var level = BLOCKS_STOREYS_LEVELS[object.storey];
+
+            var position = new BABYLON.Vector3(
+                object.position.x * -BLOCK_SIZE,
+                (level+BLOCKS_1NP_LEVEL) * BLOCK_SIZE,//(0.5 - 0.9) * BLOCK_SIZE,
+                object.position.y * BLOCK_SIZE
+            );
+
+            return(position);
+
 
         }
 

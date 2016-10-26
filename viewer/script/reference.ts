@@ -26,6 +26,7 @@
 
 
 
+/// <reference path="date-functions" />
 /// <reference path="pointer-lock.ts" />
 
 

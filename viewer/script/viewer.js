@@ -3,6 +3,48 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+//document.getElementById("para1").innerHTML = dateToSmartString(new Date('2016-01-01T13:39:45.794Z'));
+function dayOfUniverse(date) {
+    return Math.round((date) / 8.64e7);
+}
+function dateToSmartString(date) {
+    var now = new Date();
+    var day_name;
+    if (dayOfUniverse(date) == dayOfUniverse(now)) {
+        day_name = 'Today';
+    }
+    else if (dayOfUniverse(date) == dayOfUniverse(now) - 1) {
+        day_name = 'Yesterday';
+    }
+    else 
+    /*if(dayOfUniverse(date)==dayOfUniverse(now)-2){
+
+        day_name='Předevčírem';
+
+    }else*/ {
+        return (date.getDate()) + '.' + (date.getMonth() + 1) + '.' + date.getFullYear();
+    }
+    return day_name + ' at ' + date.getHours() + ':' + date.getMinutes();
+}
+function isValidDate(d) {
+    if (Object.prototype.toString.call(d) !== "[object Date]")
+        return false;
+    return !isNaN(d.getTime());
+}
+function dateFromDotString(str) {
+    var pattern = /(\d{1,2})\.(\d{1,2})\.(\d{4})/;
+    if (!pattern.test(str))
+        return false; //todo maybe invalid date of error
+    var d = parseInt(str.replace(pattern, '$1'));
+    var m = parseInt(str.replace(pattern, '$2'));
+    var y = parseInt(str.replace(pattern, '$3'));
+    var date = new Date();
+    date.setFullYear(y);
+    date.setMonth(m - 1);
+    date.setDate(d - 1);
+    //todo minutes seconds hours
+    return (date);
+}
 var GALLERY;
 (function (GALLERY) {
     var Viewer;
@@ -1548,6 +1590,9 @@ var GALLERY;
                 else if (object.type == 'gate') {
                     object = new GALLERY.Objects.Gate(object);
                 }
+                else if (object.type == 'zone') {
+                    object = new GALLERY.Objects.Zone(object);
+                }
                 else if (object.type == 'deploy') {
                     object = new GALLERY.Objects.Deploy(object);
                 }
@@ -1580,6 +1625,12 @@ var GALLERY;
                 $element.css('width', zoom_selected);
                 $element.css('height', zoom_selected);
                 return ($element);
+            };
+            Object.prototype.getBabylonPosition = function () {
+                var level = BLOCKS_STOREYS_LEVELS[object.storey];
+                var position = new BABYLON.Vector3(object.position.x * -BLOCK_SIZE, (level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
+                object.position.y * BLOCK_SIZE);
+                return (position);
             };
             return Object;
         }());
@@ -2010,7 +2061,44 @@ var GALLERY;
         Objects.Deploy = Deploy;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-var OBJECT_TYPES = ['environment', 'light', 'label', 'tree', 'stairs', 'link', 'gate', 'deploy'];
+/// <reference path="../../reference.ts" />
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        var Zone = (function (_super) {
+            __extends(Zone, _super);
+            function Zone(object) {
+                _super.call(this, object);
+                this.width = this.width || 5;
+                this.height = this.height || 5;
+                this.html = this.html || '';
+                this.selector = this.selector || '';
+            }
+            Zone.prototype.create$Element = function () {
+                var $element = this._create$Element();
+                var object = this;
+                var $block = $('<div>').addClass('image');
+                var width = object.width * zoom_selected;
+                var height = object.height * zoom_selected;
+                $block.css('width', width);
+                $block.css('height', height);
+                $block.css('background-color', 'rgba(0,0,0,0.5)');
+                $block.css('position', 'relative');
+                $block.css('top', -height / 2);
+                $block.css('left', -width / 2);
+                $block.css('transform', 'rotate(' + object.rotation + 'deg)');
+                $element.append($block);
+                //$element.css('transform','rotate('+object.rotation+'deg)');
+                return $element;
+            };
+            return Zone;
+        }(Objects.Object));
+        Objects.Zone = Zone;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+var OBJECT_TYPES = ['environment', 'light', 'label', 'tree', 'stairs', 'link', 'gate', 'zone', 'deploy'];
+var DOT_OBJECTS = ['environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'zone'];
 var BLOCK_SIZE = 5;
 //var BLOCK_SIZE_VERTICAL=10;
 //var BLOCK_SIZE_DOOR=2;
@@ -2090,6 +2178,7 @@ var r = console.log.bind(console);
 /// <reference path="script/05-objects/10-link.ts" />
 /// <reference path="script/05-objects/10-gate.ts" />
 /// <reference path="script/05-objects/10-deploy.ts" />
+/// <reference path="script/05-objects/10-zone.ts" />
 /// <reference path="script/scene-config.ts" />
 /// <reference path="script/00-common.ts" />
 /**
@@ -3172,6 +3261,25 @@ var GALLERY;
             Viewer.running = true;
             objects = compiled_objects;
             r('Running gallery with ' + objects.getAll().length + ' objects.');
+            /*
+            todo
+            var $zones = $('#zones');
+            $zones.html('');
+    
+            objects.filterTypes('zone').forEach(function (zone) {
+    
+                let $zone = $('<div></div>');
+                $zone.addClass('zone');
+                $zone.attr('id','zone-'+zone.id);
+                //$zone.css('display','none');
+                $zone.html(zone.html);
+    
+                $zones.append($zone);
+    
+    
+            });*/
+            //r('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+            //r($zones.html());
             window.onpopstate = function (event) {
                 //r("location: " + document.location + ", state: " + JSON.stringify(event.state));
                 processStateFromLocation(window.document.location);
@@ -3227,9 +3335,12 @@ var GALLERY;
 /// <reference path="reference.ts" />
 //var objects;
 var meshes = [];
+var meshes_zones = [];
 function runWorld(objects, textures) {
     r('Running gallery with ' + objects.getAll().length + ' objects.');
     r(objects);
+    meshes = [];
+    meshes_zones = [];
     var sunShadowGenerator = new BABYLON.ShadowGenerator(1024, sun);
     sunShadowGenerator.useVarianceShadowMap = true;
     var building_blocks = [];
@@ -3313,6 +3424,7 @@ function runWorld(objects, textures) {
     //var wasVideo = false;
     //==================================================================================================================
     objects.forEach(function (object) {
+        //todo use getBabylonPosition
         object.storey = object.storey || '1NP';
         var level = BLOCKS_STOREYS_LEVELS[object.storey];
         var position = new BABYLON.Vector3(object.position.x * -BLOCK_SIZE, (level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
@@ -3371,6 +3483,22 @@ function runWorld(objects, textures) {
             else {
                 scene.fogMode = BABYLON.Scene.FOGMODE_NONE;
             }
+        }
+        else if (object.type == 'zone') {
+            var mesh = BABYLON.Mesh.CreateBox(object.id, BLOCK_SIZE, scene);
+            mesh.material = new BABYLON.StandardMaterial("texture1", scene);
+            mesh.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+            mesh.material.alpha = 0;
+            //mesh.material = getMaterial('stone-plain',0.5);
+            mesh.position = position;
+            position.y += BLOCK_SIZE * BLOCKS_2D_3D_SHAPES.room.length / 2;
+            mesh.scaling.y = BLOCKS_2D_3D_SHAPES.room.length;
+            mesh.scaling.x = object.width;
+            mesh.scaling.z = object.height;
+            mesh.checkCollisions = false;
+            //r(mesh);
+            meshes_zones.push(mesh);
+            meshes.push(mesh);
         }
         else if (object.type == 'block') {
             throw new Error('Block should not be in compiled objects.');
@@ -3594,6 +3722,7 @@ var createScene = function () {
 
         this.getScene().collisionCoordinator.getNewPosition(this._oldPositionForCollisions, velocity, this._collider, 3, this, this._onCollisionPositionChange, this.uniqueId);
     };*/
+    var zones_last = [];
     scene.registerBeforeRender(function () {
         camera.cameraDirection.y += 0.01;
         //camera.moveWithCollisions(scene.gravity);
@@ -3615,6 +3744,39 @@ var createScene = function () {
         if (camera.rotation.x > limit) {
             camera.rotation.x = limit;
         }
+        var zones = [];
+        meshes_zones.forEach(function (mesh) {
+            if (mesh.intersectsPoint(camera.position)) {
+                zones.push(mesh.name);
+            }
+        });
+        var zones_plus = [];
+        var zones_minus = [];
+        for (var i = 0, l = zones.length; i < l; i++) {
+            if (zones_last.indexOf(zones[i]) == -1) {
+                zones_plus.push(zones[i]);
+            }
+        }
+        for (var i = 0, l = zones_last.length; i < l; i++) {
+            if (zones.indexOf(zones_last[i]) == -1) {
+                zones_minus.push(zones_last[i]);
+            }
+        }
+        zones_last = zones; //.slice();
+        zones_plus.forEach(function (zone_id) {
+            //$('#zone-'+zone_id).show();
+            r('In of zone ' + zone_id);
+            var zone = objects.getObjectById(zone_id);
+            var $zone_sections = $(zone.selector);
+            $zone_sections.stop().slideDown();
+        });
+        zones_minus.forEach(function (zone_id) {
+            //$('#zone-'+zone_id).hide();
+            r('Out zone ' + zone_id);
+            var zone = objects.getObjectById(zone_id);
+            var $zone_sections = $(zone.selector);
+            $zone_sections.stop().slideUp();
+        });
     });
     //camera.mode = 1;
     /*var camera_mesh = BABYLON.Mesh.CreateSphere("crate", 16, 1, scene);
@@ -4088,6 +4250,7 @@ function mouseMove(e) {
 /// <reference path="popup-window.ts" />
 /// <reference path="gates.ts" />
 /// <reference path="sounds.ts" />
+/// <reference path="date-functions" />
 /// <reference path="pointer-lock.ts" />
 /// <reference path="reference.ts" />
 var controls_keys = {

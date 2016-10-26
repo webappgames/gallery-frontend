@@ -131,7 +131,7 @@ namespace GALLERY.Editor{
 
             preview.GALLERY.Viewer.run.call(preview,compiled_objects);
 
-        },1000);
+        },500);
 
 
 

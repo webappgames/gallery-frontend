@@ -98,6 +98,7 @@ var createScene = function () {
 
 
 
+    var zones_last = [];
     scene.registerBeforeRender(function () {
 
 
@@ -133,6 +134,69 @@ var createScene = function () {
             camera.rotation.x = limit;
         }
 
+
+
+        let zones = [];
+
+
+        meshes_zones.forEach(function (mesh) {
+
+
+            if(mesh.intersectsPoint(camera.position)){
+
+                zones.push(mesh.name);
+                //r('in zone');
+
+            }
+
+
+
+        });
+
+
+        let zones_plus = [];
+        let zones_minus = [];
+
+        for(var i=0,l=zones.length;i<l;i++){
+            if(zones_last.indexOf(zones[i])==-1){
+                zones_plus.push(zones[i]);
+            }
+        }
+
+
+        for(var i=0,l=zones_last.length;i<l;i++){
+            if(zones.indexOf(zones_last[i])==-1){
+                zones_minus.push(zones_last[i]);
+            }
+        }
+
+
+
+        zones_last = zones;//.slice();
+
+
+
+        zones_plus.forEach(function(zone_id){
+            //$('#zone-'+zone_id).show();
+            r('In of zone '+zone_id);
+
+            let zone = objects.getObjectById(zone_id);
+            let $zone_sections = $(zone.selector);
+            $zone_sections.stop().slideDown();
+
+
+        });
+        zones_minus.forEach(function(zone_id){
+            //$('#zone-'+zone_id).hide();
+            r('Out zone '+zone_id);
+
+            let zone = objects.getObjectById(zone_id);
+            let $zone_sections = $(zone.selector);
+            $zone_sections.stop().slideUp();
+
+
+
+        });
 
 
 

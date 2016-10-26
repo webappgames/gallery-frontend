@@ -205,8 +205,7 @@ function createMap() {
     let $stairs= $admin_world.find('.stairs');
 
 
-
-    let $dot_objects= $admin_world.find('.environment, .light, .label, .tree, .link, .gate, .deploy');
+    let $dot_objects= $admin_world.find(DOT_OBJECTS.map(function (item) {return('.'+item);}).join(', '));
 
     /*$admin_world.mousemove(function (e) {
         var position = getPositionFromLeftTop(e.clientX,e.clientY);
@@ -270,7 +269,7 @@ function createMap() {
             if(['name','uri','key','href','target','world','material','skybox','ground','url','password'].indexOf(key)!==-1){
                 input_element='<input type="text">';
             }else
-            if(['script'].indexOf(key)!==-1){
+            if(['script','html','selector'].indexOf(key)!==-1){
                 input_element=' <textarea></textarea>';
             }else
             if(key=='intensity'){

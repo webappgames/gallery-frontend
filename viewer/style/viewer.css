@@ -236,3 +236,61 @@ button:hover, .button:hover, input[type="submit"]:hover {
   width: 100vw;
   height: 100vh;
   touch-action: none; }
+
+section#zones {
+  z-index: 6000;
+  display: block;
+  position: fixed;
+  bottom: 20px;
+  left: 5px;
+  text-align: center; }
+  section#zones div.zone {
+    display: block;
+    width: 250px;
+    background-color: #fff;
+    border-radius: 3px;
+    margin: 4px;
+    padding: 4px; }
+    section#zones div.zone h1 {
+      margin: 0px;
+      font-size: 1em;
+      width: calc(100% - 12px);
+      background-color: #ddd;
+      padding: 6px;
+      margin-bottom: 10px; }
+    section#zones div.zone h1.important {
+      font-size: 1.5em; }
+
+section.feed {
+  display: block;
+  width: 100%;
+  text-align: center; }
+  section.feed article {
+    display: inline-block;
+    width: 90px;
+    /*height: 100px;*/
+    text-align: center;
+    vertical-align: top;
+    margin: 5px;
+    margin-bottom: 10px;
+    cursor: pointer !important; }
+    section.feed article a {
+      text-decoration: none !important;
+      color: black !important; }
+    section.feed article img {
+      width: 90px;
+      height: 90px;
+      border-radius: 100px !important; }
+    section.feed article .title {
+      margin: 0;
+      font-size: 1.1em; }
+    section.feed article .type {
+      margin: 0;
+      font-size: 0.9em;
+      color: #444; }
+      section.feed article .type i {
+        margin-left: 5px; }
+    section.feed article .date {
+      margin: 0;
+      font-size: 0.9em;
+      color: #44f; }

@@ -1514,6 +1514,9 @@ var GALLERY;
                 else if (object.type == 'deploy') {
                     object = new GALLERY.Objects.Deploy(object);
                 }
+                else if (object.type == 'board') {
+                    object = new GALLERY.Objects.Board(object);
+                }
                 else {
                     console.log(object);
                     throw new Error('Cant put item into Gallery Objects Array because of unrecognized object type ' + object.type);
@@ -1986,12 +1989,13 @@ var GALLERY;
     (function (Objects) {
         var Zone = (function (_super) {
             __extends(Zone, _super);
+            //public selector: string;
             function Zone(object) {
                 _super.call(this, object);
                 this.width = this.width || 5;
                 this.height = this.height || 5;
                 this.html = this.html || '';
-                this.selector = this.selector || '';
+                //this.selector = this.selector || '';
             }
             Zone.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -2015,8 +2019,30 @@ var GALLERY;
         Objects.Zone = Zone;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-var OBJECT_TYPES = ['environment', 'light', 'label', 'tree', 'stairs', 'link', 'gate', 'zone', 'deploy'];
-var DOT_OBJECTS = ['environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'zone'];
+/// <reference path="../../reference.ts" />
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        var Board = (function (_super) {
+            __extends(Board, _super);
+            function Board(object) {
+                _super.call(this, object);
+                this.html = this.html || '';
+            }
+            Board.prototype.create$Element = function () {
+                var $element = this._create$Element();
+                var object = this;
+                $element.html('<i class="fa fa-file-text-o" aria-hidden="true"></i>');
+                return $element;
+            };
+            return Board;
+        }(Objects.Object));
+        Objects.Board = Board;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+var OBJECT_TYPES = ['zone', 'stairs', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'board'];
+var DOT_OBJECTS = ['zone', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'board'];
 var BLOCK_SIZE = 5;
 //var BLOCK_SIZE_VERTICAL=10;
 //var BLOCK_SIZE_DOOR=2;
@@ -2026,7 +2052,7 @@ var LIGHT_VERTICAL = 3;
 var SPEED = 7;
 var SPEED_INERTIA = 0.5;
 var SPEED_ROTATION = Math.PI / 2;
-var BLOCK_SHAPES = ['none', 'current', 'room', 'wall', 'door', 'window', 'low-window', 'floor', 'ceil', 'small-fence', 'medium-fence', 'big-fence'];
+var BLOCK_SHAPES = ['none', 'current', 'room', 'wall', 'door', 'window', 'low-window', 'floor', 'ceil', 'small-fence', 'medium-fence', 'big-fence', 'combo-wall'];
 var BLOCKS_2D_3D_SHAPES = {
     room: [1, 0, 0, 0, 0, 0, 0, 0, 1],
     door: [1, 0, 0, 0, 1, 1, 1, 1, 1],
@@ -2097,6 +2123,7 @@ var r = console.log.bind(console);
 /// <reference path="script/05-objects/10-gate.ts" />
 /// <reference path="script/05-objects/10-deploy.ts" />
 /// <reference path="script/05-objects/10-zone.ts" />
+/// <reference path="script/05-objects/10-board.ts" />
 /// <reference path="script/scene-config.ts" />
 /// <reference path="script/00-common.ts" />
 /// <reference path="reference.ts" />
@@ -3761,6 +3788,16 @@ function createMap() {
         drawing_objects = new GALLERY.Objects.Array();
         for (var y = 0; y <= size_y; y++) {
             for (var x = 0; x <= size_x; x++) {
+                var shape = void 0;
+                if (shape_selected == 'wall') {
+                    shape = ((x == 0 || y == 0 || x == size_x || y == size_y) ? 'wall' : 'room');
+                }
+                else if (shape_selected == 'combo-wall') {
+                    shape = (x + y) % 2 ? 'medium-fence' : 'big-fence'; //((x==0 || y==0 || x==size_x || y==size_y)?'wall':'room');
+                }
+                else {
+                    shape = shape_selected;
+                }
                 var object = {
                     id: createGuid(),
                     type: 'block',
@@ -3772,7 +3809,7 @@ function createMap() {
                     storey: storey_selected,
                     material: material_selected,
                     opacity: opacity_selected,
-                    shape: shape_selected != 'wall' ? shape_selected : ((x == 0 || y == 0 || x == size_x || y == size_y) ? 'wall' : 'room')
+                    shape: shape
                 };
                 if (shape_selected == 'gate') {
                     object.key_type = 'blue';
@@ -3790,24 +3827,38 @@ function createMap() {
         drawing = false;
         var removed_stat = 0;
         r(drawing_objects);
-        drawing_objects.forEach(function (object) {
-            if (object.shape == 'current') {
-                var object_on_position = objects.getBlockOnPosition(object.position, object.storey, object.world);
-                if (object_on_position) {
-                    object_on_position.material = object.material;
-                    object_on_position.opacity = object.opacity;
-                }
+        if (drawing_objects.getAll().length === 1) {
+            var object = drawing_objects.getAll()[0];
+            var object_on_position = objects.getBlockOnPosition(object.position, object.storey, object.world);
+            if (object_on_position) {
+                shape_selected = object_on_position.shape;
+                material_selected = object_on_position.material;
+                opacity_selected = object_on_position.opacity;
             }
             else {
-                removed_stat += objects.removeBlockOnPosition(object.position, object.storey, object.world) ? 1 : 0;
-                if (object.shape !== 'none') {
-                    objects.push(object);
-                }
+                shape_selected = 'none';
             }
-        });
-        r('removed ' + removed_stat + ' objects');
+        }
+        else {
+            drawing_objects.forEach(function (object) {
+                if (object.shape == 'current') {
+                    var object_on_position = objects.getBlockOnPosition(object.position, object.storey, object.world);
+                    if (object_on_position) {
+                        object_on_position.material = object.material;
+                        object_on_position.opacity = object.opacity;
+                    }
+                }
+                else {
+                    removed_stat += objects.removeBlockOnPosition(object.position, object.storey, object.world) ? 1 : 0;
+                    if (object.shape !== 'none') {
+                        objects.push(object);
+                    }
+                }
+            });
+            r('removed ' + removed_stat + ' objects');
+            save();
+        }
         createMap();
-        save();
     });
     //----------------------------------------------------------------------------
     //----------------------------------------------------------------------------LIGHTS, LABELS,TREES drag

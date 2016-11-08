@@ -229,6 +229,9 @@ function createMap() {
         let id = $this.attr('id');
         let object = objects.getObjectById(id);
 
+
+
+
         r(object);
 
         selected_object = object;
@@ -549,6 +552,26 @@ function createMap() {
             for(var x=0;x<=size_x;x++){
 
 
+                let shape:string;
+
+                if(shape_selected == 'wall'){
+
+                    shape = ((x==0 || y==0 || x==size_x || y==size_y)?'wall':'room');
+
+                }else
+                if(shape_selected == 'combo-wall'){
+
+                    shape = (x+y)%2?'medium-fence':'big-fence';//((x==0 || y==0 || x==size_x || y==size_y)?'wall':'room');
+
+                }else{
+
+                    shape = shape_selected;
+
+                }
+
+
+
+
                 var object = {
                     id: createGuid(),
                     type: 'block',
@@ -560,7 +583,7 @@ function createMap() {
                     storey: storey_selected,
                     material: material_selected,
                     opacity: opacity_selected,
-                    shape: shape_selected!='wall'?shape_selected:((x==0 || y==0 || x==size_x || y==size_y)?'wall':'room')
+                    shape: shape:
 
                 };
 
@@ -595,42 +618,67 @@ function createMap() {
 
         var removed_stat = 0;
         r(drawing_objects);
-        drawing_objects.forEach(function (object) {
 
 
 
-            if(object.shape=='current'){
 
-                let object_on_position = objects.getBlockOnPosition(object.position,object.storey,object.world);
-                if(object_on_position) {
-                    object_on_position.material = object.material;
-                    object_on_position.opacity = object.opacity;
-                }
+
+        if(drawing_objects.getAll().length === 1){
+
+            let object = drawing_objects.getAll()[0];
+            let object_on_position = objects.getBlockOnPosition(object.position, object.storey, object.world);
+
+            if(object_on_position){
+
+                shape_selected = object_on_position.shape;
+                material_selected = object_on_position.material;
+                opacity_selected = object_on_position.opacity;
 
             }else{
 
-                removed_stat += objects.removeBlockOnPosition(object.position,object.storey,object.world)?1:0;
-
-                if(object.shape!=='none'){
-                    objects.push(object);
-                }
+                shape_selected = 'none';
 
             }
 
 
 
+        }else {
+
+
+            drawing_objects.forEach(function (object) {
+
+
+                if (object.shape == 'current') {
+
+                    let object_on_position = objects.getBlockOnPosition(object.position, object.storey, object.world);
+                    if (object_on_position) {
+                        object_on_position.material = object.material;
+                        object_on_position.opacity = object.opacity;
+                    }
+
+                } else {
+
+                    removed_stat += objects.removeBlockOnPosition(object.position, object.storey, object.world) ? 1 : 0;
+
+                    if (object.shape !== 'none') {
+                        objects.push(object);
+                    }
+
+                }
+
+
+            });
+
+            r('removed ' + removed_stat + ' objects');
 
 
 
-        });
+            save();
 
-        r('removed '+removed_stat+' objects');
 
+        }
 
         createMap();
-
-        save();
-
 
 
     });

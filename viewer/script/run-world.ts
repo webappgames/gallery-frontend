@@ -5,7 +5,8 @@
 //var objects;
 
 var meshes = [];
-var meshes_zones = [];
+var zones = [];
+var boards = [];
 
 
 
@@ -17,7 +18,8 @@ function runWorld(objects,textures){
 
 
     meshes = [];
-    meshes_zones = [];
+    zones = [];
+    boards = [];
 
 
 
@@ -282,17 +284,42 @@ function runWorld(objects,textures){
 
 
 
+
+
+
+            let element = document.createElement('div');
+            element.id = 'zone-'+object.id;
+            element.style.display = 'none';
+            element.classList.add('zone');
+            element.innerHTML = object.html;
+
+            r(element);
+
+            document.getElementById('zones').appendChild(element);
+
+
+
+
+
             mesh.checkCollisions = false;
 
             //r(mesh);
 
-            meshes_zones.push(mesh);
+            zones.push({
+                mesh: mesh,
+                element: element
+
+
+
+            });
             meshes.push(mesh);
 
             /*return(mesh);
             r(object);
             var mesh = object.createBabylonMesh(BABYLON);
             meshes_zones.push(mesh);*/
+
+
 
 
         }else
@@ -536,6 +563,44 @@ function runWorld(objects,textures){
             });
 
             meshes.push(link);
+
+
+        }else
+        if(object.type=='board') {
+
+
+            let board = new BABYLON.Mesh.CreateSphere(object.id, 2, 2*BLOCK_SIZE, scene);
+            board.position = position;
+            board.position.y += EYE_VERTICAL * BLOCK_SIZE;
+
+
+
+            board.material = new BABYLON.StandardMaterial("texture2", scene);
+            board.material.diffuseColor = BABYLON.Color3.FromHexString('#000000');
+            board.material.alpha = 0;
+
+            board.checkCollisions = false;
+
+
+
+            let element = document.createElement('div');
+            element.style.position = 'fixed';
+            element.classList.add('zone');
+            //element.style.zIndex = '100000';
+            element.innerHTML = object.html;
+
+
+            document.getElementById('zones').appendChild(element);
+
+
+
+            boards.push({
+
+                mesh: board;
+                element: element;
+
+            });
+            meshes.push(board);
 
 
         }else

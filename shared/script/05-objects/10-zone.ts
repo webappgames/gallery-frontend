@@ -10,7 +10,7 @@ namespace GALLERY.Objects{
 
 
         public html: string;
-        public selector: string;
+        //public selector: string;
 
 
 
@@ -22,7 +22,7 @@ namespace GALLERY.Objects{
             this.width = this.width || 5;
             this.height = this.height || 5;
             this.html = this.html || '';
-            this.selector = this.selector || '';
+            //this.selector = this.selector || '';
 
         }
 

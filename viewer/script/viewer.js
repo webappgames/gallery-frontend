@@ -1596,6 +1596,9 @@ var GALLERY;
                 else if (object.type == 'deploy') {
                     object = new GALLERY.Objects.Deploy(object);
                 }
+                else if (object.type == 'board') {
+                    object = new GALLERY.Objects.Board(object);
+                }
                 else {
                     console.log(object);
                     throw new Error('Cant put item into Gallery Objects Array because of unrecognized object type ' + object.type);
@@ -2068,12 +2071,13 @@ var GALLERY;
     (function (Objects) {
         var Zone = (function (_super) {
             __extends(Zone, _super);
+            //public selector: string;
             function Zone(object) {
                 _super.call(this, object);
                 this.width = this.width || 5;
                 this.height = this.height || 5;
                 this.html = this.html || '';
-                this.selector = this.selector || '';
+                //this.selector = this.selector || '';
             }
             Zone.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -2097,8 +2101,30 @@ var GALLERY;
         Objects.Zone = Zone;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-var OBJECT_TYPES = ['environment', 'light', 'label', 'tree', 'stairs', 'link', 'gate', 'zone', 'deploy'];
-var DOT_OBJECTS = ['environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'zone'];
+/// <reference path="../../reference.ts" />
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        var Board = (function (_super) {
+            __extends(Board, _super);
+            function Board(object) {
+                _super.call(this, object);
+                this.html = this.html || '';
+            }
+            Board.prototype.create$Element = function () {
+                var $element = this._create$Element();
+                var object = this;
+                $element.html('<i class="fa fa-file-text-o" aria-hidden="true"></i>');
+                return $element;
+            };
+            return Board;
+        }(Objects.Object));
+        Objects.Board = Board;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+var OBJECT_TYPES = ['zone', 'stairs', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'board'];
+var DOT_OBJECTS = ['zone', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'board'];
 var BLOCK_SIZE = 5;
 //var BLOCK_SIZE_VERTICAL=10;
 //var BLOCK_SIZE_DOOR=2;
@@ -2108,7 +2134,7 @@ var LIGHT_VERTICAL = 3;
 var SPEED = 7;
 var SPEED_INERTIA = 0.5;
 var SPEED_ROTATION = Math.PI / 2;
-var BLOCK_SHAPES = ['none', 'current', 'room', 'wall', 'door', 'window', 'low-window', 'floor', 'ceil', 'small-fence', 'medium-fence', 'big-fence'];
+var BLOCK_SHAPES = ['none', 'current', 'room', 'wall', 'door', 'window', 'low-window', 'floor', 'ceil', 'small-fence', 'medium-fence', 'big-fence', 'combo-wall'];
 var BLOCKS_2D_3D_SHAPES = {
     room: [1, 0, 0, 0, 0, 0, 0, 0, 1],
     door: [1, 0, 0, 0, 1, 1, 1, 1, 1],
@@ -2179,6 +2205,7 @@ var r = console.log.bind(console);
 /// <reference path="script/05-objects/10-gate.ts" />
 /// <reference path="script/05-objects/10-deploy.ts" />
 /// <reference path="script/05-objects/10-zone.ts" />
+/// <reference path="script/05-objects/10-board.ts" />
 /// <reference path="script/scene-config.ts" />
 /// <reference path="script/00-common.ts" />
 /**
@@ -3335,12 +3362,14 @@ var GALLERY;
 /// <reference path="reference.ts" />
 //var objects;
 var meshes = [];
-var meshes_zones = [];
+var zones = [];
+var boards = [];
 function runWorld(objects, textures) {
     r('Running gallery with ' + objects.getAll().length + ' objects.');
     r(objects);
     meshes = [];
-    meshes_zones = [];
+    zones = [];
+    boards = [];
     var sunShadowGenerator = new BABYLON.ShadowGenerator(1024, sun);
     sunShadowGenerator.useVarianceShadowMap = true;
     var building_blocks = [];
@@ -3495,9 +3524,19 @@ function runWorld(objects, textures) {
             mesh.scaling.y = BLOCKS_2D_3D_SHAPES.room.length;
             mesh.scaling.x = object.width;
             mesh.scaling.z = object.height;
+            var element = document.createElement('div');
+            element.id = 'zone-' + object.id;
+            element.style.display = 'none';
+            element.classList.add('zone');
+            element.innerHTML = object.html;
+            r(element);
+            document.getElementById('zones').appendChild(element);
             mesh.checkCollisions = false;
             //r(mesh);
-            meshes_zones.push(mesh);
+            zones.push({
+                mesh: mesh,
+                element: element
+            });
             meshes.push(mesh);
         }
         else if (object.type == 'block') {
@@ -3633,6 +3672,26 @@ function runWorld(objects, textures) {
             });
             meshes.push(link);
         }
+        else if (object.type == 'board') {
+            var board = new BABYLON.Mesh.CreateSphere(object.id, 2, 2 * BLOCK_SIZE, scene);
+            board.position = position;
+            board.position.y += EYE_VERTICAL * BLOCK_SIZE;
+            board.material = new BABYLON.StandardMaterial("texture2", scene);
+            board.material.diffuseColor = BABYLON.Color3.FromHexString('#000000');
+            board.material.alpha = 0;
+            board.checkCollisions = false;
+            var element = document.createElement('div');
+            element.style.position = 'fixed';
+            element.classList.add('zone');
+            //element.style.zIndex = '100000';
+            element.innerHTML = object.html;
+            document.getElementById('zones').appendChild(element);
+            boards.push({
+                mesh: board,
+                element: element
+            });
+            meshes.push(board);
+        }
         else if (object.type == 'gate') {
             var rotation_rad = (object.rotation / 180) * Math.PI;
             //var gate = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
@@ -3670,8 +3729,9 @@ function clearWorld() {
 /// <reference path="reference.ts" />
 var canvas = document.getElementById("scene");
 var engine = new BABYLON.Engine(canvas, true);
+var scene;
 var createScene = function () {
-    var scene = new BABYLON.Scene(engine);
+    scene = new BABYLON.Scene(engine);
     // Lights
     //var light0 = new BABYLON.DirectionalLight("Omni", new BABYLON.Vector3(-2, -5, 2), scene);
     //var light1 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(2, -5, -2), scene);
@@ -3744,40 +3804,81 @@ var createScene = function () {
         if (camera.rotation.x > limit) {
             camera.rotation.x = limit;
         }
-        var zones = [];
-        meshes_zones.forEach(function (mesh) {
-            if (mesh.intersectsPoint(camera.position)) {
-                zones.push(mesh.name);
+        //----------------------------------------------------------Zones
+        var zones_ids = [];
+        zones.forEach(function (zone) {
+            if (zone.mesh.intersectsPoint(camera.position)) {
+                zones_ids.push(zone.mesh.name);
             }
         });
         var zones_plus = [];
         var zones_minus = [];
-        for (var i = 0, l = zones.length; i < l; i++) {
-            if (zones_last.indexOf(zones[i]) == -1) {
-                zones_plus.push(zones[i]);
+        for (var i = 0, l = zones_ids.length; i < l; i++) {
+            if (zones_last.indexOf(zones_ids[i]) == -1) {
+                zones_plus.push(zones_ids[i]);
             }
         }
         for (var i = 0, l = zones_last.length; i < l; i++) {
-            if (zones.indexOf(zones_last[i]) == -1) {
+            if (zones_ids.indexOf(zones_last[i]) == -1) {
                 zones_minus.push(zones_last[i]);
             }
         }
-        zones_last = zones; //.slice();
+        zones_last = zones_ids; //.slice();
+        //r(zones_plus,zones_minus);
         zones_plus.forEach(function (zone_id) {
             //$('#zone-'+zone_id).show();
             r('In of zone ' + zone_id);
-            var zone = objects.getObjectById(zone_id);
-            var $zone_sections = $(zone.selector);
+            //let zone = objects.getObjectById(zone_id);
+            var $zone_sections = $('#zone-' + zone_id);
             $zone_sections.stop().slideDown();
+            r($zone_sections);
         });
         zones_minus.forEach(function (zone_id) {
             //$('#zone-'+zone_id).hide();
             r('Out zone ' + zone_id);
-            var zone = objects.getObjectById(zone_id);
-            var $zone_sections = $(zone.selector);
+            //let zone = objects.getObjectById(zone_id);
+            var $zone_sections = $('#zone-' + zone_id);
             $zone_sections.stop().slideUp();
+            r($zone_sections);
         });
+        //----------------------------------------------------------Boards
+        boards.forEach(function (board) {
+            /*r(mesh.position);
+
+            var p = BABYLON.Vector3.Project(
+
+                mesh.position,
+                BABYLON.Matrix.Identity(),
+                scene.getTransformMatrix(),
+                camera.viewport.toGlobal(engine)
+
+
+            );*/
+            var position = BABYLON.Vector3.Project(board.mesh.position, BABYLON.Matrix.Identity(), scene.getTransformMatrix(), camera.viewport.toGlobal(canvas.clientWidth, canvas.clientHeight));
+            if (position.z > 1) {
+                board.element.style.display = 'none';
+                return;
+            }
+            var pickInfo = scene.pick(position.x, position.y);
+            if (pickInfo.pickedMesh !== board.mesh) {
+                board.element.style.display = 'none';
+                return;
+            }
+            //r(pickInfo.pickedMesh.name);
+            var distance = BABYLON.Vector3.Distance(camera.position, board.mesh.position);
+            var zoom = 1 / distance;
+            zoom = 1;
+            board.element.style.zIndex = 1000000000 - distance; //todo better
+            board.element.style.zoom = zoom;
+            //r(board.element.clientWidth);
+            board.element.style.left = (position.x / zoom) - (board.element.clientWidth / 2) + 'px';
+            board.element.style.top = (position.y / zoom) + 'px';
+            board.element.style.display = 'block';
+        });
+        //----------------------------------------------------------
     });
+    //r(camera.viewport);
+    //r(camera.viewport.toGlobal(engine));
     //camera.mode = 1;
     /*var camera_mesh = BABYLON.Mesh.CreateSphere("crate", 16, 1, scene);
     camera_mesh.checkCollisions = true;
@@ -3885,9 +3986,6 @@ function onCollide(collidedMesh) {
                     //r(object.uri,object.href);
                     if (label.uri == object.href) {
                         GALLERY.Viewer.appState(label.uri + window.location.hash);
-                        //todo processStateFromLocation
-                        //moveTo(label.position.x,label.position.y,parseInt(label.rotation),label.world,label.storey,true);
-                        ion.sound.play("link-teleport");
                     }
                 });
             }
@@ -4259,7 +4357,8 @@ var controls_keys = {
     'LEFT': [37, 65],
     'RIGHT': [39, 68],
     'JUMP': [32],
-    'REFRESH': [80]
+    //'REFRESH': [80],
+    'PRINTSCR': [80]
 };
 //------------------------------------------------------------
 window.addEventListener('keydown', function (e) {
@@ -4286,7 +4385,7 @@ var controls_down = {
 };
 window.addEventListener('keydown', function (e) {
     //if(T.UI.Status.focusOnMap()) {
-    //r('DOWN', e.keyCode);
+    r('DOWN', e.keyCode);
     if (keys.indexOf(e.keyCode) === -1) {
         keys.push(e.keyCode);
         controls_down.update();
@@ -4344,8 +4443,52 @@ var keys_tick = function (timestamp) {
     }
     if (controls_down.JUMP) {
     }
-    if (controls_down.REFRESH) {
+    /*if (controls_down.REFRESH) {
+
         runGallery(objects);
+
+    }*/
+    if (controls_down.PRINTSCR) {
+        controls_down.PRINTSCR = false;
+        r('print_scr');
+        //r(scene,scene.engine, scene.camera);
+        BABYLON.Tools.CreateScreenshot(engine, scene.activeCamera, { width: 3840, height: 2160 }, function (screenshot) {
+            var filename = "screenshot-4K-gallery-" + (new Date()) + ".png";
+            /*r('print_scr_ready');
+
+            function downloadURI(uri, name) {
+                var link = document.createElement("a");
+                link.download = name;
+                link.href = uri;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                delete link;
+            }
+
+            downloadURI(screenshot, filename);*/
+            function dataURItoBlob(dataURI) {
+                // convert base64 to raw binary data held in a string
+                // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+                var byteString = atob(dataURI.split(',')[1]);
+                // separate out the mime component
+                var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+                // write the bytes of the string to an ArrayBuffer
+                var ab = new ArrayBuffer(byteString.length);
+                var ia = new Uint8Array(ab);
+                for (var i = 0; i < byteString.length; i++) {
+                    ia[i] = byteString.charCodeAt(i);
+                }
+                // write the ArrayBuffer to a blob, and you're done
+                var blob = new Blob([ab], { type: mimeString });
+                return blob;
+                // Old code
+                // var bb = new BlobBuilder();
+                // bb.append(ab);
+                // return bb.getBlob(mimeString);
+            }
+            saveAs(dataURItoBlob(screenshot), filename);
+        });
     }
     requestAnimationFrame(keys_tick);
 };

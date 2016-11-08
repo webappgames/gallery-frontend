@@ -5,13 +5,13 @@
 
 var canvas = document.getElementById("scene");
 var engine = new BABYLON.Engine(canvas, true);
-
+var scene;
 
 
 
 
 var createScene = function () {
-    var scene = new BABYLON.Scene(engine);
+    scene = new BABYLON.Scene(engine);
 
     // Lights
     //var light0 = new BABYLON.DirectionalLight("Omni", new BABYLON.Vector3(-2, -5, 2), scene);
@@ -136,15 +136,17 @@ var createScene = function () {
 
 
 
-        let zones = [];
+        //----------------------------------------------------------Zones
+
+        let zones_ids = [];
 
 
-        meshes_zones.forEach(function (mesh) {
+        zones.forEach(function (zone) {
 
 
-            if(mesh.intersectsPoint(camera.position)){
+            if(zone.mesh.intersectsPoint(camera.position)){
 
-                zones.push(mesh.name);
+                zones_ids.push(zone.mesh.name);
                 //r('in zone');
 
             }
@@ -157,32 +159,36 @@ var createScene = function () {
         let zones_plus = [];
         let zones_minus = [];
 
-        for(var i=0,l=zones.length;i<l;i++){
-            if(zones_last.indexOf(zones[i])==-1){
-                zones_plus.push(zones[i]);
+        for(var i=0,l=zones_ids.length;i<l;i++){
+            if(zones_last.indexOf(zones_ids[i])==-1){
+                zones_plus.push(zones_ids[i]);
             }
         }
 
 
         for(var i=0,l=zones_last.length;i<l;i++){
-            if(zones.indexOf(zones_last[i])==-1){
+            if(zones_ids.indexOf(zones_last[i])==-1){
                 zones_minus.push(zones_last[i]);
             }
         }
 
 
 
-        zones_last = zones;//.slice();
+        zones_last = zones_ids;//.slice();
 
 
+
+        //r(zones_plus,zones_minus);
 
         zones_plus.forEach(function(zone_id){
             //$('#zone-'+zone_id).show();
             r('In of zone '+zone_id);
 
-            let zone = objects.getObjectById(zone_id);
-            let $zone_sections = $(zone.selector);
+            //let zone = objects.getObjectById(zone_id);
+            let $zone_sections = $('#zone-'+zone_id);
             $zone_sections.stop().slideDown();
+
+            r($zone_sections);
 
 
         });
@@ -190,17 +196,116 @@ var createScene = function () {
             //$('#zone-'+zone_id).hide();
             r('Out zone '+zone_id);
 
-            let zone = objects.getObjectById(zone_id);
-            let $zone_sections = $(zone.selector);
+            //let zone = objects.getObjectById(zone_id);
+            let $zone_sections = $('#zone-'+zone_id);
             $zone_sections.stop().slideUp();
+
+            r($zone_sections);
+
+
+        });
+
+
+        //----------------------------------------------------------Boards
+
+
+
+
+        boards.forEach(function (board) {
+
+            /*r(mesh.position);
+
+            var p = BABYLON.Vector3.Project(
+
+                mesh.position,
+                BABYLON.Matrix.Identity(),
+                scene.getTransformMatrix(),
+                camera.viewport.toGlobal(engine)
+
+
+            );*/
+
+
+
+
+            var position = BABYLON.Vector3.Project(
+
+
+                board.mesh.position,
+                BABYLON.Matrix.Identity(),
+                scene.getTransformMatrix(),
+                camera.viewport.toGlobal(canvas.clientWidth,canvas.clientHeight)
+
+            );
+
+
+
+
+
+
+
+            if (position.z > 1) {
+                board.element.style.display = 'none';
+                return;
+            }
+
+
+
+
+            var pickInfo = scene.pick(position.x, position.y);
+
+
+            if(pickInfo.pickedMesh!==board.mesh){
+                board.element.style.display = 'none';
+                return;
+            }
+
+
+
+            //r(pickInfo.pickedMesh.name);
+
+
+
+
+            let distance = BABYLON.Vector3.Distance(camera.position, board.mesh.position);
+            let zoom = 1 / distance;
+            zoom = 1;
+
+
+
+
+
+            board.element.style.zIndex = 1000000000-distance;//todo better
+            board.element.style.zoom = zoom;
+
+
+            //r(board.element.clientWidth);
+
+            board.element.style.left = (position.x / zoom) - (board.element.clientWidth / 2) + 'px';
+            board.element.style.top = (position.y / zoom) + 'px';
+            board.element.style.display = 'block';
+
+
+
+
+
 
 
 
         });
 
 
+        //----------------------------------------------------------
 
     });
+
+
+    //r(camera.viewport);
+    //r(camera.viewport.toGlobal(engine));
+
+
+
+
     //camera.mode = 1;
 
 

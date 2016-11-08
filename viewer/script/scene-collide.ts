@@ -58,7 +58,7 @@ function onCollide(collidedMesh) {
 
                         //todo processStateFromLocation
                         //moveTo(label.position.x,label.position.y,parseInt(label.rotation),label.world,label.storey,true);
-                        ion.sound.play("link-teleport");
+                        //ion.sound.play("link-teleport");
 
 
                     }

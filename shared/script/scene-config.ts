@@ -1,7 +1,7 @@
 
 
-const OBJECT_TYPES = ['environment','light','label','tree','stairs','link','gate','zone','deploy'];
-const DOT_OBJECTS = ['environment','light','label','tree','link','gate','deploy','zone'];
+const OBJECT_TYPES = ['zone','stairs','environment','light','label','tree','link','gate','deploy','board'];
+const DOT_OBJECTS = ['zone','environment','light','label','tree','link','gate','deploy','board'];
 
 
 const BLOCK_SIZE=5;
@@ -19,7 +19,7 @@ const SPEED_ROTATION = Math.PI/2;
 
 
 
-var BLOCK_SHAPES = ['none','current','room','wall','door','window','low-window','floor','ceil','small-fence','medium-fence','big-fence'];
+var BLOCK_SHAPES = ['none','current','room','wall','door','window','low-window','floor','ceil','small-fence','medium-fence','big-fence','combo-wall'];
 
 
 const BLOCKS_2D_3D_SHAPES = {

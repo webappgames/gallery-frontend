@@ -3878,16 +3878,38 @@ var createScene = function () {
             }
         }
         zones_last = zones_ids; //.slice();
+        if (zones_plus.length || zones_minus.length) {
+            var zones_1 = zones_ids.map(function (zone_id) {
+                return objects.getObjectById(zone_id);
+            });
+            zones_1 = zones_1.filter(function (zone) {
+                return (zone.uri.substr(0, 1) == '/');
+            });
+            zones_1.sort(function (zone_a, zone_b) {
+                if (zone_a.uri_index > zone_b.uri_index) {
+                    return (1);
+                }
+                else if (zone_a.uri_index < zone_b.uri_index) {
+                    return (-1);
+                }
+                else {
+                    return (0);
+                }
+            });
+            r('Creating new app uri from ' + zones_1.length + ' zones');
+            var uri_1 = '/';
+            zones_1.forEach(function (zone) {
+                uri_1 += zone.uri;
+            });
+            uri_1 = uri_1.split('//').join('/');
+            GALLERY.Viewer.appState(uri_1 + window.location.hash, true);
+        }
         //r(zones_plus,zones_minus);
         zones_plus.forEach(function (zone_id) {
             //$('#zone-'+zone_id).show();
             r('In the zone ' + zone_id);
             var $zone_sections = $('#zone-' + zone_id);
             $zone_sections.stop().slideDown();
-            //r(objects,zone_id);
-            var zone = objects.getObjectById(zone_id);
-            GALLERY.Viewer.appState(zone.uri + window.location.hash, true);
-            //r($zone_sections);
         });
         zones_minus.forEach(function (zone_id) {
             //$('#zone-'+zone_id).hide();
@@ -3895,7 +3917,6 @@ var createScene = function () {
             //let zone = objects.getObjectById(zone_id);
             var $zone_sections = $('#zone-' + zone_id);
             $zone_sections.stop().slideUp();
-            //r($zone_sections);
         });
         //----------------------------------------------------------Boards
         boards.forEach(function (board) {

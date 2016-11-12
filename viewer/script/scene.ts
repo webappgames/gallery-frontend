@@ -178,6 +178,51 @@ var createScene = function () {
 
 
 
+
+
+        if(zones_plus.length || zones_minus.length){
+
+
+            let zones = zones_ids.map(function (zone_id) {
+                return objects.getObjectById(zone_id);
+            });
+
+
+            zones = zones.filter(function (zone) {
+                return(zone.uri.substr(0,1) == '/');
+            });
+
+
+            zones.sort(function (zone_a,zone_b) {
+                if(zone_a.uri_index>zone_b.uri_index){
+                    return(1);
+                }else
+                if(zone_a.uri_index<zone_b.uri_index){
+                    return(-1);
+                }else{
+                    return(0);
+                }
+            });
+
+
+            r('Creating new app uri from '+zones.length+' zones');
+
+            let uri = '/';
+            zones.forEach(function (zone) {
+                uri += zone.uri;
+            });
+            uri = uri.split('//').join('/');
+
+            GALLERY.Viewer.appState(uri+window.location.hash,true);
+
+
+
+
+
+        }
+
+
+
         //r(zones_plus,zones_minus);
 
         zones_plus.forEach(function(zone_id){
@@ -188,17 +233,6 @@ var createScene = function () {
             $zone_sections.stop().slideDown();
 
 
-            //r(objects,zone_id);
-
-            let zone = objects.getObjectById(zone_id);
-            GALLERY.Viewer.appState(zone.uri+window.location.hash,true);
-
-
-
-
-            //r($zone_sections);
-
-
         });
         zones_minus.forEach(function(zone_id){
             //$('#zone-'+zone_id).hide();
@@ -207,8 +241,6 @@ var createScene = function () {
             //let zone = objects.getObjectById(zone_id);
             let $zone_sections = $('#zone-'+zone_id);
             $zone_sections.stop().slideUp();
-
-            //r($zone_sections);
 
 
         });

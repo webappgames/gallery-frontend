@@ -11,11 +11,9 @@ var boards = [];
 
 
 
-function runWorld(objects,textures){
+function runWorld(objects_world,textures){
 
-    r('Running gallery with '+objects.getAll().length+' objects.');
-    r(objects);
-
+    r('Running gallery with '+objects_world.getAll().length+' objects.',objects_world);
 
     meshes = [];
     zones = [];
@@ -285,20 +283,19 @@ function runWorld(objects,textures){
 
 
 
+            if(object.name || object.html) {
 
 
-            let element = document.createElement('div');
-            element.id = 'zone-'+object.id;
-            element.style.display = 'none';
-            element.classList.add('zone');
-            element.innerHTML = (object.name?'<h1>'+object.name+'</h1>':'')+object.html;
+                let element = document.createElement('div');
+                element.id = 'zone-' + object.id;
+                element.style.display = 'none';
+                element.classList.add('zone');
+                element.innerHTML = (object.name ? '<h1>' + object.name + '</h1>' : '') + object.html;
 
 
-            r(element);
+                document.getElementById('zones').appendChild(element);
 
-            document.getElementById('zones').appendChild(element);
-
-
+            }
 
 
 
@@ -431,17 +428,17 @@ function runWorld(objects,textures){
 
 
 
-                    if(object.name || object.html || object.uri){
+                    if(object.name || object.html || object.uri || typeof object.zoneCreated == 'undefined'){
 
                         r('Creating zone for '+object.name);
 
+                        object.zoneCreated = true;
 
                         let x = Math.sin(rotation_rad)*object.width/-2;
                         let y = Math.cos(rotation_rad)*object.width/2;
 
 
-
-                        processObject({
+                        let zone={
 
                             id: createGuid(),
                             type: 'zone',
@@ -460,10 +457,15 @@ function runWorld(objects,textures){
                             name: object.name,
                             html: object.html,
                             uri: object.uri,
-                            uri_level: 10000,//todo better
+                            uri_level: 10000,//todo better low priority
 
-                        });
+                        };
 
+
+                        processObject(zone);//todo better
+                        objects.push(zone);
+
+                        //r(objects);
 
 
                     }
@@ -695,7 +697,7 @@ function runWorld(objects,textures){
     };
 
 
-    objects.forEach(processObject);
+    objects_world.forEach(processObject);
 
     //unlockGatesAndActivateKeys();
 

@@ -3392,9 +3392,8 @@ var GALLERY;
 var meshes = [];
 var zones = [];
 var boards = [];
-function runWorld(objects, textures) {
-    r('Running gallery with ' + objects.getAll().length + ' objects.');
-    r(objects);
+function runWorld(objects_world, textures) {
+    r('Running gallery with ' + objects_world.getAll().length + ' objects.', objects_world);
     meshes = [];
     zones = [];
     boards = [];
@@ -3552,13 +3551,14 @@ function runWorld(objects, textures) {
             mesh.scaling.y = BLOCKS_2D_3D_SHAPES.room.length;
             mesh.scaling.x = object.width;
             mesh.scaling.z = object.height;
-            var element = document.createElement('div');
-            element.id = 'zone-' + object.id;
-            element.style.display = 'none';
-            element.classList.add('zone');
-            element.innerHTML = (object.name ? '<h1>' + object.name + '</h1>' : '') + object.html;
-            r(element);
-            document.getElementById('zones').appendChild(element);
+            if (object.name || object.html) {
+                var element = document.createElement('div');
+                element.id = 'zone-' + object.id;
+                element.style.display = 'none';
+                element.classList.add('zone');
+                element.innerHTML = (object.name ? '<h1>' + object.name + '</h1>' : '') + object.html;
+                document.getElementById('zones').appendChild(element);
+            }
             mesh.checkCollisions = false;
             //r(mesh);
             zones.push({
@@ -3622,11 +3622,12 @@ function runWorld(objects, textures) {
                     image.position = position;
                     image.rotation.y = Math.PI + rotation_rad;
                     image.position.y += EYE_VERTICAL * BLOCK_SIZE;
-                    if (object.name || object.html || object.uri) {
+                    if (object.name || object.html || object.uri || typeof object.zoneCreated == 'undefined') {
                         r('Creating zone for ' + object.name);
+                        object.zoneCreated = true;
                         var x = Math.sin(rotation_rad) * object.width / -2;
                         var y = Math.cos(rotation_rad) * object.width / 2;
-                        processObject({
+                        var zone = {
                             id: createGuid(),
                             type: 'zone',
                             world: object.world,
@@ -3641,7 +3642,9 @@ function runWorld(objects, textures) {
                             html: object.html,
                             uri: object.uri,
                             uri_level: 10000,
-                        });
+                        };
+                        processObject(zone); //todo better
+                        objects.push(zone);
                     }
                 }
                 image.scaling.x = object.width;
@@ -3768,7 +3771,7 @@ function runWorld(objects, textures) {
         }
     }
     ;
-    objects.forEach(processObject);
+    objects_world.forEach(processObject);
     //unlockGatesAndActivateKeys();
 }
 function clearWorld() {
@@ -3878,19 +3881,21 @@ var createScene = function () {
         //r(zones_plus,zones_minus);
         zones_plus.forEach(function (zone_id) {
             //$('#zone-'+zone_id).show();
-            r('In of zone ' + zone_id);
-            //let zone = objects.getObjectById(zone_id);
+            r('In the zone ' + zone_id);
             var $zone_sections = $('#zone-' + zone_id);
             $zone_sections.stop().slideDown();
-            r($zone_sections);
+            //r(objects,zone_id);
+            var zone = objects.getObjectById(zone_id);
+            GALLERY.Viewer.appState(zone.uri + window.location.hash, true);
+            //r($zone_sections);
         });
         zones_minus.forEach(function (zone_id) {
             //$('#zone-'+zone_id).hide();
-            r('Out zone ' + zone_id);
+            r('Out of the zone ' + zone_id);
             //let zone = objects.getObjectById(zone_id);
             var $zone_sections = $('#zone-' + zone_id);
             $zone_sections.stop().slideUp();
-            r($zone_sections);
+            //r($zone_sections);
         });
         //----------------------------------------------------------Boards
         boards.forEach(function (board) {

@@ -182,25 +182,33 @@ var createScene = function () {
 
         zones_plus.forEach(function(zone_id){
             //$('#zone-'+zone_id).show();
-            r('In of zone '+zone_id);
+            r('In the zone '+zone_id);
 
-            //let zone = objects.getObjectById(zone_id);
             let $zone_sections = $('#zone-'+zone_id);
             $zone_sections.stop().slideDown();
 
-            r($zone_sections);
+
+            //r(objects,zone_id);
+
+            let zone = objects.getObjectById(zone_id);
+            GALLERY.Viewer.appState(zone.uri+window.location.hash,true);
+
+
+
+
+            //r($zone_sections);
 
 
         });
         zones_minus.forEach(function(zone_id){
             //$('#zone-'+zone_id).hide();
-            r('Out zone '+zone_id);
+            r('Out of the zone '+zone_id);
 
             //let zone = objects.getObjectById(zone_id);
             let $zone_sections = $('#zone-'+zone_id);
             $zone_sections.stop().slideUp();
 
-            r($zone_sections);
+            //r($zone_sections);
 
 
         });

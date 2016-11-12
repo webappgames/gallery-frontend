@@ -1780,6 +1780,8 @@ var GALLERY;
             __extends(Image, _super);
             function Image(object) {
                 _super.call(this, object);
+                this.name = this.name || '';
+                this.html = this.html || '';
                 this.rotation = this.rotation || 0;
                 this.onGround = this.onGround || false;
                 this.hasAlpha = this.hasAlpha || false;
@@ -2076,6 +2078,9 @@ var GALLERY;
                 _super.call(this, object);
                 this.width = this.width || 5;
                 this.height = this.height || 5;
+                this.uri = this.uri || '';
+                this.uri_level = this.uri_level || 0;
+                this.name = this.name || '';
                 this.html = this.html || '';
                 //this.selector = this.selector || '';
             }
@@ -2123,6 +2128,7 @@ var GALLERY;
         Objects.Board = Board;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
+var STATSERVER_URL = 'http://webappgames.com:48567';
 var OBJECT_TYPES = ['zone', 'stairs', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'board'];
 var DOT_OBJECTS = ['zone', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'board'];
 var BLOCK_SIZE = 5;
@@ -2188,6 +2194,15 @@ var ZOOMS = [
 ];
 /// <reference path="../reference.ts" />
 var r = console.log.bind(console);
+function createGuid() {
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+}
 /// <reference path="lib/jquery.d.ts" />
 /// <reference path="script/uri-plugin.ts" />
 /// <reference path="script/05-objects/00-array.ts" />
@@ -2208,6 +2223,7 @@ var r = console.log.bind(console);
 /// <reference path="script/05-objects/10-board.ts" />
 /// <reference path="script/scene-config.ts" />
 /// <reference path="script/00-common.ts" />
+/// <reference path="script/guid.ts" />
 /**
  * Ion.Sound
  * version 3.0.7 Build 89
@@ -3284,10 +3300,22 @@ var GALLERY;
     var Viewer;
     (function (Viewer) {
         Viewer.running = false;
-        function run(compiled_objects) {
+        Viewer.develop = false;
+        Viewer.gallery_domain = '';
+        function run(compiled_objects, develop_, gallery_domain_) {
+            if (develop_ === void 0) { develop_ = false; }
+            if (gallery_domain_ === void 0) { gallery_domain_ = ''; }
             Viewer.running = true;
+            Viewer.develop = develop_;
+            Viewer.gallery_domain = gallery_domain_;
             objects = compiled_objects;
-            r('Running gallery with ' + objects.getAll().length + ' objects.');
+            r('Running gallery with ' + objects.getAll().length + ' objects in ' + (Viewer.develop ? 'develop' : 'production') + ' mode.');
+            if (Viewer.develop) {
+                Viewer.showStats();
+            }
+            else {
+                Viewer.runStats();
+            }
             /*
             todo
             var $zones = $('#zones');
@@ -3452,7 +3480,7 @@ function runWorld(objects, textures) {
     var endless = false;
     //var wasVideo = false;
     //==================================================================================================================
-    objects.forEach(function (object) {
+    function processObject(object) {
         //todo use getBabylonPosition
         object.storey = object.storey || '1NP';
         var level = BLOCKS_STOREYS_LEVELS[object.storey];
@@ -3528,7 +3556,7 @@ function runWorld(objects, textures) {
             element.id = 'zone-' + object.id;
             element.style.display = 'none';
             element.classList.add('zone');
-            element.innerHTML = object.html;
+            element.innerHTML = (object.name ? '<h1>' + object.name + '</h1>' : '') + object.html;
             r(element);
             document.getElementById('zones').appendChild(element);
             mesh.checkCollisions = false;
@@ -3594,6 +3622,27 @@ function runWorld(objects, textures) {
                     image.position = position;
                     image.rotation.y = Math.PI + rotation_rad;
                     image.position.y += EYE_VERTICAL * BLOCK_SIZE;
+                    if (object.name || object.html || object.uri) {
+                        r('Creating zone for ' + object.name);
+                        var x = Math.sin(rotation_rad) * object.width / -2;
+                        var y = Math.cos(rotation_rad) * object.width / 2;
+                        processObject({
+                            id: createGuid(),
+                            type: 'zone',
+                            world: object.world,
+                            storey: object.storey,
+                            position: {
+                                x: object.position.x + x,
+                                y: object.position.y + y,
+                            },
+                            width: object.width,
+                            height: object.width,
+                            name: object.name,
+                            html: object.html,
+                            uri: object.uri,
+                            uri_level: 10000,
+                        });
+                    }
                 }
                 image.scaling.x = object.width;
                 image.scaling.y = object.height;
@@ -3673,7 +3722,7 @@ function runWorld(objects, textures) {
             meshes.push(link);
         }
         else if (object.type == 'board') {
-            var board = new BABYLON.Mesh.CreateSphere(object.id, 2, 2 * BLOCK_SIZE, scene);
+            var board = new BABYLON.Mesh.CreateSphere(object.id, 2, 4 * BLOCK_SIZE, scene);
             board.position = position;
             board.position.y += EYE_VERTICAL * BLOCK_SIZE;
             board.material = new BABYLON.StandardMaterial("texture2", scene);
@@ -3717,7 +3766,9 @@ function runWorld(objects, textures) {
         else {
             console.warn('Unknown object type "' + object.type + '", maybe version mismatch between editor and this viewer.');
         }
-    });
+    }
+    ;
+    objects.forEach(processObject);
     //unlockGatesAndActivateKeys();
 }
 function clearWorld() {
@@ -4283,6 +4334,60 @@ ion.sound({
     multiplay: true,
     volume: 1
 });
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        function runStats() {
+            var cookie = window.localStorage.getItem('cookie');
+            if (!cookie) {
+                cookie = createGuid();
+                window.localStorage.setItem('cookie', cookie);
+            }
+            var session = createGuid();
+            $.post({
+                url: STATSERVER_URL + '/sessions',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    session: session,
+                    cookie: cookie,
+                    gallery: window.location.hostname,
+                })
+            }).done(function (response) {
+                r('Stats initialized!');
+            });
+            var xl, yl, zl;
+            setInterval(function () {
+                var x = camera.position.x / -BLOCK_SIZE;
+                var y = camera.position.z / BLOCK_SIZE;
+                var z = camera.position.y / BLOCK_SIZE; //- BLOCKS_1NP_LEVEL;
+                x = Math.round(x * 100) / 100;
+                y = Math.round(y * 100) / 100;
+                z = Math.round(z * 100) / 100;
+                if (x != xl || y != yl || z != zl) {
+                    xl = x;
+                    yl = y;
+                    zl = z;
+                    $.post({
+                        url: STATSERVER_URL + '/states',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            session: session,
+                            world: world_selected,
+                            time: new Date() / 1000,
+                            x: x,
+                            y: y,
+                            z: z
+                        })
+                    }).done(function (response) {
+                        r('Stats position send!');
+                    });
+                }
+            }, 300);
+        }
+        Viewer.runStats = runStats;
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
 /// <reference path="reference.ts" />
 var pointer_lock = document.getElementById("pointer-lock");
 var $hints = $('.hints');
@@ -4348,6 +4453,7 @@ function mouseMove(e) {
 /// <reference path="popup-window.ts" />
 /// <reference path="gates.ts" />
 /// <reference path="sounds.ts" />
+/// <reference path="stat.ts" />
 /// <reference path="date-functions" />
 /// <reference path="pointer-lock.ts" />
 /// <reference path="reference.ts" />
@@ -4442,6 +4548,9 @@ var keys_tick = function (timestamp) {
         }
     }
     if (controls_down.JUMP) {
+        if (GALLERY.Viewer.develop) {
+            camera.position.y += 1.6;
+        }
     }
     /*if (controls_down.REFRESH) {
 
@@ -4494,3 +4603,28 @@ var keys_tick = function (timestamp) {
 };
 requestAnimationFrame(keys_tick);
 //var on_air = true;
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        function showStats() {
+            if (!Viewer.gallery_domain)
+                return;
+            $.get(STATSERVER_URL + '/' + Viewer.gallery_domain).done(function (sessions) {
+                sessions.forEach(function (session) {
+                    if (session.states.length < 2)
+                        return;
+                    var positions = session.states.map(function (state) {
+                        var position = new BABYLON.Vector3(state.x * -BLOCK_SIZE, state.z * BLOCK_SIZE, //todo no use BLOCKS_1NP_LEVEL
+                        state.y * BLOCK_SIZE);
+                        return (position);
+                    });
+                    r(positions);
+                    var tube = BABYLON.Mesh.CreateTube("tube", positions, 0.5, 3, null, 0, scene, false, BABYLON.Mesh.FRONTSIDE);
+                    //var lines = BABYLON.Mesh.CreateTube("lines",positions,2,3, null, 0, scene, false, BABYLON.Mesh.FRONTSIDE);
+                });
+            });
+        }
+        Viewer.showStats = showStats;
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));

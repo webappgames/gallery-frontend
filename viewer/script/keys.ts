@@ -148,7 +148,10 @@ var keys_tick = function (timestamp) {
 
     if (controls_down.JUMP) {
 
-        //camera.position.y += 1.6;
+        if(GALLERY.Viewer.develop){
+            camera.position.y += 1.6;
+        }
+
 
         //on_air=true;
 

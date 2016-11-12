@@ -175,7 +175,7 @@ function runWorld(objects,textures){
 
     //==================================================================================================================
 
-    objects.forEach(function (object) {
+    function processObject(object) {
 
         //todo use getBabylonPosition
         object.storey = object.storey || '1NP';
@@ -291,7 +291,8 @@ function runWorld(objects,textures){
             element.id = 'zone-'+object.id;
             element.style.display = 'none';
             element.classList.add('zone');
-            element.innerHTML = object.html;
+            element.innerHTML = (object.name?'<h1>'+object.name+'</h1>':'')+object.html;
+
 
             r(element);
 
@@ -427,6 +428,46 @@ function runWorld(objects,textures){
 
                     image.rotation.y = Math.PI + rotation_rad;
                     image.position.y += EYE_VERTICAL * BLOCK_SIZE;
+
+
+
+                    if(object.name || object.html || object.uri){
+
+                        r('Creating zone for '+object.name);
+
+
+                        let x = Math.sin(rotation_rad)*object.width/-2;
+                        let y = Math.cos(rotation_rad)*object.width/2;
+
+
+
+                        processObject({
+
+                            id: createGuid(),
+                            type: 'zone',
+
+                            world: object.world,
+                            storey: object.storey,
+                            position: {
+                                x: object.position.x+x,
+                                y: object.position.y+y,
+                            },
+
+
+                            width: object.width,
+                            height: object.width,
+
+                            name: object.name,
+                            html: object.html,
+                            uri: object.uri,
+                            uri_level: 10000,//todo better
+
+                        });
+
+
+
+                    }
+
 
                 }
 
@@ -569,7 +610,7 @@ function runWorld(objects,textures){
         if(object.type=='board') {
 
 
-            let board = new BABYLON.Mesh.CreateSphere(object.id, 2, 2*BLOCK_SIZE, scene);
+            let board = new BABYLON.Mesh.CreateSphere(object.id, 2, 4*BLOCK_SIZE, scene);
             board.position = position;
             board.position.y += EYE_VERTICAL * BLOCK_SIZE;
 
@@ -651,8 +692,10 @@ function runWorld(objects,textures){
 
 
 
-    });
+    };
 
+
+    objects.forEach(processObject);
 
     //unlockGatesAndActivateKeys();
 

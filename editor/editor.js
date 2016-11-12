@@ -1698,6 +1698,8 @@ var GALLERY;
             __extends(Image, _super);
             function Image(object) {
                 _super.call(this, object);
+                this.name = this.name || '';
+                this.html = this.html || '';
                 this.rotation = this.rotation || 0;
                 this.onGround = this.onGround || false;
                 this.hasAlpha = this.hasAlpha || false;
@@ -1994,6 +1996,9 @@ var GALLERY;
                 _super.call(this, object);
                 this.width = this.width || 5;
                 this.height = this.height || 5;
+                this.uri = this.uri || '';
+                this.uri_level = this.uri_level || 0;
+                this.name = this.name || '';
                 this.html = this.html || '';
                 //this.selector = this.selector || '';
             }
@@ -2041,6 +2046,7 @@ var GALLERY;
         Objects.Board = Board;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
+var STATSERVER_URL = 'http://webappgames.com:48567';
 var OBJECT_TYPES = ['zone', 'stairs', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'board'];
 var DOT_OBJECTS = ['zone', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'board'];
 var BLOCK_SIZE = 5;
@@ -2106,6 +2112,15 @@ var ZOOMS = [
 ];
 /// <reference path="../reference.ts" />
 var r = console.log.bind(console);
+function createGuid() {
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+}
 /// <reference path="lib/jquery.d.ts" />
 /// <reference path="script/uri-plugin.ts" />
 /// <reference path="script/05-objects/00-array.ts" />
@@ -2126,6 +2141,7 @@ var r = console.log.bind(console);
 /// <reference path="script/05-objects/10-board.ts" />
 /// <reference path="script/scene-config.ts" />
 /// <reference path="script/00-common.ts" />
+/// <reference path="script/guid.ts" />
 /// <reference path="reference.ts" />
 function createObject$(object) {
     //r(object.create$Element());
@@ -2144,10 +2160,14 @@ window.addEventListener('keydown', function (e) {
         undo();
     }
     // space and arrow keys
-    if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+    /*if([37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+
         //if(T.UI.Status.focusOnMap()){
         e.preventDefault();
-    }
+        //}
+
+
+    }*/
 }, false);
 //------------------------------------------------------------
 var keys = [];
@@ -2444,15 +2464,6 @@ var Message = function () {
     return _class;
 }();
 /// <reference path="reference.ts" />
-function createGuid() {
-    function s4() {
-        return Math.floor((1 + Math.random()) * 0x10000)
-            .toString(16)
-            .substring(1);
-    }
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-        s4() + '-' + s4() + s4() + s4();
-}
 $(function () {
     $('.new').click(function () {
         var size = {
@@ -3174,8 +3185,31 @@ var GALLERY;
         function previewHTML() {
             var preview = window.open("../", "gallery-preview");
             //r(preview.moveToBegining);
+            var gallery;
+            var deploys = objects.filterTypes('deploy');
+            if (deploys.getAll().length != 1) {
+                console.warn('There is ' + deploys.getAll().length + ' deploy objects - as app url using empty string!');
+                gallery = '';
+            }
+            else {
+                var url = deploys.getAll()[0].url;
+                function extractDomain(url) {
+                    var domain;
+                    //find & remove protocol (http, ftp, etc.) and get domain
+                    if (url.indexOf("://") > -1) {
+                        domain = url.split('/')[2];
+                    }
+                    else {
+                        domain = url.split('/')[0];
+                    }
+                    //find & remove port number
+                    domain = domain.split(':')[0];
+                    return domain;
+                }
+                gallery = extractDomain(url);
+            }
             setTimeout(function () {
-                preview.GALLERY.Viewer.run.call(preview, compiled_objects);
+                preview.GALLERY.Viewer.run.call(preview, compiled_objects, true, gallery);
             }, 500);
             /*var theWindow = window.open("../viewer", "gallery-preview"),
                 theDoc = theWindow.document,
@@ -3642,7 +3676,7 @@ function createMap() {
             else if (key == 'color' || key == 'fogColor') {
                 input_element = '<input type="color">';
             }
-            else if (key == 'skyboxSize') {
+            else if (key == 'skyboxSize' || key == 'uri_level') {
                 input_element = '<input type="number">';
             }
             else if (key == 'rotation' /* && (object.type!=='image' && object.onGround!=='image' )*/) {
@@ -3827,7 +3861,7 @@ function createMap() {
         drawing = false;
         var removed_stat = 0;
         r(drawing_objects);
-        if (drawing_objects.getAll().length === 1) {
+        if (drawing_objects.getAll().length === 1 && false) {
             var object = drawing_objects.getAll()[0];
             var object_on_position = objects.getBlockOnPosition(object.position, object.storey, object.world);
             if (object_on_position) {
@@ -3911,15 +3945,15 @@ function createMap() {
     //----------------------------------------------------------------------------
     //----------------------------------------------------------------------------IMAGES
     var drag_snap_options = {
-        //grid: [ zoom_selected, zoom_selected ],
+        grid: [zoom_selected / 2, zoom_selected / 2],
         //snap: ".block[data-shape='wall']",
         //snap: ".block",
         //snapMode: "outer",
         //snapTolerance: 10,
         drag: function (event, ui) {
             //r('drag');
-            ui.position.left = (Math.floor((ui.position.left - window_center.x) / zoom_selected * 2) / 2 + 0.5) * zoom_selected + window_center.x;
-            ui.position.top = (Math.floor((ui.position.top - window_center.y) / zoom_selected * 2) / 2 + 0.5) * zoom_selected + window_center.y;
+            //ui.position.left = (Math.floor((ui.position.left-window_center.x) / zoom_selected *2 )/2+0.5) * zoom_selected+window_center.x;
+            //ui.position.top  = (Math.floor((ui.position.top -window_center.y) / zoom_selected *2 )/2+0.5) * zoom_selected+window_center.y;
             var draggable = $(this).data("ui-draggable");
             draggable._trigger("snapped", event, ui);
         },

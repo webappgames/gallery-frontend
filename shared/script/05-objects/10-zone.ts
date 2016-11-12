@@ -7,8 +7,10 @@ namespace GALLERY.Objects{
         public storey: string;
         public width: number;
         public height: number;
+        public uri:string;
+        public uri_level:number;
 
-
+        public name: string;
         public html: string;
         //public selector: string;
 
@@ -21,6 +23,9 @@ namespace GALLERY.Objects{
 
             this.width = this.width || 5;
             this.height = this.height || 5;
+            this.uri = this.uri || '';
+            this.uri_level = this.uri_level || 0;
+            this.name = this.name || '';
             this.html = this.html || '';
             //this.selector = this.selector || '';
 

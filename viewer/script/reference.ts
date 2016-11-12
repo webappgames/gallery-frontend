@@ -23,6 +23,7 @@
 /// <reference path="popup-window.ts" />
 /// <reference path="gates.ts" />
 /// <reference path="sounds.ts" />
+/// <reference path="stat.ts" />
 
 
 

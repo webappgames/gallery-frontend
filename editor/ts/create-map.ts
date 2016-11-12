@@ -296,7 +296,7 @@ function createMap() {
             if(key=='color' || key=='fogColor'){
                 input_element='<input type="color">';
             }else
-            if(key=='skyboxSize'){
+            if(key=='skyboxSize' || key=='uri_level'){
                 input_element='<input type="number">';
             }else
             if(key=='rotation'/* && (object.type!=='image' && object.onGround!=='image' )*/){
@@ -623,7 +623,7 @@ function createMap() {
 
 
 
-        if(drawing_objects.getAll().length === 1){
+        if(drawing_objects.getAll().length === 1 && false){//todo better
 
             let object = drawing_objects.getAll()[0];
             let object_on_position = objects.getBlockOnPosition(object.position, object.storey, object.world);
@@ -779,7 +779,7 @@ function createMap() {
     //----------------------------------------------------------------------------IMAGES
     let drag_snap_options = {
 
-        //grid: [ zoom_selected, zoom_selected ],
+        grid: [ zoom_selected/2, zoom_selected/2 ],
 
         //snap: ".block[data-shape='wall']",
         //snap: ".block",
@@ -790,8 +790,8 @@ function createMap() {
 
             //r('drag');
 
-            ui.position.left = (Math.floor((ui.position.left-window_center.x) / zoom_selected *2 )/2+0.5) * zoom_selected+window_center.x;
-            ui.position.top  = (Math.floor((ui.position.top -window_center.y) / zoom_selected *2 )/2+0.5) * zoom_selected+window_center.y;
+            //ui.position.left = (Math.floor((ui.position.left-window_center.x) / zoom_selected *2 )/2+0.5) * zoom_selected+window_center.x;
+            //ui.position.top  = (Math.floor((ui.position.top -window_center.y) / zoom_selected *2 )/2+0.5) * zoom_selected+window_center.y;
 
 
 

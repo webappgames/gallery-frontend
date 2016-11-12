@@ -5,13 +5,30 @@
 namespace GALLERY.Viewer{
 
     export var running = false;
+    export var develop=false;
+    export var gallery_domain='';
 
-    export function run(compiled_objects: GALLERY.Objects.CompiledArray){
+    export function run(compiled_objects: GALLERY.Objects.CompiledArray, develop_=false, gallery_domain_=''){
 
         running = true;
+        develop = develop_;
+        gallery_domain = gallery_domain_;
+
 
         objects = compiled_objects;
-        r('Running gallery with '+objects.getAll().length+' objects.');
+        r('Running gallery with '+objects.getAll().length+' objects in '+(develop?'develop':'production')+' mode.');
+
+
+
+        if(develop){
+            showStats();
+        }else{
+            runStats();
+        }
+
+
+
+
 
 
 

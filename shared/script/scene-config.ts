@@ -1,5 +1,8 @@
 
 
+const STATSERVER_URL = 'http://webappgames.com:48567';
+
+
 const OBJECT_TYPES = ['zone','stairs','environment','light','label','tree','link','gate','deploy','board'];
 const DOT_OBJECTS = ['zone','environment','light','label','tree','link','gate','deploy','board'];
 

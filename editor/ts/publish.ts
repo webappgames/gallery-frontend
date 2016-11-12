@@ -126,10 +126,46 @@ namespace GALLERY.Editor{
 
         //r(preview.moveToBegining);
 
+        var gallery: string;
+
+
+        var deploys = objects.filterTypes('deploy');
+        if(deploys.getAll().length != 1){
+
+            console.warn('There is '+deploys.getAll().length+' deploy objects - as app url using empty string!');
+
+            gallery='';
+
+        }else {
+
+
+            var url = deploys.getAll()[0].url;
+
+            function extractDomain(url) {
+                var domain;
+                //find & remove protocol (http, ftp, etc.) and get domain
+                if (url.indexOf("://") > -1) {
+                    domain = url.split('/')[2];
+                }
+                else {
+                    domain = url.split('/')[0];
+                }
+
+                //find & remove port number
+                domain = domain.split(':')[0];
+
+                return domain;
+            }
+
+            gallery = extractDomain(url);
+
+        }
+
+
 
         setTimeout(function () {
 
-            preview.GALLERY.Viewer.run.call(preview,compiled_objects);
+            preview.GALLERY.Viewer.run.call(preview,compiled_objects,true,gallery);
 
         },500);
 

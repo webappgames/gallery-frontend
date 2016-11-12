@@ -6,6 +6,7 @@ namespace GALLERY.Objects{
 
         public storey: string;
         public name:string;
+        public html: string;
 
         public uri:string;
         public width:number;
@@ -21,9 +22,16 @@ namespace GALLERY.Objects{
 
 
 
+
+
+
         constructor(object){
 
             super(object);
+
+            this.name = this.name || '';
+            this.html = this.html || '';
+
 
             this.rotation = this.rotation || 0;
             this.onGround = this.onGround || false;

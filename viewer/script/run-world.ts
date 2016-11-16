@@ -397,9 +397,9 @@ function runWorld(objects_world,textures){
             if(typeof object.rotation === 'number') {
 
 
-                var rotation_rad = (object.rotation / 180) * Math.PI;
+                let rotation_rad = (object.rotation / 180) * Math.PI;
 
-                var image = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
+                let image = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
                 image.material = getImageMaterial(object.src,object.isEmitting,object.hasAlpha,object.backFace);
 
 
@@ -464,6 +464,45 @@ function runWorld(objects_world,textures){
 
                         processObject(zone);//todo better
                         objects.push(zone);
+
+
+
+
+                        if(object.uri){
+
+
+
+                            let label={
+
+                                id: createGuid(),
+                                type: 'label',
+
+                                world: object.world,
+                                storey: object.storey,
+                                position: {
+                                    x: object.position.x+(x*1.9),
+                                    y: object.position.y+(y*1.9),
+                                },
+
+                                rotation: object.rotation,
+
+
+                                name: object.name,
+                                uri: object.uri,
+
+                            };
+
+
+
+
+                            processObject(label);//todo better
+                            objects.push(label);
+
+
+                        }
+
+
+
 
                         //r(objects);
 

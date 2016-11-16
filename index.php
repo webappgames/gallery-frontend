@@ -23,15 +23,28 @@ function getRoute($labels,$uri){
 
 
 $route = getRoute($labels,$_SERVER['REQUEST_URI']);
+$routeRoot = getRoute($labels,'/');
 
 
 
 if(!$route){
 
-    $route = getRoute($labels,'/');
+    $route = $routeRoot;
     http_response_code(404);
 
 }
+
+
+if($route == $routeRoot){
+
+    $title = $routeRoot['name'];
+
+}else{
+
+    $title = $route['name'].' | '.$routeRoot['name'];
+
+}
+
 
 
 ?>
@@ -41,7 +54,7 @@ if(!$route){
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title><?=htmlspecialchars($route['name'])?></title>
+    <title><?=htmlspecialchars($title)?></title>
 
 
 

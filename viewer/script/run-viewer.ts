@@ -131,20 +131,37 @@ namespace GALLERY.Viewer{
         let pathname = uri.pathname();
 
 
-        if(!standGround) {
-            if (pathname.substr(0, 2) === '/:') {
 
-                let objectId = pathname.substr(2);
-                moveToObject(objects.getObjectById(objectId));
+        let rootLabel = objects.filterTypes('label').findBy('uri','/');
+        let label;
 
 
-            } else {
+        if (pathname.substr(0, 2) === '/:') {
 
-                if (!moveToURI(pathname)) {
-                    moveToURI('/');
-                }
+            let objectId = pathname.substr(2);
+            label = objects.getObjectById(objectId);
 
+
+        } else {
+
+            label = objects.filterTypes('label').findBy('uri',pathname);
+
+            if (!label) {
+                label = rootLabel;
             }
+
+        }
+
+        if(label == rootLabel){
+            window.document.title = rootLabel.name;
+        }else{
+            window.document.title = label.name+' | '+rootLabel.name;
+        }
+
+
+
+        if(!standGround) {
+            moveToObject(label);
         }
 
 

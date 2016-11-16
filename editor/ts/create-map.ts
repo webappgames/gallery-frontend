@@ -225,6 +225,7 @@ function createMap() {
 
     let select_callback = function () {
 
+        unselect_callback();
 
         $this = $(this);
 
@@ -370,7 +371,12 @@ function createMap() {
 
 
 
-        $selected_properties.find('input, textarea').change(function () {
+
+
+        let save_callback = function () {
+
+            createMap();
+            save();
 
             var $this = $(this);
 
@@ -404,13 +410,19 @@ function createMap() {
             }
 
 
-            createMap();
-            save();
             r(object);
 
 
+        };
+        $selected_properties.find('input, textarea').change(save_callback);
+        $selected_properties.find('input, textarea').keyup(save_callback);
+        //$selected_properties.find('input, textarea').keypress(function(){let self = this;setTimeout(save_callback.call(self),50)});
 
-        });
+
+
+
+
+
 
         $selected_properties.show();
 
@@ -468,6 +480,8 @@ function createMap() {
 
     };
     let unselect_callback = function () {
+
+
         selected_object = null;
         $('.not-selected-object').removeClass('not-selected-object');
         $selected_properties.hide();

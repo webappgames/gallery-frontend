@@ -3549,6 +3549,7 @@ function createMap() {
     var $dot = $('#dot');
     var $selected_properties = $('#selected-properties');
     var select_callback = function () {
+        unselect_callback();
         $this = $(this);
         var id = $this.attr('id');
         var object = objects.getObjectById(id);
@@ -3638,7 +3639,9 @@ function createMap() {
                     '</div>');
             }
         }
-        $selected_properties.find('input, textarea').change(function () {
+        var save_callback = function () {
+            createMap();
+            save();
             var $this = $(this);
             r($this);
             if ($this.attr('type') !== 'checkbox') {
@@ -3658,10 +3661,11 @@ function createMap() {
                 var object = objects.getObjectById(id);
                 object[key] = val;
             }
-            createMap();
-            save();
             r(object);
-        });
+        };
+        $selected_properties.find('input, textarea').change(save_callback);
+        $selected_properties.find('input, textarea').keyup(save_callback);
+        //$selected_properties.find('input, textarea').keypress(function(){let self = this;setTimeout(save_callback.call(self),50)});
         $selected_properties.show();
         $delete_button = $('<button>Smazat</button>');
         $delete_button.click(function () {

@@ -3685,16 +3685,26 @@ var GALLERY;
             r('Processing location...');
             var uri = new URI(location);
             var pathname = uri.pathname();
+            var rootLabel = objects.filterTypes('label').findBy('uri', '/');
+            var label;
+            if (pathname.substr(0, 2) === '/:') {
+                var objectId = pathname.substr(2);
+                label = objects.getObjectById(objectId);
+            }
+            else {
+                label = objects.filterTypes('label').findBy('uri', pathname);
+                if (!label) {
+                    label = rootLabel;
+                }
+            }
+            if (label == rootLabel) {
+                window.document.title = rootLabel.name;
+            }
+            else {
+                window.document.title = label.name + ' | ' + rootLabel.name;
+            }
             if (!standGround) {
-                if (pathname.substr(0, 2) === '/:') {
-                    var objectId = pathname.substr(2);
-                    moveToObject(objects.getObjectById(objectId));
-                }
-                else {
-                    if (!moveToURI(pathname)) {
-                        moveToURI('/');
-                    }
-                }
+                moveToObject(label);
             }
             unlockGatesAndActivateKeys(uri.hash());
             //r(uri);
@@ -3922,26 +3932,26 @@ function runWorld(objects_world, textures) {
         }
         else if (object.type == 'image') {
             if (typeof object.rotation === 'number') {
-                var rotation_rad = (object.rotation / 180) * Math.PI;
+                var rotation_rad_1 = (object.rotation / 180) * Math.PI;
                 var image = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
                 image.material = getImageMaterial(object.src, object.isEmitting, object.hasAlpha, object.backFace);
                 if (object.onGround) {
                     image.position = position;
                     image.position.y = (level + BLOCKS_1NP_LEVEL + 0.5) * BLOCK_SIZE + 0.1;
                     image.rotation.x = Math.PI / 2;
-                    image.rotation.y = Math.PI + rotation_rad;
+                    image.rotation.y = Math.PI + rotation_rad_1;
                 }
                 else {
-                    position.x += Math.sin(rotation_rad) * BLOCK_SIZE / 100;
-                    position.z += Math.cos(rotation_rad) * BLOCK_SIZE / 100;
+                    position.x += Math.sin(rotation_rad_1) * BLOCK_SIZE / 100;
+                    position.z += Math.cos(rotation_rad_1) * BLOCK_SIZE / 100;
                     image.position = position;
-                    image.rotation.y = Math.PI + rotation_rad;
+                    image.rotation.y = Math.PI + rotation_rad_1;
                     image.position.y += EYE_VERTICAL * BLOCK_SIZE;
                     if (object.name || object.html || object.uri || typeof object.zoneCreated == 'undefined') {
                         r('Creating zone for ' + object.name);
                         object.zoneCreated = true;
-                        var x = Math.sin(rotation_rad) * object.width / -2;
-                        var y = Math.cos(rotation_rad) * object.width / 2;
+                        var x = Math.sin(rotation_rad_1) * object.width / -2;
+                        var y = Math.cos(rotation_rad_1) * object.width / 2;
                         var zone = {
                             id: createGuid(),
                             type: 'zone',
@@ -3960,6 +3970,23 @@ function runWorld(objects_world, textures) {
                         };
                         processObject(zone); //todo better
                         objects.push(zone);
+                        if (object.uri) {
+                            var label = {
+                                id: createGuid(),
+                                type: 'label',
+                                world: object.world,
+                                storey: object.storey,
+                                position: {
+                                    x: object.position.x + (x * 1.9),
+                                    y: object.position.y + (y * 1.9),
+                                },
+                                rotation: object.rotation,
+                                name: object.name,
+                                uri: object.uri,
+                            };
+                            processObject(label); //todo better
+                            objects.push(label);
+                        }
                     }
                 }
                 image.scaling.x = object.width;

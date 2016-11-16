@@ -1,4 +1,4 @@
-@import 'https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css';
+@import 'http://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css';
 main {
   z-index: 1000; }
 
@@ -82,39 +82,43 @@ main {
     transform: translate(-50%, -50%);
     border: none; }
 
-#admin-world .light, #admin-world-basement .light {
-  z-index: 30;
-  user-select: none;
-  display: block; }
-  #admin-world .light i, #admin-world-basement .light i {
-    font-size: 30px;
-    cursor: move;
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    transform: translate(-50%, -50%);
+#admin-world, #admin-world-basement {
+  /*.zone{
+    z-index: 50!important;
+  }*/ }
+  #admin-world .light, #admin-world-basement .light {
+    z-index: 30;
+    user-select: none;
+    display: block; }
+    #admin-world .light i, #admin-world-basement .light i {
+      font-size: 30px;
+      cursor: move;
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      transform: translate(-50%, -50%);
+      display: block;
+      text-align: center;
+      width: 30px;
+      height: 30px;
+      background-color: #000;
+      border-radius: 30px;
+      box-shadow: #fff 0px 0px 5px; }
+  #admin-world .label, #admin-world .tree, #admin-world .link, #admin-world .gate, #admin-world-basement .label, #admin-world-basement .tree, #admin-world-basement .link, #admin-world-basement .gate {
+    z-index: 30;
+    user-select: none;
+    display: block; }
+    #admin-world .label i, #admin-world .tree i, #admin-world .link i, #admin-world .gate i, #admin-world-basement .label i, #admin-world-basement .tree i, #admin-world-basement .link i, #admin-world-basement .gate i {
+      font-size: 30px;
+      cursor: move;
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      transform: translate(-50%, -50%); }
+  #admin-world .image, #admin-world stairs, #admin-world-basement .image, #admin-world-basement stairs {
+    z-index: 20;
+    user-select: none;
     display: block;
-    text-align: center;
-    width: 30px;
-    height: 30px;
-    background-color: #000;
-    border-radius: 30px;
-    box-shadow: #fff 0px 0px 5px; }
-#admin-world .label, #admin-world .tree, #admin-world .link, #admin-world .gate, #admin-world-basement .label, #admin-world-basement .tree, #admin-world-basement .link, #admin-world-basement .gate {
-  z-index: 30;
-  user-select: none;
-  display: block; }
-  #admin-world .label i, #admin-world .tree i, #admin-world .link i, #admin-world .gate i, #admin-world-basement .label i, #admin-world-basement .tree i, #admin-world-basement .link i, #admin-world-basement .gate i {
-    font-size: 30px;
-    cursor: move;
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    transform: translate(-50%, -50%); }
-#admin-world .image, #admin-world stairs, #admin-world-basement .image, #admin-world-basement stairs {
-  z-index: 20;
-  user-select: none;
-  display: block;
       /*width: 30px;
       height: 30px;
 
@@ -147,12 +151,12 @@ main {
 
         border-bottom: 5px solid black;
       }*/ }
-  #admin-world .image img, #admin-world stairs img, #admin-world-basement .image img, #admin-world-basement stairs img {
-    cursor: move;
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    transform: translate(-50%, -50%); }
+    #admin-world .image img, #admin-world stairs img, #admin-world-basement .image img, #admin-world-basement stairs img {
+      cursor: move;
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      transform: translate(-50%, -50%); }
 
 #save {
   z-index: 2000;

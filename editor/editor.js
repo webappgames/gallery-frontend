@@ -1024,9 +1024,22 @@ var GALLERY;
                 objects.forEach(function (object) {
                     self.push(object);
                 });
+                this.reset();
             }
+            Array.prototype.next = function () {
+                if (this.objects.length <= this.index) {
+                    return null;
+                }
+                return this.objects[this.index++];
+            };
+            Array.prototype.reset = function () {
+                this.index = 0;
+            };
             Array.prototype.getAll = function () {
                 return this.objects;
+            };
+            Array.prototype.getObjectByIndex = function (index) {
+                return this.objects[index];
             };
             Array.prototype.forEach = function (callback) {
                 return this.objects.forEach(callback);
@@ -2121,6 +2134,43 @@ function createGuid() {
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
         s4() + '-' + s4() + s4() + s4();
 }
+var PH;
+(function (PH) {
+    var Notification = (function () {
+        function Notification(work, text) {
+            this.work = work;
+            this.tag = 'tag' + Math.random();
+            // Let's check if the browser supports notifications
+            if (!("Notification" in window)) {
+                console.warn("This browser does not support desktop notification");
+            }
+            else if (window.Notification.permission === "granted") {
+                // If it's okay let's create a notification
+                this.create(text);
+            }
+            else if (window.Notification.permission !== 'denied') {
+                window.Notification.requestPermission(function (permission) {
+                    // If the user accepts, let's create a notification
+                    if (permission === "granted") {
+                        this.create(text);
+                    }
+                });
+            }
+            // At last, if the user has denied notifications, and you
+            // want to be respectful there is no need to bother them any more.
+        }
+        Notification.prototype.create = function (text) {
+            console.log(this.work + ': ' + text);
+            this.notification = new window.Notification(this.work + ': ' + text, { tag: this.tag });
+        };
+        Notification.prototype.update = function (text) {
+            this.notification.close();
+            this.create(text);
+        };
+        return Notification;
+    }());
+    PH.Notification = Notification;
+})(PH || (PH = {}));
 /// <reference path="lib/jquery.d.ts" />
 /// <reference path="script/uri-plugin.ts" />
 /// <reference path="script/05-objects/00-array.ts" />
@@ -2142,6 +2192,7 @@ function createGuid() {
 /// <reference path="script/scene-config.ts" />
 /// <reference path="script/00-common.ts" />
 /// <reference path="script/guid.ts" />
+/// <reference path="script/notifications.ts" />
 /// <reference path="reference.ts" />
 function createObject$(object) {
     //r(object.create$Element());
@@ -3184,12 +3235,13 @@ var GALLERY;
         Editor.compile = compile;
         function previewHTML() {
             var preview = window.open("../", "gallery-preview");
-            //r(preview.moveToBegining);
-            var gallery;
+            var gallery_domain;
+            var gallery_password;
             var deploys = objects.filterTypes('deploy');
             if (deploys.getAll().length != 1) {
                 console.warn('There is ' + deploys.getAll().length + ' deploy objects - as app url using empty string!');
-                gallery = '';
+                gallery_domain = '';
+                gallery_password = '';
             }
             else {
                 var url = deploys.getAll()[0].url;
@@ -3206,10 +3258,11 @@ var GALLERY;
                     domain = domain.split(':')[0];
                     return domain;
                 }
-                gallery = extractDomain(url);
+                gallery_domain = extractDomain(url);
+                gallery_password = deploys.getAll()[0].password;
             }
             setTimeout(function () {
-                preview.GALLERY.Viewer.run.call(preview, compiled_objects, true, gallery);
+                preview.GALLERY.Viewer.run.call(preview, compiled_objects, true, gallery_domain, gallery_password);
             }, 500);
             /*var theWindow = window.open("../viewer", "gallery-preview"),
                 theDoc = theWindow.document,
@@ -3232,140 +3285,6 @@ var GALLERY;
             */
         }
         Editor.previewHTML = previewHTML;
-        function publishHTML() {
-            /*let promises =
-    
-            [
-                '../viewer/index.template.html',
-                '../viewer/viewer.js'
-    
-    
-            ].map(function(url){
-    
-                return new Promise(function(resolve, reject){
-                    $.ajax(url).done(resolve).fail(reject);
-                });
-    
-            });
-    
-            r(promises);
-    
-    
-            Promise.all(promises).then(function (responses) {
-    
-                r(responses);
-    
-            });*/
-            var sources = [
-                'viewer/index.html',
-                'viewer/style/viewer.css',
-                'viewer/script/lib/babylon.js',
-                'viewer/script/viewer.js',
-                'media/images/backgrounds/menu.png',
-                'media/images/backgrounds/page.png',
-                'media/images/skybox/TropicalSunnyDay_px.jpg',
-                'media/images/skybox/TropicalSunnyDay_py.jpg',
-                'media/images/skybox/TropicalSunnyDay_pz.jpg',
-                'media/images/skybox/TropicalSunnyDay_nx.jpg',
-                'media/images/skybox/TropicalSunnyDay_ny.jpg',
-                'media/images/skybox/TropicalSunnyDay_nz.jpg',
-                'media/images/textures/clay-bricks.jpg',
-                'media/images/textures/clay-roof.jpg',
-                'media/images/textures/iron-plates.jpg',
-                'media/images/textures/stone-bricks.jpg',
-                'media/images/textures/stone-plain.jpg',
-                'media/images/textures/wood-boards.jpg',
-                'media/images/textures/wood-fence.jpg',
-                'media/images/textures/wood-raw.jpg',
-                'media/images/textures/grass.jpg',
-                'media/images/textures/bark.jpg',
-                'media/images/textures/color-white.jpg',
-                'media/images/textures/color-light-gray.jpg',
-                'media/images/textures/color-dark-gray.jpg',
-                'media/sound/link-key.mp3',
-                'media/sound/link-teleport.mp3',
-                'media/sound/link-key-none.mp3',
-                'media/sound/gate-locked.mp3',
-                'media/sound/step-stairs.mp3',
-                'media/sound/step-ground.mp3',
-                'media/sound/step-room.mp3'
-            ];
-            var promises = sources.map(function (url) {
-                var dataType;
-                //r(url.substr(-4));
-                if (['.mp3', '.jpg', '.png'].indexOf(url.substr(-4)) !== -1) {
-                    dataType = 'binary';
-                }
-                else {
-                    dataType = 'text';
-                }
-                return ($.ajax({ url: '../' + url, dataType: dataType }));
-            });
-            $.when.apply($, promises).done(function () {
-                var results = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    results[_i - 0] = arguments[_i];
-                }
-                r(results);
-                var compiled_objects = new GALLERY.Objects.CompiledArray.compile(objects);
-                results[0][0] = results[0][0]
-                    .split('{{title}}').join('Ahoj')
-                    .split('{{objects}}').join(JSON.stringify(compiled_objects.getAll()));
-                var zip = new JSZip();
-                var root = zip.folder(gallery);
-                //root.file("index.html", html);
-                for (var i = 0, l = results.length; i < l; i++) {
-                    root.file(sources[i], results[i][0]);
-                }
-                /*root.file("babylon.js", babylonjs[0]);
-                root.file("viewer.js", viewerjs[0]);
-                root.file("viewer.css", viewercss[0]);
-    
-    
-                r(sound,image);
-    
-                root.file("test.mp3", sound[0]);
-                root.file("test.png", image[0]);*/
-                zip.generateAsync({ type: "blob" })
-                    .then(function (content) {
-                    // see FileSaver.js
-                    saveAs(content, gallery + ".zip");
-                });
-            });
-        }
-        Editor.publishHTML = publishHTML;
-        function publishOnWeb() {
-            var deploys = objects.filterTypes('deploy');
-            if (deploys.getAll().length == 1) {
-                var message = Message.info();
-                var deploy = deploys.getAll()[0];
-                compiled_objects = new GALLERY.Objects.CompiledArray.compile(objects);
-                var xmlHttpRequest = new XMLHttpRequest();
-                xmlHttpRequest.open('POST', deploy.url + '/update.php?password=' + deploy.password, true);
-                //xmlHttpRequest.setRequestHeader('Content-Type', mimeType);
-                //xmlHttpRequest.setRequestHeader('Content-Disposition', 'attachment; filename="' + fileName + '"');
-                var formData = new FormData();
-                formData.append('compiled', JSON.stringify(compiled_objects.getAll()));
-                formData.append('script', VIEWER_SCRIPT);
-                formData.append('style', VIEWER_STYLE);
-                xmlHttpRequest.send(formData);
-                message.text('Nahrávání na server...');
-                r('Sending request to ' + deploy.url);
-                xmlHttpRequest.onload = function () {
-                    r('Status of request changed to ' + xmlHttpRequest.status);
-                    if (xmlHttpRequest.status == 200) {
-                        message.text('Uploaded!', 'success').close();
-                    }
-                    else {
-                        message.text('Error when deploying, maybe wrong password or url.', 'error').close();
-                    }
-                };
-            }
-            else {
-                alert('There is ' + deploys.getAll().length + ' deploy objects!');
-            }
-        }
-        Editor.publishOnWeb = publishOnWeb;
     })(Editor = GALLERY.Editor || (GALLERY.Editor = {}));
 })(GALLERY || (GALLERY = {}));
 /// <reference path="reference.ts" />
@@ -3620,6 +3539,8 @@ function createMap() {
     var $images = $admin_world.find('.image');
     var $stairs = $admin_world.find('.stairs');
     var $dot_objects = $admin_world.find(DOT_OBJECTS.map(function (item) { return ('.' + item); }).join(', '));
+    $dot_objects.css('z-index', 2);
+    $('.zone').css('z-index', 1);
     /*$admin_world.mousemove(function (e) {
         var position = getPositionFromLeftTop(e.clientX,e.clientY);
         document.title = isWallOn(05-objects,position);
@@ -3641,7 +3562,6 @@ function createMap() {
         var height = $this.outerHeight();
         $admin_world.find('div').addClass('not-selected-object').css('z-index', '');
         $this.removeClass('not-selected-object');
-        $this.css('z-index', 10000);
         $selected_properties.html('');
         $selected_properties.append('<legend>Objekt</legend>');
         var input_element, $input_element;

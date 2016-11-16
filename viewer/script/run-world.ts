@@ -48,7 +48,7 @@ function runWorld(objects_world,textures){
 
         let url: string;
         if(BLOCK_MATERIALS.indexOf(key)!==-1){
-            url = "../media/images/textures/" + key + ".jpg";
+            url = "/media/images/textures/" + key + ".jpg";
             r('Creating native texture '+key+'.');
 
         }else{

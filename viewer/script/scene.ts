@@ -194,24 +194,32 @@ var createScene = function () {
 
 
             zones.sort(function (zone_a,zone_b) {
-                if(zone_a.uri_index>zone_b.uri_index){
-                    return(1);
-                }else
-                if(zone_a.uri_index<zone_b.uri_index){
+                if(zone_a.uri_level>zone_b.uri_level){
                     return(-1);
+                }else
+                if(zone_a.uri_level<zone_b.uri_level){
+                    return(1);
                 }else{
                     return(0);
                 }
             });
 
+            r(zones);
+            r('Creating new app uri from zone ',zones[0]);
 
-            r('Creating new app uri from '+zones.length+' zones');
+            let uri:string;
+            if(zones.length == 0){
+                uri = '/';
+            }else{
+                uri = zones[0].uri;
+            }
 
-            let uri = '/';
+
+            /*let uri = '/';
             zones.forEach(function (zone) {
                 uri += zone.uri;
             });
-            uri = uri.split('//').join('/');
+            uri = uri.split('//').join('/');*/
 
             GALLERY.Viewer.appState(uri+window.location.hash,true);
 

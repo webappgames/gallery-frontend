@@ -11,7 +11,7 @@ Deny from all
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /index.html [L,QSA]
+RewriteRule . /index.php [L,QSA]
 
 
 Order Deny,Allow

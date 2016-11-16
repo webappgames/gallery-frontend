@@ -34,3 +34,4 @@
 
 /// <reference path="script/00-common.ts" />
 /// <reference path="script/guid.ts" />
+/// <reference path="script/notifications.ts" />

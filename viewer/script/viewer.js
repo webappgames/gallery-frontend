@@ -3,6 +3,26 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+function dataURItoBlob(dataURI) {
+    // convert base64 to raw binary data held in a string
+    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+    var byteString = atob(dataURI.split(',')[1]);
+    // separate out the mime component
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    // write the bytes of the string to an ArrayBuffer
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    // write the ArrayBuffer to a blob, and you're done
+    var blob = new Blob([ab], { type: mimeString });
+    return blob;
+    // Old code
+    // var bb = new BlobBuilder();
+    // bb.append(ab);
+    // return bb.getBlob(mimeString);
+}
 //document.getElementById("para1").innerHTML = dateToSmartString(new Date('2016-01-01T13:39:45.794Z'));
 function dayOfUniverse(date) {
     return Math.round((date) / 8.64e7);
@@ -45,6 +65,246 @@ function dateFromDotString(str) {
     //todo minutes seconds hours
     return (date);
 }
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        var DeployFile = (function () {
+            function DeployFile(name, content) {
+                this.name = name;
+                this.content = content;
+            }
+            return DeployFile;
+        }());
+        Viewer.DeployFile = DeployFile;
+        function deploy() {
+            var deployNotification = new PH.Notification('Deploy', 'Downloading files');
+            var index;
+            var screenshots;
+            var media;
+            index = new Promise(function (resolve, reject) {
+                var deployFiles = [];
+                deployFiles.push(new DeployFile('.htaccess', "\n            \nRewriteEngine On\n\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule . / [L,QSA]\n"));
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", '/index-src.php');
+                xhr.responseType = "blob";
+                xhr.onload = function () {
+                    //r(this);
+                    deployFiles.push(new DeployFile('index.php', this.response));
+                    if (this.status == 200) {
+                        resolve(deployFiles);
+                    }
+                    else {
+                        reject(deployFiles);
+                    }
+                };
+                xhr.send();
+            });
+            screenshots = new Promise(function (resolve, reject) {
+                var labels = objects.filterTypes('label');
+                GALLERY.Viewer.makeScreenshots(labels, { width: 1920, height: 1080 }, function (screenshots) {
+                    var deployFiles = [];
+                    screenshots.forEach(function (screenshot, index) {
+                        var label = labels.getAll()[index]; //todo .getObjectByIndex(index);
+                        var name = label.uri.split('/').join('-');
+                        var screenshotName = 'screenshots/screenshot' + name + '.png';
+                        label.screenshot = '/' + screenshotName;
+                        deployFiles.push(new DeployFile(screenshotName, screenshot));
+                        //deployFiles.push(new DeployFile(routeName,``));
+                    });
+                    //r(deployFiles);
+                    resolve(deployFiles);
+                });
+            });
+            media = new Promise(function (resolve, reject) {
+                var sources = [
+                    //'viewer/index.html',
+                    'viewer/style/viewer.css',
+                    'viewer/script/lib/babylon.js',
+                    'node_modules/handjs/hand.min.js',
+                    'viewer/script/viewer.js',
+                    //'media/images/backgrounds/menu.png',
+                    //'media/images/backgrounds/page.png',
+                    'media/images/ui/mouse-lock.png',
+                    'media/images/ui/keys-text.png',
+                    'media/sound/link-key.mp3',
+                    'media/sound/link-teleport.mp3',
+                    'media/sound/link-key-none.mp3',
+                    'media/sound/gate-locked.mp3',
+                    'media/sound/step-stairs.mp3',
+                    'media/sound/step-ground.mp3',
+                    'media/sound/step-room.mp3',
+                ];
+                var materials = [];
+                objects.forEach(function (object) {
+                    if ("material" in object) {
+                        materials.push(object.material);
+                    }
+                });
+                objects.filterTypes('environment').forEach(function (environment) {
+                    materials.push(environment.ground);
+                    sources.push('media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_ft.jpg');
+                    sources.push('media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_rt.jpg');
+                    sources.push('media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_up.jpg');
+                    sources.push('media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_bk.jpg');
+                    sources.push('media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_dn.jpg');
+                    sources.push('media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_lf.jpg');
+                });
+                materials = materials.filter(function (material) {
+                    return (material.substr(0, 1) !== '#');
+                });
+                sources = sources.concat(materials.map(function (material) {
+                    return 'media/images/textures/' + material + '.jpg';
+                }));
+                sources = sources.filter(function (v, i, a) { return a.indexOf(v) === i; });
+                //r(sources);
+                var promises = sources.map(function (url) {
+                    var dataType;
+                    //r(url.substr(-4));
+                    if (['.mp3', '.jpg', '.png'].indexOf(url.substr(-4)) !== -1) {
+                        dataType = 'binary';
+                    }
+                    else {
+                        dataType = 'text';
+                    }
+                    return new Promise(function (resolve, reject) {
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("GET", '/' + url);
+                        xhr.responseType = "blob";
+                        xhr.onload = function () {
+                            var file = new DeployFile(url, this.response);
+                            if (this.status == 200) {
+                                resolve(file);
+                            }
+                            else {
+                                reject(file);
+                            }
+                        };
+                        xhr.send();
+                        /*$.ajax({url: '/' + url, dataType: dataType}).always(function (response) {
+    
+    
+                            let file = new DeployFile(url,response.responseText);
+                            r(this);
+                            if(response.status == 200){
+                                resolve(file);
+    
+                            }else{
+                                reject(file);
+                            }
+                        });*/
+                    });
+                });
+                //r(promises);
+                Promise.all(promises).then(function (results) {
+                    resolve(results);
+                }, function () {
+                    reject();
+                });
+            });
+            //----------------------------------------------------------------
+            Promise.all([index, screenshots, media]).then(function (results) {
+                r(results);
+                deployNotification.update('Creating zip file');
+                var deployFiles = (_a = []).concat.apply(_a, results);
+                //r(deployFiles);
+                var gallery_folder = Viewer.gallery_domain.split('.').join('-');
+                var zip = new JSZip();
+                //let zipRoot = zip.folder(gallery_folder);
+                zip.file('objects.compiled.json', JSON.stringify(objects.getAll(), null, true));
+                //r(deployFiles);
+                deployFiles.forEach(function (deployFile) {
+                    zip.file(deployFile.name, deployFile.content);
+                });
+                /*screenshots.forEach(function (screenshot,index) {
+                    zipScreenshots.file(index+'.png',screenshot);
+                });
+    
+    
+                media.forEach(function (file,index) {
+                    zipMedia.file(index+'.png',file);
+                });*/
+                zip.generateAsync({ type: "blob" }).then(function (content) {
+                    // see FileSaver.js
+                    //saveAs(content, gallery_folder+".zip");
+                    //r(content);
+                    var formData = new FormData();
+                    formData.append("gallery", content);
+                    formData.append("password", Viewer.gallery_password);
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', 'http://' + Viewer.gallery_domain + '/.gallery/update.php', true);
+                    xhr.upload.onprogress = function (e) {
+                        if (e.lengthComputable) {
+                            var percentComplete = (e.loaded / e.total) * 100;
+                            percentComplete = Math.floor(percentComplete);
+                            deployNotification.update('Uploading zip file ' + percentComplete + '%');
+                        }
+                    };
+                    deployNotification.update('Uploading');
+                    xhr.onload = function () {
+                        if (this.status == 200) {
+                            deployNotification.update('Finished');
+                        }
+                        else {
+                            deployNotification.update('Error while uploading');
+                        }
+                    };
+                    xhr.send(formData);
+                });
+                var _a;
+            }, function () {
+                // one or more failed
+            });
+            //r(screenshots);
+        }
+        Viewer.deploy = deploy;
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        function developMenu() {
+            var $developMenu = $("\n                <div class=\"develop-menu\">\n                    <a onclick=\"GALLERY.Viewer.deploy();\">Deploy</a>\n                    <a onclick=\"GALLERY.Viewer.showStats();\">Show stats</a>\n                </div>\n            ");
+            var $labelsMenu = $('<ul></ul>');
+            console.log($labelsMenu);
+            objects.filterTypes('label').forEach(function (label) {
+                //todo href="'+label.uri+'"
+                var $labelsItem = $('<li><a onclick="GALLERY.Viewer.appState(\'' + label.uri + '\'+window.location.hash);">' + label.name + ' (' + label.uri + ')</a></li>');
+                $labelsMenu.append($labelsItem);
+            });
+            $($developMenu).append($labelsMenu);
+            $('body').append($developMenu);
+        }
+        Viewer.developMenu = developMenu;
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
+;
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        function showStats() {
+            if (!Viewer.gallery_domain)
+                return;
+            $.get(STATSERVER_URL + '/' + Viewer.gallery_domain).done(function (sessions) {
+                sessions.forEach(function (session) {
+                    if (session.states.length < 2)
+                        return;
+                    var positions = session.states.map(function (state) {
+                        var position = new BABYLON.Vector3(state.x * -BLOCK_SIZE, state.z * BLOCK_SIZE, //todo no use BLOCKS_1NP_LEVEL
+                        state.y * BLOCK_SIZE);
+                        return (position);
+                    });
+                    r(positions);
+                    var tube = BABYLON.Mesh.CreateTube("tube", positions, 0.5, 3, null, 0, scene, false, BABYLON.Mesh.FRONTSIDE);
+                    //var lines = BABYLON.Mesh.CreateTube("lines",positions,2,3, null, 0, scene, false, BABYLON.Mesh.FRONTSIDE);
+                });
+            });
+        }
+        Viewer.showStats = showStats;
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
 var GALLERY;
 (function (GALLERY) {
     var Viewer;
@@ -1106,9 +1366,22 @@ var GALLERY;
                 objects.forEach(function (object) {
                     self.push(object);
                 });
+                this.reset();
             }
+            Array.prototype.next = function () {
+                if (this.objects.length <= this.index) {
+                    return null;
+                }
+                return this.objects[this.index++];
+            };
+            Array.prototype.reset = function () {
+                this.index = 0;
+            };
             Array.prototype.getAll = function () {
                 return this.objects;
+            };
+            Array.prototype.getObjectByIndex = function (index) {
+                return this.objects[index];
             };
             Array.prototype.forEach = function (callback) {
                 return this.objects.forEach(callback);
@@ -2203,6 +2476,43 @@ function createGuid() {
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
         s4() + '-' + s4() + s4() + s4();
 }
+var PH;
+(function (PH) {
+    var Notification = (function () {
+        function Notification(work, text) {
+            this.work = work;
+            this.tag = 'tag' + Math.random();
+            // Let's check if the browser supports notifications
+            if (!("Notification" in window)) {
+                console.warn("This browser does not support desktop notification");
+            }
+            else if (window.Notification.permission === "granted") {
+                // If it's okay let's create a notification
+                this.create(text);
+            }
+            else if (window.Notification.permission !== 'denied') {
+                window.Notification.requestPermission(function (permission) {
+                    // If the user accepts, let's create a notification
+                    if (permission === "granted") {
+                        this.create(text);
+                    }
+                });
+            }
+            // At last, if the user has denied notifications, and you
+            // want to be respectful there is no need to bother them any more.
+        }
+        Notification.prototype.create = function (text) {
+            console.log(this.work + ': ' + text);
+            this.notification = new window.Notification(this.work + ': ' + text, { tag: this.tag });
+        };
+        Notification.prototype.update = function (text) {
+            this.notification.close();
+            this.create(text);
+        };
+        return Notification;
+    }());
+    PH.Notification = Notification;
+})(PH || (PH = {}));
 /// <reference path="lib/jquery.d.ts" />
 /// <reference path="script/uri-plugin.ts" />
 /// <reference path="script/05-objects/00-array.ts" />
@@ -2224,6 +2534,7 @@ function createGuid() {
 /// <reference path="script/scene-config.ts" />
 /// <reference path="script/00-common.ts" />
 /// <reference path="script/guid.ts" />
+/// <reference path="script/notifications.ts" />
 /**
  * Ion.Sound
  * version 3.0.7 Build 89
@@ -3302,16 +3613,20 @@ var GALLERY;
         Viewer.running = false;
         Viewer.develop = false;
         Viewer.gallery_domain = '';
-        function run(compiled_objects, develop_, gallery_domain_) {
+        Viewer.gallery_password = '';
+        function run(compiled_objects, develop_, gallery_domain_, gallery_password_) {
             if (develop_ === void 0) { develop_ = false; }
             if (gallery_domain_ === void 0) { gallery_domain_ = ''; }
+            if (gallery_password_ === void 0) { gallery_password_ = ''; }
             Viewer.running = true;
             Viewer.develop = develop_;
             Viewer.gallery_domain = gallery_domain_;
+            Viewer.gallery_password = gallery_password_;
             objects = compiled_objects;
             r('Running gallery with ' + objects.getAll().length + ' objects in ' + (Viewer.develop ? 'develop' : 'production') + ' mode.');
             if (Viewer.develop) {
-                Viewer.showStats();
+                //showStats();
+                Viewer.developMenu();
             }
             else {
                 Viewer.runStats();
@@ -3411,7 +3726,7 @@ function runWorld(objects_world, textures) {
     function getTextureUrl(key) {
         var url;
         if (BLOCK_MATERIALS.indexOf(key) !== -1) {
-            url = "../media/images/textures/" + key + ".jpg";
+            url = "/media/images/textures/" + key + ".jpg";
             r('Creating native texture ' + key + '.');
         }
         else {
@@ -3886,23 +4201,31 @@ var createScene = function () {
                 return (zone.uri.substr(0, 1) == '/');
             });
             zones_1.sort(function (zone_a, zone_b) {
-                if (zone_a.uri_index > zone_b.uri_index) {
-                    return (1);
-                }
-                else if (zone_a.uri_index < zone_b.uri_index) {
+                if (zone_a.uri_level > zone_b.uri_level) {
                     return (-1);
+                }
+                else if (zone_a.uri_level < zone_b.uri_level) {
+                    return (1);
                 }
                 else {
                     return (0);
                 }
             });
-            r('Creating new app uri from ' + zones_1.length + ' zones');
-            var uri_1 = '/';
-            zones_1.forEach(function (zone) {
-                uri_1 += zone.uri;
+            r(zones_1);
+            r('Creating new app uri from zone ', zones_1[0]);
+            var uri = void 0;
+            if (zones_1.length == 0) {
+                uri = '/';
+            }
+            else {
+                uri = zones_1[0].uri;
+            }
+            /*let uri = '/';
+            zones.forEach(function (zone) {
+                uri += zone.uri;
             });
-            uri_1 = uri_1.split('//').join('/');
-            GALLERY.Viewer.appState(uri_1 + window.location.hash, true);
+            uri = uri.split('//').join('/');*/
+            GALLERY.Viewer.appState(uri + window.location.hash, true);
         }
         //r(zones_plus,zones_minus);
         zones_plus.forEach(function (zone_id) {
@@ -4355,7 +4678,7 @@ ion.sound({
         { name: "nuke", multiplay: false },
     ],
     // main config
-    path: "../media/sound/",
+    path: "/media/sound/",
     preload: true,
     multiplay: true,
     volume: 1
@@ -4466,22 +4789,25 @@ function mouseMove(e) {
 }
 /// <reference path="../../shared/reference.ts" />
 /// <reference path="lib/ion.sound.ts" />
-/// <reference path="babylon-plugins/babylon-tree.ts" />
-/// <reference path="babylon-plugins/babylon-stairs.ts" />
-/// <reference path="run-viewer.ts" />
-/// <reference path="run-world.ts" />
-/// <reference path="keys.ts" />
-/// <reference path="scene.ts" />
-/// <reference path="scene-collide.ts" />
-/// <reference path="scene-pick.ts" />
-/// <reference path="move-to.ts" />
-/// <reference path="reference.ts" />
-/// <reference path="popup-window.ts" />
-/// <reference path="gates.ts" />
-/// <reference path="sounds.ts" />
-/// <reference path="stat.ts" />
+/// <reference path="babylon-plugins/babylon-tree" />
+/// <reference path="babylon-plugins/babylon-stairs" />
+/// <reference path="run-viewer" />
+/// <reference path="run-world" />
+/// <reference path="keys" />
+/// <reference path="scene" />
+/// <reference path="scene-collide" />
+/// <reference path="scene-pick" />
+/// <reference path="move-to" />
+/// <reference path="reference" />
+/// <reference path="popup-window" />
+/// <reference path="gates" />
+/// <reference path="sounds" />
+/// <reference path="stat" />
+/// <reference path="data-uri-to-blob" />
+/// <reference path="develop-menu" />
+/// <reference path="develop-deploy" />
 /// <reference path="date-functions" />
-/// <reference path="pointer-lock.ts" />
+/// <reference path="pointer-lock" />
 /// <reference path="reference.ts" />
 var controls_keys = {
     'UP': [38, 87],
@@ -4602,26 +4928,6 @@ var keys_tick = function (timestamp) {
             }
 
             downloadURI(screenshot, filename);*/
-            function dataURItoBlob(dataURI) {
-                // convert base64 to raw binary data held in a string
-                // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
-                var byteString = atob(dataURI.split(',')[1]);
-                // separate out the mime component
-                var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-                // write the bytes of the string to an ArrayBuffer
-                var ab = new ArrayBuffer(byteString.length);
-                var ia = new Uint8Array(ab);
-                for (var i = 0; i < byteString.length; i++) {
-                    ia[i] = byteString.charCodeAt(i);
-                }
-                // write the ArrayBuffer to a blob, and you're done
-                var blob = new Blob([ab], { type: mimeString });
-                return blob;
-                // Old code
-                // var bb = new BlobBuilder();
-                // bb.append(ab);
-                // return bb.getBlob(mimeString);
-            }
             saveAs(dataURItoBlob(screenshot), filename);
         });
     }
@@ -4633,24 +4939,20 @@ var GALLERY;
 (function (GALLERY) {
     var Viewer;
     (function (Viewer) {
-        function showStats() {
-            if (!Viewer.gallery_domain)
+        function makeScreenshots(labels, options, done, screenshots) {
+            if (screenshots === void 0) { screenshots = []; }
+            var label = labels.next();
+            if (!label) {
+                done(screenshots);
                 return;
-            $.get(STATSERVER_URL + '/' + Viewer.gallery_domain).done(function (sessions) {
-                sessions.forEach(function (session) {
-                    if (session.states.length < 2)
-                        return;
-                    var positions = session.states.map(function (state) {
-                        var position = new BABYLON.Vector3(state.x * -BLOCK_SIZE, state.z * BLOCK_SIZE, //todo no use BLOCKS_1NP_LEVEL
-                        state.y * BLOCK_SIZE);
-                        return (position);
-                    });
-                    r(positions);
-                    var tube = BABYLON.Mesh.CreateTube("tube", positions, 0.5, 3, null, 0, scene, false, BABYLON.Mesh.FRONTSIDE);
-                    //var lines = BABYLON.Mesh.CreateTube("lines",positions,2,3, null, 0, scene, false, BABYLON.Mesh.FRONTSIDE);
-                });
+            }
+            GALLERY.Viewer.appState(label.uri + window.location.hash);
+            BABYLON.Tools.CreateScreenshot(engine, scene.activeCamera, options, function (screenshot) {
+                screenshots.push(dataURItoBlob(screenshot));
+                //r('Screenshot created');
+                makeScreenshots(labels, options, done, screenshots);
             });
         }
-        Viewer.showStats = showStats;
+        Viewer.makeScreenshots = makeScreenshots;
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
 })(GALLERY || (GALLERY = {}));

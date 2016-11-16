@@ -8,7 +8,7 @@ namespace GALLERY.Objects{
 
 
         public objects:GALLERY.Objects.Object[];
-
+        public index:number;
 
         constructor(objects:GALLERY.Objects.Object[] = []) {
 
@@ -21,11 +21,32 @@ namespace GALLERY.Objects{
                 self.push(object);
             });
 
+            this.reset();
+
+        }
+
+        next():GALLERY.Objects.Object {
+
+            if(this.objects.length <= this.index){
+                return null;
+            }
+
+            return this.objects[this.index++];
+        }
+
+
+        reset(){
+            this.index=0;
         }
 
 
         getAll():GALLERY.Objects.Object[] {
             return this.objects;
+        }
+
+
+        getObjectByIndex(index:number):GALLERY.Objects.Object {
+            return this.objects[index];
         }
 
 
@@ -173,7 +194,7 @@ namespace GALLERY.Objects{
 
             this.forEach(function (object) {
 
-                if ((types as [string).indexOf(object.type) !== -1){
+                if ((types as [string]).indexOf(object.type) !== -1){
                     filtered_objects_true.getAll().push(object);//r('yes');
                 }else{
                     filtered_objects_false.getAll().push(object);//r('no');

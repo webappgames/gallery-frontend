@@ -7,12 +7,14 @@ namespace GALLERY.Viewer{
     export var running = false;
     export var develop=false;
     export var gallery_domain='';
+    export var gallery_password='';
 
-    export function run(compiled_objects: GALLERY.Objects.CompiledArray, develop_=false, gallery_domain_=''){
+    export function run(compiled_objects: GALLERY.Objects.CompiledArray, develop_=false, gallery_domain_='', gallery_password_=''){
 
         running = true;
         develop = develop_;
         gallery_domain = gallery_domain_;
+        gallery_password = gallery_password_;
 
 
         objects = compiled_objects;
@@ -21,7 +23,8 @@ namespace GALLERY.Viewer{
 
 
         if(develop){
-            showStats();
+            //showStats();
+            developMenu();
         }else{
             runStats();
         }

@@ -21,7 +21,7 @@ ion.sound({
     ],
 
     // main config
-    path: "../media/sound/",
+    path: "/media/sound/",
     preload: true,
     multiplay: true,
     volume: 1

@@ -170,9 +170,6 @@ function createMap() {
 
 
 
-
-
-
     /*let $admin_world_basement = $('#admin-world-basement');
     $admin_world_basement.html('');
     let storey_selected_basement = (parseInt(storey_selected)-1)+'NP';
@@ -206,6 +203,12 @@ function createMap() {
 
 
     let $dot_objects= $admin_world.find(DOT_OBJECTS.map(function (item) {return('.'+item);}).join(', '));
+
+
+    $dot_objects.css('z-index',2);
+    $('.zone').css('z-index',1);
+
+
 
     /*$admin_world.mousemove(function (e) {
         var position = getPositionFromLeftTop(e.clientX,e.clientY);
@@ -250,7 +253,6 @@ function createMap() {
 
         $admin_world.find('div').addClass('not-selected-object').css('z-index','');
         $this.removeClass('not-selected-object');
-        $this.css('z-index',10000);
 
 
 

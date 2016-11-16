@@ -1,4 +1,4 @@
-@import 'https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css';
+@import 'http://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css';
 body {
   /*font-family: 'Roboto', sans-serif;*/
   font-family: "Trebuchet MS", Helvetica, sans-serif;
@@ -294,3 +294,12 @@ section.feed {
       margin: 0;
       font-size: 0.9em;
       color: #44f; }
+
+.develop-menu {
+  z-index: 1000000;
+  display: block;
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background-color: #cccccc;
+  padding: 4px; }

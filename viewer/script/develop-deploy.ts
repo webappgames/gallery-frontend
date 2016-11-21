@@ -68,7 +68,7 @@ RewriteRule . / [L,QSA]
         screenshots = new Promise(function(resolve, reject) {
 
             var labels = objects.filterTypes('label');
-            GALLERY.Viewer.makeScreenshots(labels, {width:1920,height:1080},function (screenshots) {
+            GALLERY.Viewer.makeScreenshots(labels, {width:1920/2,height:1080/2},function (screenshots) {
 
 
 

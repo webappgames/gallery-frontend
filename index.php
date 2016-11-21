@@ -74,7 +74,7 @@ if($route == $routeRoot){
     <script src="/node_modules/file-saver/FileSaver.min.js"></script>
 
 
-    <meta property="og:image" content="<?=addslashes($route['screenshot'])?>"/>
+    <meta property="og:image" content="<?=addslashes('http://'.$_SERVER['HTTP_HOST'].'/'.$route['screenshot'])?>"/>
 
 
 </head>

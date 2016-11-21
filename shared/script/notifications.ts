@@ -58,8 +58,16 @@ namespace PH {
 
         update(text: string){
 
-            this.notification.close();
-            this.create(text);
+            try {
+
+                this.notification.close();
+                this.create(text);
+
+            }catch (e){
+
+
+            }
+
 
         }
 

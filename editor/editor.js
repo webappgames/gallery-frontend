@@ -2164,8 +2164,12 @@ var PH;
             this.notification = new window.Notification(this.work + ': ' + text, { tag: this.tag });
         };
         Notification.prototype.update = function (text) {
-            this.notification.close();
-            this.create(text);
+            try {
+                this.notification.close();
+                this.create(text);
+            }
+            catch (e) {
+            }
         };
         return Notification;
     }());

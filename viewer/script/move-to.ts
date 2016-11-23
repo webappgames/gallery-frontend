@@ -87,6 +87,7 @@ function moveToURI(uri: string,immediately=true){//todo use this
 function moveToBabylon(babylon_position,babylon_rotation,immediately) {
 
 
+    let duration = 1;
 
 
     if(immediately){
@@ -95,21 +96,45 @@ function moveToBabylon(babylon_position,babylon_rotation,immediately) {
         return;
     }
 
+    if(!GALLERY.Viewer.LOCKED){
+        GALLERY.Viewer.LOCKED = true;
+    }
+
+
+    setTimeout(function(){
+        console.log("Animation Finished!");
+        GALLERY.Viewer.LOCKED = false;
+
+    },1000*duration*0.8);
+
+    // 3 parameters to create an event:
+    // - The frame at which the event will be triggered
+    // - The action to execute
+    // - A boolean if the event should execute only once (false by default)
+    /*var finished = new BABYLON.AnimationEvent(60, function() {
+        console.log("Animation Finished!");
+        GALLERY.Viewer.LOCKED = false;
+    }, true);*/
+
+
 
     var easingFunction = new BABYLON.CircleEase();
     easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
 
-    BABYLON.Animation.CreateAndStartAnimation(
+
+    let animation = BABYLON.Animation.CreateAndStartAnimation(
         "anim",
         camera,
         "position",
         30,
-        60,
+        30*duration,
         camera.position,
         babylon_position,
         BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE,
         easingFunction
     );
+    // Attach your event to your animation
+    //animation.addEvent(finished);
 
 
     //r(camera.rotation.y,babylon_rotation.y);
@@ -134,7 +159,7 @@ function moveToBabylon(babylon_position,babylon_rotation,immediately) {
         camera,
         "rotation",
         30,
-        60,
+        30*duration,
         camera.rotation,
         babylon_rotation,
         BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE,

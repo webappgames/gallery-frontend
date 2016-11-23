@@ -170,11 +170,23 @@ namespace GALLERY.Editor{
 
 
 
-        setTimeout(function () {
 
-            preview.GALLERY.Viewer.run.call(preview,compiled_objects,true,gallery_domain,gallery_password);
 
-        },500);
+
+        let previewLoaded = setInterval(function () {
+
+            try{
+
+                preview.GALLERY.Viewer.run.call(preview,compiled_objects,true,gallery_domain,gallery_password);
+                clearInterval(previewLoaded);
+
+            }catch(e){
+
+                r('Not yet loaded!');
+            }
+
+
+        },100);
 
 
 

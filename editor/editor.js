@@ -1802,6 +1802,7 @@ var GALLERY;
                 _super.call(this, object);
                 this.name = this.name || '';
                 this.uri = this.uri || '';
+                this.next = this.next || 'none';
                 this.rotation = this.rotation || 0;
             }
             Label.prototype.create$Element = function () {
@@ -3265,9 +3266,15 @@ var GALLERY;
                 gallery_domain = extractDomain(url);
                 gallery_password = deploys.getAll()[0].password;
             }
-            setTimeout(function () {
-                preview.GALLERY.Viewer.run.call(preview, compiled_objects, true, gallery_domain, gallery_password);
-            }, 500);
+            var previewLoaded = setInterval(function () {
+                try {
+                    preview.GALLERY.Viewer.run.call(preview, compiled_objects, true, gallery_domain, gallery_password);
+                    clearInterval(previewLoaded);
+                }
+                catch (e) {
+                    r('Not yet loaded!');
+                }
+            }, 100);
             /*var theWindow = window.open("../viewer", "gallery-preview"),
                 theDoc = theWindow.document,
                 theScript = document.createElement('script');
@@ -3574,7 +3581,7 @@ function createMap() {
         for (var key in object) {
             input_element = null;
             check_element = null;
-            if (['name', 'uri', 'key', 'href', 'target', 'world', 'material', 'skybox', 'ground', 'url', 'password'].indexOf(key) !== -1) {
+            if (['name', 'uri', 'next', 'key', 'href', 'target', 'world', 'material', 'skybox', 'ground', 'url', 'password'].indexOf(key) !== -1) {
                 input_element = '<input type="text">';
             }
             else if (['script', 'html', 'selector'].indexOf(key) !== -1) {

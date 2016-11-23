@@ -19,8 +19,8 @@ var createScene = function () {
 
     // Need a free camera for collisions
 
-    var camera = new BABYLON.VirtualJoysticksCamera("VJC", BABYLON.Vector3.Zero(), scene);
-    //var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, EYE_VERTICAL * BLOCK_SIZE, 30*BLOCK_SIZE), scene);
+    //var camera = new BABYLON.VirtualJoysticksCamera("VJC", BABYLON.Vector3.Zero(), scene);
+    var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, EYE_VERTICAL * BLOCK_SIZE, 30*BLOCK_SIZE), scene);
 
 
     scene.activeCamera = camera;
@@ -45,8 +45,8 @@ var createScene = function () {
     //camera.keysLeft.push(65); // "s"
     //camera.keysRight.push(68); // "d"
 
-    camera.keysLeft = [81];//arrow <-
-    camera.keysRight = [69];//arrow ->
+    camera.keysLeft = [37,65];//arrow <-
+    camera.keysRight = [39,68];//arrow ->
 
 
 
@@ -100,6 +100,8 @@ var createScene = function () {
 
     var zones_last = [];
     scene.registerBeforeRender(function () {
+
+        if(GALLERY.Viewer.LOCKED)return;
 
 
         camera.cameraDirection.y += 0.01;
@@ -239,6 +241,7 @@ var createScene = function () {
 
             let $zone_sections = $('#zone-'+zone_id);
             $zone_sections.stop().slideDown();
+            //$zone_sections.show().stop().animate({'margin-top': '50px'},1000);
 
 
         });
@@ -249,6 +252,7 @@ var createScene = function () {
             //let zone = objects.getObjectById(zone_id);
             let $zone_sections = $('#zone-'+zone_id);
             $zone_sections.stop().slideUp();
+            //$zone_sections.stop().hide('slide', {direction: 'up'}, 1400);
 
 
         });

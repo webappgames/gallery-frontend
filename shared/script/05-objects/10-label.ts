@@ -8,6 +8,7 @@ namespace GALLERY.Objects{
         public storey: string;
         public name: string;
         public uri: string;
+        public next: string;
         public rotation: number;
 
 
@@ -17,6 +18,7 @@ namespace GALLERY.Objects{
 
             this.name = this.name || '';
             this.uri = this.uri || '';
+            this.next = this.next || 'none';
             this.rotation = this.rotation || 0;
 
         }

@@ -246,6 +246,7 @@ section#zones {
   text-align: center; }
   section#zones div.zone {
     display: block;
+    cursor: pointer;
     width: 250px;
     background-color: #fff;
     border-radius: 3px;
@@ -253,13 +254,21 @@ section#zones {
     padding: 4px; }
     section#zones div.zone h1 {
       margin: 0px;
-      font-size: 1em;
+      font-size: 2em;
       width: calc(100% - 12px);
       background-color: #ddd;
       padding: 6px;
       margin-bottom: 10px; }
     section#zones div.zone h1.important {
       font-size: 1.5em; }
+    section#zones div.zone .text {
+      font-size: 1.5em; }
+    section#zones div.zone .next, section#zones div.zone .previous {
+      font-size: 2em; }
+      section#zones div.zone .next:hover, section#zones div.zone .previous:hover {
+        color: #ff1b0e; }
+    section#zones div.zone:hover .next {
+      color: #ff1b0e; }
 
 section.feed {
   display: block;
@@ -299,7 +308,8 @@ section.feed {
   z-index: 1000000;
   display: block;
   position: fixed;
-  bottom: 20px;
+  top: 20px;
   left: 20px;
   background-color: #cccccc;
-  padding: 4px; }
+  padding: 4px;
+  border-radius: 3px; }

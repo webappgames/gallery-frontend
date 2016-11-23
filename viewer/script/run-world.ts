@@ -287,12 +287,22 @@ function runWorld(objects_world,textures){
 
             if(object.name || object.html) {
 
+                let label = objects.filterTypes('label').findBy('uri',object.uri);
+
 
                 let element = document.createElement('div');
                 element.id = 'zone-' + object.id;
                 element.style.display = 'none';
                 element.classList.add('zone');
-                element.innerHTML = (object.name ? '<h1>' + object.name + '</h1>' : '') + object.html;
+                element.innerHTML = ''
+
+                    //+'<div class="previous"><i class="fa fa-chevron-up" aria-hidden="true"></i></div>'
+                    +(object.name ? '<h1>' + object.name + '</h1>' : '')
+                    + '<div class="text">' +object.html + '</div>'
+                    +(label.next!=='none'?'<div class="next"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>':'');
+
+
+                element.onclick = GALLERY.Viewer.appStateNext;
 
 
                 document.getElementById('zones').appendChild(element);

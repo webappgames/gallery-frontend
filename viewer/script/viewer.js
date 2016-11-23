@@ -3,6 +3,87 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        Viewer.MODE = 'WEB';
+        Viewer.LOCKED = false;
+        function appState(location, standGround, immediately) {
+            if (standGround === void 0) { standGround = false; }
+            if (immediately === void 0) { immediately = true; }
+            history.replaceState(null, "Gallery", location); //todo normal name
+            history.pushState(null, "Gallery", location); //todo normal name
+            GALLERY.Viewer.processStateFromLocation(window.document.location, standGround, immediately);
+        }
+        Viewer.appState = appState;
+        function appStateBack(standGround, immediately) {
+            if (standGround === void 0) { standGround = false; }
+            if (immediately === void 0) { immediately = true; }
+            history.back();
+            appState(window.document.location.toString(), standGround, immediately);
+        }
+        Viewer.appStateBack = appStateBack;
+        function processStateFromLocation(location, standGround, immediately) {
+            if (standGround === void 0) { standGround = false; }
+            if (immediately === void 0) { immediately = true; }
+            r('Processing location...');
+            var uri = new URI(location);
+            var pathname = uri.pathname();
+            var rootLabel = objects.filterTypes('label').findBy('uri', '/');
+            var label;
+            if (pathname.substr(0, 2) === '/:') {
+                var objectId = pathname.substr(2);
+                label = objects.getObjectById(objectId);
+            }
+            else {
+                label = objects.filterTypes('label').findBy('uri', pathname);
+                if (!label) {
+                    label = rootLabel;
+                }
+            }
+            if (label == rootLabel) {
+                window.document.title = rootLabel.name;
+            }
+            else {
+                window.document.title = label.name + ' | ' + rootLabel.name;
+            }
+            if (!standGround) {
+                moveToObject(label, immediately);
+            }
+            unlockGatesAndActivateKeys(uri.hash());
+            //r(uri);
+        }
+        Viewer.processStateFromLocation = processStateFromLocation;
+        function appStateNext() {
+            if (Viewer.LOCKED == 'NEXT')
+                return;
+            var label = getAppStateLabel();
+            var label_next = objects.filterTypes('label').findBy('uri', label.next);
+            if (label_next) {
+                Viewer.LOCKED = 'NEXT';
+                appState(label_next.uri, false, false);
+            }
+        }
+        Viewer.appStateNext = appStateNext;
+        function appStatePrevious() {
+            if (Viewer.LOCKED == 'PREVIOUS')
+                return;
+            var label = getAppStateLabel();
+            var label_previous = objects.filterTypes('label').findBy('next', label.uri);
+            if (label_previous) {
+                Viewer.LOCKED = 'PREVIOUS';
+                appState(label_previous.uri, false, false);
+            }
+        }
+        Viewer.appStatePrevious = appStatePrevious;
+        function getAppStateLabel() {
+            //r(objects.filterTypes('label'),window.document.location);
+            return objects.filterTypes('label').findBy('uri', window.document.location.pathname);
+        }
+        Viewer.getAppStateLabel = getAppStateLabel;
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
 function dataURItoBlob(dataURI) {
     // convert base64 to raw binary data held in a string
     // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
@@ -2144,6 +2225,7 @@ var GALLERY;
                 _super.call(this, object);
                 this.name = this.name || '';
                 this.uri = this.uri || '';
+                this.next = this.next || 'none';
                 this.rotation = this.rotation || 0;
             }
             Label.prototype.create$Element = function () {
@@ -3631,6 +3713,7 @@ var GALLERY;
             if (Viewer.develop) {
                 //showStats();
                 Viewer.developMenu();
+                $('.develop-menu').draggable();
             }
             else {
                 Viewer.runStats();
@@ -3656,9 +3739,9 @@ var GALLERY;
             //r($zones.html());
             window.onpopstate = function (event) {
                 //r("location: " + document.location + ", state: " + JSON.stringify(event.state));
-                processStateFromLocation(window.document.location);
+                Viewer.processStateFromLocation(window.document.location);
             };
-            appState(window.document.location.toString());
+            Viewer.appState(window.document.location.toString());
             //processStateFromLocation(window.document.location);
             //console.log(getStateFromLocation(document.location.toString()));
             /*alert("location: " + document.location);
@@ -3671,49 +3754,6 @@ var GALLERY;
             */
         }
         Viewer.run = run;
-        function appState(location, standGround) {
-            if (standGround === void 0) { standGround = false; }
-            history.replaceState(null, "Gallery", location); //todo normal name
-            history.pushState(null, "Gallery", location); //todo normal name
-            GALLERY.Viewer.processStateFromLocation(window.document.location, standGround);
-        }
-        Viewer.appState = appState;
-        function appStateBack(location, standGround) {
-            if (standGround === void 0) { standGround = false; }
-            history.back();
-            appState(window.document.location.toString());
-        }
-        Viewer.appStateBack = appStateBack;
-        function processStateFromLocation(location, standGround) {
-            if (standGround === void 0) { standGround = false; }
-            r('Processing location...');
-            var uri = new URI(location);
-            var pathname = uri.pathname();
-            var rootLabel = objects.filterTypes('label').findBy('uri', '/');
-            var label;
-            if (pathname.substr(0, 2) === '/:') {
-                var objectId = pathname.substr(2);
-                label = objects.getObjectById(objectId);
-            }
-            else {
-                label = objects.filterTypes('label').findBy('uri', pathname);
-                if (!label) {
-                    label = rootLabel;
-                }
-            }
-            if (label == rootLabel) {
-                window.document.title = rootLabel.name;
-            }
-            else {
-                window.document.title = label.name + ' | ' + rootLabel.name;
-            }
-            if (!standGround) {
-                moveToObject(label);
-            }
-            unlockGatesAndActivateKeys(uri.hash());
-            //r(uri);
-        }
-        Viewer.processStateFromLocation = processStateFromLocation;
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
 })(GALLERY || (GALLERY = {}));
 /// <reference path="reference.ts" />
@@ -3882,11 +3922,16 @@ function runWorld(objects_world, textures) {
             mesh.scaling.x = object.width;
             mesh.scaling.z = object.height;
             if (object.name || object.html) {
+                var label = objects.filterTypes('label').findBy('uri', object.uri);
                 var element = document.createElement('div');
                 element.id = 'zone-' + object.id;
                 element.style.display = 'none';
                 element.classList.add('zone');
-                element.innerHTML = (object.name ? '<h1>' + object.name + '</h1>' : '') + object.html;
+                element.innerHTML = ''
+                    + (object.name ? '<h1>' + object.name + '</h1>' : '')
+                    + '<div class="text">' + object.html + '</div>'
+                    + (label.next !== 'none' ? '<div class="next"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
+                element.onclick = GALLERY.Viewer.appStateNext;
                 document.getElementById('zones').appendChild(element);
             }
             mesh.checkCollisions = false;
@@ -4245,8 +4290,8 @@ var createScene = function () {
     //var light0 = new BABYLON.DirectionalLight("Omni", new BABYLON.Vector3(-2, -5, 2), scene);
     //var light1 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(2, -5, -2), scene);
     // Need a free camera for collisions
-    var camera = new BABYLON.VirtualJoysticksCamera("VJC", BABYLON.Vector3.Zero(), scene);
-    //var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, EYE_VERTICAL * BLOCK_SIZE, 30*BLOCK_SIZE), scene);
+    //var camera = new BABYLON.VirtualJoysticksCamera("VJC", BABYLON.Vector3.Zero(), scene);
+    var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, EYE_VERTICAL * BLOCK_SIZE, 30 * BLOCK_SIZE), scene);
     scene.activeCamera = camera;
     camera.rotation.y = Math.PI;
     camera.attachControl(canvas, true);
@@ -4261,8 +4306,8 @@ var createScene = function () {
     camera.keysDown.push(83); // "s"
     //camera.keysLeft.push(65); // "s"
     //camera.keysRight.push(68); // "d"
-    camera.keysLeft = [81]; //arrow <-
-    camera.keysRight = [69]; //arrow ->
+    camera.keysLeft = [37, 65]; //arrow <-
+    camera.keysRight = [39, 68]; //arrow ->
     camera.speed = SPEED;
     camera.inertia = SPEED_INERTIA;
     camera.fov = 1.3;
@@ -4293,6 +4338,8 @@ var createScene = function () {
     };*/
     var zones_last = [];
     scene.registerBeforeRender(function () {
+        if (GALLERY.Viewer.LOCKED)
+            return;
         camera.cameraDirection.y += 0.01;
         //camera.moveWithCollisions(scene.gravity);
         /*if (!ground.intersectsPoint(camera.position)) {
@@ -4373,6 +4420,7 @@ var createScene = function () {
             r('In the zone ' + zone_id);
             var $zone_sections = $('#zone-' + zone_id);
             $zone_sections.stop().slideDown();
+            //$zone_sections.show().stop().animate({'margin-top': '50px'},1000);
         });
         zones_minus.forEach(function (zone_id) {
             //$('#zone-'+zone_id).hide();
@@ -4380,6 +4428,7 @@ var createScene = function () {
             //let zone = objects.getObjectById(zone_id);
             var $zone_sections = $('#zone-' + zone_id);
             $zone_sections.stop().slideUp();
+            //$zone_sections.stop().hide('slide', {direction: 'up'}, 1400);
         });
         //----------------------------------------------------------Boards
         boards.forEach(function (board) {
@@ -4677,14 +4726,32 @@ function moveToURI(uri, immediately) {
     }
 }
 function moveToBabylon(babylon_position, babylon_rotation, immediately) {
+    var duration = 1;
     if (immediately) {
         camera.position = babylon_position;
         camera.rotation = babylon_rotation;
         return;
     }
+    if (!GALLERY.Viewer.LOCKED) {
+        GALLERY.Viewer.LOCKED = true;
+    }
+    setTimeout(function () {
+        console.log("Animation Finished!");
+        GALLERY.Viewer.LOCKED = false;
+    }, 1000 * duration * 0.8);
+    // 3 parameters to create an event:
+    // - The frame at which the event will be triggered
+    // - The action to execute
+    // - A boolean if the event should execute only once (false by default)
+    /*var finished = new BABYLON.AnimationEvent(60, function() {
+        console.log("Animation Finished!");
+        GALLERY.Viewer.LOCKED = false;
+    }, true);*/
     var easingFunction = new BABYLON.CircleEase();
     easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
-    BABYLON.Animation.CreateAndStartAnimation("anim", camera, "position", 30, 60, camera.position, babylon_position, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE, easingFunction);
+    var animation = BABYLON.Animation.CreateAndStartAnimation("anim", camera, "position", 30, 30 * duration, camera.position, babylon_position, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE, easingFunction);
+    // Attach your event to your animation
+    //animation.addEvent(finished);
     //r(camera.rotation.y,babylon_rotation.y);
     function parseRadians(rad) {
         if (rad < 0)
@@ -4700,7 +4767,7 @@ function moveToBabylon(babylon_position, babylon_rotation, immediately) {
         camera.rotation.y -= Math.PI * 2;
     if (diff < -Math.PI)
         camera.rotation.y += Math.PI * 2;
-    BABYLON.Animation.CreateAndStartAnimation("anim", camera, "rotation", 30, 60, camera.rotation, babylon_rotation, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE, easingFunction);
+    BABYLON.Animation.CreateAndStartAnimation("anim", camera, "rotation", 30, 30 * duration, camera.rotation, babylon_rotation, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE, easingFunction);
 }
 /// <reference path="reference.ts" />
 var Window = {};
@@ -4878,55 +4945,66 @@ var GALLERY;
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
 })(GALLERY || (GALLERY = {}));
 /// <reference path="reference.ts" />
-var pointer_lock = document.getElementById("pointer-lock");
-var $hints = $('.hints');
-canvas.requestPointerLock = canvas.requestPointerLock ||
-    canvas.mozRequestPointerLock;
-document.exitPointerLock = document.exitPointerLock ||
-    document.mozExitPointerLock;
-//canvas.requestPointerLock();
-pointer_lock.onclick = function (e) {
-    e.preventDefault();
-    //setTimeout(//todo is there a better solution?
-    //    function () {
-    canvas.requestPointerLock();
-    //    }, IMMEDIATELY_MS
-    //);
-};
-// Hook pointer lock state change events for different browsers
-document.addEventListener('pointerlockchange', lockChangeAlert, false);
-document.addEventListener('mozpointerlockchange', lockChangeAlert, false);
-function lockChangeAlert() {
-    if (document.pointerLockElement === canvas ||
-        document.mozPointerLockElement === canvas) {
-        console.log('The pointer lock status is now locked');
-        document.addEventListener("mousemove", mouseMove, false);
-        canvas.focus();
-        //pointer_lock.innerHTML='<p>Esc</p>';
-        $hints.hide();
-    }
-    else {
-        console.log('The pointer lock status is now unlocked');
-        document.removeEventListener("mousemove", mouseMove, false);
-        //pointer_lock.innerHTML='<p><i class="fa fa-arrows" aria-hidden="true"></i></p>';
-        $hints.show();
-        camera.detachControl(canvas);
-        setTimeout(function () {
-            camera.attachControl(canvas);
-        }, IMMEDIATELY_MS);
-    }
-}
-function mouseMove(e) {
-    //r('mousemove');
-    var movementX = e.movementX ||
-        e.mozMovementX ||
-        0;
-    var movementY = e.movementY ||
-        e.mozMovementY ||
-        0;
-    camera.rotation.y += (movementX / 10) / 180 * Math.PI;
-    camera.rotation.x += (movementY / 10) / 180 * Math.PI;
-}
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        //var pointer_lock = document.getElementById("pointer-lock");
+        var $hints = $('.hints');
+        canvas.requestPointerLock = canvas.requestPointerLock ||
+            canvas.mozRequestPointerLock;
+        document.exitPointerLock = document.exitPointerLock ||
+            document.mozExitPointerLock;
+        //canvas.requestPointerLock();
+        /*pointer_lock.onclick = function (e) {
+    
+            e.preventDefault();
+            //setTimeout(//todo is there a better solution?
+            //    function () {
+            canvas.requestPointerLock();
+            //    }, IMMEDIATELY_MS
+            //);
+    
+        };*/
+        // Hook pointer lock state change events for different browsers
+        document.addEventListener('pointerlockchange', lockChangeAlert, false);
+        document.addEventListener('mozpointerlockchange', lockChangeAlert, false);
+        function lockChangeAlert() {
+            if (document.pointerLockElement === canvas ||
+                document.mozPointerLockElement === canvas) {
+                console.log('The pointer lock status is now locked');
+                document.addEventListener("mousemove", mouseMove, false);
+                canvas.focus();
+                //pointer_lock.innerHTML='<p>Esc</p>';
+                $hints.hide();
+                Viewer.MODE = 'GAME';
+            }
+            else {
+                console.log('The pointer lock status is now unlocked');
+                document.removeEventListener("mousemove", mouseMove, false);
+                //pointer_lock.innerHTML='<p><i class="fa fa-arrows" aria-hidden="true"></i></p>';
+                $hints.show();
+                camera.detachControl(canvas);
+                setTimeout(function () {
+                    camera.attachControl(canvas);
+                }, IMMEDIATELY_MS);
+                //$(canvas).trigger('mouseup');
+                Viewer.MODE = 'WEB';
+            }
+        }
+        function mouseMove(e) {
+            //r('mousemove');
+            var movementX = e.movementX ||
+                e.mozMovementX ||
+                0;
+            var movementY = e.movementY ||
+                e.mozMovementY ||
+                0;
+            camera.rotation.y += (movementX / 10) / 180 * Math.PI;
+            camera.rotation.x += (movementY / 10) / 180 * Math.PI;
+        }
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
 /// <reference path="../../shared/reference.ts" />
 /// <reference path="lib/ion.sound.ts" />
 /// <reference path="babylon-plugins/babylon-tree" />
@@ -5027,18 +5105,20 @@ var keys_tick = function (timestamp) {
 
     }
     */
-    if (controls_down.LEFT) {
-        camera.rotation.y -= SPEED_ROTATION * progress;
-        if (camera.rotation.y < 0) {
-            camera.rotation.y += Math.PI * 2;
+    /*if (controls_down.LEFT) {
+        camera.rotation.y -= SPEED_ROTATION*progress;
+        if(camera.rotation.y<0){
+            camera.rotation.y+=Math.PI*2;
         }
     }
+
+
     if (controls_down.RIGHT) {
-        camera.rotation.y += SPEED_ROTATION * progress;
-        if (camera.rotation.y > Math.PI * 2) {
-            camera.rotation.y -= Math.PI * 2;
+        camera.rotation.y += SPEED_ROTATION*progress;
+        if(camera.rotation.y>Math.PI*2){
+            camera.rotation.y-=Math.PI*2;
         }
-    }
+    }*/
     if (controls_down.JUMP) {
         if (GALLERY.Viewer.develop) {
             camera.position.y += 1.6;
@@ -5094,5 +5174,21 @@ var GALLERY;
             });
         }
         Viewer.makeScreenshots = makeScreenshots;
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        document.onwheel = function (event) {
+            //if(/*MODE == 'WEB' && */!LOCKED) {
+            if (event.deltaY > 0) {
+                Viewer.appStateNext();
+            }
+            else if (event.deltaY < 0) {
+                Viewer.appStatePrevious();
+            }
+            //}
+        };
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
 })(GALLERY || (GALLERY = {}));

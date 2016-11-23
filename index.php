@@ -92,16 +92,16 @@ if($route == $routeRoot){
 
 
 
-<div class="key topleft hints" id="pointer-lock">
+<!--<div class="key topleft hints" id="pointer-lock">
     <p><i class="fa fa-arrows" aria-hidden="true"></i></p>
 
     <img src="/media/images/ui/mouse-lock.png" width="200">
 
-</div>
+</div>-->
 
 
 
-<div class="bottomright hints" id="wasd">
+<!--<div class="bottomright hints" id="wasd">
 
 
     <img src="/media/images/ui/keys-text.png" width="200">
@@ -125,7 +125,7 @@ if($route == $routeRoot){
 
 
 
-</div>
+</div>-->
 
 
 

@@ -25,6 +25,8 @@ namespace GALLERY.Viewer{
         if(develop){
             //showStats();
             developMenu();
+
+            $('.develop-menu').draggable();
         }else{
             runStats();
         }
@@ -99,78 +101,6 @@ namespace GALLERY.Viewer{
 
 
 
-
-    export function appState(location:string,standGround=false) {
-
-
-        history.replaceState(null, "Gallery", location);//todo normal name
-        history.pushState(null, "Gallery", location);//todo normal name
-        GALLERY.Viewer.processStateFromLocation(window.document.location,standGround);
-
-
-
-    }
-
-    export function appStateBack(location,standGround=false) {
-
-        history.back();
-        appState(window.document.location.toString());
-
-    }
-
-
-
-
-
-
-    export function processStateFromLocation(location: string,standGround=false){
-
-        r('Processing location...');
-
-        let uri = new URI(location);
-        let pathname = uri.pathname();
-
-
-
-        let rootLabel = objects.filterTypes('label').findBy('uri','/');
-        let label;
-
-
-        if (pathname.substr(0, 2) === '/:') {
-
-            let objectId = pathname.substr(2);
-            label = objects.getObjectById(objectId);
-
-
-        } else {
-
-            label = objects.filterTypes('label').findBy('uri',pathname);
-
-            if (!label) {
-                label = rootLabel;
-            }
-
-        }
-
-        if(label == rootLabel){
-            window.document.title = rootLabel.name;
-        }else{
-            window.document.title = label.name+' | '+rootLabel.name;
-        }
-
-
-
-        if(!standGround) {
-            moveToObject(label);
-        }
-
-
-        unlockGatesAndActivateKeys(uri.hash());
-
-
-        //r(uri);
-
-    }
 
 
 }

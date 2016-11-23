@@ -22,9 +22,26 @@ section#zones{
 
 
 
+
+    display: block;
+
+    cursor: pointer;
+
+    width: 250px;
+
+    background-color: #fff;
+    border-radius: 3px;
+
+    margin: 4px;
+    padding: 4px;
+
+
+
+
+
     h1{
       margin: 0px;
-      font-size: 1em;
+      font-size: 2em;
 
       width:calc(100% - 12px);
 
@@ -39,16 +56,38 @@ section#zones{
     }
 
 
-    display: block;
+    .text {
+      font-size: 1.5em;
 
-    width: 250px;
+    }
 
-    background-color: #fff;
-    border-radius: 3px;
 
-    margin: 4px;
-    padding: 4px;
-    //border: 2px solod red;
+
+    .next, .previous{
+      font-size: 2em;
+
+      &:hover{
+
+        color: #ff1b0e;
+
+      }
+    }
+
+
+
+
+
+    &:hover{
+
+      .next{
+        color: #ff1b0e;
+
+
+      }
+    }
+
+
+
 
   }
 

@@ -6,7 +6,7 @@ namespace GALLERY.Viewer {
 
 
 
-    //var pointer_lock = document.getElementById("pointer-lock");
+    var pointer_lock = document.getElementById("pointer-lock");
     var $hints = $('.hints');
 
 
@@ -18,7 +18,7 @@ namespace GALLERY.Viewer {
 
 
     //canvas.requestPointerLock();
-    /*pointer_lock.onclick = function (e) {
+    pointer_lock.onclick = function (e) {
 
         e.preventDefault();
         //setTimeout(//todo is there a better solution?
@@ -27,7 +27,7 @@ namespace GALLERY.Viewer {
         //    }, IMMEDIATELY_MS
         //);
 
-    };*/
+    };
 
 
 // Hook pointer lock state change events for different browsers
@@ -41,7 +41,7 @@ namespace GALLERY.Viewer {
             document.addEventListener("mousemove", mouseMove, false);
 
             canvas.focus();
-            //pointer_lock.innerHTML='<p>Esc</p>';
+            //pointer_lock.innerHTML='Web mode';
             $hints.hide();
 
 
@@ -53,7 +53,7 @@ namespace GALLERY.Viewer {
             console.log('The pointer lock status is now unlocked');
             document.removeEventListener("mousemove", mouseMove, false);
 
-            //pointer_lock.innerHTML='<p><i class="fa fa-arrows" aria-hidden="true"></i></p>';
+            //pointer_lock.innerHTML='Game mode';
             $hints.show();
 
             camera.detachControl(canvas);

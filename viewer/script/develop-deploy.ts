@@ -122,13 +122,13 @@ RewriteRule . / [L,QSA]
                 'media/images/ui/keys-text.png',
 
 
-                'media/sound/link-key.mp3',
+                /*'media/sound/link-key.mp3',
                 'media/sound/link-teleport.mp3',
                 'media/sound/link-key-none.mp3',
                 'media/sound/gate-locked.mp3',
                 'media/sound/step-stairs.mp3',
                 'media/sound/step-ground.mp3',
-                'media/sound/step-room.mp3',
+                'media/sound/step-room.mp3',*/
 
 
                 /*'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_ft.jpg',

@@ -9,6 +9,7 @@ namespace GALLERY.Objects{
         public html: string;
 
         public uri:string;
+        public parent:string;
         public width:number;
         public height: number;
         public src: string;
@@ -31,6 +32,10 @@ namespace GALLERY.Objects{
 
             this.name = this.name || '';
             this.html = this.html || '';
+
+
+            this.uri = this.uri || 'none';
+            this.parent = this.parent || 'none';
 
 
             this.rotation = this.rotation || 0;

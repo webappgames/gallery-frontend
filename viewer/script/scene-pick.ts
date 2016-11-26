@@ -1,12 +1,30 @@
 /// <reference path="reference.ts" />
 
 
-function onPointerDown(evt, pickResult) {
+function onPointerUp(evt, pickResult) {
+
+    let current = GALLERY.Viewer.getAppStateLabel();
+    r('current',current);
 
 
-    canvas.requestPointerLock();
 
-    /*
+    function goToParent(){
+
+        if(current.parent && current.parent!=='none'){
+
+            GALLERY.Viewer.appState(current.parent,false,false);
+        }else
+        if(current.next && current.next!=='none'){
+            GALLERY.Viewer.appState(current.next,false,false);
+        }else
+
+
+
+
+    }
+    //canvas.requestPointerLock();
+
+
     // if the click hits the ground object, we change the impact position
     if (pickResult.hit) {
 
@@ -14,8 +32,10 @@ function onPointerDown(evt, pickResult) {
 
         if(pickResult.pickedMesh.name=='ground') {
 
+            r('ground picked');
+            goToParent();
 
-            var rad = Math.atan2(
+            /*var rad = Math.atan2(
                 (pickResult.pickedPoint.x-camera.position.x),
                 (pickResult.pickedPoint.z-camera.position.z)
 
@@ -40,13 +60,14 @@ function onPointerDown(evt, pickResult) {
                 pickResult.pickedPoint.z
             );
 
-            moveToBabylon(babylon_position,babylon_rotation,false);
+            moveToBabylon(babylon_position,babylon_rotation,false);*/
 
 
         }else
         if(pickResult.pickedMesh.name=='room') {
 
             r('room picked');
+            goToParent();
 
         }else{
 
@@ -54,7 +75,17 @@ function onPointerDown(evt, pickResult) {
 
             r('pick',object);
 
-            var src = object.src;
+
+            if(current == object.uri){
+                goToParent();
+
+            }else{
+
+                GALLERY.Viewer.appState(object.uri,false,false);
+            }
+
+
+            /*var src = object.src;
             var src_uri = URI(src)
                 .removeSearch("width");
             var src_normal = src_uri.addSearch({ width: 1024 }).toString();
@@ -64,7 +95,7 @@ function onPointerDown(evt, pickResult) {
                 function () {
                     Window.open(object.name, '<img src="'+src_normal+'">', function(){}, 'NORMAL');
                 }, IMMEDIATELY_MS
-            );
+            );*/
 
 
 
@@ -72,8 +103,11 @@ function onPointerDown(evt, pickResult) {
         }
         //r(object);
 
+    }else{
+
+        goToParent();
     }
 
-    */
+    /**/
 };
 

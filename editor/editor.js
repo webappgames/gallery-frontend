@@ -3,43 +3,6 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-function compileObjects(objects) {
-    throw new Error('deprecated');
-    /*
-
-
-    var stone_plain = new BABYLON.StandardMaterial("Mat", scene);
-    stone_plain.diffuseTexture = new BABYLON.Texture("../media/images/textures/stone-plain.jpg", scene);
-    stone_plain.diffuseTexture.uScale = 1;//Vertical offset of 10%
-    stone_plain.diffuseTexture.vScale = 1;//Horizontal offset of 40%
-    stone_plain.freeze();
-
-
-
-    var bark = new BABYLON.StandardMaterial("Mat", scene);
-    bark.diffuseTexture = new BABYLON.Texture("../media/images/textures/bark.jpg", scene);
-    bark.diffuseTexture.uScale = 1;//Vertical offset of 10%
-    bark.diffuseTexture.vScale = 1;//Horizontal offset of 40%
-    bark.freeze();
-
-
-
-
-
-    var sunShadowGenerator = new BABYLON.ShadowGenerator(1024, sun);
-    sunShadowGenerator.useVarianceShadowMap = true;
-
-
-    var wasVideo = false;
-
-    var building_blocks = [];
-    var lights = [];
-
-    var blocks = '';
-
-
-    */
-}
 /*! URI.js v1.17.1 http://medialize.github.io/URI.js/ */
 /* build contains: IPv6.js, punycode.js, SecondLevelDomains.js, URI.js */
 /* jshint ignore:start */
@@ -1713,6 +1676,8 @@ var GALLERY;
                 _super.call(this, object);
                 this.name = this.name || '';
                 this.html = this.html || '';
+                this.uri = this.uri || 'none';
+                this.parent = this.parent || 'none';
                 this.rotation = this.rotation || 0;
                 this.onGround = this.onGround || false;
                 this.hasAlpha = this.hasAlpha || false;
@@ -3272,9 +3237,9 @@ var GALLERY;
                     clearInterval(previewLoaded);
                 }
                 catch (e) {
-                    r('Not yet loaded!');
+                    r('Not yet loaded!', e);
                 }
-            }, 100);
+            }, 500);
             /*var theWindow = window.open("../viewer", "gallery-preview"),
                 theDoc = theWindow.document,
                 theScript = document.createElement('script');
@@ -3581,7 +3546,7 @@ function createMap() {
         for (var key in object) {
             input_element = null;
             check_element = null;
-            if (['name', 'uri', 'next', 'key', 'href', 'target', 'world', 'material', 'skybox', 'ground', 'url', 'password'].indexOf(key) !== -1) {
+            if (['name', 'uri', 'next', 'parent', 'key', 'href', 'target', 'world', 'material', 'skybox', 'ground', 'url', 'password'].indexOf(key) !== -1) {
                 input_element = '<input type="text">';
             }
             else if (['script', 'html', 'selector'].indexOf(key) !== -1) {

@@ -182,11 +182,11 @@ namespace GALLERY.Editor{
 
             }catch(e){
 
-                r('Not yet loaded!');
+                r('Not yet loaded!',e);
             }
 
 
-        },100);
+        },500);
 
 
 

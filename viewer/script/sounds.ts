@@ -5,7 +5,7 @@
 // init bunch of sounds
 ion.sound({
     sounds: [
-        {name: "step-room",multiplay: false,volume: 0.2},
+        /*{name: "step-room",multiplay: false,volume: 0.2},
         {name: "step-ground",multiplay: false,volume: 0.4},
         {name: "step-stairs",multiplay: false,volume: 0.2},
 
@@ -17,7 +17,7 @@ ion.sound({
         {name: "gate-locked",multiplay: false},
 
 
-        {name: "nuke",multiplay: false},
+        {name: "nuke",multiplay: false},*/
     ],
 
     // main config

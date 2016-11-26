@@ -287,7 +287,14 @@ function runWorld(objects_world,textures){
 
             if(object.name || object.html) {
 
+                let isNext = false;
                 let label = objects.filterTypes('label').findBy('uri',object.uri);
+                if(label){
+                    if(label.next!=='none'){
+                        isNext=true;
+                    }
+
+                }
 
 
                 let element = document.createElement('div');
@@ -299,7 +306,7 @@ function runWorld(objects_world,textures){
                     //+'<div class="previous"><i class="fa fa-chevron-up" aria-hidden="true"></i></div>'
                     +(object.name ? '<h1>' + object.name + '</h1>' : '')
                     + '<div class="text">' +object.html + '</div>'
-                    +(label.next!=='none'?'<div class="next"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>':'');
+                    +(isNext?'<div class="next"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>':'');
 
 
                 element.onclick = GALLERY.Viewer.appStateNext;
@@ -312,6 +319,7 @@ function runWorld(objects_world,textures){
 
 
             mesh.checkCollisions = false;
+            mesh.isPickable = false;
 
             //r(mesh);
 
@@ -560,11 +568,12 @@ function runWorld(objects_world,textures){
 
 
                         let uri:string;
-                        if(object.uri) {
+                        if(object.uri && object.uri!='none') {
                             uri = object.uri;
                         }else
                         if(object.name){
                             uri = '/'+createUriFromName(object.name);
+                            object.uri = uri;
                         }
 
 
@@ -624,6 +633,7 @@ function runWorld(objects_world,textures){
 
                             name: object.name,
                             uri: uri,
+                            parent: object.parent,
 
                         };
 

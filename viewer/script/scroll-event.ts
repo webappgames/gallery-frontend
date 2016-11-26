@@ -13,7 +13,7 @@ namespace GALLERY.Viewer{
     document.onwheel = function(event) {
 
 
-        //if(/*MODE == 'WEB' && */!LOCKED) {
+        if(MODE == 'WEB'/* && !LOCKED*/) {
 
         if (event.deltaY > 0) {
 
@@ -27,7 +27,7 @@ namespace GALLERY.Viewer{
         }
 
 
-        //}
+        }
 
 
     };

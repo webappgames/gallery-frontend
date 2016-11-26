@@ -92,12 +92,11 @@ if($route == $routeRoot){
 
 
 
-<!--<div class="key topleft hints" id="pointer-lock">
-    <p><i class="fa fa-arrows" aria-hidden="true"></i></p>
+<button class="bottomright hints" id="pointer-lock">
+    <i class="fa fa-gamepad" aria-hidden="true"></i> Game mode
+    <!--<img src="/media/images/ui/mouse-lock.png" width="200">-->
 
-    <img src="/media/images/ui/mouse-lock.png" width="200">
-
-</div>-->
+</button>
 
 
 

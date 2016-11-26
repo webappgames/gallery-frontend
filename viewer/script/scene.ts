@@ -431,9 +431,48 @@ var createScene = function () {
     });*/
 
 
-    //When pointer down event is raised
-    scene.onPointerDown = onPointerDown;
+    //-----------------------------------------------------------------Pointer Events
 
+    let onDownCamera, onDownTimestamp;
+
+    //When pointer down event is raised
+    scene.onPointerDown = function(){
+
+        //r('down');
+        onDownCamera = camera.rotation.clone();
+        onDownTimestamp = new Date()/1000;
+
+
+
+    };
+    /*scene.onPointerMove = function(){
+
+        r('move');
+        movement++;
+
+
+    };*/
+    scene.onPointerUp = function(){
+
+        if(GALLERY.Viewer.MODE != 'WEB')return;
+
+        let distance = BABYLON.Vector3.Distance(camera.rotation,onDownCamera);
+        let distanceTime = (new Date()/1000) - onDownTimestamp;
+
+        r(distance,distanceTime);
+
+        if(distance > 0.1 || distanceTime>1){
+
+
+        }else{
+            onPointerUp.apply(this,arguments);
+        }
+
+
+
+    };
+
+    //-----------------------------------------------------------------
 
 
     /*var movement = {

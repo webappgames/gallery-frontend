@@ -208,13 +208,6 @@ var GALLERY;
                     //'media/images/backgrounds/page.png',
                     'media/images/ui/mouse-lock.png',
                     'media/images/ui/keys-text.png',
-                    'media/sound/link-key.mp3',
-                    'media/sound/link-teleport.mp3',
-                    'media/sound/link-key-none.mp3',
-                    'media/sound/gate-locked.mp3',
-                    'media/sound/step-stairs.mp3',
-                    'media/sound/step-ground.mp3',
-                    'media/sound/step-room.mp3',
                 ];
                 var materials = [];
                 objects.forEach(function (object) {
@@ -2136,6 +2129,8 @@ var GALLERY;
                 _super.call(this, object);
                 this.name = this.name || '';
                 this.html = this.html || '';
+                this.uri = this.uri || 'none';
+                this.parent = this.parent || 'none';
                 this.rotation = this.rotation || 0;
                 this.onGround = this.onGround || false;
                 this.hasAlpha = this.hasAlpha || false;
@@ -3922,7 +3917,13 @@ function runWorld(objects_world, textures) {
             mesh.scaling.x = object.width;
             mesh.scaling.z = object.height;
             if (object.name || object.html) {
+                var isNext = false;
                 var label = objects.filterTypes('label').findBy('uri', object.uri);
+                if (label) {
+                    if (label.next !== 'none') {
+                        isNext = true;
+                    }
+                }
                 var element = document.createElement('div');
                 element.id = 'zone-' + object.id;
                 element.style.display = 'none';
@@ -3930,11 +3931,12 @@ function runWorld(objects_world, textures) {
                 element.innerHTML = ''
                     + (object.name ? '<h1>' + object.name + '</h1>' : '')
                     + '<div class="text">' + object.html + '</div>'
-                    + (label.next !== 'none' ? '<div class="next"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
+                    + (isNext ? '<div class="next"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
                 element.onclick = GALLERY.Viewer.appStateNext;
                 document.getElementById('zones').appendChild(element);
             }
             mesh.checkCollisions = false;
+            mesh.isPickable = false;
             //r(mesh);
             zones.push({
                 mesh: mesh,
@@ -4103,11 +4105,12 @@ function runWorld(objects_world, textures) {
                             return name;
                         }
                         var uri = void 0;
-                        if (object.uri) {
+                        if (object.uri && object.uri != 'none') {
                             uri = object.uri;
                         }
                         else if (object.name) {
                             uri = '/' + createUriFromName(object.name);
+                            object.uri = uri;
                         }
                         object.zoneCreated = true;
                         var x = Math.sin(rotation_rad_1) * object.width / -2;
@@ -4142,6 +4145,7 @@ function runWorld(objects_world, textures) {
                             rotation: object.rotation,
                             name: object.name,
                             uri: uri,
+                            parent: object.parent,
                         };
                         processObject(label); //todo better
                         objects.push(label);
@@ -4513,8 +4517,34 @@ var createScene = function () {
 
 
     });*/
+    //-----------------------------------------------------------------Pointer Events
+    var onDownCamera, onDownTimestamp;
     //When pointer down event is raised
-    scene.onPointerDown = onPointerDown;
+    scene.onPointerDown = function () {
+        //r('down');
+        onDownCamera = camera.rotation.clone();
+        onDownTimestamp = new Date() / 1000;
+    };
+    /*scene.onPointerMove = function(){
+
+        r('move');
+        movement++;
+
+
+    };*/
+    scene.onPointerUp = function () {
+        if (GALLERY.Viewer.MODE != 'WEB')
+            return;
+        var distance = BABYLON.Vector3.Distance(camera.rotation, onDownCamera);
+        var distanceTime = (new Date() / 1000) - onDownTimestamp;
+        r(distance, distanceTime);
+        if (distance > 0.1 || distanceTime > 1) {
+        }
+        else {
+            onPointerUp.apply(this, arguments);
+        }
+    };
+    //-----------------------------------------------------------------
     /*var movement = {
       z: 0
     };
@@ -4610,77 +4640,46 @@ function onCollide(collidedMesh) {
 }
 ;
 /// <reference path="reference.ts" />
-function onPointerDown(evt, pickResult) {
-    canvas.requestPointerLock();
-    /*
+function onPointerUp(evt, pickResult) {
+    var current = GALLERY.Viewer.getAppStateLabel();
+    r('current', current);
+    function goToParent() {
+        if (current.parent && current.parent !== 'none') {
+            GALLERY.Viewer.appState(current.parent, false, false);
+        }
+        else if (current.next && current.next !== 'none') {
+            GALLERY.Viewer.appState(current.next, false, false);
+        }
+        else
+            ;
+    }
+    //canvas.requestPointerLock();
     // if the click hits the ground object, we change the impact position
     if (pickResult.hit) {
-
         //r(pickResult.pickedMesh.name);
-
-        if(pickResult.pickedMesh.name=='ground') {
-
-
-            var rad = Math.atan2(
-                (pickResult.pickedPoint.x-camera.position.x),
-                (pickResult.pickedPoint.z-camera.position.z)
-
-            );
-
-
-            r(rad/Math.PI*180);
-
-
-
-            var babylon_rotation = new BABYLON.Vector3(
-                0,
-                rad,
-                0
-            );
-
-
-
-            var babylon_position = new BABYLON.Vector3(
-                pickResult.pickedPoint.x,
-                camera.position.y,
-                pickResult.pickedPoint.z
-            );
-
-            moveToBabylon(babylon_position,babylon_rotation,false);
-
-
-        }else
-        if(pickResult.pickedMesh.name=='room') {
-
-            r('room picked');
-
-        }else{
-
-            var object = objects.getObjectById(pickResult.pickedMesh.name);
-
-            r('pick',object);
-
-            var src = object.src;
-            var src_uri = URI(src)
-                .removeSearch("width");
-            var src_normal = src_uri.addSearch({ width: 1024 }).toString();
-
-
-            setTimeout(
-                function () {
-                    Window.open(object.name, '<img src="'+src_normal+'">', function(){}, 'NORMAL');
-                }, IMMEDIATELY_MS
-            );
-
-
-
-
+        if (pickResult.pickedMesh.name == 'ground') {
+            r('ground picked');
+            goToParent();
         }
-        //r(object);
-
+        else if (pickResult.pickedMesh.name == 'room') {
+            r('room picked');
+            goToParent();
+        }
+        else {
+            var object = objects.getObjectById(pickResult.pickedMesh.name);
+            r('pick', object);
+            if (current == object.uri) {
+                goToParent();
+            }
+            else {
+                GALLERY.Viewer.appState(object.uri, false, false);
+            }
+        }
     }
-
-    */
+    else {
+        goToParent();
+    }
+    /**/
 }
 ;
 /// <reference path="reference.ts" />
@@ -4750,6 +4749,7 @@ function moveToBabylon(babylon_position, babylon_rotation, immediately) {
     var easingFunction = new BABYLON.CircleEase();
     easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
     var animation = BABYLON.Animation.CreateAndStartAnimation("anim", camera, "position", 30, 30 * duration, camera.position, babylon_position, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE, easingFunction);
+    animation.start();
     // Attach your event to your animation
     //animation.addEvent(finished);
     //r(camera.rotation.y,babylon_rotation.y);
@@ -4874,16 +4874,7 @@ Window.close = function (dont_run_close_callback) {
 /// <reference path="reference.ts" />
 // init bunch of sounds
 ion.sound({
-    sounds: [
-        { name: "step-room", multiplay: false, volume: 0.2 },
-        { name: "step-ground", multiplay: false, volume: 0.4 },
-        { name: "step-stairs", multiplay: false, volume: 0.2 },
-        { name: "link-teleport" },
-        { name: "link-key" },
-        //{name: "link-key-none"},
-        { name: "gate-locked", multiplay: false },
-        { name: "nuke", multiplay: false },
-    ],
+    sounds: [],
     // main config
     path: "/media/sound/",
     preload: true,
@@ -4949,23 +4940,21 @@ var GALLERY;
 (function (GALLERY) {
     var Viewer;
     (function (Viewer) {
-        //var pointer_lock = document.getElementById("pointer-lock");
+        var pointer_lock = document.getElementById("pointer-lock");
         var $hints = $('.hints');
         canvas.requestPointerLock = canvas.requestPointerLock ||
             canvas.mozRequestPointerLock;
         document.exitPointerLock = document.exitPointerLock ||
             document.mozExitPointerLock;
         //canvas.requestPointerLock();
-        /*pointer_lock.onclick = function (e) {
-    
+        pointer_lock.onclick = function (e) {
             e.preventDefault();
             //setTimeout(//todo is there a better solution?
             //    function () {
             canvas.requestPointerLock();
             //    }, IMMEDIATELY_MS
             //);
-    
-        };*/
+        };
         // Hook pointer lock state change events for different browsers
         document.addEventListener('pointerlockchange', lockChangeAlert, false);
         document.addEventListener('mozpointerlockchange', lockChangeAlert, false);
@@ -4975,14 +4964,14 @@ var GALLERY;
                 console.log('The pointer lock status is now locked');
                 document.addEventListener("mousemove", mouseMove, false);
                 canvas.focus();
-                //pointer_lock.innerHTML='<p>Esc</p>';
+                //pointer_lock.innerHTML='Web mode';
                 $hints.hide();
                 Viewer.MODE = 'GAME';
             }
             else {
                 console.log('The pointer lock status is now unlocked');
                 document.removeEventListener("mousemove", mouseMove, false);
-                //pointer_lock.innerHTML='<p><i class="fa fa-arrows" aria-hidden="true"></i></p>';
+                //pointer_lock.innerHTML='Game mode';
                 $hints.show();
                 camera.detachControl(canvas);
                 setTimeout(function () {
@@ -5181,14 +5170,14 @@ var GALLERY;
     var Viewer;
     (function (Viewer) {
         document.onwheel = function (event) {
-            //if(/*MODE == 'WEB' && */!LOCKED) {
-            if (event.deltaY > 0) {
-                Viewer.appStateNext();
+            if (Viewer.MODE == 'WEB' /* && !LOCKED*/) {
+                if (event.deltaY > 0) {
+                    Viewer.appStateNext();
+                }
+                else if (event.deltaY < 0) {
+                    Viewer.appStatePrevious();
+                }
             }
-            else if (event.deltaY < 0) {
-                Viewer.appStatePrevious();
-            }
-            //}
         };
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
 })(GALLERY || (GALLERY = {}));

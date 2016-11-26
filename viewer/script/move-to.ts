@@ -133,6 +133,8 @@ function moveToBabylon(babylon_position,babylon_rotation,immediately) {
         BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE,
         easingFunction
     );
+
+    animation.start();
     // Attach your event to your animation
     //animation.addEvent(finished);
 

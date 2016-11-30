@@ -6,8 +6,9 @@ namespace GALLERY.Viewer {
 
 
 
-    var pointer_lock = document.getElementById("pointer-lock");
-    var $hints = $('.hints');
+    let pointer_lock = document.getElementById("pointer-lock");
+    let wasd = document.getElementById("wasd");
+    //var $hints = $('.hints');
 
 
     canvas.requestPointerLock = canvas.requestPointerLock ||
@@ -42,7 +43,9 @@ namespace GALLERY.Viewer {
 
             canvas.focus();
             //pointer_lock.innerHTML='Web mode';
-            $hints.hide();
+            //$hints.hide();
+            pointer_lock.style.display = 'none';
+            wasd.style.display = 'block';
 
 
             MODE = 'GAME';
@@ -54,7 +57,10 @@ namespace GALLERY.Viewer {
             document.removeEventListener("mousemove", mouseMove, false);
 
             //pointer_lock.innerHTML='Game mode';
-            $hints.show();
+            //$hints.show();
+
+            pointer_lock.style.display = 'block';
+            wasd.style.display = 'none';
 
             camera.detachControl(canvas);
 
@@ -70,6 +76,26 @@ namespace GALLERY.Viewer {
 
 
     }
+
+
+
+
+
+
+    window.addEventListener('keydown', function (e) {
+        if (
+            camera.keysUp.indexOf(e.keyCode) != -1 ||
+            camera.keysDown.indexOf(e.keyCode) != -1 ||
+            camera.keysLeft.indexOf(e.keyCode) != -1 ||
+            camera.keysRight.indexOf(e.keyCode) != -1
+        ) {
+            $(wasd).fadeOut();
+            //wasd.style.display = 'none';
+        }
+    }, false);
+
+
+
 
 
     function mouseMove(e) {

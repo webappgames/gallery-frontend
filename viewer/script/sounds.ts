@@ -1,5 +1,6 @@
 /// <reference path="reference.ts" />
 
+//todo for sounds use babylon
 
 
 // init bunch of sounds

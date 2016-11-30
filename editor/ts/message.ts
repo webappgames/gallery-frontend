@@ -83,7 +83,7 @@ var Message = function () {
         key: 'error',
         value: function error(text) {
             var message = new Message(text, 'ERROR');
-            if (text) message.close();
+            //if (text) message.close();
             return message;
         }
 
@@ -96,7 +96,7 @@ var Message = function () {
         key: 'success',
         value: function success(text) {
             var message = new Message(text, 'SUCCESS');
-            if (text) message.close();
+            //if (text) message.close();
             return message;
         }
 
@@ -109,7 +109,7 @@ var Message = function () {
         key: 'info',
         value: function info(text) {
             var message = new Message(text, 'INFO');
-            if (text) message.close();
+            //if (text) message.close();
             return message;
         }
 

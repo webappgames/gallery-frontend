@@ -7,6 +7,7 @@
 /// <reference path="lib/ion.sound.ts" />
 
 
+//todo deprecated
 
 /// <reference path="babylon-plugins/babylon-tree" />
 /// <reference path="babylon-plugins/babylon-stairs" />

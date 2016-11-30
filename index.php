@@ -92,7 +92,7 @@ if($route == $routeRoot){
 
 
 
-<button class="bottomright hints" id="pointer-lock">
+<button class="bottomright" id="pointer-lock">
     <i class="fa fa-gamepad" aria-hidden="true"></i> Game mode
     <!--<img src="/media/images/ui/mouse-lock.png" width="200">-->
 
@@ -100,11 +100,13 @@ if($route == $routeRoot){
 
 
 
-<!--<div class="bottomright hints" id="wasd">
 
 
-    <img src="/media/images/ui/keys-text.png" width="200">
-    <table>
+<div class="bottomright" id="wasd" style="display: none;">
+   <table>
+       <tr>
+           <td colspan="3"><p class="hint">Move in gallery with theese keys <i class="fa fa-hand-o-down" aria-hidden="true"></i></p></td>
+       </tr>
         <tr>
             <td></td>
             <td></td>
@@ -121,10 +123,10 @@ if($route == $routeRoot){
             <td><div class="key"><p>D</p></div></td>
         </tr>
     </table>
+</div>
 
 
 
-</div>-->
 
 
 

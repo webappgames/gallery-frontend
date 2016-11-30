@@ -134,5 +134,3 @@ namespace GALLERY.Viewer{
 
 }
 
-
-}

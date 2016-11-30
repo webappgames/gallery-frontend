@@ -276,7 +276,7 @@ $(function () {
                     id: createGuid(),
                     type: type,
                     position: position,
-                    world: world_selected
+                    world: world_selected,
                     storey: storey_selected
                 };
 

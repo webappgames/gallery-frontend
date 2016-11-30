@@ -599,7 +599,7 @@ function createMap() {
                     storey: storey_selected,
                     material: material_selected,
                     opacity: opacity_selected,
-                    shape: shape:
+                    shape: shape
 
                 };
 

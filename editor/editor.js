@@ -3,6 +3,85 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var TOWNS;
+(function (TOWNS) {
+    var CDN;
+    (function (CDN) {
+        var URL = 'http://cdn.pavolhejny.com/';
+        var FILE_ACCEPTED_TYPES = [
+            'image/jpeg',
+            'image/jpg',
+            'image/gif',
+            'image/png'
+        ];
+        var FILE_MAX_SIZE = 25 * Math.pow(1024, 2 /*MB*/) * 0.9;
+        var REQUEST_MAX_SIZE = FILE_MAX_SIZE * 10;
+        function uploadFiles(files, onProgress, onDone, onFail) {
+            // process all File 05-objects
+            var formData = new FormData();
+            var files_key = {};
+            var request_size = 1024; //todo is it OK?
+            //var filenames = [];
+            for (var i = 0; i < files.length; i++) {
+                if (FILE_ACCEPTED_TYPES.indexOf(files[i].type) == -1) {
+                    onFail('Můžete nahrávat pouze obrázky.');
+                    return;
+                }
+                if (files[i].size > FILE_MAX_SIZE) {
+                    onFail('Celková velikost jednoho souboru může být maximálně' + ' ' + bytesToSize(FILE_MAX_SIZE));
+                    return;
+                }
+                request_size += files[i].size;
+                var key = 'image' + i;
+                formData.append(key, files[i]);
+                files_key[key] = files[i];
+            } //r(files_key);
+            //filenames = filenames.join(', ');
+            if (request_size > REQUEST_MAX_SIZE) {
+                //alert('Soubory jsou moc velké.');
+                onFail('Celková velikost všech souborů může být maximálně ' + ' ' + bytesToSize(REQUEST_MAX_SIZE));
+                return;
+            }
+            // now post a new XHR request
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', URL);
+            //var message = Message.info();
+            xhr.upload.onprogress = function (event) {
+                if (event.lengthComputable) {
+                    var progress = (event.loaded / event.total * 100 | 0);
+                    onProgress(progress);
+                }
+            };
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    try {
+                        console.log('all done: ' + xhr.status);
+                        var responseObject = (JSON.parse(xhr.response));
+                        var responseArray = [];
+                        var index = void 0;
+                        for (var key_1 in responseObject) {
+                            index = parseInt(key_1.split('image').join(''));
+                            responseArray[index] = responseObject[key_1];
+                        }
+                        onDone(responseArray);
+                        return;
+                    }
+                    catch (error) {
+                        onFail('Chyba při nahrávání.');
+                        throw error;
+                        return;
+                    }
+                }
+                else {
+                    onFail('Chyba při nahrávání (HTTP status = ' + xhr.status + ').');
+                    return;
+                }
+            };
+            xhr.send(formData);
+        }
+        CDN.uploadFiles = uploadFiles;
+    })(CDN = TOWNS.CDN || (TOWNS.CDN = {}));
+})(TOWNS || (TOWNS = {}));
 /*! URI.js v1.17.1 http://medialize.github.io/URI.js/ */
 /* build contains: IPv6.js, punycode.js, SecondLevelDomains.js, URI.js */
 /* jshint ignore:start */
@@ -2461,24 +2540,21 @@ var Message = function () {
             key: 'error',
             value: function error(text) {
                 var message = new Message(text, 'ERROR');
-                if (text)
-                    message.close();
+                //if (text) message.close();
                 return message;
             }
         }, {
             key: 'success',
             value: function success(text) {
                 var message = new Message(text, 'SUCCESS');
-                if (text)
-                    message.close();
+                //if (text) message.close();
                 return message;
             }
         }, {
             key: 'info',
             value: function info(text) {
                 var message = new Message(text, 'INFO');
-                if (text)
-                    message.close();
+                //if (text) message.close();
                 return message;
             }
         }]);
@@ -2733,16 +2809,6 @@ var GALLERY;
     GALLERY.ImagesCollection = ImagesCollection;
 })(GALLERY || (GALLERY = {}));
 /// <reference path="reference.ts" />
-//var TOWNS_CDN_URL='http://towns-cdn.local/';
-var TOWNS_CDN_URL = 'http://cdn.pavolhejny.com/';
-var TOWNS_CDN_FILE_ACCEPTED_TYPES = [
-    'image/jpeg',
-    'image/jpg',
-    'image/gif',
-    'image/png'
-];
-var TOWNS_CDN_FILE_MAX_SIZE = 25 * Math.pow(1024, 2 /*MB*/);
-var TOWNS_CDN_REQUEST_MAX_SIZE = TOWNS_CDN_FILE_MAX_SIZE * 10;
 //----------------------------------------------------------------------
 // file drop
 document.addEventListener("dragover", function (e) {
@@ -2751,7 +2817,7 @@ document.addEventListener("dragover", function (e) {
 document.addEventListener("dragleave", function (e) {
     e.preventDefault();
 }, false);
-function setImageWidth(src, id, height) {
+function setImageWidth(src, id, height, onDone) {
     var image = new Image();
     image.src = src;
     image.onload = function () {
@@ -2759,6 +2825,7 @@ function setImageWidth(src, id, height) {
         var width = (this.width * height) / this.height;
         object.width = width;
         r('setting image width', object);
+        onDone();
         save();
     };
 }
@@ -2786,86 +2853,46 @@ document.addEventListener("drop", function (e) {
         reader.readAsText(files[0]);
         return;
     }
-    // process all File 05-objects
-    var formData = new FormData();
-    var files_key = {};
-    var request_size = 1024; //todo is it OK?
-    var filenames = [];
+    var position = getPositionFromLeftTop(e.clientX, e.clientY);
+    var filesArray = [];
     for (var i = 0; i < files.length; i++) {
-        if (TOWNS_CDN_FILE_ACCEPTED_TYPES.indexOf(files[i].type) == -1) {
-            Message.error('Můžete nahrávat pouze obrázky.');
-            throw new Error('Not allowed filetype.');
-        }
-        if (files[i].size > TOWNS_CDN_FILE_MAX_SIZE) {
-            //alert('Jeden nebo více souborů jsou moc velké.');
-            Message.error('Celková velikost jednoho souboru může být maximálně' + ' ' + bytesToSize(TOWNS_CDN_FILE_MAX_SIZE));
-            throw new Error('File too big');
-        }
-        request_size += files[i].size;
-        var key = 'image' + i;
-        formData.append(key, files[i]);
-        files_key[key] = files[i];
-        filenames.push(files[i].name);
-    } //r(files_key);
-    filenames = filenames.join(', ');
-    if (request_size > TOWNS_CDN_REQUEST_MAX_SIZE) {
-        //alert('Soubory jsou moc velké.');
-        Message.error('Celková velikost všech souborů může být maximálně ' + ' ' + bytesToSize(TOWNS_CDN_REQUEST_MAX_SIZE));
-        throw new Error('Request too big');
+        filesArray.push(files[i]);
     }
-    // now post a new XHR request
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', TOWNS_CDN_URL);
-    var message = Message.info();
-    xhr.upload.onprogress = function (event) {
-        if (event.lengthComputable) {
-            var complete = (event.loaded / event.total * 100 | 0);
-            message.text('Nahráno ' + filenames + ' ' + complete + '%');
-        }
-    };
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-            try {
-                console.log('all done: ' + xhr.status);
-                r(e);
-                var position = getPositionFromLeftTop(e.clientX, e.clientY);
-                r(position);
-                var response = (JSON.parse(xhr.response));
-                var object;
-                for (var key in files_key) {
-                    objects.push(object = {
-                        id: createGuid(),
-                        type: 'image',
-                        position: position,
-                        storey: storey_selected,
-                        world: world_selected,
-                        name: files_key[key].name,
-                        src: response[key],
-                        height: 2,
-                        rotation: 0,
-                        onGround: false,
-                        hasAlpha: false,
-                        isEmitting: true,
-                        name: '',
-                        uri: ''
-                    });
-                    setImageWidth(response[key], object.id, 2);
-                    position = { x: position.x, y: position.y + 2 };
-                }
-                createMap();
-                message.text('Nahráno ' + filenames + ' 100%', 'success').close();
-            }
-            catch (e) {
-                message.text('Chyba při nahrávání ', 'error').close();
-                console.log('Error when processing data...');
-                r(e);
-            }
-        }
-        else {
-            console.log('Something went terribly wrong...');
-        }
-    };
-    xhr.send(formData);
+    filesArray.forEach(function (file) {
+        var filename = file.name;
+        var message = Message.info(filename + ': Nahrávání...');
+        TOWNS.CDN.uploadFiles([file], function (progress) {
+            message.text(filename + ': ' + progress + '%');
+        }, function (response) {
+            var object;
+            var url = response[0];
+            objects.push(object = {
+                id: createGuid(),
+                type: 'image',
+                position: position,
+                storey: storey_selected,
+                world: world_selected,
+                name: file.name,
+                src: url,
+                height: 2,
+                rotation: 0,
+                onGround: false,
+                hasAlpha: false,
+                isEmitting: true,
+                name: '',
+                uri: ''
+            });
+            message.text(filename + ': Nastavování velikosti obrázku');
+            setImageWidth(url, object.id, 2, function () {
+                message.text(filename + ': Hotovo', 'success').close();
+            });
+            //position={x:position.x,y:position.y+2};
+            createMap();
+        }, function (errorMessage) {
+            console.warn('error while uploading', errorMessage);
+            message.text(filename + ': ' + errorMessage, 'error');
+        });
+    });
     //-----------------
 }, false);
 //});

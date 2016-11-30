@@ -27,6 +27,16 @@ namespace GALLERY.Viewer{
         }
 
 
+        }else{
+
+            /*if (event.deltaY > 0) {
+                camera.fov -=0.01;
+            } else if (event.deltaY < 0) {
+                camera.fov +=0.01;
+            }
+
+            r('FOV is now '+camera.fov);*/
+
         }
 
 

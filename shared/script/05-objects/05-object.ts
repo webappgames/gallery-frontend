@@ -86,6 +86,9 @@ namespace GALLERY.Objects{
             }else if (object.type == 'zone') {
 
                 object = new GALLERY.Objects.Zone(object);
+            }else if (object.type == 'groundhole') {
+
+                object = new GALLERY.Objects.GroundHole(object);
 
             }else if (object.type == 'deploy') {
 

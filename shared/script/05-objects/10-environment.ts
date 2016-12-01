@@ -11,6 +11,10 @@ namespace GALLERY.Objects{
         public skybox_reverse: boolean;//todo camelCase
         public fogDensity: number;
         public fogColor: string;
+        public clearColor: string;
+        public endlessStructures: boolean;
+        public endlessStructuresFromStorey: string;
+        public shadows: boolean;
 
 
 
@@ -24,6 +28,10 @@ namespace GALLERY.Objects{
             this.skybox_reverse = this.skybox_reverse || false;
             this.fogDensity = this.fogDensity || 0;
             this.fogColor = this.fogColor || '#ffffff';
+            this.clearColor = this.clearColor || '#ffffff';
+            this.endlessStructures = this.endlessStructures || false;
+            this.endlessStructuresFromStorey = this.endlessStructuresFromStorey || '1NP';
+            this.shadows = this.shadows || false;
 
 
         }

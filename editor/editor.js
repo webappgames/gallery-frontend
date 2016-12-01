@@ -1566,6 +1566,9 @@ var GALLERY;
                 else if (object.type == 'zone') {
                     object = new GALLERY.Objects.Zone(object);
                 }
+                else if (object.type == 'groundhole') {
+                    object = new GALLERY.Objects.GroundHole(object);
+                }
                 else if (object.type == 'deploy') {
                     object = new GALLERY.Objects.Deploy(object);
                 }
@@ -1628,6 +1631,10 @@ var GALLERY;
                 this.skybox_reverse = this.skybox_reverse || false;
                 this.fogDensity = this.fogDensity || 0;
                 this.fogColor = this.fogColor || '#ffffff';
+                this.clearColor = this.clearColor || '#ffffff';
+                this.endlessStructures = this.endlessStructures || false;
+                this.endlessStructuresFromStorey = this.endlessStructuresFromStorey || '1NP';
+                this.shadows = this.shadows || false;
             }
             Environment.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -1894,7 +1901,7 @@ var GALLERY;
             __extends(Stairs, _super);
             function Stairs(object) {
                 _super.call(this, object);
-                this.material = this.material || 'stone-plain';
+                this.material = this.material || '#cccccc';
                 this.width = this.width || 10;
                 this.height = this.height || 2;
                 this.rotation = this.rotation || 0;
@@ -2052,8 +2059,8 @@ var GALLERY;
             //public selector: string;
             function Zone(object) {
                 _super.call(this, object);
-                this.width = this.width || 5;
-                this.height = this.height || 5;
+                this.width = this.width || 1;
+                this.height = this.height || 1;
                 this.uri = this.uri || '';
                 this.uri_level = this.uri_level || 0;
                 this.name = this.name || '';
@@ -2087,6 +2094,40 @@ var GALLERY;
 (function (GALLERY) {
     var Objects;
     (function (Objects) {
+        var GroundHole = (function (_super) {
+            __extends(GroundHole, _super);
+            function GroundHole(object) {
+                _super.call(this, object);
+                this.width = this.width || 1;
+                this.height = this.height || 1;
+            }
+            GroundHole.prototype.create$Element = function () {
+                var $element = this._create$Element();
+                var object = this;
+                var $block = $('<div>').addClass('image');
+                var width = object.width * zoom_selected;
+                var height = object.height * zoom_selected;
+                $block.css('width', width);
+                $block.css('height', height);
+                $block.css('background-color', 'rgba(0,0,100,0.5)');
+                $block.css('position', 'relative');
+                $block.css('top', -height / 2);
+                $block.css('left', -width / 2);
+                $block.css('transform', 'rotate(' + object.rotation + 'deg)');
+                $element.append($block);
+                //$element.css('transform','rotate('+object.rotation+'deg)');
+                return $element;
+            };
+            return GroundHole;
+        }(Objects.Object));
+        Objects.GroundHole = GroundHole;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="../../reference.ts" />
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
         var Board = (function (_super) {
             __extends(Board, _super);
             function Board(object) {
@@ -2105,8 +2146,8 @@ var GALLERY;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
 var STATSERVER_URL = 'http://webappgames.com:48567';
-var OBJECT_TYPES = ['zone', 'stairs', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'board'];
-var DOT_OBJECTS = ['zone', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'board'];
+var OBJECT_TYPES = ['zone', 'groundhole', 'stairs', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'board'];
+var DOT_OBJECTS = ['zone', 'groundhole', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'board'];
 var BLOCK_SIZE = 5;
 //var BLOCK_SIZE_VERTICAL=10;
 //var BLOCK_SIZE_DOOR=2;
@@ -2131,6 +2172,9 @@ var BLOCKS_2D_3D_SHAPES = {
     'big-fence': [1, 1, 1, 1, 0, 0, 0, 0, 0]
 };
 var STOREYS = [
+    '3PP',
+    '2PP',
+    '1PP',
     '1NP',
     '2NP',
     '3NP',
@@ -2140,6 +2184,9 @@ var STOREYS = [
 ];
 var BLOCKS_1NP_LEVEL = (0.5 - 0.9);
 var BLOCKS_STOREYS_LEVELS = {
+    '3PP': -3 * 8,
+    '2PP': -2 * 8,
+    '1PP': -1 * 8,
     '1NP': 0 * 8,
     '2NP': 1 * 8,
     '3NP': 2 * 8,
@@ -2237,6 +2284,7 @@ var PH;
 /// <reference path="script/05-objects/10-gate.ts" />
 /// <reference path="script/05-objects/10-deploy.ts" />
 /// <reference path="script/05-objects/10-zone.ts" />
+/// <reference path="script/05-objects/10-groundhole.ts" />
 /// <reference path="script/05-objects/10-board.ts" />
 /// <reference path="script/scene-config.ts" />
 /// <reference path="script/00-common.ts" />
@@ -2940,7 +2988,7 @@ $(function () {
             selected_object.storey = storey_selected;
         }
         saveAndRedraw();
-    }).first().trigger('click');
+    }).first().next().next().next().trigger('click');
 });
 //-------------------------------------------------------------
 var zoom_selected;
@@ -3024,6 +3072,7 @@ $(function () {
         var $dot_object = createObject$(GALLERY.Objects.Object.init({
             type: type
         }));
+        //r(type,$dot_object);
         $dot_object.draggable({
             //helper: 'clone',
             stop: function () {
@@ -3543,7 +3592,7 @@ function createMap() {
     var $stairs = $admin_world.find('.stairs');
     var $dot_objects = $admin_world.find(DOT_OBJECTS.map(function (item) { return ('.' + item); }).join(', '));
     $dot_objects.css('z-index', 2);
-    $('.zone').css('z-index', 1);
+    $('.zone,.groundhole').css('z-index', 1);
     /*$admin_world.mousemove(function (e) {
         var position = getPositionFromLeftTop(e.clientX,e.clientY);
         document.title = isWallOn(05-objects,position);
@@ -3573,7 +3622,7 @@ function createMap() {
         for (var key in object) {
             input_element = null;
             check_element = null;
-            if (['name', 'uri', 'next', 'parent', 'key', 'href', 'target', 'world', 'material', 'skybox', 'ground', 'url', 'password'].indexOf(key) !== -1) {
+            if (['name', 'uri', 'next', 'parent', 'key', 'href', 'target', 'world', 'material', 'skybox', 'ground', 'url', 'password', 'endlessStructuresFromStorey'].indexOf(key) !== -1) {
                 input_element = '<input type="text">';
             }
             else if (['script', 'html', 'selector'].indexOf(key) !== -1) {
@@ -3597,7 +3646,7 @@ function createMap() {
             else if (key == 'fogDensity') {
                 input_element = '<input type="range" min="0" max="0.05" step="0.0001">';
             }
-            else if (key == 'color' || key == 'fogColor') {
+            else if (key == 'color' || key == 'fogColor' || key == 'clearColor') {
                 input_element = '<input type="color">';
             }
             else if (key == 'skyboxSize' || key == 'uri_level') {

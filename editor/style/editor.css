@@ -217,29 +217,38 @@ nav {
   right: 0px;
   align: center; }
 
-.palette div {
-  display: inline-block; }
-  .palette div i {
-    cursor: move;
-    display: inline-block;
-    font-size: 30px; }
-.palette .block {
-  border: 2px solid transparent; }
-.palette .selected {
-  border: 2px solid #ff4e41 !important; }
-.palette .select-storeys ul, .palette .select-zooms ul, .palette .select-worlds ul {
-  margin: 0;
-  padding: 0; }
-  .palette .select-storeys ul li, .palette .select-zooms ul li, .palette .select-worlds ul li {
-    display: inline-block;
-    cursor: pointer;
-    list-style: none;
-    margin: 2px;
-    padding: 4px;
-    background-color: #88a9a5;
+.palette {
+  /*.select-dot-objects{
+
+    *{
+      position: static!important;
+    }
+
+
+  }*/ }
+  .palette div {
+    display: inline-block; }
+    .palette div i {
+      cursor: move;
+      display: inline-block;
+      font-size: 30px; }
+  .palette .block {
     border: 2px solid transparent; }
-.palette .select-materials div, .palette .select-shapes div {
-  cursor: pointer; }
+  .palette .selected {
+    border: 2px solid #ff4e41 !important; }
+  .palette .select-storeys ul, .palette .select-zooms ul, .palette .select-worlds ul {
+    margin: 0;
+    padding: 0; }
+    .palette .select-storeys ul li, .palette .select-zooms ul li, .palette .select-worlds ul li {
+      display: inline-block;
+      cursor: pointer;
+      list-style: none;
+      margin: 2px;
+      padding: 4px;
+      background-color: #88a9a5;
+      border: 2px solid transparent; }
+  .palette .select-materials div, .palette .select-shapes div {
+    cursor: pointer; }
 
 .not-selected-object:not(.block) {
   opacity: 0.3;

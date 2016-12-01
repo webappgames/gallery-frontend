@@ -740,8 +740,9 @@ var GALLERY;
         }
         Viewer.getTextureUrl = getTextureUrl;
         var materials = {}; //todo maybe DI
-        function getMaterial(key, opacity) {
-            if (typeof materials[key] === 'undefined') {
+        function getMaterial(key, opacity, noCache) {
+            if (noCache === void 0) { noCache = false; }
+            if (typeof materials[key] === 'undefined' || noCache) {
                 var material = new BABYLON.StandardMaterial("Mat", Viewer.scene);
                 if (key.substr(0, 1) == '#') {
                     material.diffuseColor = BABYLON.Color3.FromHexString(key);
@@ -753,7 +754,12 @@ var GALLERY;
                 }
                 material.alpha = opacity;
                 material.freeze();
-                materials[key] = material;
+                if (noCache) {
+                    return (material);
+                }
+                else {
+                    materials[key] = material;
+                }
             }
             return (materials[key]);
         }
@@ -2244,6 +2250,9 @@ var GALLERY;
                 else if (object.type == 'zone') {
                     object = new GALLERY.Objects.Zone(object);
                 }
+                else if (object.type == 'groundhole') {
+                    object = new GALLERY.Objects.GroundHole(object);
+                }
                 else if (object.type == 'deploy') {
                     object = new GALLERY.Objects.Deploy(object);
                 }
@@ -2306,6 +2315,10 @@ var GALLERY;
                 this.skybox_reverse = this.skybox_reverse || false;
                 this.fogDensity = this.fogDensity || 0;
                 this.fogColor = this.fogColor || '#ffffff';
+                this.clearColor = this.clearColor || '#ffffff';
+                this.endlessStructures = this.endlessStructures || false;
+                this.endlessStructuresFromStorey = this.endlessStructuresFromStorey || '1NP';
+                this.shadows = this.shadows || false;
             }
             Environment.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -2572,7 +2585,7 @@ var GALLERY;
             __extends(Stairs, _super);
             function Stairs(object) {
                 _super.call(this, object);
-                this.material = this.material || 'stone-plain';
+                this.material = this.material || '#cccccc';
                 this.width = this.width || 10;
                 this.height = this.height || 2;
                 this.rotation = this.rotation || 0;
@@ -2730,8 +2743,8 @@ var GALLERY;
             //public selector: string;
             function Zone(object) {
                 _super.call(this, object);
-                this.width = this.width || 5;
-                this.height = this.height || 5;
+                this.width = this.width || 1;
+                this.height = this.height || 1;
                 this.uri = this.uri || '';
                 this.uri_level = this.uri_level || 0;
                 this.name = this.name || '';
@@ -2765,6 +2778,40 @@ var GALLERY;
 (function (GALLERY) {
     var Objects;
     (function (Objects) {
+        var GroundHole = (function (_super) {
+            __extends(GroundHole, _super);
+            function GroundHole(object) {
+                _super.call(this, object);
+                this.width = this.width || 1;
+                this.height = this.height || 1;
+            }
+            GroundHole.prototype.create$Element = function () {
+                var $element = this._create$Element();
+                var object = this;
+                var $block = $('<div>').addClass('image');
+                var width = object.width * zoom_selected;
+                var height = object.height * zoom_selected;
+                $block.css('width', width);
+                $block.css('height', height);
+                $block.css('background-color', 'rgba(0,0,100,0.5)');
+                $block.css('position', 'relative');
+                $block.css('top', -height / 2);
+                $block.css('left', -width / 2);
+                $block.css('transform', 'rotate(' + object.rotation + 'deg)');
+                $element.append($block);
+                //$element.css('transform','rotate('+object.rotation+'deg)');
+                return $element;
+            };
+            return GroundHole;
+        }(Objects.Object));
+        Objects.GroundHole = GroundHole;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="../../reference.ts" />
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
         var Board = (function (_super) {
             __extends(Board, _super);
             function Board(object) {
@@ -2783,8 +2830,8 @@ var GALLERY;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
 var STATSERVER_URL = 'http://webappgames.com:48567';
-var OBJECT_TYPES = ['zone', 'stairs', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'board'];
-var DOT_OBJECTS = ['zone', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'board'];
+var OBJECT_TYPES = ['zone', 'groundhole', 'stairs', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'board'];
+var DOT_OBJECTS = ['zone', 'groundhole', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'board'];
 var BLOCK_SIZE = 5;
 //var BLOCK_SIZE_VERTICAL=10;
 //var BLOCK_SIZE_DOOR=2;
@@ -2809,6 +2856,9 @@ var BLOCKS_2D_3D_SHAPES = {
     'big-fence': [1, 1, 1, 1, 0, 0, 0, 0, 0]
 };
 var STOREYS = [
+    '3PP',
+    '2PP',
+    '1PP',
     '1NP',
     '2NP',
     '3NP',
@@ -2818,6 +2868,9 @@ var STOREYS = [
 ];
 var BLOCKS_1NP_LEVEL = (0.5 - 0.9);
 var BLOCKS_STOREYS_LEVELS = {
+    '3PP': -3 * 8,
+    '2PP': -2 * 8,
+    '1PP': -1 * 8,
     '1NP': 0 * 8,
     '2NP': 1 * 8,
     '3NP': 2 * 8,
@@ -2915,6 +2968,7 @@ var PH;
 /// <reference path="script/05-objects/10-gate.ts" />
 /// <reference path="script/05-objects/10-deploy.ts" />
 /// <reference path="script/05-objects/10-zone.ts" />
+/// <reference path="script/05-objects/10-groundhole.ts" />
 /// <reference path="script/05-objects/10-board.ts" />
 /// <reference path="script/scene-config.ts" />
 /// <reference path="script/00-common.ts" />
@@ -4079,7 +4133,8 @@ var GALLERY;
             bark.freeze();
             Viewer.gates = [];
             links = [];
-            var endless = false;
+            var endlessStructures = false;
+            var endlessStructuresFromStorey = false;
             //var wasVideo = false;
             //-----------------------------------------------------zoneMaterial
             var zoneMaterial = new BABYLON.StandardMaterial("texture1", Viewer.scene);
@@ -4093,38 +4148,68 @@ var GALLERY;
             //-----------------------------------------------------
             //==================================================================================================================
             var zoneIdsCreatedForImages = [];
-            function processObject(object) {
+            function getBabylonPositionForObject(object) {
                 //todo use getBabylonPosition
                 object.storey = object.storey || '1NP';
                 var level = BLOCKS_STOREYS_LEVELS[object.storey];
                 var position = new BABYLON.Vector3(object.position.x * -BLOCK_SIZE, (level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
                 object.position.y * BLOCK_SIZE);
+                return (position);
+            }
+            function processObject(object) {
+                var position = getBabylonPositionForObject(object);
                 if (object.type == 'environment') {
+                    endlessStructures = object.endlessStructures;
+                    endlessStructuresFromStorey = object.endlessStructuresFromStorey;
+                    Viewer.scene.clearColor = BABYLON.Color3.FromHexString(object.clearColor);
                     if (object.ground !== 'none') {
                         //todo position
                         /**/
                         //Ground
-                        var ground = BABYLON.Mesh.CreatePlane("ground", 10000, Viewer.scene);
-                        ground.material = new BABYLON.StandardMaterial("groundMat", Viewer.scene);
-                        //ground.material.diffuseColor = new BABYLON.Color3(0.5, 0.9, 0.7);
-                        //ground.material.backFaceCulling = false;
-                        ground.material.diffuseTexture = new BABYLON.Texture(Viewer.getTextureUrl(object.ground), Viewer.scene);
-                        ground.material.diffuseTexture.opacity = 0.5;
-                        ground.material.diffuseTexture.uScale = 100; //Vertical offset of 10%
-                        ground.material.diffuseTexture.vScale = 100; //Horizontal offset of 40%
-                        ground.material.reflectionColor = new BABYLON.Color3(0, 0, 0);
-                        ground.material.specularColor = new BABYLON.Color3(0, 0, 0);
-                        ground.position = new BABYLON.Vector3(0, 0, 0);
+                        /*var ground = BABYLON.Mesh.CreatePlane("ground", 10000, scene);
                         ground.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
+                        ground.material = getMaterial(object.ground,1,true);
+                        if("diffuseTexture" in ground.material) {
+                            ground.material.diffuseTexture.uScale = 100;//Vertical offset of 10%
+                            ground.material.diffuseTexture.vScale = 100;//Horizontal offset of 40%
+                        }
                         ground.receiveShadows = true;
                         ground.isPickable = true;
                         ground.checkCollisions = true;
-                        Viewer.meshes.push(ground);
-                    }
-                    else {
-                        endless = true;
-                        r('Activating endless multiblocks.');
-                    }
+                        meshes.push(ground);*/
+                        var groundMesh_1 = BABYLON.Mesh.CreateBox("ground", BLOCK_SIZE, Viewer.scene);
+                        groundMesh_1.position.y = BLOCK_SIZE * -1 / 2;
+                        groundMesh_1.scaling.x = 10000 / BLOCK_SIZE;
+                        groundMesh_1.scaling.z = 10000 / BLOCK_SIZE;
+                        groundMesh_1.material = Viewer.getMaterial(object.ground, 1, true);
+                        //groundMesh.material.backFaceCulling = false;
+                        objects_world.filterTypes('groundhole').forEach(function (holeObject) {
+                            r('asshole', holeObject);
+                            var holePosition = getBabylonPositionForObject(holeObject);
+                            var holeMesh = BABYLON.Mesh.CreateBox(holeObject.id, BLOCK_SIZE, Viewer.scene);
+                            holeMesh.material = groundMesh_1.material; //getMaterial('#00ff00',1,true);
+                            holeMesh.position = holePosition;
+                            holePosition.y = 0;
+                            holeMesh.scaling.y = BLOCK_SIZE;
+                            holeMesh.scaling.x = holeObject.width;
+                            holeMesh.scaling.z = holeObject.height;
+                            var groundCSG = BABYLON.CSG.FromMesh(groundMesh_1);
+                            var holeCSG = BABYLON.CSG.FromMesh(holeMesh);
+                            var groundWithHoleCSG = groundCSG.subtract(holeCSG);
+                            r(groundCSG, holeCSG, groundWithHoleCSG);
+                            var newGround = groundWithHoleCSG.toMesh("ground", groundMesh_1.material, Viewer.scene);
+                            // Disposing original meshes since we don't want to see them on the scene
+                            groundMesh_1.dispose();
+                            holeMesh.dispose();
+                            groundMesh_1 = newGround; /**/
+                        });
+                        if (object.shadows) {
+                            groundMesh_1.receiveShadows = true;
+                        }
+                        groundMesh_1.isPickable = true;
+                        groundMesh_1.checkCollisions = true;
+                        Viewer.meshes.push(groundMesh_1);
+                    } //else {
                     if (object.skybox !== 'none') {
                         var url = object.skybox + '/' + object.skybox;
                         // Skybox
@@ -4196,9 +4281,9 @@ var GALLERY;
                 }
                 else if (object.type == 'multiblock') {
                     //--------------------------------------Endless
-                    if (endless) {
+                    if (endlessStructures) {
                         var bottom = object.position.z - object.size.z / 2;
-                        if (bottom <= 0) {
+                        if (bottom <= BLOCKS_STOREYS_LEVELS[endlessStructuresFromStorey]) {
                             var top_2 = object.position.z + object.size.z / 2;
                             bottom -= 1000;
                             object.position.z = (top_2 + bottom) / 2;

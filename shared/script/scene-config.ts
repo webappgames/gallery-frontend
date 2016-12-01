@@ -3,8 +3,8 @@
 const STATSERVER_URL = 'http://webappgames.com:48567';
 
 
-const OBJECT_TYPES = ['zone','stairs','environment','light','label','tree','link','gate','deploy','board'];
-const DOT_OBJECTS = ['zone','environment','light','label','tree','link','gate','deploy','board'];
+const OBJECT_TYPES = ['zone','groundhole','stairs','environment','light','label','tree','link','gate','deploy','board'];
+const DOT_OBJECTS = ['zone','groundhole','environment','light','label','tree','link','gate','deploy','board'];
 
 
 const BLOCK_SIZE=5;
@@ -44,6 +44,9 @@ const BLOCKS_2D_3D_SHAPES = {
 
 
 const STOREYS = [
+    '3PP',
+    '2PP',
+    '1PP',
     '1NP',
     '2NP',
     '3NP',
@@ -55,6 +58,9 @@ const STOREYS = [
 
 const BLOCKS_1NP_LEVEL = (0.5 - 0.9);
 const BLOCKS_STOREYS_LEVELS = {
+    '3PP':  -3*8,
+    '2PP':  -2*8,
+    '1PP':  -1*8,
     '1NP':  0*8,
     '2NP':  1*8,
     '3NP':  2*8,

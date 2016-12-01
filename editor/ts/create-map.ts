@@ -206,7 +206,7 @@ function createMap() {
 
 
     $dot_objects.css('z-index',2);
-    $('.zone').css('z-index',1);
+    $('.zone,.groundhole').css('z-index',1);
 
 
 
@@ -272,7 +272,7 @@ function createMap() {
             check_element=null;
 
 
-            if(['name','uri','next','parent','key','href','target','world','material','skybox','ground','url','password'].indexOf(key)!==-1){
+            if(['name','uri','next','parent','key','href','target','world','material','skybox','ground','url','password','endlessStructuresFromStorey'].indexOf(key)!==-1){
                 input_element='<input type="text">';
             }else
             if(['script','html','selector'].indexOf(key)!==-1){
@@ -296,7 +296,7 @@ function createMap() {
             if(key=='fogDensity'){
                 input_element='<input type="range" min="0" max="0.05" step="0.0001">';
             }else
-            if(key=='color' || key=='fogColor'){
+            if(key=='color' || key=='fogColor' || key=='clearColor'){
                 input_element='<input type="color">';
             }else
             if(key=='skyboxSize' || key=='uri_level'){

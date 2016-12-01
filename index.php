@@ -165,6 +165,8 @@ if($route == $routeRoot){
 <!--<script src="viewer/script/lib/jquery.jfeed.js"></script>-->
 <script src="/viewer/script/lib/babylon.js"></script>
 <script src="/node_modules/handjs/hand.min.js"></script>
+
+
 <script src="/viewer/script/viewer.js"></script>
 <script>
     $.get('/objects.compiled.json').done(function(response){

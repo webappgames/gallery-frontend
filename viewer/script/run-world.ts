@@ -37,7 +37,8 @@ namespace GALLERY.Viewer {
 
 
 
-        let endless = false;
+        let endlessStructures = false;
+        let endlessStructuresFromStorey = false;
         //var wasVideo = false;
 
 
@@ -63,51 +64,147 @@ namespace GALLERY.Viewer {
 
         let zoneIdsCreatedForImages = [];
 
-        function processObject(object) {
+
+        function getBabylonPositionForObject(object){
 
             //todo use getBabylonPosition
             object.storey = object.storey || '1NP';
-            var level = BLOCKS_STOREYS_LEVELS[object.storey];
+            let level = BLOCKS_STOREYS_LEVELS[object.storey];
 
-            var position = new BABYLON.Vector3(
+            let position = new BABYLON.Vector3(
                 object.position.x * -BLOCK_SIZE,
                 (level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE,//(0.5 - 0.9) * BLOCK_SIZE,
                 object.position.y * BLOCK_SIZE
             );
 
+            return(position);
+        }
+
+
+
+        function processObject(object) {
+
+            let position = getBabylonPositionForObject(object);
+
 
             if (object.type == 'environment') {
+
+
+                endlessStructures = object.endlessStructures;
+                endlessStructuresFromStorey = object.endlessStructuresFromStorey;
+
+
+                scene.clearColor = BABYLON.Color3.FromHexString(object.clearColor);
 
 
                 if (object.ground !== 'none') {
                     //todo position
                     /**/
                     //Ground
-                    var ground = BABYLON.Mesh.CreatePlane("ground", 10000, scene);
-                    ground.material = new BABYLON.StandardMaterial("groundMat", scene);
-                    //ground.material.diffuseColor = new BABYLON.Color3(0.5, 0.9, 0.7);
-                    //ground.material.backFaceCulling = false;
-                    ground.material.diffuseTexture = new BABYLON.Texture(getTextureUrl(object.ground), scene);
-                    ground.material.diffuseTexture.opacity = 0.5;
-                    ground.material.diffuseTexture.uScale = 100;//Vertical offset of 10%
-                    ground.material.diffuseTexture.vScale = 100;//Horizontal offset of 40%
-                    ground.material.reflectionColor = new BABYLON.Color3(0, 0, 0);
-                    ground.material.specularColor = new BABYLON.Color3(0, 0, 0);
 
 
-                    ground.position = new BABYLON.Vector3(0, 0, 0);
+
+
+
+
+
+                    /*var ground = BABYLON.Mesh.CreatePlane("ground", 10000, scene);
                     ground.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
+                    ground.material = getMaterial(object.ground,1,true);
+                    if("diffuseTexture" in ground.material) {
+                        ground.material.diffuseTexture.uScale = 100;//Vertical offset of 10%
+                        ground.material.diffuseTexture.vScale = 100;//Horizontal offset of 40%
+                    }
                     ground.receiveShadows = true;
                     ground.isPickable = true;
-
                     ground.checkCollisions = true;
-                    meshes.push(ground);
-                    /**/
-                } else {
-                    endless = true;
-                    r('Activating endless multiblocks.');
+                    meshes.push(ground);*/
 
-                }
+
+
+
+
+
+
+
+
+                    let groundMesh = BABYLON.Mesh.CreateBox("ground", BLOCK_SIZE, scene);
+                    groundMesh.position.y = BLOCK_SIZE*-1/2;
+                    groundMesh.scaling.x = 10000/BLOCK_SIZE;
+                    groundMesh.scaling.z = 10000/BLOCK_SIZE;
+
+                    groundMesh.material = getMaterial(object.ground,1,true);
+                    //groundMesh.material.backFaceCulling = false;
+
+
+
+
+
+
+
+                    objects_world.filterTypes('groundhole').forEach(function (holeObject) {
+
+                        r('asshole',holeObject);
+
+                        let holePosition = getBabylonPositionForObject(holeObject);
+                        let holeMesh = BABYLON.Mesh.CreateBox(holeObject.id, BLOCK_SIZE, scene);
+                        holeMesh.material = groundMesh.material;//getMaterial('#00ff00',1,true);
+                        holeMesh.position = holePosition;
+                        holePosition.y = 0;
+                        holeMesh.scaling.y = BLOCK_SIZE;
+                        holeMesh.scaling.x = holeObject.width;
+                        holeMesh.scaling.z = holeObject.height;
+
+
+                        var groundCSG = BABYLON.CSG.FromMesh(groundMesh);
+                        var holeCSG = BABYLON.CSG.FromMesh(holeMesh);
+
+
+
+                        var groundWithHoleCSG = groundCSG.subtract(holeCSG);
+
+
+
+                        r(groundCSG,holeCSG,groundWithHoleCSG);
+
+
+                        let newGround = groundWithHoleCSG.toMesh("ground", groundMesh.material, scene);
+
+
+                        // Disposing original meshes since we don't want to see them on the scene
+                        groundMesh.dispose();
+                        holeMesh.dispose();
+
+
+
+                        groundMesh = newGround;/**/
+
+
+                    });
+
+
+
+                    if(object.shadows){
+                        groundMesh.receiveShadows = true;
+                    }
+
+                    groundMesh.isPickable = true;
+                    groundMesh.checkCollisions = true;
+                    meshes.push(groundMesh);
+
+
+
+
+
+
+
+
+
+
+
+
+                    /**/
+                }//else {
 
 
                 if (object.skybox !== 'none') {
@@ -225,9 +322,9 @@ namespace GALLERY.Viewer {
 
 
                 //--------------------------------------Endless
-                if (endless) {
+                if (endlessStructures) {
                     let bottom = object.position.z - object.size.z / 2;
-                    if (bottom <= 0) {
+                    if (bottom <= BLOCKS_STOREYS_LEVELS[endlessStructuresFromStorey]) {
 
                         let top = object.position.z + object.size.z / 2;
 

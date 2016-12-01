@@ -18,7 +18,7 @@ namespace GALLERY.Objects{
 
             super(object);
 
-            this.material = this.material || 'stone-plain';
+            this.material = this.material || '#cccccc';
             this.width = this.width || 10;
             this.height = this.height || 2;
             this.rotation = this.rotation || 0;

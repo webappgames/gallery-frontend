@@ -32,9 +32,9 @@ namespace GALLERY.Viewer {
 
 
     let materials = {};//todo maybe DI
-    export function getMaterial(key: string, opacity: number) {
+    export function getMaterial(key: string, opacity: number, noCache=false) {
 
-        if (typeof materials[key] === 'undefined') {
+        if (typeof materials[key] === 'undefined' || noCache) {
 
 
             let material = new BABYLON.StandardMaterial("Mat", scene);
@@ -54,7 +54,11 @@ namespace GALLERY.Viewer {
             material.alpha = opacity;
             material.freeze();
 
-            materials[key] = material;
+            if(noCache){
+                return(material);
+            }else{
+                materials[key] = material;
+            }
             /**/
 
         }

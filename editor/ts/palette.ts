@@ -96,7 +96,7 @@ $(function () {
         saveAndRedraw();
 
 
-    }).first().trigger('click');
+    }).first().next().next().next().trigger('click');
 
 });
 
@@ -259,6 +259,7 @@ $(function () {
             type: type
         }));
 
+        //r(type,$dot_object);
 
 
         $dot_object.draggable({

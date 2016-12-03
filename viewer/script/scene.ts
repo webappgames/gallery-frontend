@@ -51,7 +51,10 @@ namespace GALLERY.Viewer {
         camera.fov = 1.3;
 
 
-        camera.onCollide = onCollide;
+        camera.onCollide = function () {
+            onCollide.apply(this,arguments);//todo why?
+            //r('collide',onCollide);
+        };
 
 
         //Set gravity for the scene (G force like, on Y-axis)
@@ -69,6 +72,9 @@ namespace GALLERY.Viewer {
         //Set the ellipsoid around the camera (e.g. your player's size)
         camera.ellipsoid = new BABYLON.Vector3(1, EYE_VERTICAL * BLOCK_SIZE / 2, 1);
 
+
+        //r(camera.angularSensibility);
+        camera.angularSensibility= -camera.angularSensibility;//-1000;
         //finally, say which mesh will be collisionable
 
 
@@ -89,6 +95,19 @@ namespace GALLERY.Viewer {
 
         var zones_last = [];
         scene.registerBeforeRender(function () {
+
+
+            if(GALLERY.Viewer.MODE=='WEB') {
+
+                if (current_label) {
+
+                    r(current_label.uri);
+                    //r(current_label);
+                    if (current_label.rotationSpeed) {
+                        camera.rotation.y += current_label.rotationSpeed / 180 * Math.PI / engine.getFps();
+                    }
+                }
+            }
 
 
             //r(scene.isReady());

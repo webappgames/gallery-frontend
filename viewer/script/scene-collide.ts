@@ -12,6 +12,7 @@ namespace GALLERY.Viewer {
 
             //on_air = false;
 
+            //r('collide with '+collidedMesh.id);
             ion.sound.play("step-" + collidedMesh.id);
             return;
         }

@@ -278,6 +278,26 @@ section#zones {
     section#zones div.zone:hover .next {
       color: #ff1b0e; }
 
+nav .turn-right, nav .turn-left {
+  margin: 5px;
+  padding: 7px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-color: rgba(255, 255, 255, 0.61);
+  border-radius: 3px;
+  color: #000;
+  font-size: 2em; }
+  nav .turn-right:hover, nav .turn-left:hover {
+    color: #ff1b0e; }
+nav .turn-right {
+  position: fixed;
+  top: 50%;
+  right: 0px; }
+nav .turn-left {
+  position: fixed;
+  top: 50%;
+  left: 0px; }
+
 section.feed {
   display: block;
   width: 100%;

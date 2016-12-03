@@ -4,6 +4,7 @@ namespace GALLERY.Viewer{
 
     export var MODE = 'WEB';
     export var LOCKED = false;
+    export var current_label = null;
 
 
 
@@ -12,10 +13,12 @@ namespace GALLERY.Viewer{
     export function appState(location:string,standGround=false,immediately=true) {
 
 
+        current_label = objects.filterTypes('label').findBy('uri',location);
+
+
         history.replaceState(null, "Gallery", location);//todo normal name
         history.pushState(null, "Gallery", location);//todo normal name
-        GALLERY.Viewer.processStateFromLocation(window.document.location,standGround,immediately);
-
+        GALLERY.Viewer.processStateFromLocation(/*window.document.location*/location,standGround,immediately);
 
 
     }
@@ -45,13 +48,13 @@ namespace GALLERY.Viewer{
         let label;
 
 
-        if (pathname.substr(0, 2) === '/:') {
+        /*if (pathname.substr(0, 2) === '/:') {
 
             let objectId = pathname.substr(2);
-            label = objects.getObjectById(objectId);
+            label = objects.filterTypes('label').getObjectById(objectId);
 
 
-        } else {
+        } else {*/
 
             label = objects.filterTypes('label').findBy('uri',pathname);
 
@@ -59,7 +62,7 @@ namespace GALLERY.Viewer{
                 label = rootLabel;
             }
 
-        }
+        //}
 
         if(label == rootLabel){
             window.document.title = rootLabel.name;
@@ -115,6 +118,28 @@ namespace GALLERY.Viewer{
         }
     }
 
+
+
+    export function appStateTurnLeft(){
+
+        let babylon_rotation = new BABYLON.Vector3(
+            0,
+            camera.rotation.y - Math.PI/2,
+            0
+        );
+        rotateToBabylon(babylon_rotation);
+
+    }
+    export function appStateTurnRight(){
+
+        let babylon_rotation = new BABYLON.Vector3(
+            0,
+            camera.rotation.y + Math.PI/2,
+            0
+        );
+        rotateToBabylon(babylon_rotation);
+
+    }
 
 
 

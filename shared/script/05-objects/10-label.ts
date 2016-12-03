@@ -10,6 +10,8 @@ namespace GALLERY.Objects{
         public uri: string;
         public next: string;
         public rotation: number;
+        public rotationNotImportant: boolean;
+        public rotationSpeed: number;
 
 
         constructor(object){
@@ -20,6 +22,8 @@ namespace GALLERY.Objects{
             this.uri = this.uri || '';
             this.next = this.next || 'none';
             this.rotation = this.rotation || 0;
+            this.rotationNotImportant = this.rotationNotImportant || false;
+            this.rotationSpeed = this.rotationSpeed || 0;
 
         }
 

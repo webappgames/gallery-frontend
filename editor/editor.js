@@ -1527,6 +1527,11 @@ var GALLERY;
                         this_key = 'id'; //todo maybe better solution
                     this[this_key] = object[key];
                 }
+                if ("uri" in this) {
+                    if (this.uri == '/:' + this.id) {
+                        this.uri = 'none';
+                    }
+                }
             }
             Object.init = function (object) {
                 if (object instanceof GALLERY.Objects.Object) {
@@ -1588,6 +1593,18 @@ var GALLERY;
             /*create$Element(){
                 return this._create$Element();
             }*/
+            Object.prototype.getUri = function () {
+                var uri;
+                if ("uri" in this) {
+                    if (this.uri != 'none') {
+                        uri = this.uri;
+                    }
+                }
+                if (typeof uri === 'undefined') {
+                    uri = '/:' + this.id;
+                }
+                return (uri);
+            };
             Object.prototype._create$Element = function () {
                 var object = this;
                 var element = '<div></div>';
@@ -1855,6 +1872,8 @@ var GALLERY;
                 this.uri = this.uri || '';
                 this.next = this.next || 'none';
                 this.rotation = this.rotation || 0;
+                this.rotationNotImportant = this.rotationNotImportant || false;
+                this.rotationSpeed = this.rotationSpeed || 0;
             }
             Label.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -2157,16 +2176,20 @@ var LIGHT_VERTICAL = 3;
 var SPEED = 7;
 var SPEED_INERTIA = 0.5;
 var SPEED_ROTATION = Math.PI / 2;
-var BLOCK_SHAPES = ['none', 'current', 'room', 'wall', 'door', 'window', 'low-window', 'floor', 'ceil', 'small-fence', 'medium-fence', 'big-fence', 'combo-wall'];
+var BLOCK_SHAPES = ['none', 'current', 'room', 'wall', 'wall-noroof', 'door', 'big-door', 'giant-door', 'giant-door-noroof', 'window', 'low-window', 'floor', 'ceil', 'small-fence', 'medium-fence', 'big-fence', 'combo-wall'];
 var BLOCKS_2D_3D_SHAPES = {
-    room: [1, 0, 0, 0, 0, 0, 0, 0, 1],
-    door: [1, 0, 0, 0, 1, 1, 1, 1, 1],
-    gate: [1, 0, 0, 0, 1, 1, 1, 1, 1],
-    wall: [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    window: [1, 1, 1, 0, 0, 1, 1, 1, 1],
+    'room': [1, 0, 0, 0, 0, 0, 0, 0, 1],
+    'door': [1, 0, 0, 0, 1, 1, 1, 1, 1],
+    'big-door': [1, 0, 0, 0, 0, 1, 1, 1, 1],
+    'giant-door': [1, 0, 0, 0, 0, 0, 1, 1, 1],
+    'giant-door-noroof': [1, 0, 0, 0, 0, 0, 1, 1, 0],
+    'gate': [1, 0, 0, 0, 1, 1, 1, 1, 1],
+    'wall': [1, 1, 1, 1, 1, 1, 1, 1, 1],
+    'wall-noroof': [1, 1, 1, 1, 1, 1, 1, 1, 0],
+    'window': [1, 1, 1, 0, 0, 1, 1, 1, 1],
     'low-window': [1, 1, 0, 0, 1, 1, 1, 1, 1],
-    floor: [1, 0, 0, 0, 0, 0, 0, 0, 0],
-    ceil: [0, 0, 0, 0, 0, 0, 0, 0, 1],
+    'floor': [1, 0, 0, 0, 0, 0, 0, 0, 0],
+    'ceil': [0, 0, 0, 0, 0, 0, 0, 0, 1],
     'small-fence': [1, 1, 0, 0, 0, 0, 0, 0, 0],
     'medium-fence': [1, 1, 1, 0, 0, 0, 0, 0, 0],
     'big-fence': [1, 1, 1, 1, 0, 0, 0, 0, 0]
@@ -3641,7 +3664,7 @@ function createMap() {
                 input_element = '<input type="range" min="0.2" max="10" step="0.02">';
             }
             else if (key == 'width' || key == 'height') {
-                input_element = '<input type="range" min="0.2" max="16" step="0.02">';
+                input_element = '<input type="range" min="0.2" max="25" step="0.02">';
             }
             else if (key == 'fogDensity') {
                 input_element = '<input type="range" min="0" max="0.05" step="0.0001">';
@@ -3654,6 +3677,9 @@ function createMap() {
             }
             else if (key == 'rotation' /* && (object.type!=='image' && object.onGround!=='image' )*/) {
                 input_element = '<input type="range" min="0" max="360" step="10">';
+            }
+            else if (key == 'rotationSpeed') {
+                input_element = '<input type="number" min="-360" max="360" step="1">';
             }
             else if (typeof object[key] === "boolean") {
                 check_element = '<input type="checkbox">';

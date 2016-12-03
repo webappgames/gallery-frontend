@@ -49,7 +49,8 @@ namespace GALLERY.Viewer {
 
 
         if(develop){
-            zoneMaterial.alpha = 0.2;
+            zoneMaterial.alpha = 0;
+            //zoneMaterial.alpha = 0.2;
             //zoneMaterial.wireframe = true;
         }else{
             zoneMaterial.alpha = 0;
@@ -416,7 +417,7 @@ namespace GALLERY.Viewer {
                         image.position.y += (EYE_VERTICAL - BLOCKS_1NP_LEVEL) * BLOCK_SIZE;
 
 
-                        if (develop && (object.uri || object.name) && (zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
+                        if (develop && /*(object.uri || object.name) &&*/ (zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
 
                             r('Creating zone for ' + object.name);
 
@@ -432,6 +433,11 @@ namespace GALLERY.Viewer {
                             } else if (object.name) {
                                 uri = '/' + createUriFromName(object.name);
                                 object.uri = uri;
+                            }else{
+
+                                //uri = '/' + (object.id.split('-')[0]);
+                                uri = '/:' + object.id;
+                                //object.uri = uri;
                             }
 
 

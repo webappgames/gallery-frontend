@@ -9,12 +9,14 @@ var GALLERY;
     (function (Viewer) {
         Viewer.MODE = 'WEB';
         Viewer.LOCKED = false;
+        Viewer.current_label = null;
         function appState(location, standGround, immediately) {
             if (standGround === void 0) { standGround = false; }
             if (immediately === void 0) { immediately = true; }
+            Viewer.current_label = objects.filterTypes('label').findBy('uri', location);
             history.replaceState(null, "Gallery", location); //todo normal name
             history.pushState(null, "Gallery", location); //todo normal name
-            GALLERY.Viewer.processStateFromLocation(window.document.location, standGround, immediately);
+            GALLERY.Viewer.processStateFromLocation(/*window.document.location*/ location, standGround, immediately);
         }
         Viewer.appState = appState;
         function appStateBack(standGround, immediately) {
@@ -32,16 +34,18 @@ var GALLERY;
             var pathname = uri.pathname();
             var rootLabel = objects.filterTypes('label').findBy('uri', '/');
             var label;
-            if (pathname.substr(0, 2) === '/:') {
-                var objectId = pathname.substr(2);
-                label = objects.getObjectById(objectId);
+            /*if (pathname.substr(0, 2) === '/:') {
+    
+                let objectId = pathname.substr(2);
+                label = objects.filterTypes('label').getObjectById(objectId);
+    
+    
+            } else {*/
+            label = objects.filterTypes('label').findBy('uri', pathname);
+            if (!label) {
+                label = rootLabel;
             }
-            else {
-                label = objects.filterTypes('label').findBy('uri', pathname);
-                if (!label) {
-                    label = rootLabel;
-                }
-            }
+            //}
             if (label == rootLabel) {
                 window.document.title = rootLabel.name;
             }
@@ -77,6 +81,16 @@ var GALLERY;
             }
         }
         Viewer.appStatePrevious = appStatePrevious;
+        function appStateTurnLeft() {
+            var babylon_rotation = new BABYLON.Vector3(0, Viewer.camera.rotation.y - Math.PI / 2, 0);
+            Viewer.rotateToBabylon(babylon_rotation);
+        }
+        Viewer.appStateTurnLeft = appStateTurnLeft;
+        function appStateTurnRight() {
+            var babylon_rotation = new BABYLON.Vector3(0, Viewer.camera.rotation.y + Math.PI / 2, 0);
+            Viewer.rotateToBabylon(babylon_rotation);
+        }
+        Viewer.appStateTurnRight = appStateTurnRight;
         function getAppStateLabel() {
             //r(objects.filterTypes('label'),window.document.location);
             return objects.filterTypes('label').findBy('uri', window.document.location.pathname);
@@ -2211,6 +2225,11 @@ var GALLERY;
                         this_key = 'id'; //todo maybe better solution
                     this[this_key] = object[key];
                 }
+                if ("uri" in this) {
+                    if (this.uri == '/:' + this.id) {
+                        this.uri = 'none';
+                    }
+                }
             }
             Object.init = function (object) {
                 if (object instanceof GALLERY.Objects.Object) {
@@ -2272,6 +2291,18 @@ var GALLERY;
             /*create$Element(){
                 return this._create$Element();
             }*/
+            Object.prototype.getUri = function () {
+                var uri;
+                if ("uri" in this) {
+                    if (this.uri != 'none') {
+                        uri = this.uri;
+                    }
+                }
+                if (typeof uri === 'undefined') {
+                    uri = '/:' + this.id;
+                }
+                return (uri);
+            };
             Object.prototype._create$Element = function () {
                 var object = this;
                 var element = '<div></div>';
@@ -2539,6 +2570,8 @@ var GALLERY;
                 this.uri = this.uri || '';
                 this.next = this.next || 'none';
                 this.rotation = this.rotation || 0;
+                this.rotationNotImportant = this.rotationNotImportant || false;
+                this.rotationSpeed = this.rotationSpeed || 0;
             }
             Label.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -2841,16 +2874,20 @@ var LIGHT_VERTICAL = 3;
 var SPEED = 7;
 var SPEED_INERTIA = 0.5;
 var SPEED_ROTATION = Math.PI / 2;
-var BLOCK_SHAPES = ['none', 'current', 'room', 'wall', 'door', 'window', 'low-window', 'floor', 'ceil', 'small-fence', 'medium-fence', 'big-fence', 'combo-wall'];
+var BLOCK_SHAPES = ['none', 'current', 'room', 'wall', 'wall-noroof', 'door', 'big-door', 'giant-door', 'giant-door-noroof', 'window', 'low-window', 'floor', 'ceil', 'small-fence', 'medium-fence', 'big-fence', 'combo-wall'];
 var BLOCKS_2D_3D_SHAPES = {
-    room: [1, 0, 0, 0, 0, 0, 0, 0, 1],
-    door: [1, 0, 0, 0, 1, 1, 1, 1, 1],
-    gate: [1, 0, 0, 0, 1, 1, 1, 1, 1],
-    wall: [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    window: [1, 1, 1, 0, 0, 1, 1, 1, 1],
+    'room': [1, 0, 0, 0, 0, 0, 0, 0, 1],
+    'door': [1, 0, 0, 0, 1, 1, 1, 1, 1],
+    'big-door': [1, 0, 0, 0, 0, 1, 1, 1, 1],
+    'giant-door': [1, 0, 0, 0, 0, 0, 1, 1, 1],
+    'giant-door-noroof': [1, 0, 0, 0, 0, 0, 1, 1, 0],
+    'gate': [1, 0, 0, 0, 1, 1, 1, 1, 1],
+    'wall': [1, 1, 1, 1, 1, 1, 1, 1, 1],
+    'wall-noroof': [1, 1, 1, 1, 1, 1, 1, 1, 0],
+    'window': [1, 1, 1, 0, 0, 1, 1, 1, 1],
     'low-window': [1, 1, 0, 0, 1, 1, 1, 1, 1],
-    floor: [1, 0, 0, 0, 0, 0, 0, 0, 0],
-    ceil: [0, 0, 0, 0, 0, 0, 0, 0, 1],
+    'floor': [1, 0, 0, 0, 0, 0, 0, 0, 0],
+    'ceil': [0, 0, 0, 0, 0, 0, 0, 0, 1],
     'small-fence': [1, 1, 0, 0, 0, 0, 0, 0, 0],
     'medium-fence': [1, 1, 1, 0, 0, 0, 0, 0, 0],
     'big-fence': [1, 1, 1, 1, 0, 0, 0, 0, 0]
@@ -4140,7 +4177,7 @@ var GALLERY;
             var zoneMaterial = new BABYLON.StandardMaterial("texture1", Viewer.scene);
             zoneMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
             if (Viewer.develop) {
-                zoneMaterial.alpha = 0.2;
+                zoneMaterial.alpha = 0;
             }
             else {
                 zoneMaterial.alpha = 0;
@@ -4333,7 +4370,7 @@ var GALLERY;
                             //image.position.y = (/*level + BLOCKS_1NP_LEVEL +*/ EYE_VERTICAL) * BLOCK_SIZE ;
                             image.rotation.y = Math.PI + rotation_rad_1;
                             image.position.y += (EYE_VERTICAL - BLOCKS_1NP_LEVEL) * BLOCK_SIZE;
-                            if (Viewer.develop && (object.uri || object.name) && (zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
+                            if (Viewer.develop && (zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
                                 r('Creating zone for ' + object.name);
                                 zoneIdsCreatedForImages.push(object.id);
                                 var uri = void 0;
@@ -4343,6 +4380,10 @@ var GALLERY;
                                 else if (object.name) {
                                     uri = '/' + createUriFromName(object.name);
                                     object.uri = uri;
+                                }
+                                else {
+                                    //uri = '/' + (object.id.split('-')[0]);
+                                    uri = '/:' + object.id;
                                 }
                                 object.zoneCreated = true;
                                 var size = Math.max(object.width, object.height);
@@ -4554,7 +4595,10 @@ var GALLERY;
             camera.speed = SPEED;
             camera.inertia = SPEED_INERTIA;
             camera.fov = 1.3;
-            camera.onCollide = Viewer.onCollide;
+            camera.onCollide = function () {
+                Viewer.onCollide.apply(this, arguments); //todo why?
+                //r('collide',onCollide);
+            };
             //Set gravity for the scene (G force like, on Y-axis)
             Viewer.scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
             //scene.enablePhysics(scene.gravity, new BABYLON.OimoJSPlugin());
@@ -4565,6 +4609,8 @@ var GALLERY;
             camera.applyGravity = true;
             //Set the ellipsoid around the camera (e.g. your player's size)
             camera.ellipsoid = new BABYLON.Vector3(1, EYE_VERTICAL * BLOCK_SIZE / 2, 1);
+            //r(camera.angularSensibility);
+            camera.angularSensibility = -camera.angularSensibility; //-1000;
             //finally, say which mesh will be collisionable
             /*camera._oldPositionForCollisions = camera.position;
              camera.moveWithCollisions = function(velocity: Vector3): void {
@@ -4581,6 +4627,15 @@ var GALLERY;
              };*/
             var zones_last = [];
             Viewer.scene.registerBeforeRender(function () {
+                if (GALLERY.Viewer.MODE == 'WEB') {
+                    if (Viewer.current_label) {
+                        r(Viewer.current_label.uri);
+                        //r(current_label);
+                        if (Viewer.current_label.rotationSpeed) {
+                            camera.rotation.y += Viewer.current_label.rotationSpeed / 180 * Math.PI / Viewer.engine.getFps();
+                        }
+                    }
+                }
                 //r(scene.isReady());
                 if (GALLERY.Viewer.LOCKED)
                     return;
@@ -4829,6 +4884,7 @@ var GALLERY;
             //collidedMesh.checkCollisions = false;
             if (['ground', 'room', 'stairs'].indexOf(collidedMesh.id) !== -1) {
                 //on_air = false;
+                //r('collide with '+collidedMesh.id);
                 ion.sound.play("step-" + collidedMesh.id);
                 return;
             }
@@ -4918,11 +4974,11 @@ var GALLERY;
                 else {
                     var object = objects.getObjectById(pickResult.pickedMesh.name);
                     r('pick', object);
-                    if (current.uri == object.uri) {
+                    if (current.getUri() == object.getUri()) {
                         goToParent();
                     }
                     else {
-                        GALLERY.Viewer.appState(object.uri, false, false);
+                        GALLERY.Viewer.appState(object.getUri(), false, false);
                     }
                 }
             }
@@ -4956,7 +5012,13 @@ var GALLERY;
     
              camera.position.x = x * -BLOCK_SIZE;
              camera.position.z = y * BLOCK_SIZE;*/
-            var babylon_rotation = new BABYLON.Vector3(0, (180 + rotation) / 180 * Math.PI, 0);
+            var babylon_rotation;
+            if (rotation === null) {
+                babylon_rotation = null;
+            }
+            else {
+                babylon_rotation = new BABYLON.Vector3(0, (180 + rotation) / 180 * Math.PI, 0);
+            }
             var level = BLOCKS_STOREYS_LEVELS[storey];
             var babylon_position = new BABYLON.Vector3(x * -BLOCK_SIZE, (level + EYE_VERTICAL) * BLOCK_SIZE, y * BLOCK_SIZE);
             moveToBabylon(babylon_position, babylon_rotation, immediately);
@@ -4965,7 +5027,14 @@ var GALLERY;
         function moveToObject(object, immediately) {
             if (immediately === void 0) { immediately = true; }
             object.rotation = object.rotation || 0; //todo better
-            moveTo(object.position.x, object.position.y, object.rotation / 1, object.world, object.storey, immediately);
+            var rotation;
+            if (object.rotationNotImportant) {
+                rotation = null;
+            }
+            else {
+                rotation = object.rotation / 1;
+            }
+            moveTo(object.position.x, object.position.y, rotation, object.world, object.storey, immediately);
         }
         Viewer.moveToObject = moveToObject;
         function moveToURI(uri, immediately) {
@@ -4982,11 +5051,15 @@ var GALLERY;
             }
         }
         Viewer.moveToURI = moveToURI;
+        Viewer.duration = 1;
+        Viewer.easingFunction = new BABYLON.CircleEase();
+        Viewer.easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
         function moveToBabylon(babylon_position, babylon_rotation, immediately) {
-            var duration = 1;
             if (immediately) {
                 Viewer.camera.position = babylon_position;
-                Viewer.camera.rotation = babylon_rotation;
+                if (babylon_rotation !== null) {
+                    Viewer.camera.rotation = babylon_rotation;
+                }
                 return;
             }
             if (!GALLERY.Viewer.LOCKED) {
@@ -5001,17 +5074,16 @@ var GALLERY;
              GALLERY.Viewer.LOCKED = false;
              }, true);*/
             Viewer.scene._pendingData = [];
-            var easingFunction = new BABYLON.CircleEase();
-            easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
-            var animation = BABYLON.Animation.CreateAndStartAnimation("anim", Viewer.camera, "position", 30, 30 * duration, Viewer.camera.position, babylon_position, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE, easingFunction, function () {
+            var animation = BABYLON.Animation.CreateAndStartAnimation("anim", Viewer.camera, "position", 30, 30 * Viewer.duration, Viewer.camera.position, babylon_position, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE, Viewer.easingFunction, function () {
                 console.log("Animation Finished!");
                 GALLERY.Viewer.LOCKED = false;
             });
-            //r(animation.isStopped());
-            //animation.start();
-            // Attach your event to your animation
-            //animation.addEvent(finished);
-            //r(camera.rotation.y,babylon_rotation.y);
+            if (babylon_rotation !== null) {
+                rotateToBabylon(babylon_rotation);
+            }
+        }
+        Viewer.moveToBabylon = moveToBabylon;
+        function rotateToBabylon(babylon_rotation) {
             function parseRadians(rad) {
                 if (rad < 0)
                     rad += Math.PI * 2;
@@ -5026,9 +5098,9 @@ var GALLERY;
                 Viewer.camera.rotation.y -= Math.PI * 2;
             if (diff < -Math.PI)
                 Viewer.camera.rotation.y += Math.PI * 2;
-            BABYLON.Animation.CreateAndStartAnimation("anim", Viewer.camera, "rotation", 30, 30 * duration, Viewer.camera.rotation, babylon_rotation, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE, easingFunction);
+            BABYLON.Animation.CreateAndStartAnimation("anim", Viewer.camera, "rotation", 30, 30 * Viewer.duration, Viewer.camera.rotation, babylon_rotation, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE, Viewer.easingFunction);
         }
-        Viewer.moveToBabylon = moveToBabylon;
+        Viewer.rotateToBabylon = rotateToBabylon;
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
 })(GALLERY || (GALLERY = {}));
 /// <reference path="reference.ts" />

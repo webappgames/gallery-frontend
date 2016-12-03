@@ -33,6 +33,14 @@ namespace GALLERY.Objects{
 
 
 
+            if("uri" in this){
+                if(this.uri=='/:'+this.id){
+                    this.uri = 'none';
+                }
+            }
+
+
+
         }
 
 
@@ -121,6 +129,25 @@ namespace GALLERY.Objects{
         /*create$Element(){
             return this._create$Element();
         }*/
+
+
+
+        getUri(){
+
+            let uri:string;
+
+            if("uri" in this){
+                if(this.uri!='none'){
+                    uri = this.uri;
+                }
+            }
+
+            if(typeof uri === 'undefined'){
+                uri = '/:'+this.id;
+            }
+
+            return(uri);
+        }
 
 
         _create$Element(){

@@ -6,7 +6,8 @@ namespace GALLERY.Viewer {
     export var world_selected;
 
 
-    export function moveTo(x, y, rotation, world, storey, immediately = true) {
+
+    export function moveTo(x: number, y:number, rotation, world, storey, immediately = true) {
 
 
         if (world_selected !== world) {
@@ -33,12 +34,22 @@ namespace GALLERY.Viewer {
          camera.position.x = x * -BLOCK_SIZE;
          camera.position.z = y * BLOCK_SIZE;*/
 
+        let babylon_rotation;
 
-        var babylon_rotation = new BABYLON.Vector3(
-            0,
-            (180 + rotation) / 180 * Math.PI,
-            0
-        );
+        if(rotation === null) {
+
+            babylon_rotation = null;
+
+        }else{
+
+            babylon_rotation = new BABYLON.Vector3(
+                0,
+                (180 + rotation) / 180 * Math.PI,
+                0
+            );
+
+        }
+
 
 
         var level = BLOCKS_STOREYS_LEVELS[storey];
@@ -57,7 +68,16 @@ namespace GALLERY.Viewer {
     export function moveToObject(object: GALLERY.Objects.Object, immediately = true) {//todo use this
 
         object.rotation = object.rotation || 0;//todo better
-        moveTo(object.position.x, object.position.y, object.rotation / 1, object.world, object.storey, immediately);
+
+        let rotation;
+        if(object.rotationNotImportant){
+            rotation = null;
+        }else{
+            rotation = object.rotation / 1;
+        }
+
+        moveTo(object.position.x, object.position.y, rotation, object.world, object.storey, immediately);
+
     }
 
 
@@ -79,15 +99,27 @@ namespace GALLERY.Viewer {
     }
 
 
+
+
+    export let duration = 1;
+    export let easingFunction = new BABYLON.CircleEase();
+    easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
+
+
+
+
     export function moveToBabylon(babylon_position, babylon_rotation, immediately) {
 
 
-        let duration = 1;
 
 
         if (immediately) {
             camera.position = babylon_position;
-            camera.rotation = babylon_rotation;
+
+            if(babylon_rotation!==null){
+                camera.rotation = babylon_rotation;
+            }
+
             return;
         }
 
@@ -109,8 +141,7 @@ namespace GALLERY.Viewer {
         scene._pendingData = [];
 
 
-        var easingFunction = new BABYLON.CircleEase();
-        easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
+
 
 
         let animation = BABYLON.Animation.CreateAndStartAnimation(
@@ -132,14 +163,18 @@ namespace GALLERY.Viewer {
         );
 
 
-        //r(animation.isStopped());
-
-        //animation.start();
-        // Attach your event to your animation
-        //animation.addEvent(finished);
+        if(babylon_rotation!==null) {
+            rotateToBabylon(babylon_rotation);
+        }
 
 
-        //r(camera.rotation.y,babylon_rotation.y);
+    }
+
+
+
+    export function rotateToBabylon(babylon_rotation){
+
+
         function parseRadians(rad) {
             if (rad < 0)rad += Math.PI * 2;
             if (rad > Math.PI * 2)rad -= Math.PI * 2;
@@ -170,6 +205,7 @@ namespace GALLERY.Viewer {
 
 
     }
+
 
 
 }

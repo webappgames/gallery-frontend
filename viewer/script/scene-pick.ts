@@ -74,12 +74,12 @@ namespace GALLERY.Viewer {
                 r('pick', object);
 
 
-                if (current.uri == object.uri) {
+                if (current.getUri() == object.getUri()) {
                     goToParent();
 
                 } else {
 
-                    GALLERY.Viewer.appState(object.uri, false, false);
+                    GALLERY.Viewer.appState(object.getUri(), false, false);
                 }
 
 

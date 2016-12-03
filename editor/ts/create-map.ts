@@ -291,7 +291,7 @@ function createMap() {
                 input_element='<input type="range" min="0.2" max="10" step="0.02">';
             }else
             if(key=='width' || key=='height'){
-                input_element='<input type="range" min="0.2" max="16" step="0.02">';
+                input_element='<input type="range" min="0.2" max="25" step="0.02">';
             }else
             if(key=='fogDensity'){
                 input_element='<input type="range" min="0" max="0.05" step="0.0001">';
@@ -304,6 +304,9 @@ function createMap() {
             }else
             if(key=='rotation'/* && (object.type!=='image' && object.onGround!=='image' )*/){
                 input_element='<input type="range" min="0" max="360" step="10">';
+            }else
+            if(key=='rotationSpeed'){
+                input_element='<input type="number" min="-360" max="360" step="1">';
             }else
             if(/*['onGround','hasAlpha','isEmitting','checkCollisions','isFull'].indexOf(key)!==-1*/typeof object[key] === "boolean"){
 

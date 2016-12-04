@@ -46,7 +46,7 @@ var GALLERY;
                 label = rootLabel;
             }
             //}
-            if (label == rootLabel) {
+            if (label == rootLabel || !label.name) {
                 window.document.title = rootLabel.name;
             }
             else {
@@ -2350,6 +2350,8 @@ var GALLERY;
                 this.endlessStructures = this.endlessStructures || false;
                 this.endlessStructuresFromStorey = this.endlessStructuresFromStorey || '1NP';
                 this.shadows = this.shadows || false;
+                this.name = this.name || '';
+                this.html = this.html || '';
             }
             Environment.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -2780,6 +2782,7 @@ var GALLERY;
                 this.height = this.height || 1;
                 this.uri = this.uri || '';
                 this.uri_level = this.uri_level || 0;
+                this.isPickable = this.isPickable || false;
                 this.name = this.name || '';
                 this.html = this.html || '';
                 //this.selector = this.selector || '';
@@ -4275,6 +4278,28 @@ var GALLERY;
                     else {
                         Viewer.scene.fogMode = BABYLON.Scene.FOGMODE_NONE;
                     }
+                    if (Viewer.develop && (zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
+                        r('Creating zone for ' + object.name);
+                        zoneIdsCreatedForImages.push(object.id); //todo rename zoneIdsCreatedForImages
+                        var zone = {
+                            id: createGuid(),
+                            type: 'zone',
+                            world: object.world,
+                            storey: object.storey,
+                            position: {
+                                x: 0,
+                                y: 0,
+                            },
+                            width: 500,
+                            height: 500,
+                            name: object.name,
+                            html: object.html,
+                            uri: 'none',
+                            uri_level: 1,
+                        };
+                        processObject(zone); //todo better
+                        objects.push(zone);
+                    }
                 }
                 else if (object.type == 'zone') {
                     var mesh = BABYLON.Mesh.CreateBox(object.id, BLOCK_SIZE, Viewer.scene);
@@ -4305,11 +4330,12 @@ var GALLERY;
                         document.getElementById('zones').appendChild(element);
                     }
                     mesh.checkCollisions = false;
-                    mesh.isPickable = false;
+                    mesh.isPickable = false; //object.isPickable;
                     //r(mesh);
                     Viewer.zones.push({
                         mesh: mesh,
-                        element: element
+                        element: element,
+                        object: object
                     });
                     Viewer.meshes.push(mesh);
                 }
@@ -4576,6 +4602,7 @@ var GALLERY;
             // Need a free camera for collisions
             //var camera = new BABYLON.VirtualJoysticksCamera("VJC", BABYLON.Vector3.Zero(), scene);
             var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, EYE_VERTICAL * BLOCK_SIZE, 30 * BLOCK_SIZE), Viewer.scene);
+            camera.ellipsoid = new BABYLON.Vector3(1, (EYE_VERTICAL - 0.1111 /*todo why?*/) * BLOCK_SIZE / 2, 1);
             Viewer.scene.activeCamera = camera;
             camera.rotation.y = Math.PI;
             camera.attachControl(Viewer.canvas, true);
@@ -4608,7 +4635,6 @@ var GALLERY;
             camera.checkCollisions = true;
             camera.applyGravity = true;
             //Set the ellipsoid around the camera (e.g. your player's size)
-            camera.ellipsoid = new BABYLON.Vector3(1, EYE_VERTICAL * BLOCK_SIZE / 2, 1);
             //r(camera.angularSensibility);
             camera.angularSensibility = -camera.angularSensibility; //-1000;
             //finally, say which mesh will be collisionable
@@ -4629,7 +4655,7 @@ var GALLERY;
             Viewer.scene.registerBeforeRender(function () {
                 if (GALLERY.Viewer.MODE == 'WEB') {
                     if (Viewer.current_label) {
-                        r(Viewer.current_label.uri);
+                        //r(current_label.uri);
                         //r(current_label);
                         if (Viewer.current_label.rotationSpeed) {
                             camera.rotation.y += Viewer.current_label.rotationSpeed / 180 * Math.PI / Viewer.engine.getFps();
@@ -4664,6 +4690,11 @@ var GALLERY;
                 Viewer.zones.forEach(function (zone) {
                     if (zone.mesh.intersectsPoint(camera.position)) {
                         zones_ids.push(zone.mesh.name);
+                        //r('in zone');
+                        zone.mesh.isPickable = false;
+                    }
+                    else {
+                        zone.mesh.isPickable = zone.object.isPickable;
                     }
                 });
                 var zones_plus = [];
@@ -4956,7 +4987,6 @@ var GALLERY;
                     GALLERY.Viewer.appState(current.parent, false, false);
                 }
                 else if (current.next && current.next !== 'none') {
-                    GALLERY.Viewer.appState(current.next, false, false);
                 }
             }
             //canvas.requestPointerLock();

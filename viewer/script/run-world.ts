@@ -245,6 +245,48 @@ namespace GALLERY.Viewer {
                 }
 
 
+
+                if (develop && /*(object.uri || object.name) &&*/ (zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
+                    r('Creating zone for ' + object.name);
+                    zoneIdsCreatedForImages.push(object.id);//todo rename zoneIdsCreatedForImages
+
+
+                    let zone = {
+
+                        id: createGuid(),
+                        type: 'zone',
+                        world: object.world,
+                        storey: object.storey,
+                        position: {
+                            x: 0,
+                            y: 0,
+                        },
+                        width: 500,
+                        height: 500,
+
+                        name: object.name,
+                        html: object.html,
+                        uri: 'none',
+                        uri_level: 1,//todo better low priority
+
+                    };
+
+
+                    processObject(zone);//todo better
+                    objects.push(zone);
+
+
+
+
+                }
+
+
+
+
+
+
+
+
             } else if (object.type == 'zone') {
 
 
@@ -297,13 +339,14 @@ namespace GALLERY.Viewer {
 
 
                 mesh.checkCollisions = false;
-                mesh.isPickable = false;
+                mesh.isPickable = false;//object.isPickable;
 
                 //r(mesh);
 
                 zones.push({
                     mesh: mesh,
-                    element: element
+                    element: element,
+                    object: object
 
 
                 });

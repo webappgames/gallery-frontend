@@ -16,6 +16,9 @@ namespace GALLERY.Objects{
         public endlessStructuresFromStorey: string;
         public shadows: boolean;
 
+        public name: string;
+        public html: string;
+
 
 
         constructor(object){
@@ -33,6 +36,8 @@ namespace GALLERY.Objects{
             this.endlessStructuresFromStorey = this.endlessStructuresFromStorey || '1NP';
             this.shadows = this.shadows || false;
 
+            this.name = this.name || '';
+            this.html = this.html || '';
 
         }
 

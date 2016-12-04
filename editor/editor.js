@@ -1652,6 +1652,8 @@ var GALLERY;
                 this.endlessStructures = this.endlessStructures || false;
                 this.endlessStructuresFromStorey = this.endlessStructuresFromStorey || '1NP';
                 this.shadows = this.shadows || false;
+                this.name = this.name || '';
+                this.html = this.html || '';
             }
             Environment.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -2082,6 +2084,7 @@ var GALLERY;
                 this.height = this.height || 1;
                 this.uri = this.uri || '';
                 this.uri_level = this.uri_level || 0;
+                this.isPickable = this.isPickable || false;
                 this.name = this.name || '';
                 this.html = this.html || '';
                 //this.selector = this.selector || '';

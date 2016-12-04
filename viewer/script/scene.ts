@@ -19,6 +19,7 @@ namespace GALLERY.Viewer {
 
         //var camera = new BABYLON.VirtualJoysticksCamera("VJC", BABYLON.Vector3.Zero(), scene);
         var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, EYE_VERTICAL * BLOCK_SIZE, 30 * BLOCK_SIZE), scene);
+        camera.ellipsoid = new BABYLON.Vector3(1, (EYE_VERTICAL - 0.1111/*todo why?*/) * BLOCK_SIZE / 2 , 1);
 
 
         scene.activeCamera = camera;
@@ -70,7 +71,6 @@ namespace GALLERY.Viewer {
         camera.applyGravity = true;
 
         //Set the ellipsoid around the camera (e.g. your player's size)
-        camera.ellipsoid = new BABYLON.Vector3(1, EYE_VERTICAL * BLOCK_SIZE / 2, 1);
 
 
         //r(camera.angularSensibility);
@@ -101,7 +101,7 @@ namespace GALLERY.Viewer {
 
                 if (current_label) {
 
-                    r(current_label.uri);
+                    //r(current_label.uri);
                     //r(current_label);
                     if (current_label.rotationSpeed) {
                         camera.rotation.y += current_label.rotationSpeed / 180 * Math.PI / engine.getFps();
@@ -158,6 +158,10 @@ namespace GALLERY.Viewer {
 
                     zones_ids.push(zone.mesh.name);
                     //r('in zone');
+                    zone.mesh.isPickable = false;
+
+                }else{
+                    zone.mesh.isPickable = zone.object.isPickable;
 
                 }
 

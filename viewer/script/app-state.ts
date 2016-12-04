@@ -64,7 +64,7 @@ namespace GALLERY.Viewer{
 
         //}
 
-        if(label == rootLabel){
+        if(label == rootLabel || !label.name){
             window.document.title = rootLabel.name;
         }else{
             window.document.title = label.name+' | '+rootLabel.name;

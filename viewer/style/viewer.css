@@ -274,9 +274,9 @@ section#zones {
     section#zones div.zone .next, section#zones div.zone .previous {
       font-size: 2em; }
       section#zones div.zone .next:hover, section#zones div.zone .previous:hover {
-        color: #ff1b0e; }
+        color: #37beff; }
     section#zones div.zone:hover .next {
-      color: #ff1b0e; }
+      color: #37beff; }
 
 nav .turn-right, nav .turn-left {
   margin: 5px;
@@ -288,7 +288,7 @@ nav .turn-right, nav .turn-left {
   color: #000;
   font-size: 2em; }
   nav .turn-right:hover, nav .turn-left:hover {
-    color: #ff1b0e; }
+    color: #17557c; }
 nav .turn-right {
   position: fixed;
   top: 50%;

@@ -15,7 +15,8 @@ namespace GALLERY.Viewer {
 
                 GALLERY.Viewer.appState(current.parent, false, false);
             } else if (current.next && current.next !== 'none') {
-                GALLERY.Viewer.appState(current.next, false, false);
+                //todo context menu
+                //GALLERY.Viewer.appState(current.next, false, false);
             }
 
 

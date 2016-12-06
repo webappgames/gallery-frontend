@@ -4176,6 +4176,9 @@ var GALLERY;
             var endlessStructures = false;
             var endlessStructuresFromStorey = false;
             //var wasVideo = false;
+            Viewer.hooverLayer = new BABYLON.HighlightLayer("hooverLayer", Viewer.scene);
+            Viewer.hooverLayer.blurHorizontalSize = 1;
+            Viewer.hooverLayer.blurVerticalSize = 1;
             //-----------------------------------------------------zoneMaterial
             var zoneMaterial = new BABYLON.StandardMaterial("texture1", Viewer.scene);
             zoneMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
@@ -4331,6 +4334,9 @@ var GALLERY;
                     }
                     mesh.checkCollisions = false;
                     mesh.isPickable = false; //object.isPickable;
+                    if (!object.isPickable) {
+                        Viewer.hooverLayer.addExcludedMesh(mesh);
+                    }
                     //r(mesh);
                     Viewer.zones.push({
                         mesh: mesh,
@@ -4593,7 +4599,7 @@ var GALLERY;
     var Viewer;
     (function (Viewer) {
         Viewer.canvas = document.getElementById("scene");
-        Viewer.engine = new BABYLON.Engine(Viewer.canvas, true);
+        Viewer.engine = new BABYLON.Engine(Viewer.canvas, true, { stencil: true });
         function createScene() {
             Viewer.scene = new BABYLON.Scene(Viewer.engine);
             // Lights
@@ -4651,6 +4657,10 @@ var GALLERY;
     
              this.getScene().collisionCoordinator.getNewPosition(this._oldPositionForCollisions, velocity, this._collider, 3, this, this._onCollisionPositionChange, this.uniqueId);
              };*/
+            Viewer.canvas.addEventListener("mousemove", function (event) {
+                var pickResult = Viewer.scene.pick(Viewer.scene.pointerX, Viewer.scene.pointerY);
+                Viewer.onPointerHover(event, pickResult);
+            });
             var zones_last = [];
             Viewer.scene.registerBeforeRender(function () {
                 if (GALLERY.Viewer.MODE == 'WEB') {
@@ -5551,6 +5561,48 @@ var GALLERY;
             });
         }
         Viewer.makeScreenshots = makeScreenshots;
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="reference.ts" />
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        var last_hoovered_mesh = null;
+        function onPointerHover(evt, pickResult) {
+            var hoovered_mesh;
+            if (pickResult.hit) {
+                if (pickResult.pickedMesh.name == 'room' || pickResult.pickedMesh.name == 'ground') {
+                    hoovered_mesh = null;
+                }
+                else {
+                    hoovered_mesh = pickResult.pickedMesh;
+                }
+            }
+            else {
+                hoovered_mesh = null;
+            }
+            if (hoovered_mesh !== last_hoovered_mesh) {
+                if (hoovered_mesh) {
+                    onPointerEnter(hoovered_mesh);
+                }
+                if (last_hoovered_mesh) {
+                    onPointerLeave(last_hoovered_mesh);
+                }
+                last_hoovered_mesh = hoovered_mesh;
+            }
+        }
+        Viewer.onPointerHover = onPointerHover;
+        function onPointerEnter(mesh) {
+            r('onPointerEnter');
+            Viewer.hooverLayer.addMesh(mesh, BABYLON.Color3.White());
+        }
+        Viewer.onPointerEnter = onPointerEnter;
+        function onPointerLeave(mesh) {
+            r('onPointerLeave');
+            Viewer.hooverLayer.removeMesh(mesh);
+        }
+        Viewer.onPointerLeave = onPointerLeave;
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
 })(GALLERY || (GALLERY = {}));
 var GALLERY;

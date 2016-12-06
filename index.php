@@ -168,10 +168,17 @@ if($route == $routeRoot){
 
 
 
+<!--<script src="/viewer/script/lib/babylon.js"></script>
+<script src="/node_modules/handjs/hand.min.js"></script>-->
 
-<!--<script src="viewer/script/lib/jquery.jfeed.js"></script>-->
-<script src="/viewer/script/lib/babylon.js"></script>
-<script src="/node_modules/handjs/hand.min.js"></script>
+
+<script src="http://www.babylonjs.com/hand.minified-1.2.js"></script>
+<script src="http://www.babylonjs.com/cannon.js"></script>
+<script src="http://www.babylonjs.com/oimo.js"></script>
+<script src="http://www.babylonjs.com/babylon.js"></script>
+
+
+
 
 
 <script src="/viewer/script/viewer.js"></script>

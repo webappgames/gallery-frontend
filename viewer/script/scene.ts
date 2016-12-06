@@ -4,7 +4,7 @@
 namespace GALLERY.Viewer {
 
     export var canvas = document.getElementById("scene");
-    export var engine = new BABYLON.Engine(canvas, true);
+    export var engine = new BABYLON.Engine(canvas, true, { stencil: true });
     export var scene;
 
 
@@ -93,6 +93,19 @@ namespace GALLERY.Viewer {
          };*/
 
 
+
+
+        canvas.addEventListener("mousemove", function (event) {
+            var pickResult = scene.pick(scene.pointerX, scene.pointerY);
+            onPointerHover(event,pickResult);
+        });
+
+
+
+
+
+
+
         var zones_last = [];
         scene.registerBeforeRender(function () {
 
@@ -107,6 +120,7 @@ namespace GALLERY.Viewer {
                         camera.rotation.y += current_label.rotationSpeed / 180 * Math.PI / engine.getFps();
                     }
                 }
+
             }
 
 

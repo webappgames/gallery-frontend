@@ -8,6 +8,7 @@ namespace GALLERY.Viewer {
     export var meshes = [];
     export var zones = [];
     export var boards = [];
+    export var hooverLayer;
 
 
     export function runWorld(objects_world, textures) {
@@ -40,6 +41,14 @@ namespace GALLERY.Viewer {
         let endlessStructures = false;
         let endlessStructuresFromStorey = false;
         //var wasVideo = false;
+
+
+
+
+
+        hooverLayer = new BABYLON.HighlightLayer("hooverLayer", scene);
+        hooverLayer.blurHorizontalSize = 1;
+        hooverLayer.blurVerticalSize = 1;
 
 
 
@@ -340,6 +349,10 @@ namespace GALLERY.Viewer {
 
                 mesh.checkCollisions = false;
                 mesh.isPickable = false;//object.isPickable;
+                if(!object.isPickable){
+                    hooverLayer.addExcludedMesh(mesh);
+                }
+
 
                 //r(mesh);
 
@@ -350,6 +363,7 @@ namespace GALLERY.Viewer {
 
 
                 });
+
                 meshes.push(mesh);
 
                 /*return(mesh);

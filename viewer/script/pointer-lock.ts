@@ -49,6 +49,7 @@ namespace GALLERY.Viewer {
 
 
             MODE = 'GAME';
+            camera.angularSensibility = MOUSE_ANGULAR_SENSIBILITY;
             //triggerMouseEvent (canvas, "mousedown");
 
 
@@ -71,6 +72,7 @@ namespace GALLERY.Viewer {
             //$(canvas).trigger('mouseup');
 
             MODE = 'WEB';
+            camera.angularSensibility = -MOUSE_ANGULAR_SENSIBILITY;
 
         }
 

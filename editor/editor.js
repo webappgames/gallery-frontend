@@ -2179,6 +2179,7 @@ var LIGHT_VERTICAL = 3;
 var SPEED = 7;
 var SPEED_INERTIA = 0.5;
 var SPEED_ROTATION = Math.PI / 2;
+var MOUSE_ANGULAR_SENSIBILITY = 1000;
 var BLOCK_SHAPES = ['none', 'current', 'room', 'wall', 'wall-noroof', 'door', 'big-door', 'giant-door', 'giant-door-noroof', 'window', 'low-window', 'floor', 'ceil', 'small-fence', 'medium-fence', 'big-fence', 'combo-wall'];
 var BLOCKS_2D_3D_SHAPES = {
     'room': [1, 0, 0, 0, 0, 0, 0, 0, 1],

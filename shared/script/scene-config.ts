@@ -20,6 +20,9 @@ const SPEED_INERTIA = 0.5;
 const SPEED_ROTATION = Math.PI/2;
 
 
+const MOUSE_ANGULAR_SENSIBILITY = 1000;
+
+
 
 
 var BLOCK_SHAPES = ['none','current','room','wall','wall-noroof','door','big-door','giant-door','giant-door-noroof','window','low-window','floor','ceil','small-fence','medium-fence','big-fence','combo-wall'];

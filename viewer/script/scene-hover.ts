@@ -40,11 +40,11 @@ namespace GALLERY.Viewer {
 
 
 
-
+    let hoverColor = BABYLON.Color3.White();//BABYLON.Color3.FromHexString('#37beff');
 
     export function onPointerEnter(mesh) {
         r('onPointerEnter');
-        hooverLayer.addMesh(mesh, BABYLON.Color3.White());
+        hooverLayer.addMesh(mesh, hoverColor);
     }
 
 

@@ -46,10 +46,10 @@ namespace GALLERY.Viewer {
 
 
 
-        hooverLayer = new BABYLON.HighlightLayer("hooverLayer", scene);
-        hooverLayer.blurHorizontalSize = 1;
-        hooverLayer.blurVerticalSize = 1;
-
+        hooverLayer = new BABYLON.HighlightLayer("hooverLayer", scene, {camera: camera});
+        hooverLayer.blurHorizontalSize = 0.5;
+        hooverLayer.blurVerticalSize = 0.5;
+        //hooverLayer.innerGlow = false;
 
 
         //-----------------------------------------------------zoneMaterial

@@ -25,7 +25,7 @@ namespace GALLERY.Viewer {
         scene.activeCamera = camera;
         camera.rotation.y = Math.PI;
         camera.attachControl(canvas, true);
-        camera.angularSensibility = 1000;
+        camera.angularSensibility = -MOUSE_ANGULAR_SENSIBILITY;//todo const
         //camera.panningSensibility = 10000;
 
 
@@ -73,9 +73,6 @@ namespace GALLERY.Viewer {
         //Set the ellipsoid around the camera (e.g. your player's size)
 
 
-        //r(camera.angularSensibility);
-        camera.angularSensibility= -camera.angularSensibility;//-1000;
-        //finally, say which mesh will be collisionable
 
 
         /*camera._oldPositionForCollisions = camera.position;

@@ -2877,6 +2877,7 @@ var LIGHT_VERTICAL = 3;
 var SPEED = 7;
 var SPEED_INERTIA = 0.5;
 var SPEED_ROTATION = Math.PI / 2;
+var MOUSE_ANGULAR_SENSIBILITY = 1000;
 var BLOCK_SHAPES = ['none', 'current', 'room', 'wall', 'wall-noroof', 'door', 'big-door', 'giant-door', 'giant-door-noroof', 'window', 'low-window', 'floor', 'ceil', 'small-fence', 'medium-fence', 'big-fence', 'combo-wall'];
 var BLOCKS_2D_3D_SHAPES = {
     'room': [1, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -4176,9 +4177,10 @@ var GALLERY;
             var endlessStructures = false;
             var endlessStructuresFromStorey = false;
             //var wasVideo = false;
-            Viewer.hooverLayer = new BABYLON.HighlightLayer("hooverLayer", Viewer.scene);
-            Viewer.hooverLayer.blurHorizontalSize = 1;
-            Viewer.hooverLayer.blurVerticalSize = 1;
+            Viewer.hooverLayer = new BABYLON.HighlightLayer("hooverLayer", Viewer.scene, { camera: Viewer.camera });
+            Viewer.hooverLayer.blurHorizontalSize = 0.5;
+            Viewer.hooverLayer.blurVerticalSize = 0.5;
+            //hooverLayer.innerGlow = false;
             //-----------------------------------------------------zoneMaterial
             var zoneMaterial = new BABYLON.StandardMaterial("texture1", Viewer.scene);
             zoneMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
@@ -4612,7 +4614,7 @@ var GALLERY;
             Viewer.scene.activeCamera = camera;
             camera.rotation.y = Math.PI;
             camera.attachControl(Viewer.canvas, true);
-            camera.angularSensibility = 1000;
+            camera.angularSensibility = -MOUSE_ANGULAR_SENSIBILITY; //todo const
             //camera.panningSensibility = 10000;
             //var inputManager = camera.inputs;
             /*setTimeout(function () {
@@ -4641,9 +4643,6 @@ var GALLERY;
             camera.checkCollisions = true;
             camera.applyGravity = true;
             //Set the ellipsoid around the camera (e.g. your player's size)
-            //r(camera.angularSensibility);
-            camera.angularSensibility = -camera.angularSensibility; //-1000;
-            //finally, say which mesh will be collisionable
             /*camera._oldPositionForCollisions = camera.position;
              camera.moveWithCollisions = function(velocity: Vector3): void {
     
@@ -5345,6 +5344,7 @@ var GALLERY;
                 pointer_lock.style.display = 'none';
                 wasd.style.display = 'block';
                 Viewer.MODE = 'GAME';
+                Viewer.camera.angularSensibility = MOUSE_ANGULAR_SENSIBILITY;
             }
             else {
                 console.log('The pointer lock status is now unlocked');
@@ -5359,6 +5359,7 @@ var GALLERY;
                 }, IMMEDIATELY_MS);
                 //$(canvas).trigger('mouseup');
                 Viewer.MODE = 'WEB';
+                Viewer.camera.angularSensibility = -MOUSE_ANGULAR_SENSIBILITY;
             }
         }
         window.addEventListener('keydown', function (e) {
@@ -5593,9 +5594,10 @@ var GALLERY;
             }
         }
         Viewer.onPointerHover = onPointerHover;
+        var hoverColor = BABYLON.Color3.White(); //BABYLON.Color3.FromHexString('#37beff');
         function onPointerEnter(mesh) {
             r('onPointerEnter');
-            Viewer.hooverLayer.addMesh(mesh, BABYLON.Color3.White());
+            Viewer.hooverLayer.addMesh(mesh, hoverColor);
         }
         Viewer.onPointerEnter = onPointerEnter;
         function onPointerLeave(mesh) {

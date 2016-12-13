@@ -132,44 +132,8 @@ namespace GALLERY.Editor{
 
 
 
-        var deploys = objects.filterTypes('deploy');
-        if(deploys.getAll().length != 1){
-
-            console.warn('There is '+deploys.getAll().length+' deploy objects - as app url using empty string!');
-
-            gallery_domain='';
-            gallery_password='';
-
-        }else {
-
-
-            var url = deploys.getAll()[0].url;
-
-            function extractDomain(url) {
-                var domain;
-                //find & remove protocol (http, ftp, etc.) and get domain
-                if (url.indexOf("://") > -1) {
-                    domain = url.split('/')[2];
-                }
-                else {
-                    domain = url.split('/')[0];
-                }
-
-                //find & remove port number
-                domain = domain.split(':')[0];
-
-                return domain;
-            }
-
-
-            gallery_domain = extractDomain(url);
-            gallery_password = deploys.getAll()[0].password;
-
-
-        }
-
-
-
+        var analyticsObject = objects.filterTypes('analytics').findBy('analyticsType','gallery');
+        var deployObject = objects.filterTypes('deploy').findBy('deployType','ftp');
 
 
 
@@ -177,7 +141,7 @@ namespace GALLERY.Editor{
 
             try{
 
-                preview.GALLERY.Viewer.run.call(preview,compiled_objects,true,gallery_domain,gallery_password);
+                preview.GALLERY.Viewer.run.call(preview,compiled_objects,true,deployObject,analyticsObject);
                 clearInterval(previewLoaded);
 
             }catch(e){

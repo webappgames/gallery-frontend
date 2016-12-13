@@ -9,7 +9,8 @@ namespace GALLERY.Viewer {
 
         let $developMenu = $(`
                 <div class="develop-menu">
-                    <a onclick="GALLERY.Viewer.deploy();">Deploy</a>
+                    <a onclick="GALLERY.Viewer.deployToFTP();">Deploy to FTP</a>
+                    <a onclick="GALLERY.Viewer.downloadZip();">Download as ZIP</a>
                     <a onclick="GALLERY.Viewer.showStats();">Show stats</a>
                 </div>
             `);

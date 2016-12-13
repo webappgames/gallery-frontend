@@ -1577,6 +1577,9 @@ var GALLERY;
                 else if (object.type == 'deploy') {
                     object = new GALLERY.Objects.Deploy(object);
                 }
+                else if (object.type == 'analytics') {
+                    object = new GALLERY.Objects.Analytics(object);
+                }
                 else if (object.type == 'board') {
                     object = new GALLERY.Objects.Board(object);
                 }
@@ -2055,9 +2058,11 @@ var GALLERY;
             __extends(Deploy, _super);
             function Deploy(object) {
                 _super.call(this, object);
-                this.name = this.name || '';
-                this.url = this.url || '';
+                this.deployType = this.deployType || 'ftp';
+                this.server = this.server || '';
+                this.username = this.username || '';
                 this.password = this.password || '';
+                this.directory = this.directory || '';
             }
             Deploy.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -2068,6 +2073,29 @@ var GALLERY;
             return Deploy;
         }(Objects.Object));
         Objects.Deploy = Deploy;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="../../reference.ts" />
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        var Analytics = (function (_super) {
+            __extends(Analytics, _super);
+            function Analytics(object) {
+                _super.call(this, object);
+                this.analyticsType = this.analyticsType || 'gallery';
+                this.domain = this.domain || '';
+            }
+            Analytics.prototype.create$Element = function () {
+                var $element = this._create$Element();
+                var object = this;
+                $element.html('<i class="fa fa-database" aria-hidden="true"></i>');
+                return $element;
+            };
+            return Analytics;
+        }(Objects.Object));
+        Objects.Analytics = Analytics;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
 /// <reference path="../../reference.ts" />
@@ -2168,8 +2196,8 @@ var GALLERY;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
 var STATSERVER_URL = 'http://webappgames.com:48567';
-var OBJECT_TYPES = ['zone', 'groundhole', 'stairs', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'board'];
-var DOT_OBJECTS = ['zone', 'groundhole', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'board'];
+var OBJECT_TYPES = ['zone', 'groundhole', 'stairs', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'analytics', 'board'];
+var DOT_OBJECTS = ['zone', 'groundhole', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'analytics', 'board'];
 var BLOCK_SIZE = 5;
 //var BLOCK_SIZE_VERTICAL=10;
 //var BLOCK_SIZE_DOOR=2;
@@ -2310,6 +2338,7 @@ var PH;
 /// <reference path="script/05-objects/10-link.ts" />
 /// <reference path="script/05-objects/10-gate.ts" />
 /// <reference path="script/05-objects/10-deploy.ts" />
+/// <reference path="script/05-objects/10-analytics.ts" />
 /// <reference path="script/05-objects/10-zone.ts" />
 /// <reference path="script/05-objects/10-groundhole.ts" />
 /// <reference path="script/05-objects/10-board.ts" />
@@ -3310,33 +3339,11 @@ var GALLERY;
             var preview = window.open("../", "gallery-preview");
             var gallery_domain;
             var gallery_password;
-            var deploys = objects.filterTypes('deploy');
-            if (deploys.getAll().length != 1) {
-                console.warn('There is ' + deploys.getAll().length + ' deploy objects - as app url using empty string!');
-                gallery_domain = '';
-                gallery_password = '';
-            }
-            else {
-                var url = deploys.getAll()[0].url;
-                function extractDomain(url) {
-                    var domain;
-                    //find & remove protocol (http, ftp, etc.) and get domain
-                    if (url.indexOf("://") > -1) {
-                        domain = url.split('/')[2];
-                    }
-                    else {
-                        domain = url.split('/')[0];
-                    }
-                    //find & remove port number
-                    domain = domain.split(':')[0];
-                    return domain;
-                }
-                gallery_domain = extractDomain(url);
-                gallery_password = deploys.getAll()[0].password;
-            }
+            var analyticsObject = objects.filterTypes('analytics').findBy('analyticsType', 'gallery');
+            var deployObject = objects.filterTypes('deploy').findBy('deployType', 'ftp');
             var previewLoaded = setInterval(function () {
                 try {
-                    preview.GALLERY.Viewer.run.call(preview, compiled_objects, true, gallery_domain, gallery_password);
+                    preview.GALLERY.Viewer.run.call(preview, compiled_objects, true, deployObject, analyticsObject);
                     clearInterval(previewLoaded);
                 }
                 catch (e) {
@@ -3649,7 +3656,7 @@ function createMap() {
         for (var key in object) {
             input_element = null;
             check_element = null;
-            if (['name', 'uri', 'next', 'parent', 'key', 'href', 'target', 'world', 'material', 'skybox', 'ground', 'url', 'password', 'endlessStructuresFromStorey'].indexOf(key) !== -1) {
+            if (['name', 'uri', 'next', 'parent', 'key', 'href', 'target', 'world', 'material', 'skybox', 'ground', 'url', 'server', 'username', 'password', 'directory', 'domain', 'endlessStructuresFromStorey'].indexOf(key) !== -1) {
                 input_element = '<input type="text">';
             }
             else if (['script', 'html', 'selector'].indexOf(key) !== -1) {

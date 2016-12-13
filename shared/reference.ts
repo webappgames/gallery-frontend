@@ -23,6 +23,7 @@
 /// <reference path="script/05-objects/10-link.ts" />
 /// <reference path="script/05-objects/10-gate.ts" />
 /// <reference path="script/05-objects/10-deploy.ts" />
+/// <reference path="script/05-objects/10-analytics.ts" />
 /// <reference path="script/05-objects/10-zone.ts" />
 /// <reference path="script/05-objects/10-groundhole.ts" />
 /// <reference path="script/05-objects/10-board.ts" />

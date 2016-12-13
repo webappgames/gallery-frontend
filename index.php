@@ -76,6 +76,7 @@ if($route == $routeRoot){
 
     <meta property="og:image" content="<?=addslashes('http://'.$_SERVER['HTTP_HOST'].'/'.$route['screenshot'])?>"/>
 
+    <!--GALLERY SCRIPT-->
 
 </head>
 <body>
@@ -168,14 +169,12 @@ if($route == $routeRoot){
 
 
 
-<!--<script src="/viewer/script/lib/babylon.js"></script>
-<script src="/node_modules/handjs/hand.min.js"></script>-->
+<script src="/viewer/script/lib/babylon.js"></script>
+<script src="/node_modules/handjs/hand.min.js"></script>
 
 
-<script src="http://www.babylonjs.com/hand.minified-1.2.js"></script>
-<script src="http://www.babylonjs.com/cannon.js"></script>
-<script src="http://www.babylonjs.com/oimo.js"></script>
-<script src="http://www.babylonjs.com/babylon.js"></script>
+<!--<script src="http://www.babylonjs.com/hand.minified-1.2.js"></script>
+<script src="http://www.babylonjs.com/babylon.js"></script>-->
 
 
 

@@ -11,7 +11,7 @@ namespace GALLERY.Viewer {
 
 
 
-    export function deploy() {
+    export function createZip(onDone) {
 
 
         let deployNotification = new PH.Notification('Deploy','Downloading files');
@@ -25,21 +25,11 @@ namespace GALLERY.Viewer {
 
         index = new Promise(function(resolve, reject) {
 
-
             let deployFiles = [];
-            deployFiles.push(new DeployFile('.htaccess',`
-            
-RewriteEngine On
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . / [L,QSA]
-`));
-
 
             var xhr = new XMLHttpRequest();
             xhr.open("GET", '/index-src.php');
-            xhr.responseType = "blob";
+            xhr.responseType = "text";
 
             xhr.onload = function () {
 
@@ -103,23 +93,20 @@ RewriteRule . / [L,QSA]
 
 
 
-
-
         media = new Promise(function(resolve, reject) {
             let sources = [
 
                 //'viewer/index.html',
-                'viewer/style/viewer.css',
-                'viewer/script/lib/babylon.js',
-                'node_modules/handjs/hand.min.js',
-                'viewer/script/viewer.js',
+                '/viewer/style/viewer.css',
+                //'viewer/script/lib/babylon.js',
+                //'node_modules/handjs/hand.min.js',
 
 
                 //'media/images/backgrounds/menu.png',
                 //'media/images/backgrounds/page.png',
 
-                'media/images/ui/mouse-lock.png',
-                'media/images/ui/keys-text.png',
+                //'media/images/ui/mouse-lock.png',
+                //'media/images/ui/keys-text.png',
 
 
                 /*'media/sound/link-key.mp3',
@@ -140,6 +127,19 @@ RewriteRule . / [L,QSA]
 
 
 
+                'https://code.jquery.com/jquery-2.2.4.min.js',
+                'https://code.jquery.com/ui/1.12.0/jquery-ui.min.js',
+                '/node_modules/jszip/dist/jszip.min.js',
+                '/node_modules/file-saver/FileSaver.min.js',
+
+                '/viewer/script/lib/babylon.js',
+                '/node_modules/handjs/hand.min.js',
+                //'http://www.babylonjs.com/hand.minified-1.2.js',
+                //'http://www.babylonjs.com/babylon.js',
+
+
+                '/viewer/script/viewer.js'
+
             ];
 
 
@@ -158,16 +158,18 @@ RewriteRule . / [L,QSA]
 
             objects.filterTypes('environment').forEach(function (environment) {
 
+                if(environment.ground!='none') {
+                    materials.push(environment.ground);
+                }
 
-                materials.push(environment.ground);
-
-                sources.push('media/images/skyboxes/'+environment.skybox+'/'+environment.skybox+'_ft.jpg');
-                sources.push('media/images/skyboxes/'+environment.skybox+'/'+environment.skybox+'_rt.jpg');
-                sources.push('media/images/skyboxes/'+environment.skybox+'/'+environment.skybox+'_up.jpg');
-                sources.push('media/images/skyboxes/'+environment.skybox+'/'+environment.skybox+'_bk.jpg');
-                sources.push('media/images/skyboxes/'+environment.skybox+'/'+environment.skybox+'_dn.jpg');
-                sources.push('media/images/skyboxes/'+environment.skybox+'/'+environment.skybox+'_lf.jpg');
-
+                if(environment.skybox!='none') {
+                    sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_ft.jpg');
+                    sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_rt.jpg');
+                    sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_up.jpg');
+                    sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_bk.jpg');
+                    sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_dn.jpg');
+                    sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_lf.jpg');
+                }
 
 
             });
@@ -179,7 +181,7 @@ RewriteRule . / [L,QSA]
 
 
             sources = sources.concat(materials.map(function (material) {
-                return 'media/images/textures/'+material+'.jpg';
+                return '/media/images/textures/'+material+'.jpg';
             }));
 
 
@@ -194,16 +196,16 @@ RewriteRule . / [L,QSA]
 
             let promises = sources.map(function (url) {
 
-                let dataType: string;
+                let responseType: string;
 
-                //r(url.substr(-4));
-                if (['.mp3', '.jpg', '.png'].indexOf(url.substr(-4)) !== -1) {//todo better
 
-                    dataType = 'binary';
+                if (url.substr(-3) == '.js') {
+
+                    responseType = 'text';
 
                 } else {
 
-                    dataType = 'text';
+                    responseType = 'blob';
 
                 }
 
@@ -212,8 +214,8 @@ RewriteRule . / [L,QSA]
 
 
                     var xhr = new XMLHttpRequest();
-                    xhr.open("GET", '/' + url);
-                    xhr.responseType = "blob";
+                    xhr.open("GET", url);
+                    xhr.responseType = responseType;
 
                     xhr.onload = function () {
 
@@ -274,30 +276,57 @@ RewriteRule . / [L,QSA]
 
         Promise.all([index,screenshots,media]).then(function(results) {
 
-            r(results);
 
             deployNotification.update('Creating zip file');
 
 
 
-            let deployFiles = [].concat(...results);
-
-
-            //r(deployFiles);
+            let [index,screenshots,media] = results;
+            let deployFiles = [].concat(screenshots,media);
 
 
 
 
 
-            let gallery_folder = gallery_domain.split('.').join('-');
+            let jsFiles = deployFiles.filter(function (file) {
+                return(file.name.substr(-3)=='.js');
+            });
+
+            deployFiles = deployFiles.filter(function (file) {
+                return(file.name.substr(-3)!=='.js');
+            });
+
+
+
+            let scripts = jsFiles.map(function (file) {
+                return file.content;
+            });
+
+
+            scripts.push(
+                'GALLERY.Viewer.run(new GALLERY.Objects.CompiledArray('+JSON.stringify(objects.getAll())+'))'
+            );
+
+
+            let script = scripts.join(';');
+
+
+            //let gallery_folder = gallery_domain.split('.').join('-');
 
 
             let zip = new JSZip();
             //let zipRoot = zip.folder(gallery_folder);
 
 
-
+            zip.file('script-bundle.js',script);
             zip.file('objects.compiled.json',JSON.stringify(objects.getAll(),null,true));
+            zip.file('.htaccess',`
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . / [L,QSA]
+`);
 
 
 
@@ -309,64 +338,32 @@ RewriteRule . / [L,QSA]
 
 
 
-            /*screenshots.forEach(function (screenshot,index) {
-                zipScreenshots.file(index+'.png',screenshot);
-            });
 
 
-            media.forEach(function (file,index) {
-                zipMedia.file(index+'.png',file);
-            });*/
+            let html = index[0].content;
 
 
 
 
 
-            zip.generateAsync({type:"blob"}).then(function(content) {
-                // see FileSaver.js
-                //saveAs(content, gallery_folder+".zip");
-
-
-                //r(content);
+            const COMMENT = /<!--((?!-->)(.|\s))*-->/g;
+            const SCRIPT = /<script((?!script>)(.|\s))*script>/g;
 
 
 
-
-                var formData = new FormData();
-                formData.append("gallery", content);
-
-                formData.append("password", gallery_password);
-
-                var xhr = new XMLHttpRequest();
-                xhr.open('POST', 'http://'+gallery_domain+'/.gallery/update.php', true);
+            html = html.replace(SCRIPT, '');
+            html = html.split('<!--GALLERY SCRIPT-->').join('<script src="/script-bundle.js" async></script>');
+            html = html.replace(COMMENT, '');
 
 
-                xhr.upload.onprogress = function(e) {
 
-                    if (e.lengthComputable) {
-                        let percentComplete = (e.loaded / e.total) * 100;
-                        percentComplete = Math.floor(percentComplete);
-                        deployNotification.update('Uploading zip file '+percentComplete + '%' );
-                    }
-                };
-
-
-                deployNotification.update('Uploading');
-
-                xhr.onload = function() {
-                    if (this.status == 200) {
-                        deployNotification.update('Finished');
-                    }else{
-                        deployNotification.update('Error while uploading');
-                    }
-                };
-                xhr.send(formData);
+            zip.file('index.php',html);
 
 
 
 
-
-
+            zip.generateAsync({type:"blob"}).then(function(content){
+                onDone(content,deployNotification);
             });
 
 
@@ -378,46 +375,108 @@ RewriteRule . / [L,QSA]
         });
 
 
-
-
-
-
-
-
-
-
-
         //r(screenshots);
 
+    }
+
+
+
+    export function downloadZip(){
+        createZip(function(content){
+            let gallery_folder = analyticsObject.domain.split('.').join('-');
+            saveAs(content, gallery_folder+".zip");
+        });
+
+    }
 
 
 
 
+    export function deployToFTP(){
+
+        createZip(function(content,deployNotification){
+
+
+
+            var formData = new FormData();
+            formData.append("update", content);
+
+            formData.append("server",    deployObject.server);
+            formData.append("username",  deployObject.username);
+            formData.append("password",  deployObject.password);
+            formData.append("directory", deployObject.directory);
+
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'tools/ftp-deploy.php', true);
+
+
+            xhr.upload.onprogress = function(e) {
+
+                if (e.lengthComputable) {
+                    let percentComplete = (e.loaded / e.total) * 100;
+                    percentComplete = Math.floor(percentComplete);
+                    deployNotification.update('Uploading zip file '+percentComplete + '%' );
+                }
+            };
+
+
+            deployNotification.update('Uploading');
+
+            xhr.onload = function() {
+                if (this.status == 200) {
+                    deployNotification.update('Finished');
+                }else{
+                    deployNotification.update('Error while uploading');
+                }
+            };
+            xhr.send(formData);
 
 
 
 
+            /*var formData = new FormData();
+            formData.append("gallery", content);
+
+            formData.append("password", gallery_password);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'http://'+gallery_domain+'/.gallery/update.php', true);
+
+
+            xhr.upload.onprogress = function(e) {
+
+                if (e.lengthComputable) {
+                    let percentComplete = (e.loaded / e.total) * 100;
+                    percentComplete = Math.floor(percentComplete);
+                    deployNotification.update('Uploading zip file '+percentComplete + '%' );
+                }
+            };
+
+
+            deployNotification.update('Uploading');
+
+            xhr.onload = function() {
+                if (this.status == 200) {
+                    deployNotification.update('Finished');
+                }else{
+                    deployNotification.update('Error while uploading');
+                }
+            };
+            xhr.send(formData);*/
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+        });
 
 
 
     }
+
+
+
+
 
 
 }

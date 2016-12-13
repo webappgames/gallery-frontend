@@ -102,6 +102,10 @@ namespace GALLERY.Objects{
 
                 object = new GALLERY.Objects.Deploy(object);
 
+            }else if (object.type == 'analytics') {
+
+                object = new GALLERY.Objects.Analytics(object);
+
             }else if (object.type == 'board') {
 
                 object = new GALLERY.Objects.Board(object);

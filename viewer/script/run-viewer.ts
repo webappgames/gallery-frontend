@@ -6,15 +6,15 @@ namespace GALLERY.Viewer{
 
     export var running = false;
     export var develop=false;
-    export var gallery_domain='';
-    export var gallery_password='';
+    export var deployObject='';
+    export var analyticsObject='';
 
-    export function run(compiled_objects: GALLERY.Objects.CompiledArray, develop_=false, gallery_domain_='', gallery_password_=''){
+    export function run(compiled_objects: GALLERY.Objects.CompiledArray, develop_=false, deployObject_=null,analyticsObject_=null){
 
         running = true;
         develop = develop_;
-        gallery_domain = gallery_domain_;
-        gallery_password = gallery_password_;
+        deployObject = deployObject_;
+        analyticsObject = analyticsObject_;
 
 
         objects = compiled_objects;

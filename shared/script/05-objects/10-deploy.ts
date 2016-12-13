@@ -5,8 +5,11 @@ namespace GALLERY.Objects{
     export class Deploy extends Object{
 
 
-        public url: string;
+        public deployType: string;
+        public server: string;
+        public username: string;
         public password: string;
+        public directory: string;
 
 
 
@@ -15,10 +18,11 @@ namespace GALLERY.Objects{
 
             super(object);
 
-            this.name = this.name || '';
-            this.url = this.url || '';
+            this.deployType = this.deployType || 'ftp';
+            this.server = this.server || '';
+            this.username = this.username || '';
             this.password = this.password || '';
-
+            this.directory = this.directory || '';
 
         }
 

@@ -388,17 +388,16 @@ var GALLERY;
             return DeployFile;
         }());
         Viewer.DeployFile = DeployFile;
-        function deploy() {
+        function createZip(onDone) {
             var deployNotification = new PH.Notification('Deploy', 'Downloading files');
             var index;
             var screenshots;
             var media;
             index = new Promise(function (resolve, reject) {
                 var deployFiles = [];
-                deployFiles.push(new DeployFile('.htaccess', "\n            \nRewriteEngine On\n\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule . / [L,QSA]\n"));
                 var xhr = new XMLHttpRequest();
                 xhr.open("GET", '/index-src.php');
-                xhr.responseType = "blob";
+                xhr.responseType = "text";
                 xhr.onload = function () {
                     //r(this);
                     deployFiles.push(new DeployFile('index.php', this.response));
@@ -430,14 +429,35 @@ var GALLERY;
             media = new Promise(function (resolve, reject) {
                 var sources = [
                     //'viewer/index.html',
-                    'viewer/style/viewer.css',
-                    'viewer/script/lib/babylon.js',
-                    'node_modules/handjs/hand.min.js',
-                    'viewer/script/viewer.js',
+                    '/viewer/style/viewer.css',
+                    //'viewer/script/lib/babylon.js',
+                    //'node_modules/handjs/hand.min.js',
                     //'media/images/backgrounds/menu.png',
                     //'media/images/backgrounds/page.png',
-                    'media/images/ui/mouse-lock.png',
-                    'media/images/ui/keys-text.png',
+                    //'media/images/ui/mouse-lock.png',
+                    //'media/images/ui/keys-text.png',
+                    /*'media/sound/link-key.mp3',
+                    'media/sound/link-teleport.mp3',
+                    'media/sound/link-key-none.mp3',
+                    'media/sound/gate-locked.mp3',
+                    'media/sound/step-stairs.mp3',
+                    'media/sound/step-ground.mp3',
+                    'media/sound/step-room.mp3',*/
+                    /*'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_ft.jpg',
+                    'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_rt.jpg',
+                    'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_up.jpg',
+                    'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_bk.jpg',
+                    'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_dn.jpg',
+                    'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_lf.jpg',*/
+                    'https://code.jquery.com/jquery-2.2.4.min.js',
+                    'https://code.jquery.com/ui/1.12.0/jquery-ui.min.js',
+                    '/node_modules/jszip/dist/jszip.min.js',
+                    '/node_modules/file-saver/FileSaver.min.js',
+                    '/viewer/script/lib/babylon.js',
+                    '/node_modules/handjs/hand.min.js',
+                    //'http://www.babylonjs.com/hand.minified-1.2.js',
+                    //'http://www.babylonjs.com/babylon.js',
+                    '/viewer/script/viewer.js'
                 ];
                 var materials = [];
                 objects.forEach(function (object) {
@@ -446,35 +466,38 @@ var GALLERY;
                     }
                 });
                 objects.filterTypes('environment').forEach(function (environment) {
-                    materials.push(environment.ground);
-                    sources.push('media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_ft.jpg');
-                    sources.push('media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_rt.jpg');
-                    sources.push('media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_up.jpg');
-                    sources.push('media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_bk.jpg');
-                    sources.push('media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_dn.jpg');
-                    sources.push('media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_lf.jpg');
+                    if (environment.ground != 'none') {
+                        materials.push(environment.ground);
+                    }
+                    if (environment.skybox != 'none') {
+                        sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_ft.jpg');
+                        sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_rt.jpg');
+                        sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_up.jpg');
+                        sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_bk.jpg');
+                        sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_dn.jpg');
+                        sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_lf.jpg');
+                    }
                 });
                 materials = materials.filter(function (material) {
                     return (material.substr(0, 1) !== '#');
                 });
                 sources = sources.concat(materials.map(function (material) {
-                    return 'media/images/textures/' + material + '.jpg';
+                    return '/media/images/textures/' + material + '.jpg';
                 }));
                 sources = sources.filter(function (v, i, a) { return a.indexOf(v) === i; });
                 //r(sources);
                 var promises = sources.map(function (url) {
-                    var dataType;
-                    //r(url.substr(-4));
-                    if (['.mp3', '.jpg', '.png'].indexOf(url.substr(-4)) !== -1) {
-                        dataType = 'binary';
+                    var responseType;
+                    if (url.substr(-3) == '.js') {
+                        responseType = 'text';
                     }
                     else {
-                        dataType = 'text';
+                        responseType = 'blob';
                     }
                     return new Promise(function (resolve, reject) {
                         var xhr = new XMLHttpRequest();
-                        xhr.open("GET", '/' + url);
-                        xhr.responseType = "blob";
+                        xhr.open("GET", url);
+                        xhr.responseType = responseType;
                         xhr.onload = function () {
                             var file = new DeployFile(url, this.response);
                             if (this.status == 200) {
@@ -508,60 +531,112 @@ var GALLERY;
             });
             //----------------------------------------------------------------
             Promise.all([index, screenshots, media]).then(function (results) {
-                r(results);
                 deployNotification.update('Creating zip file');
-                var deployFiles = (_a = []).concat.apply(_a, results);
-                //r(deployFiles);
-                var gallery_folder = Viewer.gallery_domain.split('.').join('-');
+                var index = results[0], screenshots = results[1], media = results[2];
+                var deployFiles = [].concat(screenshots, media);
+                var jsFiles = deployFiles.filter(function (file) {
+                    return (file.name.substr(-3) == '.js');
+                });
+                deployFiles = deployFiles.filter(function (file) {
+                    return (file.name.substr(-3) !== '.js');
+                });
+                var scripts = jsFiles.map(function (file) {
+                    return file.content;
+                });
+                scripts.push('GALLERY.Viewer.run(new GALLERY.Objects.CompiledArray(' + JSON.stringify(objects.getAll()) + '))');
+                var script = scripts.join(';');
+                //let gallery_folder = gallery_domain.split('.').join('-');
                 var zip = new JSZip();
                 //let zipRoot = zip.folder(gallery_folder);
+                zip.file('script-bundle.js', script);
                 zip.file('objects.compiled.json', JSON.stringify(objects.getAll(), null, true));
+                zip.file('.htaccess', "\nRewriteEngine On\n\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule . / [L,QSA]\n");
                 //r(deployFiles);
                 deployFiles.forEach(function (deployFile) {
                     zip.file(deployFile.name, deployFile.content);
                 });
-                /*screenshots.forEach(function (screenshot,index) {
-                    zipScreenshots.file(index+'.png',screenshot);
-                });
-    
-    
-                media.forEach(function (file,index) {
-                    zipMedia.file(index+'.png',file);
-                });*/
+                var html = index[0].content;
+                var COMMENT = /<!--((?!-->)(.|\s))*-->/g;
+                var SCRIPT = /<script((?!script>)(.|\s))*script>/g;
+                html = html.replace(SCRIPT, '');
+                html = html.split('<!--GALLERY SCRIPT-->').join('<script src="/script-bundle.js" async></script>');
+                html = html.replace(COMMENT, '');
+                zip.file('index.php', html);
                 zip.generateAsync({ type: "blob" }).then(function (content) {
-                    // see FileSaver.js
-                    //saveAs(content, gallery_folder+".zip");
-                    //r(content);
-                    var formData = new FormData();
-                    formData.append("gallery", content);
-                    formData.append("password", Viewer.gallery_password);
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('POST', 'http://' + Viewer.gallery_domain + '/.gallery/update.php', true);
-                    xhr.upload.onprogress = function (e) {
-                        if (e.lengthComputable) {
-                            var percentComplete = (e.loaded / e.total) * 100;
-                            percentComplete = Math.floor(percentComplete);
-                            deployNotification.update('Uploading zip file ' + percentComplete + '%');
-                        }
-                    };
-                    deployNotification.update('Uploading');
-                    xhr.onload = function () {
-                        if (this.status == 200) {
-                            deployNotification.update('Finished');
-                        }
-                        else {
-                            deployNotification.update('Error while uploading');
-                        }
-                    };
-                    xhr.send(formData);
+                    onDone(content, deployNotification);
                 });
-                var _a;
             }, function () {
                 // one or more failed
             });
             //r(screenshots);
         }
-        Viewer.deploy = deploy;
+        Viewer.createZip = createZip;
+        function downloadZip() {
+            createZip(function (content) {
+                var gallery_folder = Viewer.analyticsObject.domain.split('.').join('-');
+                saveAs(content, gallery_folder + ".zip");
+            });
+        }
+        Viewer.downloadZip = downloadZip;
+        function deployToFTP() {
+            createZip(function (content, deployNotification) {
+                var formData = new FormData();
+                formData.append("update", content);
+                formData.append("server", Viewer.deployObject.server);
+                formData.append("username", Viewer.deployObject.username);
+                formData.append("password", Viewer.deployObject.password);
+                formData.append("directory", Viewer.deployObject.directory);
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'tools/ftp-deploy.php', true);
+                xhr.upload.onprogress = function (e) {
+                    if (e.lengthComputable) {
+                        var percentComplete = (e.loaded / e.total) * 100;
+                        percentComplete = Math.floor(percentComplete);
+                        deployNotification.update('Uploading zip file ' + percentComplete + '%');
+                    }
+                };
+                deployNotification.update('Uploading');
+                xhr.onload = function () {
+                    if (this.status == 200) {
+                        deployNotification.update('Finished');
+                    }
+                    else {
+                        deployNotification.update('Error while uploading');
+                    }
+                };
+                xhr.send(formData);
+                /*var formData = new FormData();
+                formData.append("gallery", content);
+    
+                formData.append("password", gallery_password);
+    
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'http://'+gallery_domain+'/.gallery/update.php', true);
+    
+    
+                xhr.upload.onprogress = function(e) {
+    
+                    if (e.lengthComputable) {
+                        let percentComplete = (e.loaded / e.total) * 100;
+                        percentComplete = Math.floor(percentComplete);
+                        deployNotification.update('Uploading zip file '+percentComplete + '%' );
+                    }
+                };
+    
+    
+                deployNotification.update('Uploading');
+    
+                xhr.onload = function() {
+                    if (this.status == 200) {
+                        deployNotification.update('Finished');
+                    }else{
+                        deployNotification.update('Error while uploading');
+                    }
+                };
+                xhr.send(formData);*/
+            });
+        }
+        Viewer.deployToFTP = deployToFTP;
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
 })(GALLERY || (GALLERY = {}));
 var GALLERY;
@@ -569,7 +644,7 @@ var GALLERY;
     var Viewer;
     (function (Viewer) {
         function developMenu() {
-            var $developMenu = $("\n                <div class=\"develop-menu\">\n                    <a onclick=\"GALLERY.Viewer.deploy();\">Deploy</a>\n                    <a onclick=\"GALLERY.Viewer.showStats();\">Show stats</a>\n                </div>\n            ");
+            var $developMenu = $("\n                <div class=\"develop-menu\">\n                    <a onclick=\"GALLERY.Viewer.deployToFTP();\">Deploy to FTP</a>\n                    <a onclick=\"GALLERY.Viewer.downloadZip();\">Download as ZIP</a>\n                    <a onclick=\"GALLERY.Viewer.showStats();\">Show stats</a>\n                </div>\n            ");
             var $labelsMenu = $('<ul></ul>');
             console.log($labelsMenu);
             objects.filterTypes('label').forEach(function (label) {
@@ -589,22 +664,24 @@ var GALLERY;
     var Viewer;
     (function (Viewer) {
         function showStats() {
-            if (!Viewer.gallery_domain)
+            if (!Viewer.analyticsObject)
                 return;
-            $.get(STATSERVER_URL + '/' + Viewer.gallery_domain).done(function (sessions) {
-                sessions.forEach(function (session) {
-                    if (session.states.length < 2)
-                        return;
-                    var positions = session.states.map(function (state) {
-                        var position = new BABYLON.Vector3(state.x * -BLOCK_SIZE, state.z * BLOCK_SIZE, //todo no use BLOCKS_1NP_LEVEL
-                        state.y * BLOCK_SIZE);
-                        return (position);
+            if (Viewer.analyticsObject.analyticsType == 'gallery') {
+                $.get(STATSERVER_URL + '/' + Viewer.analyticsObject.domain).done(function (sessions) {
+                    sessions.forEach(function (session) {
+                        if (session.states.length < 2)
+                            return;
+                        var positions = session.states.map(function (state) {
+                            var position = new BABYLON.Vector3(state.x * -BLOCK_SIZE, state.z * BLOCK_SIZE, //todo no use BLOCKS_1NP_LEVEL
+                            state.y * BLOCK_SIZE);
+                            return (position);
+                        });
+                        r(positions);
+                        var tube = BABYLON.Mesh.CreateTube("tube", positions, 0.5, 3, null, 0, Viewer.scene, false, BABYLON.Mesh.FRONTSIDE);
+                        //var lines = BABYLON.Mesh.CreateTube("lines",positions,2,3, null, 0, scene, false, BABYLON.Mesh.FRONTSIDE);
                     });
-                    r(positions);
-                    var tube = BABYLON.Mesh.CreateTube("tube", positions, 0.5, 3, null, 0, Viewer.scene, false, BABYLON.Mesh.FRONTSIDE);
-                    //var lines = BABYLON.Mesh.CreateTube("lines",positions,2,3, null, 0, scene, false, BABYLON.Mesh.FRONTSIDE);
                 });
-            });
+            }
         }
         Viewer.showStats = showStats;
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
@@ -2275,6 +2352,9 @@ var GALLERY;
                 else if (object.type == 'deploy') {
                     object = new GALLERY.Objects.Deploy(object);
                 }
+                else if (object.type == 'analytics') {
+                    object = new GALLERY.Objects.Analytics(object);
+                }
                 else if (object.type == 'board') {
                     object = new GALLERY.Objects.Board(object);
                 }
@@ -2753,9 +2833,11 @@ var GALLERY;
             __extends(Deploy, _super);
             function Deploy(object) {
                 _super.call(this, object);
-                this.name = this.name || '';
-                this.url = this.url || '';
+                this.deployType = this.deployType || 'ftp';
+                this.server = this.server || '';
+                this.username = this.username || '';
                 this.password = this.password || '';
+                this.directory = this.directory || '';
             }
             Deploy.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -2766,6 +2848,29 @@ var GALLERY;
             return Deploy;
         }(Objects.Object));
         Objects.Deploy = Deploy;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="../../reference.ts" />
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        var Analytics = (function (_super) {
+            __extends(Analytics, _super);
+            function Analytics(object) {
+                _super.call(this, object);
+                this.analyticsType = this.analyticsType || 'gallery';
+                this.domain = this.domain || '';
+            }
+            Analytics.prototype.create$Element = function () {
+                var $element = this._create$Element();
+                var object = this;
+                $element.html('<i class="fa fa-database" aria-hidden="true"></i>');
+                return $element;
+            };
+            return Analytics;
+        }(Objects.Object));
+        Objects.Analytics = Analytics;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
 /// <reference path="../../reference.ts" />
@@ -2866,8 +2971,8 @@ var GALLERY;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
 var STATSERVER_URL = 'http://webappgames.com:48567';
-var OBJECT_TYPES = ['zone', 'groundhole', 'stairs', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'board'];
-var DOT_OBJECTS = ['zone', 'groundhole', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'board'];
+var OBJECT_TYPES = ['zone', 'groundhole', 'stairs', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'analytics', 'board'];
+var DOT_OBJECTS = ['zone', 'groundhole', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'analytics', 'board'];
 var BLOCK_SIZE = 5;
 //var BLOCK_SIZE_VERTICAL=10;
 //var BLOCK_SIZE_DOOR=2;
@@ -3008,6 +3113,7 @@ var PH;
 /// <reference path="script/05-objects/10-link.ts" />
 /// <reference path="script/05-objects/10-gate.ts" />
 /// <reference path="script/05-objects/10-deploy.ts" />
+/// <reference path="script/05-objects/10-analytics.ts" />
 /// <reference path="script/05-objects/10-zone.ts" />
 /// <reference path="script/05-objects/10-groundhole.ts" />
 /// <reference path="script/05-objects/10-board.ts" />
@@ -4092,16 +4198,16 @@ var GALLERY;
     (function (Viewer) {
         Viewer.running = false;
         Viewer.develop = false;
-        Viewer.gallery_domain = '';
-        Viewer.gallery_password = '';
-        function run(compiled_objects, develop_, gallery_domain_, gallery_password_) {
+        Viewer.deployObject = '';
+        Viewer.analyticsObject = '';
+        function run(compiled_objects, develop_, deployObject_, analyticsObject_) {
             if (develop_ === void 0) { develop_ = false; }
-            if (gallery_domain_ === void 0) { gallery_domain_ = ''; }
-            if (gallery_password_ === void 0) { gallery_password_ = ''; }
+            if (deployObject_ === void 0) { deployObject_ = null; }
+            if (analyticsObject_ === void 0) { analyticsObject_ = null; }
             Viewer.running = true;
             Viewer.develop = develop_;
-            Viewer.gallery_domain = gallery_domain_;
-            Viewer.gallery_password = gallery_password_;
+            Viewer.deployObject = deployObject_;
+            Viewer.analyticsObject = analyticsObject_;
             objects = compiled_objects;
             r('Running gallery with ' + objects.getAll().length + ' objects in ' + (Viewer.develop ? 'develop' : 'production') + ' mode.');
             if (Viewer.develop) {

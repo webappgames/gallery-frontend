@@ -3,12 +3,10 @@
 
 namespace GALLERY.Viewer {
 
-    export var canvas = document.getElementById("scene");
-    export var engine = new BABYLON.Engine(canvas, true, { stencil: true });
-    export var scene;
 
 
-    export function createScene() {
+
+    export function createScene(engine,canvas) {
         scene = new BABYLON.Scene(engine);
 
         // Lights
@@ -69,6 +67,10 @@ namespace GALLERY.Viewer {
         //Then apply collisions and gravity to the active camera
         camera.checkCollisions = true;
         camera.applyGravity = true;
+
+
+
+
 
         //Set the ellipsoid around the camera (e.g. your player's size)
 
@@ -162,7 +164,7 @@ namespace GALLERY.Viewer {
             let zones_ids = [];
 
 
-            zones.forEach(function (zone) {
+            /*zones.forEach(function (zone) {
 
 
                 if (zone.mesh.intersectsPoint(camera.position)) {
@@ -177,7 +179,7 @@ namespace GALLERY.Viewer {
                 }
 
 
-            });
+            });*/
 
 
             let zones_plus = [];
@@ -403,14 +405,23 @@ namespace GALLERY.Viewer {
         //-----------------------------------------------------------------Pointer Events
 
         let onDownCamera, onDownTimestamp;
+        let pointerDown = false;
+        const enginePlayReasonDragging = new EnginePlayReason('dragging');
 
         //When pointer down event is raised
         scene.onPointerDown = function () {
 
-            //r('down');
-            onDownCamera = camera.rotation.clone();
-            onDownTimestamp = new Date() / 1000;
+            pointerDown = true;
 
+            if(MODE=='WEB') {
+
+                //r('down');
+                onDownCamera = camera.rotation.clone();
+                onDownTimestamp = new Date() / 1000;
+
+                playEngine(enginePlayReasonDragging);
+
+            }
 
         };
         /*scene.onPointerMove = function(){
@@ -422,22 +433,38 @@ namespace GALLERY.Viewer {
          };*/
         scene.onPointerUp = function () {
 
-            if (GALLERY.Viewer.MODE != 'WEB')return;
+            pointerDown = false;
 
-            let distance = BABYLON.Vector3.Distance(camera.rotation, onDownCamera);
-            let distanceTime = (new Date() / 1000) - onDownTimestamp;
+            if(MODE=='WEB') {
 
-            r(distance, distanceTime);
+                let distance = BABYLON.Vector3.Distance(camera.rotation, onDownCamera);
+                let distanceTime = (new Date() / 1000) - onDownTimestamp;
 
-            if (distance > 0.1 || distanceTime > 1) {
+                r(distance, distanceTime);
+
+                if (distance > 0.1 || distanceTime > 1) {
 
 
-            } else {
-                onPointerUp.apply(this, arguments);
+                } else {
+                    onPointerUp.apply(this, arguments);
+                }
+
+                pauseEngine(enginePlayReasonDragging);
+
+            }
+        };
+
+
+        /*scene.registerBeforeRender(function () {
+
+            if(pointerDown) {
+                camera.position.x += Math.sin(camera.rotation.y) * 0.5;
+                camera.position.z += Math.cos(camera.rotation.y) * 0.5;
             }
 
+        });*/
 
-        };
+
 
         //-----------------------------------------------------------------
 
@@ -463,23 +490,7 @@ namespace GALLERY.Viewer {
             //movement: movement,
         });
 
-    };
-
-    var scene_ = createScene();
-    export var scene = scene_.scene;
-    export var camera = scene_.camera;
-    export var movement = scene_.movement;
-    export var sun = scene_.sun;
-
-
-    engine.runRenderLoop(function () {
-        scene.render();
-    });
-
-    // Resize
-    window.addEventListener("resize", function () {
-        engine.resize();
-    });
+    }
 
 
 }

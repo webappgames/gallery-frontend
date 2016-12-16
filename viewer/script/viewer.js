@@ -98,765 +98,6 @@ var GALLERY;
         Viewer.getAppStateLabel = getAppStateLabel;
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
 })(GALLERY || (GALLERY = {}));
-var defaultDiacriticsRemovalMap = [
-    {
-        'base': 'A',
-        'letters': /[\u0041\u24B6\uFF21\u00C0\u00C1\u00C2\u1EA6\u1EA4\u1EAA\u1EA8\u00C3\u0100\u0102\u1EB0\u1EAE\u1EB4\u1EB2\u0226\u01E0\u00C4\u01DE\u1EA2\u00C5\u01FA\u01CD\u0200\u0202\u1EA0\u1EAC\u1EB6\u1E00\u0104\u023A\u2C6F]/g
-    },
-    { 'base': 'AA', 'letters': /[\uA732]/g },
-    { 'base': 'AE', 'letters': /[\u00C6\u01FC\u01E2]/g },
-    { 'base': 'AO', 'letters': /[\uA734]/g },
-    { 'base': 'AU', 'letters': /[\uA736]/g },
-    { 'base': 'AV', 'letters': /[\uA738\uA73A]/g },
-    { 'base': 'AY', 'letters': /[\uA73C]/g },
-    { 'base': 'B', 'letters': /[\u0042\u24B7\uFF22\u1E02\u1E04\u1E06\u0243\u0182\u0181]/g },
-    {
-        'base': 'C',
-        'letters': /[\u0043\u24B8\uFF23\u0106\u0108\u010A\u010C\u00C7\u1E08\u0187\u023B\uA73E]/g
-    },
-    {
-        'base': 'D',
-        'letters': /[\u0044\u24B9\uFF24\u1E0A\u010E\u1E0C\u1E10\u1E12\u1E0E\u0110\u018B\u018A\u0189\uA779]/g
-    },
-    { 'base': 'DZ', 'letters': /[\u01F1\u01C4]/g },
-    { 'base': 'Dz', 'letters': /[\u01F2\u01C5]/g },
-    {
-        'base': 'E',
-        'letters': /[\u0045\u24BA\uFF25\u00C8\u00C9\u00CA\u1EC0\u1EBE\u1EC4\u1EC2\u1EBC\u0112\u1E14\u1E16\u0114\u0116\u00CB\u1EBA\u011A\u0204\u0206\u1EB8\u1EC6\u0228\u1E1C\u0118\u1E18\u1E1A\u0190\u018E]/g
-    },
-    { 'base': 'F', 'letters': /[\u0046\u24BB\uFF26\u1E1E\u0191\uA77B]/g },
-    {
-        'base': 'G',
-        'letters': /[\u0047\u24BC\uFF27\u01F4\u011C\u1E20\u011E\u0120\u01E6\u0122\u01E4\u0193\uA7A0\uA77D\uA77E]/g
-    },
-    {
-        'base': 'H',
-        'letters': /[\u0048\u24BD\uFF28\u0124\u1E22\u1E26\u021E\u1E24\u1E28\u1E2A\u0126\u2C67\u2C75\uA78D]/g
-    },
-    {
-        'base': 'I',
-        'letters': /[\u0049\u24BE\uFF29\u00CC\u00CD\u00CE\u0128\u012A\u012C\u0130\u00CF\u1E2E\u1EC8\u01CF\u0208\u020A\u1ECA\u012E\u1E2C\u0197]/g
-    },
-    { 'base': 'J', 'letters': /[\u004A\u24BF\uFF2A\u0134\u0248]/g },
-    {
-        'base': 'K',
-        'letters': /[\u004B\u24C0\uFF2B\u1E30\u01E8\u1E32\u0136\u1E34\u0198\u2C69\uA740\uA742\uA744\uA7A2]/g
-    },
-    {
-        'base': 'L',
-        'letters': /[\u004C\u24C1\uFF2C\u013F\u0139\u013D\u1E36\u1E38\u013B\u1E3C\u1E3A\u0141\u023D\u2C62\u2C60\uA748\uA746\uA780]/g
-    },
-    { 'base': 'LJ', 'letters': /[\u01C7]/g },
-    { 'base': 'Lj', 'letters': /[\u01C8]/g },
-    { 'base': 'M', 'letters': /[\u004D\u24C2\uFF2D\u1E3E\u1E40\u1E42\u2C6E\u019C]/g },
-    {
-        'base': 'N',
-        'letters': /[\u004E\u24C3\uFF2E\u01F8\u0143\u00D1\u1E44\u0147\u1E46\u0145\u1E4A\u1E48\u0220\u019D\uA790\uA7A4]/g
-    },
-    { 'base': 'NJ', 'letters': /[\u01CA]/g },
-    { 'base': 'Nj', 'letters': /[\u01CB]/g },
-    {
-        'base': 'O',
-        'letters': /[\u004F\u24C4\uFF2F\u00D2\u00D3\u00D4\u1ED2\u1ED0\u1ED6\u1ED4\u00D5\u1E4C\u022C\u1E4E\u014C\u1E50\u1E52\u014E\u022E\u0230\u00D6\u022A\u1ECE\u0150\u01D1\u020C\u020E\u01A0\u1EDC\u1EDA\u1EE0\u1EDE\u1EE2\u1ECC\u1ED8\u01EA\u01EC\u00D8\u01FE\u0186\u019F\uA74A\uA74C]/g
-    },
-    { 'base': 'OI', 'letters': /[\u01A2]/g },
-    { 'base': 'OO', 'letters': /[\uA74E]/g },
-    { 'base': 'OU', 'letters': /[\u0222]/g },
-    {
-        'base': 'P',
-        'letters': /[\u0050\u24C5\uFF30\u1E54\u1E56\u01A4\u2C63\uA750\uA752\uA754]/g
-    },
-    { 'base': 'Q', 'letters': /[\u0051\u24C6\uFF31\uA756\uA758\u024A]/g },
-    {
-        'base': 'R',
-        'letters': /[\u0052\u24C7\uFF32\u0154\u1E58\u0158\u0210\u0212\u1E5A\u1E5C\u0156\u1E5E\u024C\u2C64\uA75A\uA7A6\uA782]/g
-    },
-    {
-        'base': 'S',
-        'letters': /[\u0053\u24C8\uFF33\u1E9E\u015A\u1E64\u015C\u1E60\u0160\u1E66\u1E62\u1E68\u0218\u015E\u2C7E\uA7A8\uA784]/g
-    },
-    {
-        'base': 'T',
-        'letters': /[\u0054\u24C9\uFF34\u1E6A\u0164\u1E6C\u021A\u0162\u1E70\u1E6E\u0166\u01AC\u01AE\u023E\uA786]/g
-    },
-    { 'base': 'TZ', 'letters': /[\uA728]/g },
-    {
-        'base': 'U',
-        'letters': /[\u0055\u24CA\uFF35\u00D9\u00DA\u00DB\u0168\u1E78\u016A\u1E7A\u016C\u00DC\u01DB\u01D7\u01D5\u01D9\u1EE6\u016E\u0170\u01D3\u0214\u0216\u01AF\u1EEA\u1EE8\u1EEE\u1EEC\u1EF0\u1EE4\u1E72\u0172\u1E76\u1E74\u0244]/g
-    },
-    { 'base': 'V', 'letters': /[\u0056\u24CB\uFF36\u1E7C\u1E7E\u01B2\uA75E\u0245]/g },
-    { 'base': 'VY', 'letters': /[\uA760]/g },
-    {
-        'base': 'W',
-        'letters': /[\u0057\u24CC\uFF37\u1E80\u1E82\u0174\u1E86\u1E84\u1E88\u2C72]/g
-    },
-    { 'base': 'X', 'letters': /[\u0058\u24CD\uFF38\u1E8A\u1E8C]/g },
-    {
-        'base': 'Y',
-        'letters': /[\u0059\u24CE\uFF39\u1EF2\u00DD\u0176\u1EF8\u0232\u1E8E\u0178\u1EF6\u1EF4\u01B3\u024E\u1EFE]/g
-    },
-    {
-        'base': 'Z',
-        'letters': /[\u005A\u24CF\uFF3A\u0179\u1E90\u017B\u017D\u1E92\u1E94\u01B5\u0224\u2C7F\u2C6B\uA762]/g
-    },
-    {
-        'base': 'a',
-        'letters': /[\u0061\u24D0\uFF41\u1E9A\u00E0\u00E1\u00E2\u1EA7\u1EA5\u1EAB\u1EA9\u00E3\u0101\u0103\u1EB1\u1EAF\u1EB5\u1EB3\u0227\u01E1\u00E4\u01DF\u1EA3\u00E5\u01FB\u01CE\u0201\u0203\u1EA1\u1EAD\u1EB7\u1E01\u0105\u2C65\u0250]/g
-    },
-    { 'base': 'aa', 'letters': /[\uA733]/g },
-    { 'base': 'ae', 'letters': /[\u00E6\u01FD\u01E3]/g },
-    { 'base': 'ao', 'letters': /[\uA735]/g },
-    { 'base': 'au', 'letters': /[\uA737]/g },
-    { 'base': 'av', 'letters': /[\uA739\uA73B]/g },
-    { 'base': 'ay', 'letters': /[\uA73D]/g },
-    { 'base': 'b', 'letters': /[\u0062\u24D1\uFF42\u1E03\u1E05\u1E07\u0180\u0183\u0253]/g },
-    {
-        'base': 'c',
-        'letters': /[\u0063\u24D2\uFF43\u0107\u0109\u010B\u010D\u00E7\u1E09\u0188\u023C\uA73F\u2184]/g
-    },
-    {
-        'base': 'd',
-        'letters': /[\u0064\u24D3\uFF44\u1E0B\u010F\u1E0D\u1E11\u1E13\u1E0F\u0111\u018C\u0256\u0257\uA77A]/g
-    },
-    { 'base': 'dz', 'letters': /[\u01F3\u01C6]/g },
-    {
-        'base': 'e',
-        'letters': /[\u0065\u24D4\uFF45\u00E8\u00E9\u00EA\u1EC1\u1EBF\u1EC5\u1EC3\u1EBD\u0113\u1E15\u1E17\u0115\u0117\u00EB\u1EBB\u011B\u0205\u0207\u1EB9\u1EC7\u0229\u1E1D\u0119\u1E19\u1E1B\u0247\u025B\u01DD]/g
-    },
-    { 'base': 'f', 'letters': /[\u0066\u24D5\uFF46\u1E1F\u0192\uA77C]/g },
-    {
-        'base': 'g',
-        'letters': /[\u0067\u24D6\uFF47\u01F5\u011D\u1E21\u011F\u0121\u01E7\u0123\u01E5\u0260\uA7A1\u1D79\uA77F]/g
-    },
-    {
-        'base': 'h',
-        'letters': /[\u0068\u24D7\uFF48\u0125\u1E23\u1E27\u021F\u1E25\u1E29\u1E2B\u1E96\u0127\u2C68\u2C76\u0265]/g
-    },
-    { 'base': 'hv', 'letters': /[\u0195]/g },
-    {
-        'base': 'i',
-        'letters': /[\u0069\u24D8\uFF49\u00EC\u00ED\u00EE\u0129\u012B\u012D\u00EF\u1E2F\u1EC9\u01D0\u0209\u020B\u1ECB\u012F\u1E2D\u0268\u0131]/g
-    },
-    { 'base': 'j', 'letters': /[\u006A\u24D9\uFF4A\u0135\u01F0\u0249]/g },
-    {
-        'base': 'k',
-        'letters': /[\u006B\u24DA\uFF4B\u1E31\u01E9\u1E33\u0137\u1E35\u0199\u2C6A\uA741\uA743\uA745\uA7A3]/g
-    },
-    {
-        'base': 'l',
-        'letters': /[\u006C\u24DB\uFF4C\u0140\u013A\u013E\u1E37\u1E39\u013C\u1E3D\u1E3B\u017F\u0142\u019A\u026B\u2C61\uA749\uA781\uA747]/g
-    },
-    { 'base': 'lj', 'letters': /[\u01C9]/g },
-    { 'base': 'm', 'letters': /[\u006D\u24DC\uFF4D\u1E3F\u1E41\u1E43\u0271\u026F]/g },
-    {
-        'base': 'n',
-        'letters': /[\u006E\u24DD\uFF4E\u01F9\u0144\u00F1\u1E45\u0148\u1E47\u0146\u1E4B\u1E49\u019E\u0272\u0149\uA791\uA7A5]/g
-    },
-    { 'base': 'nj', 'letters': /[\u01CC]/g },
-    {
-        'base': 'o',
-        'letters': /[\u006F\u24DE\uFF4F\u00F2\u00F3\u00F4\u1ED3\u1ED1\u1ED7\u1ED5\u00F5\u1E4D\u022D\u1E4F\u014D\u1E51\u1E53\u014F\u022F\u0231\u00F6\u022B\u1ECF\u0151\u01D2\u020D\u020F\u01A1\u1EDD\u1EDB\u1EE1\u1EDF\u1EE3\u1ECD\u1ED9\u01EB\u01ED\u00F8\u01FF\u0254\uA74B\uA74D\u0275]/g
-    },
-    { 'base': 'oi', 'letters': /[\u01A3]/g },
-    { 'base': 'ou', 'letters': /[\u0223]/g },
-    { 'base': 'oo', 'letters': /[\uA74F]/g },
-    {
-        'base': 'p',
-        'letters': /[\u0070\u24DF\uFF50\u1E55\u1E57\u01A5\u1D7D\uA751\uA753\uA755]/g
-    },
-    { 'base': 'q', 'letters': /[\u0071\u24E0\uFF51\u024B\uA757\uA759]/g },
-    {
-        'base': 'r',
-        'letters': /[\u0072\u24E1\uFF52\u0155\u1E59\u0159\u0211\u0213\u1E5B\u1E5D\u0157\u1E5F\u024D\u027D\uA75B\uA7A7\uA783]/g
-    },
-    {
-        'base': 's',
-        'letters': /[\u0073\u24E2\uFF53\u00DF\u015B\u1E65\u015D\u1E61\u0161\u1E67\u1E63\u1E69\u0219\u015F\u023F\uA7A9\uA785\u1E9B]/g
-    },
-    {
-        'base': 't',
-        'letters': /[\u0074\u24E3\uFF54\u1E6B\u1E97\u0165\u1E6D\u021B\u0163\u1E71\u1E6F\u0167\u01AD\u0288\u2C66\uA787]/g
-    },
-    { 'base': 'tz', 'letters': /[\uA729]/g },
-    {
-        'base': 'u',
-        'letters': /[\u0075\u24E4\uFF55\u00F9\u00FA\u00FB\u0169\u1E79\u016B\u1E7B\u016D\u00FC\u01DC\u01D8\u01D6\u01DA\u1EE7\u016F\u0171\u01D4\u0215\u0217\u01B0\u1EEB\u1EE9\u1EEF\u1EED\u1EF1\u1EE5\u1E73\u0173\u1E77\u1E75\u0289]/g
-    },
-    { 'base': 'v', 'letters': /[\u0076\u24E5\uFF56\u1E7D\u1E7F\u028B\uA75F\u028C]/g },
-    { 'base': 'vy', 'letters': /[\uA761]/g },
-    {
-        'base': 'w',
-        'letters': /[\u0077\u24E6\uFF57\u1E81\u1E83\u0175\u1E87\u1E85\u1E98\u1E89\u2C73]/g
-    },
-    { 'base': 'x', 'letters': /[\u0078\u24E7\uFF58\u1E8B\u1E8D]/g },
-    {
-        'base': 'y',
-        'letters': /[\u0079\u24E8\uFF59\u1EF3\u00FD\u0177\u1EF9\u0233\u1E8F\u00FF\u1EF7\u1E99\u1EF5\u01B4\u024F\u1EFF]/g
-    },
-    {
-        'base': 'z',
-        'letters': /[\u007A\u24E9\uFF5A\u017A\u1E91\u017C\u017E\u1E93\u1E95\u01B6\u0225\u0240\u2C6C\uA763]/g
-    }
-];
-var changes;
-function removeDiacritics(str) {
-    if (!changes) {
-        changes = defaultDiacriticsRemovalMap;
-    }
-    for (var i = 0; i < changes.length; i++) {
-        str = str.replace(changes[i].letters, changes[i].base);
-    }
-    return str;
-}
-function createUriFromName(name) {
-    name = removeDiacritics(name);
-    name = name.toLocaleLowerCase();
-    name = name.split(' ').join('-');
-    return name;
-}
-function dataURItoBlob(dataURI) {
-    // convert base64 to raw binary data held in a string
-    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
-    var byteString = atob(dataURI.split(',')[1]);
-    // separate out the mime component
-    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-    // write the bytes of the string to an ArrayBuffer
-    var ab = new ArrayBuffer(byteString.length);
-    var ia = new Uint8Array(ab);
-    for (var i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-    }
-    // write the ArrayBuffer to a blob, and you're done
-    var blob = new Blob([ab], { type: mimeString });
-    return blob;
-    // Old code
-    // var bb = new BlobBuilder();
-    // bb.append(ab);
-    // return bb.getBlob(mimeString);
-}
-//document.getElementById("para1").innerHTML = dateToSmartString(new Date('2016-01-01T13:39:45.794Z'));
-function dayOfUniverse(date) {
-    return Math.round((date) / 8.64e7);
-}
-function dateToSmartString(date) {
-    var now = new Date();
-    var day_name;
-    if (dayOfUniverse(date) == dayOfUniverse(now)) {
-        day_name = 'Today';
-    }
-    else if (dayOfUniverse(date) == dayOfUniverse(now) - 1) {
-        day_name = 'Yesterday';
-    }
-    else 
-    /*if(dayOfUniverse(date)==dayOfUniverse(now)-2){
-
-        day_name='Předevčírem';
-
-    }else*/ {
-        return (date.getDate()) + '.' + (date.getMonth() + 1) + '.' + date.getFullYear();
-    }
-    return day_name + ' at ' + date.getHours() + ':' + date.getMinutes();
-}
-function isValidDate(d) {
-    if (Object.prototype.toString.call(d) !== "[object Date]")
-        return false;
-    return !isNaN(d.getTime());
-}
-function dateFromDotString(str) {
-    var pattern = /(\d{1,2})\.(\d{1,2})\.(\d{4})/;
-    if (!pattern.test(str))
-        return false; //todo maybe invalid date of error
-    var d = parseInt(str.replace(pattern, '$1'));
-    var m = parseInt(str.replace(pattern, '$2'));
-    var y = parseInt(str.replace(pattern, '$3'));
-    var date = new Date();
-    date.setFullYear(y);
-    date.setMonth(m - 1);
-    date.setDate(d - 1);
-    //todo minutes seconds hours
-    return (date);
-}
-var GALLERY;
-(function (GALLERY) {
-    var Viewer;
-    (function (Viewer) {
-        var DeployFile = (function () {
-            function DeployFile(name, content) {
-                this.name = name;
-                this.content = content;
-            }
-            return DeployFile;
-        }());
-        Viewer.DeployFile = DeployFile;
-        function createZip(onDone) {
-            var deployNotification = new PH.Notification('Deploy', 'Downloading files');
-            var index;
-            var screenshots;
-            var media;
-            index = new Promise(function (resolve, reject) {
-                var deployFiles = [];
-                var xhr = new XMLHttpRequest();
-                xhr.open("GET", '/index-src.php');
-                xhr.responseType = "text";
-                xhr.onload = function () {
-                    //r(this);
-                    deployFiles.push(new DeployFile('index.php', this.response));
-                    if (this.status == 200) {
-                        resolve(deployFiles);
-                    }
-                    else {
-                        reject(deployFiles);
-                    }
-                };
-                xhr.send();
-            });
-            screenshots = new Promise(function (resolve, reject) {
-                var labels = objects.filterTypes('label');
-                GALLERY.Viewer.makeScreenshots(labels, { width: 1920 / 2, height: 1080 / 2 }, function (screenshots) {
-                    var deployFiles = [];
-                    screenshots.forEach(function (screenshot, index) {
-                        var label = labels.getAll()[index]; //todo .getObjectByIndex(index);
-                        var name = label.uri.split('/').join('-');
-                        var screenshotName = 'screenshots/screenshot' + name + '.png';
-                        label.screenshot = '/' + screenshotName;
-                        deployFiles.push(new DeployFile(screenshotName, screenshot));
-                        //deployFiles.push(new DeployFile(routeName,``));
-                    });
-                    //r(deployFiles);
-                    resolve(deployFiles);
-                });
-            });
-            media = new Promise(function (resolve, reject) {
-                var sources = [
-                    //'viewer/index.html',
-                    '/viewer/style/viewer.css',
-                    //'viewer/script/lib/babylon.js',
-                    //'node_modules/handjs/hand.min.js',
-                    //'media/images/backgrounds/menu.png',
-                    //'media/images/backgrounds/page.png',
-                    //'media/images/ui/mouse-lock.png',
-                    //'media/images/ui/keys-text.png',
-                    /*'media/sound/link-key.mp3',
-                    'media/sound/link-teleport.mp3',
-                    'media/sound/link-key-none.mp3',
-                    'media/sound/gate-locked.mp3',
-                    'media/sound/step-stairs.mp3',
-                    'media/sound/step-ground.mp3',
-                    'media/sound/step-room.mp3',*/
-                    /*'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_ft.jpg',
-                    'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_rt.jpg',
-                    'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_up.jpg',
-                    'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_bk.jpg',
-                    'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_dn.jpg',
-                    'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_lf.jpg',*/
-                    'https://code.jquery.com/jquery-2.2.4.min.js',
-                    'https://code.jquery.com/ui/1.12.0/jquery-ui.min.js',
-                    '/node_modules/jszip/dist/jszip.min.js',
-                    '/node_modules/file-saver/FileSaver.min.js',
-                    '/viewer/script/lib/babylon.js',
-                    '/node_modules/handjs/hand.min.js',
-                    //'http://www.babylonjs.com/hand.minified-1.2.js',
-                    //'http://www.babylonjs.com/babylon.js',
-                    '/viewer/script/viewer.js'
-                ];
-                var materials = [];
-                objects.forEach(function (object) {
-                    if ("material" in object) {
-                        materials.push(object.material);
-                    }
-                });
-                objects.filterTypes('environment').forEach(function (environment) {
-                    if (environment.ground != 'none') {
-                        materials.push(environment.ground);
-                    }
-                    if (environment.skybox != 'none') {
-                        sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_ft.jpg');
-                        sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_rt.jpg');
-                        sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_up.jpg');
-                        sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_bk.jpg');
-                        sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_dn.jpg');
-                        sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_lf.jpg');
-                    }
-                });
-                materials = materials.filter(function (material) {
-                    return (material.substr(0, 1) !== '#');
-                });
-                sources = sources.concat(materials.map(function (material) {
-                    return '/media/images/textures/' + material + '.jpg';
-                }));
-                sources = sources.filter(function (v, i, a) { return a.indexOf(v) === i; });
-                //r(sources);
-                var promises = sources.map(function (url) {
-                    var responseType;
-                    if (url.substr(-3) == '.js') {
-                        responseType = 'text';
-                    }
-                    else {
-                        responseType = 'blob';
-                    }
-                    return new Promise(function (resolve, reject) {
-                        var xhr = new XMLHttpRequest();
-                        xhr.open("GET", url);
-                        xhr.responseType = responseType;
-                        xhr.onload = function () {
-                            var file = new DeployFile(url, this.response);
-                            if (this.status == 200) {
-                                resolve(file);
-                            }
-                            else {
-                                reject(file);
-                            }
-                        };
-                        xhr.send();
-                        /*$.ajax({url: '/' + url, dataType: dataType}).always(function (response) {
-    
-    
-                            let file = new DeployFile(url,response.responseText);
-                            r(this);
-                            if(response.status == 200){
-                                resolve(file);
-    
-                            }else{
-                                reject(file);
-                            }
-                        });*/
-                    });
-                });
-                //r(promises);
-                Promise.all(promises).then(function (results) {
-                    resolve(results);
-                }, function () {
-                    reject();
-                });
-            });
-            //----------------------------------------------------------------
-            Promise.all([index, screenshots, media]).then(function (results) {
-                deployNotification.update('Creating zip file');
-                var index = results[0], screenshots = results[1], media = results[2];
-                var deployFiles = [].concat(screenshots, media);
-                var jsFiles = deployFiles.filter(function (file) {
-                    return (file.name.substr(-3) == '.js');
-                });
-                deployFiles = deployFiles.filter(function (file) {
-                    return (file.name.substr(-3) !== '.js');
-                });
-                var scripts = jsFiles.map(function (file) {
-                    return file.content;
-                });
-                scripts.push('GALLERY.Viewer.run(new GALLERY.Objects.CompiledArray(' + JSON.stringify(objects.getAll()) + '))');
-                var script = scripts.join(';');
-                //let gallery_folder = gallery_domain.split('.').join('-');
-                var zip = new JSZip();
-                //let zipRoot = zip.folder(gallery_folder);
-                zip.file('script-bundle.js', script);
-                zip.file('objects.compiled.json', JSON.stringify(objects.getAll(), null, true));
-                zip.file('.htaccess', "\nRewriteEngine On\n\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule . / [L,QSA]\n");
-                //r(deployFiles);
-                deployFiles.forEach(function (deployFile) {
-                    zip.file(deployFile.name, deployFile.content);
-                });
-                var html = index[0].content;
-                var COMMENT = /<!--((?!-->)(.|\s))*-->/g;
-                var SCRIPT = /<script((?!script>)(.|\s))*script>/g;
-                html = html.replace(SCRIPT, '');
-                html = html.split('<!--GALLERY SCRIPT-->').join('<script src="/script-bundle.js" async></script>');
-                html = html.replace(COMMENT, '');
-                zip.file('index.php', html);
-                zip.generateAsync({ type: "blob" }).then(function (content) {
-                    onDone(content, deployNotification);
-                });
-            }, function () {
-                // one or more failed
-            });
-            //r(screenshots);
-        }
-        Viewer.createZip = createZip;
-        function downloadZip() {
-            createZip(function (content) {
-                var gallery_folder = Viewer.analyticsObject.domain.split('.').join('-');
-                saveAs(content, gallery_folder + ".zip");
-            });
-        }
-        Viewer.downloadZip = downloadZip;
-        function deployToFTP() {
-            createZip(function (content, deployNotification) {
-                var formData = new FormData();
-                formData.append("update", content);
-                formData.append("server", Viewer.deployObject.server);
-                formData.append("username", Viewer.deployObject.username);
-                formData.append("password", Viewer.deployObject.password);
-                formData.append("directory", Viewer.deployObject.directory);
-                var xhr = new XMLHttpRequest();
-                xhr.open('POST', 'tools/ftp-deploy.php', true);
-                xhr.upload.onprogress = function (e) {
-                    if (e.lengthComputable) {
-                        var percentComplete = (e.loaded / e.total) * 100;
-                        percentComplete = Math.floor(percentComplete);
-                        deployNotification.update('Uploading zip file ' + percentComplete + '%');
-                    }
-                };
-                deployNotification.update('Uploading');
-                xhr.onload = function () {
-                    if (this.status == 200) {
-                        deployNotification.update('Finished');
-                    }
-                    else {
-                        deployNotification.update('Error while uploading');
-                    }
-                };
-                xhr.send(formData);
-                /*var formData = new FormData();
-                formData.append("gallery", content);
-    
-                formData.append("password", gallery_password);
-    
-                var xhr = new XMLHttpRequest();
-                xhr.open('POST', 'http://'+gallery_domain+'/.gallery/update.php', true);
-    
-    
-                xhr.upload.onprogress = function(e) {
-    
-                    if (e.lengthComputable) {
-                        let percentComplete = (e.loaded / e.total) * 100;
-                        percentComplete = Math.floor(percentComplete);
-                        deployNotification.update('Uploading zip file '+percentComplete + '%' );
-                    }
-                };
-    
-    
-                deployNotification.update('Uploading');
-    
-                xhr.onload = function() {
-                    if (this.status == 200) {
-                        deployNotification.update('Finished');
-                    }else{
-                        deployNotification.update('Error while uploading');
-                    }
-                };
-                xhr.send(formData);*/
-            });
-        }
-        Viewer.deployToFTP = deployToFTP;
-    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
-})(GALLERY || (GALLERY = {}));
-var GALLERY;
-(function (GALLERY) {
-    var Viewer;
-    (function (Viewer) {
-        function developMenu() {
-            var $developMenu = $("\n                <div class=\"develop-menu\">\n                    <a onclick=\"GALLERY.Viewer.deployToFTP();\">Deploy to FTP</a>\n                    <a onclick=\"GALLERY.Viewer.downloadZip();\">Download as ZIP</a>\n                    <a onclick=\"GALLERY.Viewer.showStats();\">Show stats</a>\n                </div>\n            ");
-            var $labelsMenu = $('<ul></ul>');
-            console.log($labelsMenu);
-            objects.filterTypes('label').forEach(function (label) {
-                //todo href="'+label.uri+'"
-                var $labelsItem = $('<li><a onclick="GALLERY.Viewer.appState(\'' + label.uri + '\'+window.location.hash);">' + label.name + ' (' + label.uri + ')</a></li>');
-                $labelsMenu.append($labelsItem);
-            });
-            $($developMenu).append($labelsMenu);
-            $('body').append($developMenu);
-        }
-        Viewer.developMenu = developMenu;
-    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
-})(GALLERY || (GALLERY = {}));
-;
-var GALLERY;
-(function (GALLERY) {
-    var Viewer;
-    (function (Viewer) {
-        function showStats() {
-            if (!Viewer.analyticsObject)
-                return;
-            if (Viewer.analyticsObject.analyticsType == 'gallery') {
-                $.get(STATSERVER_URL + '/' + Viewer.analyticsObject.domain).done(function (sessions) {
-                    sessions.forEach(function (session) {
-                        if (session.states.length < 2)
-                            return;
-                        var positions = session.states.map(function (state) {
-                            var position = new BABYLON.Vector3(state.x * -BLOCK_SIZE, state.z * BLOCK_SIZE, //todo no use BLOCKS_1NP_LEVEL
-                            state.y * BLOCK_SIZE);
-                            return (position);
-                        });
-                        r(positions);
-                        var tube = BABYLON.Mesh.CreateTube("tube", positions, 0.5, 3, null, 0, Viewer.scene, false, BABYLON.Mesh.FRONTSIDE);
-                        //var lines = BABYLON.Mesh.CreateTube("lines",positions,2,3, null, 0, scene, false, BABYLON.Mesh.FRONTSIDE);
-                    });
-                });
-            }
-        }
-        Viewer.showStats = showStats;
-    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
-})(GALLERY || (GALLERY = {}));
-var GALLERY;
-(function (GALLERY) {
-    var Viewer;
-    (function (Viewer) {
-        var Effects;
-        (function (Effects) {
-            function nuke() {
-                Viewer.scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
-                Viewer.scene.fogDensity = 0.5;
-                Viewer.scene.fogColor = BABYLON.Color3.FromHexString('#ffffff');
-                Viewer.running = true;
-                Viewer.scene.registerBeforeRender(function () {
-                    if (!Viewer.running)
-                        return;
-                    Viewer.scene.fogDensity = Viewer.scene.fogDensity * 0.995;
-                    if (Viewer.scene.fogDensity < 0.02) {
-                        Viewer.scene.fogDensity = 0.02;
-                        Viewer.running = false;
-                    }
-                });
-                setTimeout(function () {
-                    ion.sound.play("nuke");
-                }, 300);
-                /*var easingFunction = new BABYLON.CircleEase();
-                easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
-        
-        
-                BABYLON.Animation.CreateAndStartAnimation(
-                    "anim",
-                    scene,
-                    "fogDensity",
-                    30,
-                    60,
-                    camera.position,
-                    0.02,
-        
-                    BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE,
-                    easingFunction
-                );*/
-            }
-            Effects.nuke = nuke;
-        })(Effects = Viewer.Effects || (Viewer.Effects = {}));
-    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
-})(GALLERY || (GALLERY = {}));
-var GALLERY;
-(function (GALLERY) {
-    var Viewer;
-    (function (Viewer) {
-        function unlockGatesAndActivateKeys(key) {
-            var opening = 0, closing = 0;
-            Viewer.gates.forEach(function (gate) {
-                if (gate.object.key == key) {
-                    gate.mesh.checkCollisions = false;
-                    gate.mesh.material.alpha = 0.1;
-                    opening++;
-                }
-                else {
-                    gate.mesh.checkCollisions = true;
-                    gate.mesh.material.alpha = 0.95;
-                    closing++;
-                }
-            });
-            var activating = 0, inactivating = 0;
-            links.forEach(function (link) {
-                //r(link.object.href.substr(0,1));
-                if (link.object.href.substr(0, 1) === '#') {
-                    if (link.object.href == key) {
-                        link.mesh.checkCollisions = false;
-                        link.mesh.material.alpha = 0.1;
-                        inactivating++;
-                    }
-                    else {
-                        link.mesh.checkCollisions = true;
-                        link.mesh.material.alpha = 0.95;
-                        activating++;
-                    }
-                }
-            });
-            r('Opening ' + opening + ' gates, closing ' + closing + ' gates. Activating ' + activating + ' keys, inactivating ' + inactivating + ' keys.');
-        }
-        Viewer.unlockGatesAndActivateKeys = unlockGatesAndActivateKeys;
-    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
-})(GALLERY || (GALLERY = {}));
-var GALLERY;
-(function (GALLERY) {
-    var Viewer;
-    (function (Viewer) {
-        var imagesMaterials = {}; //todo DI
-        function getImageMaterial(src, isEmitting, hasAlpha, backFace) {
-            var key = src + isEmitting + hasAlpha + backFace; //todo better - maybe hash
-            if (typeof imagesMaterials[key] === 'undefined') {
-                var src = src;
-                var src_uri = URI(src) //todo Di
-                    .removeSearch("width");
-                var src_normal = src_uri.addSearch({ width: 512 }).toString();
-                var image_texture = new BABYLON.Texture(src_normal, Viewer.scene);
-                image_texture.hasAlpha = hasAlpha;
-                //image_texture.delayLoadState = BABYLON.Engine.DELAYLOADSTATE_NOTLOADED;
-                var material = new BABYLON.StandardMaterial("texture4", Viewer.scene);
-                if (isEmitting) {
-                    material.emissiveTexture = image_texture;
-                    material.backFaceCulling = !(backFace);
-                    material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
-                    material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
-                    material.specularPower = 32;
-                    //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
-                    material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
-                    material.diffuseColor = new BABYLON.Color3(0, 0, 0);
-                }
-                else {
-                    material.diffuseTexture = image_texture;
-                }
-                material.freeze();
-                imagesMaterials[key] = material;
-            }
-            return (imagesMaterials[key]);
-        }
-        Viewer.getImageMaterial = getImageMaterial;
-    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
-})(GALLERY || (GALLERY = {}));
-var GALLERY;
-(function (GALLERY) {
-    var Viewer;
-    (function (Viewer) {
-        function getTextureUrl(key) {
-            var url;
-            if (BLOCK_MATERIALS.indexOf(key) !== -1) {
-                url = "/media/images/textures/" + key + ".jpg";
-                r('Creating native texture ' + key + '.');
-            }
-            else {
-                var image = textures.findBy('name', key);
-                r('finded', image);
-                if (image) {
-                    url = image.getTexture();
-                    r('Creating texture ' + key + ' from ' + url + '.');
-                }
-                else {
-                    console.warn('There is no texture image with name ' + key + '!');
-                }
-            }
-            return (url);
-        }
-        Viewer.getTextureUrl = getTextureUrl;
-        var materials = {}; //todo maybe DI
-        function getMaterial(key, opacity, noCache) {
-            if (noCache === void 0) { noCache = false; }
-            if (typeof materials[key] === 'undefined' || noCache) {
-                var material = new BABYLON.StandardMaterial("Mat", Viewer.scene);
-                if (key.substr(0, 1) == '#') {
-                    material.diffuseColor = BABYLON.Color3.FromHexString(key);
-                }
-                else {
-                    material.diffuseTexture = new BABYLON.Texture(getTextureUrl(key), Viewer.scene);
-                    material.diffuseTexture.uScale = 10; //Vertical offset of 10%
-                    material.diffuseTexture.vScale = 10; //Horizontal offset of 40%
-                }
-                material.alpha = opacity;
-                material.freeze();
-                if (noCache) {
-                    return (material);
-                }
-                else {
-                    materials[key] = material;
-                }
-            }
-            return (materials[key]);
-        }
-        Viewer.getMaterial = getMaterial;
-    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
-})(GALLERY || (GALLERY = {}));
 /*! URI.js v1.17.1 http://medialize.github.io/URI.js/ */
 /* build contains: IPv6.js, punycode.js, SecondLevelDomains.js, URI.js */
 /* jshint ignore:start */
@@ -4192,6 +3433,392 @@ function createStairsMesh(name, stairs_count, isFull, scene) {
      */
     return stairs_mesh;
 }
+/// <reference path="reference.ts" />
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        function createScene(engine, canvas) {
+            Viewer.scene = new BABYLON.Scene(engine);
+            // Lights
+            //var light0 = new BABYLON.DirectionalLight("Omni", new BABYLON.Vector3(-2, -5, 2), scene);
+            //var light1 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(2, -5, -2), scene);
+            // Need a free camera for collisions
+            //var camera = new BABYLON.VirtualJoysticksCamera("VJC", BABYLON.Vector3.Zero(), scene);
+            var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, EYE_VERTICAL * BLOCK_SIZE, 30 * BLOCK_SIZE), Viewer.scene);
+            camera.ellipsoid = new BABYLON.Vector3(1, (EYE_VERTICAL - 0.1111 /*todo why?*/) * BLOCK_SIZE / 2, 1);
+            Viewer.scene.activeCamera = camera;
+            camera.rotation.y = Math.PI;
+            camera.attachControl(canvas, true);
+            camera.angularSensibility = -MOUSE_ANGULAR_SENSIBILITY; //todo const
+            //camera.panningSensibility = 10000;
+            //var inputManager = camera.inputs;
+            /*setTimeout(function () {
+             r('mousedown');
+             $(canvas).trigger('mousedown');
+             },1500);*/
+            camera.keysUp.push(87); // "w"
+            camera.keysDown.push(83); // "s"
+            //camera.keysLeft.push(65); // "s"
+            //camera.keysRight.push(68); // "d"
+            camera.keysLeft = [37, 65]; //arrow <-
+            camera.keysRight = [39, 68]; //arrow ->
+            camera.speed = SPEED;
+            camera.inertia = SPEED_INERTIA;
+            camera.fov = 1.3;
+            camera.onCollide = function () {
+                Viewer.onCollide.apply(this, arguments); //todo why?
+                //r('collide',onCollide);
+            };
+            //Set gravity for the scene (G force like, on Y-axis)
+            Viewer.scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
+            //scene.enablePhysics(scene.gravity, new BABYLON.OimoJSPlugin());
+            // Enable Collisions
+            Viewer.scene.collisionsEnabled = true;
+            //Then apply collisions and gravity to the active camera
+            camera.checkCollisions = true;
+            camera.applyGravity = true;
+            //Set the ellipsoid around the camera (e.g. your player's size)
+            /*camera._oldPositionForCollisions = camera.position;
+             camera.moveWithCollisions = function(velocity: Vector3): void {
+    
+             r(this);
+    
+             var globalPosition = this.position;//getAbsolutePosition();
+    
+             globalPosition.subtractFromFloatsToRef(0, this.ellipsoid.y, 0, this._oldPositionForCollisions);
+             //this._oldPositionForCollisions.addInPlace(this.ellipsoidOffset);
+             this._collider.radius = this.ellipsoid;
+    
+             this.getScene().collisionCoordinator.getNewPosition(this._oldPositionForCollisions, velocity, this._collider, 3, this, this._onCollisionPositionChange, this.uniqueId);
+             };*/
+            canvas.addEventListener("mousemove", function (event) {
+                var pickResult = Viewer.scene.pick(Viewer.scene.pointerX, Viewer.scene.pointerY);
+                Viewer.onPointerHover(event, pickResult);
+            });
+            var zones_last = [];
+            Viewer.scene.registerBeforeRender(function () {
+                if (GALLERY.Viewer.MODE == 'WEB') {
+                    if (Viewer.current_label) {
+                        //r(current_label.uri);
+                        //r(current_label);
+                        if (Viewer.current_label.rotationSpeed) {
+                            camera.rotation.y += Viewer.current_label.rotationSpeed / 180 * Math.PI / engine.getFps();
+                        }
+                    }
+                }
+                //r(scene.isReady());
+                if (GALLERY.Viewer.LOCKED)
+                    return;
+                camera.cameraDirection.y += 0.01;
+                //camera.moveWithCollisions(scene.gravity);
+                /*if (!ground.intersectsPoint(camera.position)) {
+                 camera.position.addInPlace(scene.gravity);
+                 }*/
+                /*camera_mesh.position = camera.position;
+                 camera_mesh.moveWithCollisions(scene.gravity);
+                 camera.position = camera_mesh.position;*/
+                if (camera.position.y < RESPAWN_VERTICAL * BLOCK_SIZE) {
+                    if (GALLERY.Viewer.running) {
+                        GALLERY.Viewer.appStateBack();
+                    }
+                }
+                var limit = (Math.PI / 2) * (3 / 4);
+                if (camera.rotation.x < -limit) {
+                    camera.rotation.x = -limit;
+                }
+                if (camera.rotation.x > limit) {
+                    camera.rotation.x = limit;
+                }
+                //----------------------------------------------------------Zones
+                var zones_ids = [];
+                /*zones.forEach(function (zone) {
+    
+    
+                    if (zone.mesh.intersectsPoint(camera.position)) {
+    
+                        zones_ids.push(zone.mesh.name);
+                        //r('in zone');
+                        zone.mesh.isPickable = false;
+    
+                    }else{
+                        zone.mesh.isPickable = zone.object.isPickable;
+    
+                    }
+    
+    
+                });*/
+                var zones_plus = [];
+                var zones_minus = [];
+                for (var i = 0, l = zones_ids.length; i < l; i++) {
+                    if (zones_last.indexOf(zones_ids[i]) == -1) {
+                        zones_plus.push(zones_ids[i]);
+                    }
+                }
+                for (var i = 0, l = zones_last.length; i < l; i++) {
+                    if (zones_ids.indexOf(zones_last[i]) == -1) {
+                        zones_minus.push(zones_last[i]);
+                    }
+                }
+                zones_last = zones_ids; //.slice();
+                if (zones_plus.length || zones_minus.length) {
+                    var zones_1 = zones_ids.map(function (zone_id) {
+                        return objects.getObjectById(zone_id);
+                    });
+                    zones_1 = zones_1.filter(function (zone) {
+                        return (zone.uri.substr(0, 1) == '/');
+                    });
+                    zones_1.sort(function (zone_a, zone_b) {
+                        if (zone_a.uri_level > zone_b.uri_level) {
+                            return (-1);
+                        }
+                        else if (zone_a.uri_level < zone_b.uri_level) {
+                            return (1);
+                        }
+                        else {
+                            return (0);
+                        }
+                    });
+                    r(zones_1);
+                    r('Creating new app uri from zone ', zones_1[0]);
+                    var uri = void 0;
+                    if (zones_1.length == 0) {
+                        uri = '/';
+                    }
+                    else {
+                        uri = zones_1[0].uri;
+                    }
+                    /*let uri = '/';
+                     zones.forEach(function (zone) {
+                     uri += zone.uri;
+                     });
+                     uri = uri.split('//').join('/');*/
+                    GALLERY.Viewer.appState(uri + window.location.hash, true);
+                }
+                //r(zones_plus,zones_minus);
+                zones_plus.forEach(function (zone_id) {
+                    //$('#zone-'+zone_id).show();
+                    r('In the zone ' + zone_id);
+                    var $zone_sections = $('#zone-' + zone_id);
+                    $zone_sections.stop().slideDown();
+                    //$zone_sections.show().stop().animate({'margin-top': '50px'},1000);
+                });
+                zones_minus.forEach(function (zone_id) {
+                    //$('#zone-'+zone_id).hide();
+                    r('Out of the zone ' + zone_id);
+                    //let zone = objects.getObjectById(zone_id);
+                    var $zone_sections = $('#zone-' + zone_id);
+                    $zone_sections.stop().slideUp();
+                    //$zone_sections.stop().hide('slide', {direction: 'up'}, 1400);
+                });
+                //----------------------------------------------------------Boards
+                Viewer.boards.forEach(function (board) {
+                    /*r(mesh.position);
+    
+                     var p = BABYLON.Vector3.Project(
+    
+                     mesh.position,
+                     BABYLON.Matrix.Identity(),
+                     scene.getTransformMatrix(),
+                     camera.viewport.toGlobal(engine)
+    
+    
+                     );*/
+                    var position = BABYLON.Vector3.Project(board.mesh.position, BABYLON.Matrix.Identity(), Viewer.scene.getTransformMatrix(), camera.viewport.toGlobal(canvas.clientWidth, canvas.clientHeight));
+                    if (position.z > 1) {
+                        board.element.style.display = 'none';
+                        return;
+                    }
+                    var pickInfo = Viewer.scene.pick(position.x, position.y);
+                    if (pickInfo.pickedMesh !== board.mesh) {
+                        board.element.style.display = 'none';
+                        return;
+                    }
+                    //r(pickInfo.pickedMesh.name);
+                    var distance = BABYLON.Vector3.Distance(camera.position, board.mesh.position);
+                    var zoom = 1 / distance;
+                    zoom = 1;
+                    board.element.style.zIndex = 1000000000 - distance; //todo better
+                    board.element.style.zoom = zoom;
+                    //r(board.element.clientWidth);
+                    board.element.style.left = (position.x / zoom) - (board.element.clientWidth / 2) + 'px';
+                    board.element.style.top = (position.y / zoom) + 'px';
+                    board.element.style.display = 'block';
+                });
+                //----------------------------------------------------------
+            });
+            //r(camera.viewport);
+            //r(camera.viewport.toGlobal(engine));
+            //camera.mode = 1;
+            /*var camera_mesh = BABYLON.Mesh.CreateSphere("crate", 16, 1, scene);
+             camera_mesh.checkCollisions = true;
+             camera_mesh.applyGravity = true;
+    
+             camera_mesh.scaling.y = EYE_VERTICAL * BLOCK_SIZE/2;*/
+            /*camera.onCollide = function(event){
+             r(event);
+    
+             };*/
+            var sun = new BABYLON.DirectionalLight("Dir0", new BABYLON.Vector3(-0.7, -1, -0.5), Viewer.scene);
+            var sun2 = new BABYLON.DirectionalLight("Dir0", new BABYLON.Vector3(0.7, -1, 0.5), Viewer.scene);
+            sun2.intensity = 0.5;
+            /*
+             // Skybox
+             var skybox = BABYLON.Mesh.CreateBox("skyBox", 10000, scene);
+             var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+             skyboxMaterial.backFaceCulling = false;
+             skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../media/images/skyboxes/tropical-sunny-day/TropicalSunnyDay", scene);
+             skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+             skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+             skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+             skyboxMaterial.disableLighting = true;
+             skybox.material = skyboxMaterial;
+             skybox.position = new BABYLON.Vector3(0, 0, 0);
+             skybox.isPickable = false;
+             /**/
+            /*$( canvas ).keydown(function( event ) {
+    
+             console.log(event.which);
+    
+    
+             if ( event.which == 39 ) {
+    
+             camera.rotation.y += 0.2;
+             }
+             if ( event.which == 37 ) {
+    
+             camera.rotation.y -= 0.2;
+    
+             }
+    
+    
+    
+             });*/
+            //-----------------------------------------------------------------Pointer Events
+            var onDownCamera, onDownTimestamp;
+            var pointerDown = false;
+            var enginePlayReasonDragging = new Viewer.EnginePlayReason('dragging');
+            //When pointer down event is raised
+            Viewer.scene.onPointerDown = function () {
+                pointerDown = true;
+                if (Viewer.MODE == 'WEB') {
+                    //r('down');
+                    onDownCamera = camera.rotation.clone();
+                    onDownTimestamp = new Date() / 1000;
+                    Viewer.playEngine(enginePlayReasonDragging);
+                }
+            };
+            /*scene.onPointerMove = function(){
+    
+             r('move');
+             movement++;
+    
+    
+             };*/
+            Viewer.scene.onPointerUp = function () {
+                pointerDown = false;
+                if (Viewer.MODE == 'WEB') {
+                    var distance = BABYLON.Vector3.Distance(camera.rotation, onDownCamera);
+                    var distanceTime = (new Date() / 1000) - onDownTimestamp;
+                    r(distance, distanceTime);
+                    if (distance > 0.1 || distanceTime > 1) {
+                    }
+                    else {
+                        Viewer.onPointerUp.apply(this, arguments);
+                    }
+                    Viewer.pauseEngine(enginePlayReasonDragging);
+                }
+            };
+            /*scene.registerBeforeRender(function () {
+    
+                if(pointerDown) {
+                    camera.position.x += Math.sin(camera.rotation.y) * 0.5;
+                    camera.position.z += Math.cos(camera.rotation.y) * 0.5;
+                }
+    
+            });*/
+            //-----------------------------------------------------------------
+            /*var movement = {
+             z: 0
+             };
+             scene.registerBeforeRender(function () {
+    
+             //r(movement);
+             camera.position.y += movement.z;
+    
+             movement.z *= 0.9;
+             if(movement.z<0.1)movement.z=0;
+    
+             });*/
+            return ({
+                scene: Viewer.scene,
+                camera: camera,
+                sun: sun,
+            });
+        }
+        Viewer.createScene = createScene;
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="reference.ts" />
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        var EnginePlayReason = (function () {
+            function EnginePlayReason(name) {
+                this.name = name;
+            }
+            return EnginePlayReason;
+        }());
+        Viewer.EnginePlayReason = EnginePlayReason;
+        Viewer.engineRunning = false;
+        Viewer.enginePlayReasons = [];
+        function renderTick() {
+            Viewer.scene.render();
+        }
+        Viewer.renderTick = renderTick;
+        function _enginePlayReasonsChanged() {
+            if (Viewer.enginePlayReasons.length > 0) {
+                var enginePlayReasonsNames = Viewer.enginePlayReasons.map(function (enginePlayReason) {
+                    return (enginePlayReason.name);
+                }).join(' and ');
+                r('Starting engine because of ' + enginePlayReasonsNames + '.');
+                Viewer.engine.runRenderLoop(renderTick);
+                Viewer.engineRunning = true;
+            }
+            else {
+                r('Pausing engine');
+                Viewer.engine.stopRenderLoop(renderTick);
+                Viewer.engineRunning = false;
+            }
+        }
+        function playEngine(enginePlayReason) {
+            Viewer.enginePlayReasons.push(enginePlayReason);
+            _enginePlayReasonsChanged();
+        }
+        Viewer.playEngine = playEngine;
+        function pauseEngine(enginePlayReason) {
+            Viewer.enginePlayReasons = Viewer.enginePlayReasons.filter(function (enginePlayReason_) {
+                return (enginePlayReason != enginePlayReason_);
+            });
+            setTimeout(_enginePlayReasonsChanged, 100);
+        }
+        Viewer.pauseEngine = pauseEngine;
+        Viewer.canvas = document.getElementById("scene");
+        Viewer.engine = new BABYLON.Engine(Viewer.canvas, true, { stencil: true, preserveDrawingBuffer: true });
+        var scene_ = Viewer.createScene(Viewer.engine, Viewer.canvas);
+        Viewer.scene = scene_.scene;
+        Viewer.camera = scene_.camera;
+        Viewer.sun = scene_.sun;
+        // Resize
+        window.addEventListener("resize", function () {
+            Viewer.engine.resize();
+        });
+        BABYLON.SceneOptimizer.OptimizeAsync(Viewer.scene, BABYLON.SceneOptimizerOptions.HighDegradationAllowed(), function () {
+        }, function () {
+        });
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
 var GALLERY;
 (function (GALLERY) {
     var Viewer;
@@ -4261,11 +3888,14 @@ var GALLERY;
 (function (GALLERY) {
     var Viewer;
     (function (Viewer) {
+        Viewer.rendered = false;
         Viewer.meshes = [];
         Viewer.zones = [];
         Viewer.boards = [];
+        //export var hooverLayer;
         function runWorld(objects_world, textures) {
             r('Running gallery with ' + objects_world.getAll().length + ' objects.', objects_world);
+            Viewer.rendered = false;
             Viewer.meshes = [];
             Viewer.zones = [];
             Viewer.boards = [];
@@ -4283,15 +3913,14 @@ var GALLERY;
             var endlessStructures = false;
             var endlessStructuresFromStorey = false;
             //var wasVideo = false;
-            Viewer.hooverLayer = new BABYLON.HighlightLayer("hooverLayer", Viewer.scene, { camera: Viewer.camera });
-            Viewer.hooverLayer.blurHorizontalSize = 0.5;
-            Viewer.hooverLayer.blurVerticalSize = 0.5;
-            //hooverLayer.innerGlow = false;
+            /*hooverLayer = new BABYLON.HighlightLayer("hooverLayer", scene, {camera: camera});
+            hooverLayer.blurHorizontalSize = 0.5;
+            hooverLayer.blurVerticalSize = 0.5;*/
             //-----------------------------------------------------zoneMaterial
             var zoneMaterial = new BABYLON.StandardMaterial("texture1", Viewer.scene);
             zoneMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
             if (Viewer.develop) {
-                zoneMaterial.alpha = 0;
+                zoneMaterial.alpha = 0.2;
             }
             else {
                 zoneMaterial.alpha = 0;
@@ -4413,14 +4042,6 @@ var GALLERY;
                     }
                 }
                 else if (object.type == 'zone') {
-                    var mesh = BABYLON.Mesh.CreateBox(object.id, BLOCK_SIZE, Viewer.scene);
-                    mesh.material = zoneMaterial;
-                    //mesh.material = getMaterial('stone-plain',0.5);
-                    mesh.position = position;
-                    position.y += BLOCK_SIZE * BLOCKS_2D_3D_SHAPES.room.length / 2;
-                    mesh.scaling.y = BLOCKS_2D_3D_SHAPES.room.length;
-                    mesh.scaling.x = object.width;
-                    mesh.scaling.z = object.height;
                     if (object.name || object.html) {
                         var isNext = false;
                         var label = objects.filterTypes('label').findBy('uri', object.uri);
@@ -4440,10 +4061,25 @@ var GALLERY;
                         element.onclick = Viewer.appStateNext;
                         document.getElementById('zones').appendChild(element);
                     }
-                    mesh.checkCollisions = false;
-                    mesh.isPickable = false; //object.isPickable;
-                    if (!object.isPickable) {
-                        Viewer.hooverLayer.addExcludedMesh(mesh);
+                    var mesh = void 0;
+                    if (object.isPickable && false) {
+                        mesh = BABYLON.Mesh.CreateBox(object.id, BLOCK_SIZE, Viewer.scene);
+                        mesh.material = zoneMaterial;
+                        //mesh.material = getMaterial('stone-plain',0.5);
+                        mesh.position = position;
+                        position.y += BLOCK_SIZE * BLOCKS_2D_3D_SHAPES.room.length / 2;
+                        mesh.scaling.y = BLOCKS_2D_3D_SHAPES.room.length;
+                        mesh.scaling.x = object.width;
+                        mesh.scaling.z = object.height;
+                        mesh.checkCollisions = false;
+                        mesh.isPickable = false; //object.isPickable;
+                        /*if(!object.isPickable){
+                            hooverLayer.addExcludedMesh(mesh);
+                        }*/
+                        Viewer.meshes.push(mesh);
+                    }
+                    else {
+                        mesh = null;
                     }
                     //r(mesh);
                     Viewer.zones.push({
@@ -4451,7 +4087,6 @@ var GALLERY;
                         element: element,
                         object: object
                     });
-                    Viewer.meshes.push(mesh);
                 }
                 else if (object.type == 'block') {
                     throw new Error('Block should not be in compiled objects.');
@@ -4494,8 +4129,7 @@ var GALLERY;
                 else if (object.type == 'image') {
                     if (typeof object.rotation === 'number') {
                         var rotation_rad_1 = (object.rotation / 180) * Math.PI;
-                        var image = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, Viewer.scene);
-                        image.material = Viewer.getImageMaterial(object.src, object.isEmitting, object.hasAlpha, object.backFace);
+                        var image = Viewer.getImageMesh(object);
                         if (object.onGround) {
                             image.position = position;
                             image.position.y = (level + BLOCKS_1NP_LEVEL + 0.5) * BLOCK_SIZE + 0.1;
@@ -4567,7 +4201,7 @@ var GALLERY;
                         }
                         image.scaling.x = object.width;
                         image.scaling.y = object.height;
-                        image.scaling.z = 0.1;
+                        //image.scaling.z = 0.1;
                         image.checkCollisions = object.checkCollisions;
                         Viewer.meshes.push(image);
                     }
@@ -4689,6 +4323,7 @@ var GALLERY;
                 }
             }
             objects_world.forEach(processObject);
+            Viewer.rendered = true;
             //unlockGatesAndActivateKeys();
         }
         Viewer.runWorld = runWorld;
@@ -4706,320 +4341,138 @@ var GALLERY;
 (function (GALLERY) {
     var Viewer;
     (function (Viewer) {
-        Viewer.canvas = document.getElementById("scene");
-        Viewer.engine = new BABYLON.Engine(Viewer.canvas, true, { stencil: true });
-        function createScene() {
-            Viewer.scene = new BABYLON.Scene(Viewer.engine);
-            // Lights
-            //var light0 = new BABYLON.DirectionalLight("Omni", new BABYLON.Vector3(-2, -5, 2), scene);
-            //var light1 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(2, -5, -2), scene);
-            // Need a free camera for collisions
-            //var camera = new BABYLON.VirtualJoysticksCamera("VJC", BABYLON.Vector3.Zero(), scene);
-            var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, EYE_VERTICAL * BLOCK_SIZE, 30 * BLOCK_SIZE), Viewer.scene);
-            camera.ellipsoid = new BABYLON.Vector3(1, (EYE_VERTICAL - 0.1111 /*todo why?*/) * BLOCK_SIZE / 2, 1);
-            Viewer.scene.activeCamera = camera;
-            camera.rotation.y = Math.PI;
-            camera.attachControl(Viewer.canvas, true);
-            camera.angularSensibility = -MOUSE_ANGULAR_SENSIBILITY; //todo const
-            //camera.panningSensibility = 10000;
-            //var inputManager = camera.inputs;
-            /*setTimeout(function () {
-             r('mousedown');
-             $(canvas).trigger('mousedown');
-             },1500);*/
-            camera.keysUp.push(87); // "w"
-            camera.keysDown.push(83); // "s"
-            //camera.keysLeft.push(65); // "s"
-            //camera.keysRight.push(68); // "d"
-            camera.keysLeft = [37, 65]; //arrow <-
-            camera.keysRight = [39, 68]; //arrow ->
-            camera.speed = SPEED;
-            camera.inertia = SPEED_INERTIA;
-            camera.fov = 1.3;
-            camera.onCollide = function () {
-                Viewer.onCollide.apply(this, arguments); //todo why?
-                //r('collide',onCollide);
-            };
-            //Set gravity for the scene (G force like, on Y-axis)
-            Viewer.scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
-            //scene.enablePhysics(scene.gravity, new BABYLON.OimoJSPlugin());
-            // Enable Collisions
-            Viewer.scene.collisionsEnabled = true;
-            //Then apply collisions and gravity to the active camera
-            camera.checkCollisions = true;
-            camera.applyGravity = true;
-            //Set the ellipsoid around the camera (e.g. your player's size)
-            /*camera._oldPositionForCollisions = camera.position;
-             camera.moveWithCollisions = function(velocity: Vector3): void {
-    
-             r(this);
-    
-             var globalPosition = this.position;//getAbsolutePosition();
-    
-             globalPosition.subtractFromFloatsToRef(0, this.ellipsoid.y, 0, this._oldPositionForCollisions);
-             //this._oldPositionForCollisions.addInPlace(this.ellipsoidOffset);
-             this._collider.radius = this.ellipsoid;
-    
-             this.getScene().collisionCoordinator.getNewPosition(this._oldPositionForCollisions, velocity, this._collider, 3, this, this._onCollisionPositionChange, this.uniqueId);
-             };*/
-            Viewer.canvas.addEventListener("mousemove", function (event) {
-                var pickResult = Viewer.scene.pick(Viewer.scene.pointerX, Viewer.scene.pointerY);
-                Viewer.onPointerHover(event, pickResult);
-            });
-            var zones_last = [];
-            Viewer.scene.registerBeforeRender(function () {
-                if (GALLERY.Viewer.MODE == 'WEB') {
-                    if (Viewer.current_label) {
-                        //r(current_label.uri);
-                        //r(current_label);
-                        if (Viewer.current_label.rotationSpeed) {
-                            camera.rotation.y += Viewer.current_label.rotationSpeed / 180 * Math.PI / Viewer.engine.getFps();
+        var controls_keys = {
+            'UP': [38, 87],
+            'DOWN': [40, 83],
+            'LEFT': [37, 65],
+            'RIGHT': [39, 68],
+            'JUMP': [32],
+            //'REFRESH': [80],
+            'PRINTSCR': [80],
+        };
+        //------------------------------------------------------------
+        window.addEventListener('keydown', function (e) {
+            // space and arrow keys
+            if ([32, 37, 38, 39, 40].indexOf(e.keyCode) != -1) {
+                //if(T.UI.Status.focusOnMap()){
+                e.preventDefault();
+            }
+        }, false);
+        //------------------------------------------------------------
+        var keys = [];
+        var moving = false;
+        var controls_down = {
+            update: function () {
+                for (var control in controls_keys) {
+                    this[control] = false;
+                    for (var i = 0, l = keys.length; i < l; i++) {
+                        if (controls_keys[control].indexOf(keys[i]) !== -1) {
+                            this[control] = true;
                         }
                     }
                 }
-                //r(scene.isReady());
-                if (GALLERY.Viewer.LOCKED)
-                    return;
-                camera.cameraDirection.y += 0.01;
-                //camera.moveWithCollisions(scene.gravity);
-                /*if (!ground.intersectsPoint(camera.position)) {
-                 camera.position.addInPlace(scene.gravity);
-                 }*/
-                /*camera_mesh.position = camera.position;
-                 camera_mesh.moveWithCollisions(scene.gravity);
-                 camera.position = camera_mesh.position;*/
-                if (camera.position.y < RESPAWN_VERTICAL * BLOCK_SIZE) {
-                    if (GALLERY.Viewer.running) {
-                        GALLERY.Viewer.appStateBack();
-                    }
-                }
-                var limit = (Math.PI / 2) * (3 / 4);
-                if (camera.rotation.x < -limit) {
-                    camera.rotation.x = -limit;
-                }
-                if (camera.rotation.x > limit) {
-                    camera.rotation.x = limit;
-                }
-                //----------------------------------------------------------Zones
-                var zones_ids = [];
-                Viewer.zones.forEach(function (zone) {
-                    if (zone.mesh.intersectsPoint(camera.position)) {
-                        zones_ids.push(zone.mesh.name);
-                        //r('in zone');
-                        zone.mesh.isPickable = false;
-                    }
-                    else {
-                        zone.mesh.isPickable = zone.object.isPickable;
-                    }
-                });
-                var zones_plus = [];
-                var zones_minus = [];
-                for (var i = 0, l = zones_ids.length; i < l; i++) {
-                    if (zones_last.indexOf(zones_ids[i]) == -1) {
-                        zones_plus.push(zones_ids[i]);
-                    }
-                }
-                for (var i = 0, l = zones_last.length; i < l; i++) {
-                    if (zones_ids.indexOf(zones_last[i]) == -1) {
-                        zones_minus.push(zones_last[i]);
-                    }
-                }
-                zones_last = zones_ids; //.slice();
-                if (zones_plus.length || zones_minus.length) {
-                    var zones_1 = zones_ids.map(function (zone_id) {
-                        return objects.getObjectById(zone_id);
-                    });
-                    zones_1 = zones_1.filter(function (zone) {
-                        return (zone.uri.substr(0, 1) == '/');
-                    });
-                    zones_1.sort(function (zone_a, zone_b) {
-                        if (zone_a.uri_level > zone_b.uri_level) {
-                            return (-1);
-                        }
-                        else if (zone_a.uri_level < zone_b.uri_level) {
-                            return (1);
-                        }
-                        else {
-                            return (0);
-                        }
-                    });
-                    r(zones_1);
-                    r('Creating new app uri from zone ', zones_1[0]);
-                    var uri = void 0;
-                    if (zones_1.length == 0) {
-                        uri = '/';
-                    }
-                    else {
-                        uri = zones_1[0].uri;
-                    }
-                    /*let uri = '/';
-                     zones.forEach(function (zone) {
-                     uri += zone.uri;
-                     });
-                     uri = uri.split('//').join('/');*/
-                    GALLERY.Viewer.appState(uri + window.location.hash, true);
-                }
-                //r(zones_plus,zones_minus);
-                zones_plus.forEach(function (zone_id) {
-                    //$('#zone-'+zone_id).show();
-                    r('In the zone ' + zone_id);
-                    var $zone_sections = $('#zone-' + zone_id);
-                    $zone_sections.stop().slideDown();
-                    //$zone_sections.show().stop().animate({'margin-top': '50px'},1000);
-                });
-                zones_minus.forEach(function (zone_id) {
-                    //$('#zone-'+zone_id).hide();
-                    r('Out of the zone ' + zone_id);
-                    //let zone = objects.getObjectById(zone_id);
-                    var $zone_sections = $('#zone-' + zone_id);
-                    $zone_sections.stop().slideUp();
-                    //$zone_sections.stop().hide('slide', {direction: 'up'}, 1400);
-                });
-                //----------------------------------------------------------Boards
-                Viewer.boards.forEach(function (board) {
-                    /*r(mesh.position);
-    
-                     var p = BABYLON.Vector3.Project(
-    
-                     mesh.position,
-                     BABYLON.Matrix.Identity(),
-                     scene.getTransformMatrix(),
-                     camera.viewport.toGlobal(engine)
-    
-    
-                     );*/
-                    var position = BABYLON.Vector3.Project(board.mesh.position, BABYLON.Matrix.Identity(), Viewer.scene.getTransformMatrix(), camera.viewport.toGlobal(Viewer.canvas.clientWidth, Viewer.canvas.clientHeight));
-                    if (position.z > 1) {
-                        board.element.style.display = 'none';
-                        return;
-                    }
-                    var pickInfo = Viewer.scene.pick(position.x, position.y);
-                    if (pickInfo.pickedMesh !== board.mesh) {
-                        board.element.style.display = 'none';
-                        return;
-                    }
-                    //r(pickInfo.pickedMesh.name);
-                    var distance = BABYLON.Vector3.Distance(camera.position, board.mesh.position);
-                    var zoom = 1 / distance;
-                    zoom = 1;
-                    board.element.style.zIndex = 1000000000 - distance; //todo better
-                    board.element.style.zoom = zoom;
-                    //r(board.element.clientWidth);
-                    board.element.style.left = (position.x / zoom) - (board.element.clientWidth / 2) + 'px';
-                    board.element.style.top = (position.y / zoom) + 'px';
-                    board.element.style.display = 'block';
-                });
-                //----------------------------------------------------------
-            });
-            //r(camera.viewport);
-            //r(camera.viewport.toGlobal(engine));
-            //camera.mode = 1;
-            /*var camera_mesh = BABYLON.Mesh.CreateSphere("crate", 16, 1, scene);
-             camera_mesh.checkCollisions = true;
-             camera_mesh.applyGravity = true;
-    
-             camera_mesh.scaling.y = EYE_VERTICAL * BLOCK_SIZE/2;*/
-            /*camera.onCollide = function(event){
-             r(event);
-    
-             };*/
-            var sun = new BABYLON.DirectionalLight("Dir0", new BABYLON.Vector3(-0.7, -1, -0.5), Viewer.scene);
-            var sun2 = new BABYLON.DirectionalLight("Dir0", new BABYLON.Vector3(0.7, -1, 0.5), Viewer.scene);
-            sun2.intensity = 0.5;
+            }
+        };
+        window.addEventListener('keydown', function (e) {
+            //if(T.UI.Status.focusOnMap()) {
+            r('DOWN', e.keyCode);
+            if (keys.indexOf(e.keyCode) === -1) {
+                keys.push(e.keyCode);
+                controls_down.update();
+            }
+            //}
+        });
+        window.addEventListener('keyup', function (e) {
+            //if(T.UI.Status.focusOnMap()) {
+            //r('UP', e.keyCode);
+            var i = keys.indexOf(e.keyCode);
+            if (i != -1) {
+                keys.splice(i, 1);
+                controls_down.update();
+            }
+            //}
+        });
+        var last = null;
+        var keys_tick = function (timestamp) {
+            if (!last)
+                last = timestamp;
+            var progress = (timestamp - last) / 1000;
+            last = timestamp;
+            //if(window_opened)return;
             /*
-             // Skybox
-             var skybox = BABYLON.Mesh.CreateBox("skyBox", 10000, scene);
-             var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
-             skyboxMaterial.backFaceCulling = false;
-             skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../media/images/skyboxes/tropical-sunny-day/TropicalSunnyDay", scene);
-             skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-             skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-             skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-             skyboxMaterial.disableLighting = true;
-             skybox.material = skyboxMaterial;
-             skybox.position = new BABYLON.Vector3(0, 0, 0);
-             skybox.isPickable = false;
-             /**/
-            /*$( canvas ).keydown(function( event ) {
     
-             console.log(event.which);
+             if (controls_down.UP) {
     
     
-             if ( event.which == 39 ) {
+             ion.sound.play("step");
     
-             camera.rotation.y += 0.2;
-             }
-             if ( event.which == 37 ) {
-    
-             camera.rotation.y -= 0.2;
+             //camera.position.x += Math.sin(camera.rotation.y)*5;
+             //camera.position.z += Math.cos(camera.rotation.y)*5;
     
              }
     
     
+             if (controls_down.DOWN) {
     
-             });*/
-            //-----------------------------------------------------------------Pointer Events
-            var onDownCamera, onDownTimestamp;
-            //When pointer down event is raised
-            Viewer.scene.onPointerDown = function () {
-                //r('down');
-                onDownCamera = camera.rotation.clone();
-                onDownTimestamp = new Date() / 1000;
-            };
-            /*scene.onPointerMove = function(){
+             //camera.position.x -= Math.sin(camera.rotation.y)*5;
+             //camera.position.z -= Math.cos(camera.rotation.y)*5;
     
-             r('move');
-             movement++;
+             }
+             */
+            /*if (controls_down.LEFT) {
+             camera.rotation.y -= SPEED_ROTATION*progress;
+             if(camera.rotation.y<0){
+             camera.rotation.y+=Math.PI*2;
+             }
+             }
     
     
-             };*/
-            Viewer.scene.onPointerUp = function () {
-                if (GALLERY.Viewer.MODE != 'WEB')
-                    return;
-                var distance = BABYLON.Vector3.Distance(camera.rotation, onDownCamera);
-                var distanceTime = (new Date() / 1000) - onDownTimestamp;
-                r(distance, distanceTime);
-                if (distance > 0.1 || distanceTime > 1) {
+             if (controls_down.RIGHT) {
+             camera.rotation.y += SPEED_ROTATION*progress;
+             if(camera.rotation.y>Math.PI*2){
+             camera.rotation.y-=Math.PI*2;
+             }
+             }*/
+            if (controls_down.JUMP) {
+                if (GALLERY.Viewer.develop) {
+                    Viewer.camera.position.y += 1.6;
                 }
-                else {
-                    Viewer.onPointerUp.apply(this, arguments);
-                }
-            };
-            //-----------------------------------------------------------------
-            /*var movement = {
-             z: 0
-             };
-             scene.registerBeforeRender(function () {
+            }
+            /*if (controls_down.REFRESH) {
     
-             //r(movement);
-             camera.position.y += movement.z;
+             runGallery(objects);
     
-             movement.z *= 0.9;
-             if(movement.z<0.1)movement.z=0;
+             }*/
+            if (controls_down.PRINTSCR) {
+                controls_down.PRINTSCR = false;
+                r('print_scr');
+                //r(scene,scene.engine, scene.camera);
+                BABYLON.Tools.CreateScreenshot(Viewer.engine, Viewer.scene.activeCamera, {
+                    precision: 1,
+                }, function (screenshot) {
+                    var filename = "screenshot-4K-gallery-" + (new Date()) + ".png";
+                    /*r('print_scr_ready');
     
-             });*/
-            return ({
-                scene: Viewer.scene,
-                camera: camera,
-                sun: sun,
-            });
-        }
-        Viewer.createScene = createScene;
-        ;
-        var scene_ = createScene();
-        Viewer.scene = scene_.scene;
-        Viewer.camera = scene_.camera;
-        Viewer.movement = scene_.movement;
-        Viewer.sun = scene_.sun;
-        Viewer.engine.runRenderLoop(function () {
-            Viewer.scene.render();
-        });
-        // Resize
-        window.addEventListener("resize", function () {
-            Viewer.engine.resize();
-        });
+                     function downloadURI(uri, name) {
+                     var link = document.createElement("a");
+                     link.download = name;
+                     link.href = uri;
+                     document.body.appendChild(link);
+                     link.click();
+                     document.body.removeChild(link);
+                     delete link;
+                     }
+    
+                     downloadURI(screenshot, filename);*/
+                    saveAs(dataURItoBlob(screenshot), filename);
+                });
+            }
+            requestAnimationFrame(keys_tick);
+        };
+        requestAnimationFrame(keys_tick);
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
 })(GALLERY || (GALLERY = {}));
+//var on_air = true;
 /// <reference path="reference.ts" />
 var GALLERY;
 (function (GALLERY) {
@@ -5119,12 +4572,13 @@ var GALLERY;
                 else {
                     var object = objects.getObjectById(pickResult.pickedMesh.name);
                     r('pick', object);
-                    if (current.getUri() == object.getUri()) {
-                        goToParent();
-                    }
-                    else {
-                        GALLERY.Viewer.appState(object.getUri(), false, false);
-                    }
+                    if (object)
+                        if (current.getUri() == object.getUri()) {
+                            goToParent();
+                        }
+                        else {
+                            GALLERY.Viewer.appState(object.getUri(), false, false);
+                        }
                 }
             }
             else {
@@ -5205,10 +4659,11 @@ var GALLERY;
                 if (babylon_rotation !== null) {
                     Viewer.camera.rotation = babylon_rotation;
                 }
+                Viewer.renderTick();
                 return;
             }
-            if (!GALLERY.Viewer.LOCKED) {
-                GALLERY.Viewer.LOCKED = true;
+            if (!Viewer.LOCKED) {
+                Viewer.LOCKED = true;
             }
             // 3 parameters to create an event:
             // - The frame at which the event will be triggered
@@ -5219,9 +4674,12 @@ var GALLERY;
              GALLERY.Viewer.LOCKED = false;
              }, true);*/
             Viewer.scene._pendingData = [];
+            var enginePlayReasonMoving = new Viewer.EnginePlayReason('moving');
+            Viewer.playEngine(enginePlayReasonMoving);
             var animation = BABYLON.Animation.CreateAndStartAnimation("anim", Viewer.camera, "position", 30, 30 * Viewer.duration, Viewer.camera.position, babylon_position, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE, Viewer.easingFunction, function () {
                 console.log("Animation Finished!");
-                GALLERY.Viewer.LOCKED = false;
+                Viewer.LOCKED = false;
+                Viewer.pauseEngine(enginePlayReasonMoving);
             });
             if (babylon_rotation !== null) {
                 rotateToBabylon(babylon_rotation);
@@ -5243,7 +4701,14 @@ var GALLERY;
                 Viewer.camera.rotation.y -= Math.PI * 2;
             if (diff < -Math.PI)
                 Viewer.camera.rotation.y += Math.PI * 2;
-            BABYLON.Animation.CreateAndStartAnimation("anim", Viewer.camera, "rotation", 30, 30 * Viewer.duration, Viewer.camera.rotation, babylon_rotation, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE, Viewer.easingFunction);
+            var enginePlayReasonRotating = new Viewer.EnginePlayReason('rotating');
+            Viewer.playEngine(enginePlayReasonRotating);
+            Viewer.LOCKED = true;
+            BABYLON.Animation.CreateAndStartAnimation("anim", Viewer.camera, "rotation", 30, 30 * Viewer.duration, Viewer.camera.rotation, babylon_rotation, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE, Viewer.easingFunction, function () {
+                console.log("Animation Finished!");
+                Viewer.LOCKED = false;
+                Viewer.pauseEngine(enginePlayReasonRotating);
+            });
         }
         Viewer.rotateToBabylon = rotateToBabylon;
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
@@ -5350,6 +4815,45 @@ Window.close = function (dont_run_close_callback) {
     }
     //-------------------------------------------
 };
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        function unlockGatesAndActivateKeys(key) {
+            var opening = 0, closing = 0;
+            Viewer.gates.forEach(function (gate) {
+                if (gate.object.key == key) {
+                    gate.mesh.checkCollisions = false;
+                    gate.mesh.material.alpha = 0.1;
+                    opening++;
+                }
+                else {
+                    gate.mesh.checkCollisions = true;
+                    gate.mesh.material.alpha = 0.95;
+                    closing++;
+                }
+            });
+            var activating = 0, inactivating = 0;
+            links.forEach(function (link) {
+                //r(link.object.href.substr(0,1));
+                if (link.object.href.substr(0, 1) === '#') {
+                    if (link.object.href == key) {
+                        link.mesh.checkCollisions = false;
+                        link.mesh.material.alpha = 0.1;
+                        inactivating++;
+                    }
+                    else {
+                        link.mesh.checkCollisions = true;
+                        link.mesh.material.alpha = 0.95;
+                        activating++;
+                    }
+                }
+            });
+            r('Opening ' + opening + ' gates, closing ' + closing + ' gates. Activating ' + activating + ' keys, inactivating ' + inactivating + ' keys.');
+        }
+        Viewer.unlockGatesAndActivateKeys = unlockGatesAndActivateKeys;
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
 /// <reference path="reference.ts" />
 //todo for sounds use babylon
 // init bunch of sounds
@@ -5420,6 +4924,394 @@ var GALLERY;
 (function (GALLERY) {
     var Viewer;
     (function (Viewer) {
+        window.addEventListener('keydown', function (e) {
+            if (e.keyCode == 70) {
+                var $fps_1 = $('.fps');
+                setInterval(function () {
+                    if (!Viewer.rendered)
+                        return;
+                    var fps = Viewer.engine.getFps();
+                    var html = '';
+                    if (Viewer.engineRunning) {
+                        html += '<i class="fa fa-play-circle-o" aria-hidden="true"></i>';
+                    }
+                    else {
+                        html += '<i class="fa fa-pause-circle-o" aria-hidden="true"></i>';
+                    }
+                    html += '&nbsp;';
+                    html += fps.toFixed(1);
+                    //html += '<br>'+engine.drawCalls;
+                    $fps_1.html(html);
+                }, 50);
+                $fps_1.show();
+            }
+        }, false);
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
+function dataURItoBlob(dataURI) {
+    // convert base64 to raw binary data held in a string
+    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+    var byteString = atob(dataURI.split(',')[1]);
+    // separate out the mime component
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    // write the bytes of the string to an ArrayBuffer
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    // write the ArrayBuffer to a blob, and you're done
+    var blob = new Blob([ab], { type: mimeString });
+    return blob;
+    // Old code
+    // var bb = new BlobBuilder();
+    // bb.append(ab);
+    // return bb.getBlob(mimeString);
+}
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        function developMenu() {
+            var $developMenu = $("\n                <div class=\"develop-menu\">\n                    <a onclick=\"GALLERY.Viewer.deployToFTP();\">Deploy to FTP</a>\n                    <a onclick=\"GALLERY.Viewer.downloadZip();\">Download as ZIP</a>\n                    <a onclick=\"GALLERY.Viewer.showStats();\">Show stats</a>\n                </div>\n            ");
+            var $labelsMenu = $('<ul></ul>');
+            console.log($labelsMenu);
+            objects.filterTypes('label').forEach(function (label) {
+                //todo href="'+label.uri+'"
+                var $labelsItem = $('<li><a onclick="GALLERY.Viewer.appState(\'' + label.uri + '\'+window.location.hash);">' + label.name + ' (' + label.uri + ')</a></li>');
+                $labelsMenu.append($labelsItem);
+            });
+            $($developMenu).append($labelsMenu);
+            $('body').append($developMenu);
+        }
+        Viewer.developMenu = developMenu;
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
+;
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        var DeployFile = (function () {
+            function DeployFile(name, content) {
+                this.name = name;
+                this.content = content;
+            }
+            return DeployFile;
+        }());
+        Viewer.DeployFile = DeployFile;
+        function createZip(onDone) {
+            var deployNotification = new PH.Notification('Deploy', 'Downloading files');
+            var index;
+            var screenshots;
+            var media;
+            index = new Promise(function (resolve, reject) {
+                var deployFiles = [];
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", '/index-src.php');
+                xhr.responseType = "text";
+                xhr.onload = function () {
+                    //r(this);
+                    deployFiles.push(new DeployFile('index.php', this.response));
+                    if (this.status == 200) {
+                        resolve(deployFiles);
+                    }
+                    else {
+                        reject(deployFiles);
+                    }
+                };
+                xhr.send();
+            });
+            screenshots = new Promise(function (resolve, reject) {
+                var labels = objects.filterTypes('label');
+                var width = Viewer.canvas.width;
+                var height = Viewer.canvas.height;
+                Viewer.canvas.width = 1920;
+                Viewer.canvas.height = 1080;
+                GALLERY.Viewer.makeScreenshots(labels, { precision: 1 }, function (screenshots) {
+                    var deployFiles = [];
+                    screenshots.forEach(function (screenshot, index) {
+                        var label = labels.getAll()[index]; //todo .getObjectByIndex(index);
+                        var name = label.uri.split('/').join('-');
+                        var screenshotName = 'screenshots/screenshot' + name + '.png';
+                        label.screenshot = '/' + screenshotName;
+                        deployFiles.push(new DeployFile(screenshotName, screenshot));
+                        //deployFiles.push(new DeployFile(routeName,``));
+                    });
+                    Viewer.canvas.width = width;
+                    Viewer.canvas.height = height;
+                    //r(deployFiles);
+                    resolve(deployFiles);
+                });
+            });
+            media = new Promise(function (resolve, reject) {
+                var sources = [
+                    //'viewer/index.html',
+                    '/viewer/style/viewer.css',
+                    //'viewer/script/lib/babylon.js',
+                    //'node_modules/handjs/hand.min.js',
+                    //'media/images/backgrounds/menu.png',
+                    //'media/images/backgrounds/page.png',
+                    //'media/images/ui/mouse-lock.png',
+                    //'media/images/ui/keys-text.png',
+                    /*'media/sound/link-key.mp3',
+                    'media/sound/link-teleport.mp3',
+                    'media/sound/link-key-none.mp3',
+                    'media/sound/gate-locked.mp3',
+                    'media/sound/step-stairs.mp3',
+                    'media/sound/step-ground.mp3',
+                    'media/sound/step-room.mp3',*/
+                    /*'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_ft.jpg',
+                    'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_rt.jpg',
+                    'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_up.jpg',
+                    'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_bk.jpg',
+                    'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_dn.jpg',
+                    'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_lf.jpg',*/
+                    'https://code.jquery.com/jquery-2.2.4.min.js',
+                    'https://code.jquery.com/ui/1.12.0/jquery-ui.min.js',
+                    'https://cdn.ravenjs.com/3.9.1/raven.min.js',
+                    '/node_modules/jszip/dist/jszip.min.js',
+                    '/node_modules/file-saver/FileSaver.min.js',
+                    '/viewer/script/lib/babylon.js',
+                    '/node_modules/handjs/hand.min.js',
+                    //'http://www.babylonjs.com/hand.minified-1.2.js',
+                    //'http://www.babylonjs.com/babylon.js',
+                    '/viewer/script/viewer.js'
+                ];
+                var materials = [];
+                objects.forEach(function (object) {
+                    if ("material" in object) {
+                        materials.push(object.material);
+                    }
+                });
+                objects.filterTypes('environment').forEach(function (environment) {
+                    if (environment.ground != 'none') {
+                        materials.push(environment.ground);
+                    }
+                    if (environment.skybox != 'none') {
+                        sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_ft.jpg');
+                        sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_rt.jpg');
+                        sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_up.jpg');
+                        sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_bk.jpg');
+                        sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_dn.jpg');
+                        sources.push('/media/images/skyboxes/' + environment.skybox + '/' + environment.skybox + '_lf.jpg');
+                    }
+                });
+                materials = materials.filter(function (material) {
+                    return (material.substr(0, 1) !== '#');
+                });
+                sources = sources.concat(materials.map(function (material) {
+                    return '/media/images/textures/' + material + '.jpg';
+                }));
+                sources = sources.filter(function (v, i, a) { return a.indexOf(v) === i; });
+                //r(sources);
+                var promises = sources.map(function (url) {
+                    var responseType;
+                    if (url.substr(-3) == '.js') {
+                        responseType = 'text';
+                    }
+                    else {
+                        responseType = 'blob';
+                    }
+                    return new Promise(function (resolve, reject) {
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("GET", url);
+                        xhr.responseType = responseType;
+                        xhr.onload = function () {
+                            var file = new DeployFile(url, this.response);
+                            if (this.status == 200) {
+                                resolve(file);
+                            }
+                            else {
+                                reject(file);
+                            }
+                        };
+                        xhr.send();
+                        /*$.ajax({url: '/' + url, dataType: dataType}).always(function (response) {
+    
+    
+                            let file = new DeployFile(url,response.responseText);
+                            r(this);
+                            if(response.status == 200){
+                                resolve(file);
+    
+                            }else{
+                                reject(file);
+                            }
+                        });*/
+                    });
+                });
+                //r(promises);
+                Promise.all(promises).then(function (results) {
+                    resolve(results);
+                }, function () {
+                    reject();
+                });
+            });
+            //----------------------------------------------------------------
+            Promise.all([index, screenshots, media]).then(function (results) {
+                deployNotification.update('Creating zip file');
+                var index = results[0], screenshots = results[1], media = results[2];
+                var deployFiles = [].concat(screenshots, media);
+                var jsFiles = deployFiles.filter(function (file) {
+                    return (file.name.substr(-3) == '.js');
+                });
+                deployFiles = deployFiles.filter(function (file) {
+                    return (file.name.substr(-3) !== '.js');
+                });
+                var scripts = jsFiles.map(function (file) {
+                    return file.content;
+                });
+                scripts.push('GALLERY.Viewer.run(new GALLERY.Objects.CompiledArray(' + JSON.stringify(objects.getAll()) + '))');
+                var script = scripts.join(';/**/\n');
+                //let gallery_folder = gallery_domain.split('.').join('-');
+                var zip = new JSZip();
+                //let zipRoot = zip.folder(gallery_folder);
+                zip.file('script-bundle.js', script);
+                zip.file('objects.compiled.json', JSON.stringify(objects.getAll(), null, true));
+                zip.file('.htaccess', "\nRewriteEngine On\n\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule . / [L,QSA]\n");
+                //r(deployFiles);
+                deployFiles.forEach(function (deployFile) {
+                    zip.file(deployFile.name, deployFile.content);
+                });
+                var html = index[0].content;
+                var COMMENT = /<!--((?!-->)(.|\s))*-->/g;
+                var SCRIPT = /<script((?!script>)(.|\s))*script>/g;
+                html = html.replace(SCRIPT, '');
+                html = html.split('<!--GALLERY SCRIPT-->').join('<script src="/script-bundle.js" async></script>');
+                html = html.replace(COMMENT, '');
+                zip.file('index.php', html);
+                zip.generateAsync({ type: "blob" }).then(function (content) {
+                    onDone(content, deployNotification);
+                });
+            }, function () {
+                // one or more failed
+            });
+            //r(screenshots);
+        }
+        Viewer.createZip = createZip;
+        function downloadZip() {
+            createZip(function (content) {
+                var gallery_folder = Viewer.analyticsObject.domain.split('.').join('-');
+                saveAs(content, gallery_folder + ".zip");
+            });
+        }
+        Viewer.downloadZip = downloadZip;
+        function deployToFTP() {
+            createZip(function (content, deployNotification) {
+                var formData = new FormData();
+                formData.append("update", content);
+                formData.append("server", Viewer.deployObject.server);
+                formData.append("username", Viewer.deployObject.username);
+                formData.append("password", Viewer.deployObject.password);
+                formData.append("directory", Viewer.deployObject.directory);
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'tools/ftp-deploy.php', true);
+                xhr.upload.onprogress = function (e) {
+                    if (e.lengthComputable) {
+                        var percentComplete = (e.loaded / e.total) * 100;
+                        percentComplete = Math.floor(percentComplete);
+                        deployNotification.update('Uploading zip file ' + percentComplete + '%');
+                    }
+                };
+                deployNotification.update('Uploading');
+                xhr.onload = function () {
+                    if (this.status == 200) {
+                        deployNotification.update('Finished');
+                    }
+                    else {
+                        deployNotification.update('Error while uploading');
+                    }
+                };
+                xhr.send(formData);
+                /*var formData = new FormData();
+                formData.append("gallery", content);
+    
+                formData.append("password", gallery_password);
+    
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'http://'+gallery_domain+'/.gallery/update.php', true);
+    
+    
+                xhr.upload.onprogress = function(e) {
+    
+                    if (e.lengthComputable) {
+                        let percentComplete = (e.loaded / e.total) * 100;
+                        percentComplete = Math.floor(percentComplete);
+                        deployNotification.update('Uploading zip file '+percentComplete + '%' );
+                    }
+                };
+    
+    
+                deployNotification.update('Uploading');
+    
+                xhr.onload = function() {
+                    if (this.status == 200) {
+                        deployNotification.update('Finished');
+                    }else{
+                        deployNotification.update('Error while uploading');
+                    }
+                };
+                xhr.send(formData);*/
+            });
+        }
+        Viewer.deployToFTP = deployToFTP;
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="reference.ts" />
+if (!GALLERY.Viewer.develop) {
+    Raven.config('https://71d6fb2b651845dea3ef3861e8df529d@sentry.io/122195').install({
+        environment: (GALLERY.Viewer.develop ? 'develop' : 'production'),
+    });
+}
+//document.getElementById("para1").innerHTML = dateToSmartString(new Date('2016-01-01T13:39:45.794Z'));
+function dayOfUniverse(date) {
+    return Math.round((date) / 8.64e7);
+}
+function dateToSmartString(date) {
+    var now = new Date();
+    var day_name;
+    if (dayOfUniverse(date) == dayOfUniverse(now)) {
+        day_name = 'Today';
+    }
+    else if (dayOfUniverse(date) == dayOfUniverse(now) - 1) {
+        day_name = 'Yesterday';
+    }
+    else 
+    /*if(dayOfUniverse(date)==dayOfUniverse(now)-2){
+
+        day_name='Předevčírem';
+
+    }else*/ {
+        return (date.getDate()) + '.' + (date.getMonth() + 1) + '.' + date.getFullYear();
+    }
+    return day_name + ' at ' + date.getHours() + ':' + date.getMinutes();
+}
+function isValidDate(d) {
+    if (Object.prototype.toString.call(d) !== "[object Date]")
+        return false;
+    return !isNaN(d.getTime());
+}
+function dateFromDotString(str) {
+    var pattern = /(\d{1,2})\.(\d{1,2})\.(\d{4})/;
+    if (!pattern.test(str))
+        return false; //todo maybe invalid date of error
+    var d = parseInt(str.replace(pattern, '$1'));
+    var m = parseInt(str.replace(pattern, '$2'));
+    var y = parseInt(str.replace(pattern, '$3'));
+    var date = new Date();
+    date.setFullYear(y);
+    date.setMonth(m - 1);
+    date.setDate(d - 1);
+    //todo minutes seconds hours
+    return (date);
+}
+/// <reference path="reference.ts" />
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        var enginePlayReasonGameMode = new Viewer.EnginePlayReason('game mode');
         var pointer_lock = document.getElementById("pointer-lock");
         var wasd = document.getElementById("wasd");
         //var $hints = $('.hints');
@@ -5451,6 +5343,7 @@ var GALLERY;
                 wasd.style.display = 'block';
                 Viewer.MODE = 'GAME';
                 Viewer.camera.angularSensibility = MOUSE_ANGULAR_SENSIBILITY;
+                Viewer.playEngine(enginePlayReasonGameMode);
             }
             else {
                 console.log('The pointer lock status is now unlocked');
@@ -5466,6 +5359,7 @@ var GALLERY;
                 //$(canvas).trigger('mouseup');
                 Viewer.MODE = 'WEB';
                 Viewer.camera.angularSensibility = -MOUSE_ANGULAR_SENSIBILITY;
+                Viewer.pauseEngine(enginePlayReasonGameMode);
             }
         }
         window.addEventListener('keydown', function (e) {
@@ -5494,10 +5388,12 @@ var GALLERY;
 //todo deprecated
 /// <reference path="babylon-plugins/babylon-tree" />
 /// <reference path="babylon-plugins/babylon-stairs" />
+/// <reference path="compatibility" />
+/// <reference path="scene" />
+/// <reference path="engine" />
 /// <reference path="run-viewer" />
 /// <reference path="run-world" />
 /// <reference path="keys" />
-/// <reference path="scene" />
 /// <reference path="scene-collide" />
 /// <reference path="scene-pick" />
 /// <reference path="move-to" />
@@ -5506,166 +5402,483 @@ var GALLERY;
 /// <reference path="gates" />
 /// <reference path="sounds" />
 /// <reference path="stat" />
+/// <reference path="fps-meter" />
 /// <reference path="data-uri-to-blob" />
 /// <reference path="develop-menu" />
 /// <reference path="develop-deploy" />
+/// <reference path="error-reporting" />
 /// <reference path="date-functions" />
-/// <reference path="pointer-lock" />
+/// <reference path="game-mode" />
 /// <reference path="reference.ts" />
 var GALLERY;
 (function (GALLERY) {
     var Viewer;
     (function (Viewer) {
-        var controls_keys = {
-            'UP': [38, 87],
-            'DOWN': [40, 83],
-            'LEFT': [37, 65],
-            'RIGHT': [39, 68],
-            'JUMP': [32],
-            //'REFRESH': [80],
-            'PRINTSCR': [80]
-        };
-        //------------------------------------------------------------
-        window.addEventListener('keydown', function (e) {
-            // space and arrow keys
-            if ([32, 37, 38, 39, 40].indexOf(e.keyCode) != -1) {
-                //if(T.UI.Status.focusOnMap()){
-                e.preventDefault();
-            }
-        }, false);
-        //------------------------------------------------------------
-        var keys = [];
-        var moving = false;
-        var controls_down = {
-            update: function () {
-                for (var control in controls_keys) {
-                    this[control] = false;
-                    for (var i = 0, l = keys.length; i < l; i++) {
-                        if (controls_keys[control].indexOf(keys[i]) !== -1) {
-                            this[control] = true;
-                        }
-                    }
-                }
-            }
-        };
-        window.addEventListener('keydown', function (e) {
-            //if(T.UI.Status.focusOnMap()) {
-            r('DOWN', e.keyCode);
-            if (keys.indexOf(e.keyCode) === -1) {
-                keys.push(e.keyCode);
-                controls_down.update();
-            }
-            //}
-        });
-        window.addEventListener('keyup', function (e) {
-            //if(T.UI.Status.focusOnMap()) {
-            //r('UP', e.keyCode);
-            var i = keys.indexOf(e.keyCode);
-            if (i != -1) {
-                keys.splice(i, 1);
-                controls_down.update();
-            }
-            //}
-        });
-        var last = null;
-        var keys_tick = function (timestamp) {
-            if (!last)
-                last = timestamp;
-            var progress = (timestamp - last) / 1000;
-            last = timestamp;
-            //if(window_opened)return;
-            /*
-    
-             if (controls_down.UP) {
-    
-    
-             ion.sound.play("step");
-    
-             //camera.position.x += Math.sin(camera.rotation.y)*5;
-             //camera.position.z += Math.cos(camera.rotation.y)*5;
-    
-             }
-    
-    
-             if (controls_down.DOWN) {
-    
-             //camera.position.x -= Math.sin(camera.rotation.y)*5;
-             //camera.position.z -= Math.cos(camera.rotation.y)*5;
-    
-             }
-             */
-            /*if (controls_down.LEFT) {
-             camera.rotation.y -= SPEED_ROTATION*progress;
-             if(camera.rotation.y<0){
-             camera.rotation.y+=Math.PI*2;
-             }
-             }
-    
-    
-             if (controls_down.RIGHT) {
-             camera.rotation.y += SPEED_ROTATION*progress;
-             if(camera.rotation.y>Math.PI*2){
-             camera.rotation.y-=Math.PI*2;
-             }
-             }*/
-            if (controls_down.JUMP) {
-                if (GALLERY.Viewer.develop) {
-                    Viewer.camera.position.y += 1.6;
-                }
-            }
-            /*if (controls_down.REFRESH) {
-    
-             runGallery(objects);
-    
-             }*/
-            if (controls_down.PRINTSCR) {
-                controls_down.PRINTSCR = false;
-                r('print_scr');
-                //r(scene,scene.engine, scene.camera);
-                BABYLON.Tools.CreateScreenshot(Viewer.engine, Viewer.scene.activeCamera, {
-                    width: 3840,
-                    height: 2160
-                }, function (screenshot) {
-                    var filename = "screenshot-4K-gallery-" + (new Date()) + ".png";
-                    /*r('print_scr_ready');
-    
-                     function downloadURI(uri, name) {
-                     var link = document.createElement("a");
-                     link.download = name;
-                     link.href = uri;
-                     document.body.appendChild(link);
-                     link.click();
-                     document.body.removeChild(link);
-                     delete link;
-                     }
-    
-                     downloadURI(screenshot, filename);*/
-                    saveAs(dataURItoBlob(screenshot), filename);
-                });
-            }
-            requestAnimationFrame(keys_tick);
-        };
-        requestAnimationFrame(keys_tick);
+        if (BABYLON.Engine.isSupported()) {
+        }
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
 })(GALLERY || (GALLERY = {}));
-//var on_air = true;
+var defaultDiacriticsRemovalMap = [
+    {
+        'base': 'A',
+        'letters': /[\u0041\u24B6\uFF21\u00C0\u00C1\u00C2\u1EA6\u1EA4\u1EAA\u1EA8\u00C3\u0100\u0102\u1EB0\u1EAE\u1EB4\u1EB2\u0226\u01E0\u00C4\u01DE\u1EA2\u00C5\u01FA\u01CD\u0200\u0202\u1EA0\u1EAC\u1EB6\u1E00\u0104\u023A\u2C6F]/g
+    },
+    { 'base': 'AA', 'letters': /[\uA732]/g },
+    { 'base': 'AE', 'letters': /[\u00C6\u01FC\u01E2]/g },
+    { 'base': 'AO', 'letters': /[\uA734]/g },
+    { 'base': 'AU', 'letters': /[\uA736]/g },
+    { 'base': 'AV', 'letters': /[\uA738\uA73A]/g },
+    { 'base': 'AY', 'letters': /[\uA73C]/g },
+    { 'base': 'B', 'letters': /[\u0042\u24B7\uFF22\u1E02\u1E04\u1E06\u0243\u0182\u0181]/g },
+    {
+        'base': 'C',
+        'letters': /[\u0043\u24B8\uFF23\u0106\u0108\u010A\u010C\u00C7\u1E08\u0187\u023B\uA73E]/g
+    },
+    {
+        'base': 'D',
+        'letters': /[\u0044\u24B9\uFF24\u1E0A\u010E\u1E0C\u1E10\u1E12\u1E0E\u0110\u018B\u018A\u0189\uA779]/g
+    },
+    { 'base': 'DZ', 'letters': /[\u01F1\u01C4]/g },
+    { 'base': 'Dz', 'letters': /[\u01F2\u01C5]/g },
+    {
+        'base': 'E',
+        'letters': /[\u0045\u24BA\uFF25\u00C8\u00C9\u00CA\u1EC0\u1EBE\u1EC4\u1EC2\u1EBC\u0112\u1E14\u1E16\u0114\u0116\u00CB\u1EBA\u011A\u0204\u0206\u1EB8\u1EC6\u0228\u1E1C\u0118\u1E18\u1E1A\u0190\u018E]/g
+    },
+    { 'base': 'F', 'letters': /[\u0046\u24BB\uFF26\u1E1E\u0191\uA77B]/g },
+    {
+        'base': 'G',
+        'letters': /[\u0047\u24BC\uFF27\u01F4\u011C\u1E20\u011E\u0120\u01E6\u0122\u01E4\u0193\uA7A0\uA77D\uA77E]/g
+    },
+    {
+        'base': 'H',
+        'letters': /[\u0048\u24BD\uFF28\u0124\u1E22\u1E26\u021E\u1E24\u1E28\u1E2A\u0126\u2C67\u2C75\uA78D]/g
+    },
+    {
+        'base': 'I',
+        'letters': /[\u0049\u24BE\uFF29\u00CC\u00CD\u00CE\u0128\u012A\u012C\u0130\u00CF\u1E2E\u1EC8\u01CF\u0208\u020A\u1ECA\u012E\u1E2C\u0197]/g
+    },
+    { 'base': 'J', 'letters': /[\u004A\u24BF\uFF2A\u0134\u0248]/g },
+    {
+        'base': 'K',
+        'letters': /[\u004B\u24C0\uFF2B\u1E30\u01E8\u1E32\u0136\u1E34\u0198\u2C69\uA740\uA742\uA744\uA7A2]/g
+    },
+    {
+        'base': 'L',
+        'letters': /[\u004C\u24C1\uFF2C\u013F\u0139\u013D\u1E36\u1E38\u013B\u1E3C\u1E3A\u0141\u023D\u2C62\u2C60\uA748\uA746\uA780]/g
+    },
+    { 'base': 'LJ', 'letters': /[\u01C7]/g },
+    { 'base': 'Lj', 'letters': /[\u01C8]/g },
+    { 'base': 'M', 'letters': /[\u004D\u24C2\uFF2D\u1E3E\u1E40\u1E42\u2C6E\u019C]/g },
+    {
+        'base': 'N',
+        'letters': /[\u004E\u24C3\uFF2E\u01F8\u0143\u00D1\u1E44\u0147\u1E46\u0145\u1E4A\u1E48\u0220\u019D\uA790\uA7A4]/g
+    },
+    { 'base': 'NJ', 'letters': /[\u01CA]/g },
+    { 'base': 'Nj', 'letters': /[\u01CB]/g },
+    {
+        'base': 'O',
+        'letters': /[\u004F\u24C4\uFF2F\u00D2\u00D3\u00D4\u1ED2\u1ED0\u1ED6\u1ED4\u00D5\u1E4C\u022C\u1E4E\u014C\u1E50\u1E52\u014E\u022E\u0230\u00D6\u022A\u1ECE\u0150\u01D1\u020C\u020E\u01A0\u1EDC\u1EDA\u1EE0\u1EDE\u1EE2\u1ECC\u1ED8\u01EA\u01EC\u00D8\u01FE\u0186\u019F\uA74A\uA74C]/g
+    },
+    { 'base': 'OI', 'letters': /[\u01A2]/g },
+    { 'base': 'OO', 'letters': /[\uA74E]/g },
+    { 'base': 'OU', 'letters': /[\u0222]/g },
+    {
+        'base': 'P',
+        'letters': /[\u0050\u24C5\uFF30\u1E54\u1E56\u01A4\u2C63\uA750\uA752\uA754]/g
+    },
+    { 'base': 'Q', 'letters': /[\u0051\u24C6\uFF31\uA756\uA758\u024A]/g },
+    {
+        'base': 'R',
+        'letters': /[\u0052\u24C7\uFF32\u0154\u1E58\u0158\u0210\u0212\u1E5A\u1E5C\u0156\u1E5E\u024C\u2C64\uA75A\uA7A6\uA782]/g
+    },
+    {
+        'base': 'S',
+        'letters': /[\u0053\u24C8\uFF33\u1E9E\u015A\u1E64\u015C\u1E60\u0160\u1E66\u1E62\u1E68\u0218\u015E\u2C7E\uA7A8\uA784]/g
+    },
+    {
+        'base': 'T',
+        'letters': /[\u0054\u24C9\uFF34\u1E6A\u0164\u1E6C\u021A\u0162\u1E70\u1E6E\u0166\u01AC\u01AE\u023E\uA786]/g
+    },
+    { 'base': 'TZ', 'letters': /[\uA728]/g },
+    {
+        'base': 'U',
+        'letters': /[\u0055\u24CA\uFF35\u00D9\u00DA\u00DB\u0168\u1E78\u016A\u1E7A\u016C\u00DC\u01DB\u01D7\u01D5\u01D9\u1EE6\u016E\u0170\u01D3\u0214\u0216\u01AF\u1EEA\u1EE8\u1EEE\u1EEC\u1EF0\u1EE4\u1E72\u0172\u1E76\u1E74\u0244]/g
+    },
+    { 'base': 'V', 'letters': /[\u0056\u24CB\uFF36\u1E7C\u1E7E\u01B2\uA75E\u0245]/g },
+    { 'base': 'VY', 'letters': /[\uA760]/g },
+    {
+        'base': 'W',
+        'letters': /[\u0057\u24CC\uFF37\u1E80\u1E82\u0174\u1E86\u1E84\u1E88\u2C72]/g
+    },
+    { 'base': 'X', 'letters': /[\u0058\u24CD\uFF38\u1E8A\u1E8C]/g },
+    {
+        'base': 'Y',
+        'letters': /[\u0059\u24CE\uFF39\u1EF2\u00DD\u0176\u1EF8\u0232\u1E8E\u0178\u1EF6\u1EF4\u01B3\u024E\u1EFE]/g
+    },
+    {
+        'base': 'Z',
+        'letters': /[\u005A\u24CF\uFF3A\u0179\u1E90\u017B\u017D\u1E92\u1E94\u01B5\u0224\u2C7F\u2C6B\uA762]/g
+    },
+    {
+        'base': 'a',
+        'letters': /[\u0061\u24D0\uFF41\u1E9A\u00E0\u00E1\u00E2\u1EA7\u1EA5\u1EAB\u1EA9\u00E3\u0101\u0103\u1EB1\u1EAF\u1EB5\u1EB3\u0227\u01E1\u00E4\u01DF\u1EA3\u00E5\u01FB\u01CE\u0201\u0203\u1EA1\u1EAD\u1EB7\u1E01\u0105\u2C65\u0250]/g
+    },
+    { 'base': 'aa', 'letters': /[\uA733]/g },
+    { 'base': 'ae', 'letters': /[\u00E6\u01FD\u01E3]/g },
+    { 'base': 'ao', 'letters': /[\uA735]/g },
+    { 'base': 'au', 'letters': /[\uA737]/g },
+    { 'base': 'av', 'letters': /[\uA739\uA73B]/g },
+    { 'base': 'ay', 'letters': /[\uA73D]/g },
+    { 'base': 'b', 'letters': /[\u0062\u24D1\uFF42\u1E03\u1E05\u1E07\u0180\u0183\u0253]/g },
+    {
+        'base': 'c',
+        'letters': /[\u0063\u24D2\uFF43\u0107\u0109\u010B\u010D\u00E7\u1E09\u0188\u023C\uA73F\u2184]/g
+    },
+    {
+        'base': 'd',
+        'letters': /[\u0064\u24D3\uFF44\u1E0B\u010F\u1E0D\u1E11\u1E13\u1E0F\u0111\u018C\u0256\u0257\uA77A]/g
+    },
+    { 'base': 'dz', 'letters': /[\u01F3\u01C6]/g },
+    {
+        'base': 'e',
+        'letters': /[\u0065\u24D4\uFF45\u00E8\u00E9\u00EA\u1EC1\u1EBF\u1EC5\u1EC3\u1EBD\u0113\u1E15\u1E17\u0115\u0117\u00EB\u1EBB\u011B\u0205\u0207\u1EB9\u1EC7\u0229\u1E1D\u0119\u1E19\u1E1B\u0247\u025B\u01DD]/g
+    },
+    { 'base': 'f', 'letters': /[\u0066\u24D5\uFF46\u1E1F\u0192\uA77C]/g },
+    {
+        'base': 'g',
+        'letters': /[\u0067\u24D6\uFF47\u01F5\u011D\u1E21\u011F\u0121\u01E7\u0123\u01E5\u0260\uA7A1\u1D79\uA77F]/g
+    },
+    {
+        'base': 'h',
+        'letters': /[\u0068\u24D7\uFF48\u0125\u1E23\u1E27\u021F\u1E25\u1E29\u1E2B\u1E96\u0127\u2C68\u2C76\u0265]/g
+    },
+    { 'base': 'hv', 'letters': /[\u0195]/g },
+    {
+        'base': 'i',
+        'letters': /[\u0069\u24D8\uFF49\u00EC\u00ED\u00EE\u0129\u012B\u012D\u00EF\u1E2F\u1EC9\u01D0\u0209\u020B\u1ECB\u012F\u1E2D\u0268\u0131]/g
+    },
+    { 'base': 'j', 'letters': /[\u006A\u24D9\uFF4A\u0135\u01F0\u0249]/g },
+    {
+        'base': 'k',
+        'letters': /[\u006B\u24DA\uFF4B\u1E31\u01E9\u1E33\u0137\u1E35\u0199\u2C6A\uA741\uA743\uA745\uA7A3]/g
+    },
+    {
+        'base': 'l',
+        'letters': /[\u006C\u24DB\uFF4C\u0140\u013A\u013E\u1E37\u1E39\u013C\u1E3D\u1E3B\u017F\u0142\u019A\u026B\u2C61\uA749\uA781\uA747]/g
+    },
+    { 'base': 'lj', 'letters': /[\u01C9]/g },
+    { 'base': 'm', 'letters': /[\u006D\u24DC\uFF4D\u1E3F\u1E41\u1E43\u0271\u026F]/g },
+    {
+        'base': 'n',
+        'letters': /[\u006E\u24DD\uFF4E\u01F9\u0144\u00F1\u1E45\u0148\u1E47\u0146\u1E4B\u1E49\u019E\u0272\u0149\uA791\uA7A5]/g
+    },
+    { 'base': 'nj', 'letters': /[\u01CC]/g },
+    {
+        'base': 'o',
+        'letters': /[\u006F\u24DE\uFF4F\u00F2\u00F3\u00F4\u1ED3\u1ED1\u1ED7\u1ED5\u00F5\u1E4D\u022D\u1E4F\u014D\u1E51\u1E53\u014F\u022F\u0231\u00F6\u022B\u1ECF\u0151\u01D2\u020D\u020F\u01A1\u1EDD\u1EDB\u1EE1\u1EDF\u1EE3\u1ECD\u1ED9\u01EB\u01ED\u00F8\u01FF\u0254\uA74B\uA74D\u0275]/g
+    },
+    { 'base': 'oi', 'letters': /[\u01A3]/g },
+    { 'base': 'ou', 'letters': /[\u0223]/g },
+    { 'base': 'oo', 'letters': /[\uA74F]/g },
+    {
+        'base': 'p',
+        'letters': /[\u0070\u24DF\uFF50\u1E55\u1E57\u01A5\u1D7D\uA751\uA753\uA755]/g
+    },
+    { 'base': 'q', 'letters': /[\u0071\u24E0\uFF51\u024B\uA757\uA759]/g },
+    {
+        'base': 'r',
+        'letters': /[\u0072\u24E1\uFF52\u0155\u1E59\u0159\u0211\u0213\u1E5B\u1E5D\u0157\u1E5F\u024D\u027D\uA75B\uA7A7\uA783]/g
+    },
+    {
+        'base': 's',
+        'letters': /[\u0073\u24E2\uFF53\u00DF\u015B\u1E65\u015D\u1E61\u0161\u1E67\u1E63\u1E69\u0219\u015F\u023F\uA7A9\uA785\u1E9B]/g
+    },
+    {
+        'base': 't',
+        'letters': /[\u0074\u24E3\uFF54\u1E6B\u1E97\u0165\u1E6D\u021B\u0163\u1E71\u1E6F\u0167\u01AD\u0288\u2C66\uA787]/g
+    },
+    { 'base': 'tz', 'letters': /[\uA729]/g },
+    {
+        'base': 'u',
+        'letters': /[\u0075\u24E4\uFF55\u00F9\u00FA\u00FB\u0169\u1E79\u016B\u1E7B\u016D\u00FC\u01DC\u01D8\u01D6\u01DA\u1EE7\u016F\u0171\u01D4\u0215\u0217\u01B0\u1EEB\u1EE9\u1EEF\u1EED\u1EF1\u1EE5\u1E73\u0173\u1E77\u1E75\u0289]/g
+    },
+    { 'base': 'v', 'letters': /[\u0076\u24E5\uFF56\u1E7D\u1E7F\u028B\uA75F\u028C]/g },
+    { 'base': 'vy', 'letters': /[\uA761]/g },
+    {
+        'base': 'w',
+        'letters': /[\u0077\u24E6\uFF57\u1E81\u1E83\u0175\u1E87\u1E85\u1E98\u1E89\u2C73]/g
+    },
+    { 'base': 'x', 'letters': /[\u0078\u24E7\uFF58\u1E8B\u1E8D]/g },
+    {
+        'base': 'y',
+        'letters': /[\u0079\u24E8\uFF59\u1EF3\u00FD\u0177\u1EF9\u0233\u1E8F\u00FF\u1EF7\u1E99\u1EF5\u01B4\u024F\u1EFF]/g
+    },
+    {
+        'base': 'z',
+        'letters': /[\u007A\u24E9\uFF5A\u017A\u1E91\u017C\u017E\u1E93\u1E95\u01B6\u0225\u0240\u2C6C\uA763]/g
+    }
+];
+var changes;
+function removeDiacritics(str) {
+    if (!changes) {
+        changes = defaultDiacriticsRemovalMap;
+    }
+    for (var i = 0; i < changes.length; i++) {
+        str = str.replace(changes[i].letters, changes[i].base);
+    }
+    return str;
+}
+function createUriFromName(name) {
+    name = removeDiacritics(name);
+    name = name.toLocaleLowerCase();
+    name = name.split(' ').join('-');
+    return name;
+}
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        function showStats() {
+            if (!Viewer.analyticsObject)
+                return;
+            if (Viewer.analyticsObject.analyticsType == 'gallery') {
+                $.get(STATSERVER_URL + '/' + Viewer.analyticsObject.domain).done(function (sessions) {
+                    sessions.forEach(function (session) {
+                        if (session.states.length < 2)
+                            return;
+                        var positions = session.states.map(function (state) {
+                            var position = new BABYLON.Vector3(state.x * -BLOCK_SIZE, state.z * BLOCK_SIZE, //todo no use BLOCKS_1NP_LEVEL
+                            state.y * BLOCK_SIZE);
+                            return (position);
+                        });
+                        r(positions);
+                        var tube = BABYLON.Mesh.CreateTube("tube", positions, 0.5, 3, null, 0, Viewer.scene, false, BABYLON.Mesh.FRONTSIDE);
+                        //var lines = BABYLON.Mesh.CreateTube("lines",positions,2,3, null, 0, scene, false, BABYLON.Mesh.FRONTSIDE);
+                    });
+                });
+            }
+        }
+        Viewer.showStats = showStats;
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        var Effects;
+        (function (Effects) {
+            function nuke() {
+                Viewer.scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
+                Viewer.scene.fogDensity = 0.5;
+                Viewer.scene.fogColor = BABYLON.Color3.FromHexString('#ffffff');
+                Viewer.running = true;
+                Viewer.scene.registerBeforeRender(function () {
+                    if (!Viewer.running)
+                        return;
+                    Viewer.scene.fogDensity = Viewer.scene.fogDensity * 0.995;
+                    if (Viewer.scene.fogDensity < 0.02) {
+                        Viewer.scene.fogDensity = 0.02;
+                        Viewer.running = false;
+                    }
+                });
+                setTimeout(function () {
+                    ion.sound.play("nuke");
+                }, 300);
+                /*var easingFunction = new BABYLON.CircleEase();
+                easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
+        
+        
+                BABYLON.Animation.CreateAndStartAnimation(
+                    "anim",
+                    scene,
+                    "fogDensity",
+                    30,
+                    60,
+                    camera.position,
+                    0.02,
+        
+                    BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE,
+                    easingFunction
+                );*/
+            }
+            Effects.nuke = nuke;
+        })(Effects = Viewer.Effects || (Viewer.Effects = {}));
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        /*
+        let image_texture = new BABYLON.Texture('/media/images/sprite.jpg', scene);
+        image_texture.hasAlpha = false;
+    
+    
+    
+    
+        export function getImageMaterial(src: string, isEmitting: boolean, hasAlpha: boolean, backFace: boolean) {
+    
+    
+            let material = new BABYLON.StandardMaterial("texture4", scene);
+            material.diffuseTexture = image_texture;
+            return(material);
+    
+    
+        }*/
+        var enginePlayReasonLoadingTextures = new Viewer.EnginePlayReason('loading textures');
+        Viewer.playEngine(enginePlayReasonLoadingTextures);
+        var texturesCount = 0;
+        var texturesLoaded = 0;
+        var onTextureLoad = function () {
+            texturesLoaded++;
+            //r('Loaded texture '+texturesLoaded+' / '+texturesCount);
+            if (texturesLoaded == texturesCount) {
+                Viewer.pauseEngine(enginePlayReasonLoadingTextures);
+            }
+        };
+        var imagesMaterials = {}; //todo DI
+        function getImageMaterial(src, width, isEmitting, hasAlpha, backFace) {
+            var key = src + width + isEmitting + hasAlpha + backFace; //todo better - maybe hash
+            if (typeof imagesMaterials[key] === 'undefined') {
+                var src = src;
+                var src_uri = URI(src) //todo Di
+                    .removeSearch("width");
+                var src_normal = src_uri.addSearch({ width: width }).toString();
+                var onLoad = function () {
+                    r('Loaded texture!');
+                    Viewer.renderTick();
+                };
+                texturesCount++;
+                var image_texture = new BABYLON.Texture(src_normal, Viewer.scene, false, true, BABYLON.Texture.TRILINEAR_SAMPLINGMODE, onTextureLoad);
+                image_texture.hasAlpha = hasAlpha;
+                //image_texture.delayLoadState = BABYLON.Engine.DELAYLOADSTATE_NOTLOADED;
+                var material = new BABYLON.StandardMaterial("texture4", Viewer.scene);
+                if (isEmitting) {
+                    material.emissiveTexture = image_texture;
+                    material.backFaceCulling = !(backFace);
+                    material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
+                    material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
+                    material.specularPower = 32;
+                    //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
+                    material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
+                    material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+                }
+                else {
+                    material.diffuseTexture = image_texture;
+                }
+                material.freeze();
+                imagesMaterials[key] = material;
+            }
+            return (imagesMaterials[key]);
+        }
+        Viewer.getImageMaterial = getImageMaterial;
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        function getImageMesh(object) {
+            if (window.innerWidth > 1024) {
+                var quality = 1024;
+            }
+            else if (window.innerWidth > 512) {
+                var quality = 512;
+            }
+            else {
+                var quality = 256;
+            }
+            var distance = 5;
+            var image00 = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, Viewer.scene);
+            image00.material = Viewer.getImageMaterial(object.src, quality, object.isEmitting, object.hasAlpha, object.backFace);
+            var lods = 5;
+            var mesh;
+            for (var lod = 0; lod < lods; lod++) {
+                quality = quality / 2;
+                distance = distance * 2;
+                var mesh_1 = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, Viewer.scene);
+                mesh_1.material = Viewer.getImageMaterial(object.src, quality, object.isEmitting, object.hasAlpha, object.backFace);
+                image00.addLODLevel(distance, mesh_1);
+            }
+            return image00;
+        }
+        Viewer.getImageMesh = getImageMesh;
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        function getTextureUrl(key) {
+            var url;
+            if (BLOCK_MATERIALS.indexOf(key) !== -1) {
+                url = "/media/images/textures/" + key + ".jpg";
+                r('Creating native texture ' + key + '.');
+            }
+            else {
+                var image = textures.findBy('name', key);
+                r('finded', image);
+                if (image) {
+                    url = image.getTexture();
+                    r('Creating texture ' + key + ' from ' + url + '.');
+                }
+                else {
+                    console.warn('There is no texture image with name ' + key + '!');
+                }
+            }
+            return (url);
+        }
+        Viewer.getTextureUrl = getTextureUrl;
+        var materials = {}; //todo maybe DI
+        function getMaterial(key, opacity, noCache) {
+            if (noCache === void 0) { noCache = false; }
+            if (typeof materials[key] === 'undefined' || noCache) {
+                var material = new BABYLON.StandardMaterial("Mat", Viewer.scene);
+                if (key.substr(0, 1) == '#') {
+                    material.diffuseColor = BABYLON.Color3.FromHexString(key);
+                }
+                else {
+                    material.diffuseTexture = new BABYLON.Texture(getTextureUrl(key), Viewer.scene);
+                    material.diffuseTexture.uScale = 10; //Vertical offset of 10%
+                    material.diffuseTexture.vScale = 10; //Horizontal offset of 40%
+                }
+                material.alpha = opacity;
+                material.freeze();
+                if (noCache) {
+                    return (material);
+                }
+                else {
+                    materials[key] = material;
+                }
+            }
+            return (materials[key]);
+        }
+        Viewer.getMaterial = getMaterial;
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
 var GALLERY;
 (function (GALLERY) {
     var Viewer;
     (function (Viewer) {
         function makeScreenshots(labels, options, done, screenshots) {
             if (screenshots === void 0) { screenshots = []; }
+            r('Making screenshot...');
             var label = labels.next();
             if (!label) {
                 done(screenshots);
                 return;
             }
             GALLERY.Viewer.appState(label.uri + window.location.hash);
-            BABYLON.Tools.CreateScreenshot(Viewer.engine, Viewer.scene.activeCamera, options, function (screenshot) {
-                screenshots.push(dataURItoBlob(screenshot));
-                //r('Screenshot created');
-                makeScreenshots(labels, options, done, screenshots);
-            });
+            setTimeout(function () {
+                BABYLON.Tools.CreateScreenshot(Viewer.engine, Viewer.scene.activeCamera, options, function (screenshot) {
+                    //r(screenshot);
+                    //saveAs(dataURItoBlob(screenshot),'screenshot.png');
+                    //sss;
+                    screenshots.push(dataURItoBlob(screenshot));
+                    //r('Screenshot created');
+                    makeScreenshots(labels, options, done, screenshots);
+                });
+            }, 40);
         }
         Viewer.makeScreenshots = makeScreenshots;
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
@@ -5679,7 +5892,7 @@ var GALLERY;
         function onPointerHover(evt, pickResult) {
             var hoovered_mesh;
             if (pickResult.hit) {
-                if (pickResult.pickedMesh.name == 'room' || pickResult.pickedMesh.name == 'ground') {
+                if (pickResult.pickedMesh.name.substr(0, 4) == 'room' || pickResult.pickedMesh.name.substr(0, 6) == 'ground') {
                     hoovered_mesh = null;
                 }
                 else {
@@ -5700,15 +5913,39 @@ var GALLERY;
             }
         }
         Viewer.onPointerHover = onPointerHover;
-        var hoverColor = BABYLON.Color3.White(); //BABYLON.Color3.FromHexString('#37beff');
+        var beforeHoverScaling;
+        //let hooverInterval;
+        //let hoverColor = BABYLON.Color3.White();//BABYLON.Color3.FromHexString('#37beff');
         function onPointerEnter(mesh) {
-            r('onPointerEnter');
-            Viewer.hooverLayer.addMesh(mesh, hoverColor);
+            r('onPointerEnter', mesh);
+            var distance = BABYLON.Vector3.Distance(Viewer.camera.position, mesh.position) / BLOCK_SIZE;
+            beforeHoverScaling = mesh.scaling;
+            mesh.scaling = beforeHoverScaling.clone();
+            var q = 1 + 0.005 * distance;
+            mesh.scaling.x *= q;
+            mesh.scaling.y *= q;
+            Viewer.renderTick();
+            /*let rad = 0;
+            hooverInterval = setInterval(function () {
+    
+                rad += 30 / 180 * Math.PI;
+                let q = 1+(-Math.cos(rad)+1)/5;
+    
+                mesh.scaling = beforeHoverScaling.clone();
+                mesh.scaling.x *= q;
+                mesh.scaling.y *= q;
+    
+    
+            },50);*/
+            //hooverLayer.addMesh(mesh, hoverColor);
         }
         Viewer.onPointerEnter = onPointerEnter;
         function onPointerLeave(mesh) {
             r('onPointerLeave');
-            Viewer.hooverLayer.removeMesh(mesh);
+            //clearInterval(hooverInterval);
+            mesh.scaling = beforeHoverScaling;
+            Viewer.renderTick();
+            //hooverLayer.removeMesh(mesh);
         }
         Viewer.onPointerLeave = onPointerLeave;
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));

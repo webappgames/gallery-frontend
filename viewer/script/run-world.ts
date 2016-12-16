@@ -5,15 +5,19 @@
 namespace GALLERY.Viewer {
 
 
+    export let rendered = false;
+
     export var meshes = [];
     export var zones = [];
     export var boards = [];
-    export var hooverLayer;
+    //export var hooverLayer;
 
 
     export function runWorld(objects_world, textures) {
 
         r('Running gallery with ' + objects_world.getAll().length + ' objects.', objects_world);
+
+        rendered = false;
 
         meshes = [];
         zones = [];
@@ -46,10 +50,9 @@ namespace GALLERY.Viewer {
 
 
 
-        hooverLayer = new BABYLON.HighlightLayer("hooverLayer", scene, {camera: camera});
+        /*hooverLayer = new BABYLON.HighlightLayer("hooverLayer", scene, {camera: camera});
         hooverLayer.blurHorizontalSize = 0.5;
-        hooverLayer.blurVerticalSize = 0.5;
-        //hooverLayer.innerGlow = false;
+        hooverLayer.blurVerticalSize = 0.5;*/
 
 
         //-----------------------------------------------------zoneMaterial
@@ -58,7 +61,7 @@ namespace GALLERY.Viewer {
 
 
         if(develop){
-            zoneMaterial.alpha = 0;
+            zoneMaterial.alpha = 0.2;
             //zoneMaterial.alpha = 0.2;
             //zoneMaterial.wireframe = true;
         }else{
@@ -299,22 +302,6 @@ namespace GALLERY.Viewer {
             } else if (object.type == 'zone') {
 
 
-                let mesh = BABYLON.Mesh.CreateBox(object.id, BLOCK_SIZE, scene);
-
-
-                mesh.material = zoneMaterial;
-
-
-                //mesh.material = getMaterial('stone-plain',0.5);
-                mesh.position = position;
-
-                position.y += BLOCK_SIZE * BLOCKS_2D_3D_SHAPES.room.length / 2;
-                mesh.scaling.y = BLOCKS_2D_3D_SHAPES.room.length;
-
-                mesh.scaling.x = object.width;
-                mesh.scaling.z = object.height;
-
-
                 if (object.name || object.html) {
 
                     let isNext = false;
@@ -347,11 +334,39 @@ namespace GALLERY.Viewer {
                 }
 
 
-                mesh.checkCollisions = false;
-                mesh.isPickable = false;//object.isPickable;
-                if(!object.isPickable){
-                    hooverLayer.addExcludedMesh(mesh);
+                let mesh;
+                if(object.isPickable && false) {
+                    mesh = BABYLON.Mesh.CreateBox(object.id, BLOCK_SIZE, scene);
+
+
+                    mesh.material = zoneMaterial;
+
+
+                    //mesh.material = getMaterial('stone-plain',0.5);
+                    mesh.position = position;
+
+                    position.y += BLOCK_SIZE * BLOCKS_2D_3D_SHAPES.room.length / 2;
+                    mesh.scaling.y = BLOCKS_2D_3D_SHAPES.room.length;
+
+                    mesh.scaling.x = object.width;
+                    mesh.scaling.z = object.height;
+
+
+                    mesh.checkCollisions = false;
+                    mesh.isPickable = false;//object.isPickable;
+                    /*if(!object.isPickable){
+                        hooverLayer.addExcludedMesh(mesh);
+                    }*/
+
+                    meshes.push(mesh);
+
+
+
+                }else{
+
+                    mesh = null;
                 }
+
 
 
                 //r(mesh);
@@ -364,7 +379,7 @@ namespace GALLERY.Viewer {
 
                 });
 
-                meshes.push(mesh);
+
 
                 /*return(mesh);
                  r(object);
@@ -444,8 +459,7 @@ namespace GALLERY.Viewer {
 
                     let rotation_rad = (object.rotation / 180) * Math.PI;
 
-                    let image = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
-                    image.material = getImageMaterial(object.src, object.isEmitting, object.hasAlpha, object.backFace);
+                    let image = getImageMesh(object);
 
 
                     if (object.onGround) {
@@ -577,7 +591,7 @@ namespace GALLERY.Viewer {
 
                     image.scaling.x = object.width;
                     image.scaling.y = object.height;
-                    image.scaling.z = 0.1;
+                    //image.scaling.z = 0.1;
 
 
                     image.checkCollisions = object.checkCollisions;
@@ -774,6 +788,11 @@ namespace GALLERY.Viewer {
 
 
         objects_world.forEach(processObject);
+
+
+
+        rendered = true;
+
 
         //unlockGatesAndActivateKeys();
 

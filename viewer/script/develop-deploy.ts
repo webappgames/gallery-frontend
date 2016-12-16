@@ -58,7 +58,13 @@ namespace GALLERY.Viewer {
         screenshots = new Promise(function(resolve, reject) {
 
             var labels = objects.filterTypes('label');
-            GALLERY.Viewer.makeScreenshots(labels, {width:1920/2,height:1080/2},function (screenshots) {
+
+            let width = canvas.width;
+            let height = canvas.height;
+
+            canvas.width = 1920;
+            canvas.height = 1080;
+            GALLERY.Viewer.makeScreenshots(labels, {precision: 1},function (screenshots) {
 
 
 
@@ -81,7 +87,8 @@ namespace GALLERY.Viewer {
                 });
 
 
-
+                canvas.width = width;
+                canvas.height = height;
 
                 //r(deployFiles);
                 resolve(deployFiles);
@@ -129,6 +136,7 @@ namespace GALLERY.Viewer {
 
                 'https://code.jquery.com/jquery-2.2.4.min.js',
                 'https://code.jquery.com/ui/1.12.0/jquery-ui.min.js',
+                'https://cdn.ravenjs.com/3.9.1/raven.min.js',
                 '/node_modules/jszip/dist/jszip.min.js',
                 '/node_modules/file-saver/FileSaver.min.js',
 
@@ -280,10 +288,8 @@ namespace GALLERY.Viewer {
             deployNotification.update('Creating zip file');
 
 
-
             let [index,screenshots,media] = results;
             let deployFiles = [].concat(screenshots,media);
-
 
 
 
@@ -308,7 +314,7 @@ namespace GALLERY.Viewer {
             );
 
 
-            let script = scripts.join(';');
+            let script = scripts.join(';/**/\n');
 
 
             //let gallery_folder = gallery_domain.split('.').join('-');

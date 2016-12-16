@@ -9,7 +9,7 @@ namespace GALLERY.Viewer {
         'RIGHT': [39, 68],
         'JUMP': [32],
         //'REFRESH': [80],
-        'PRINTSCR': [80]
+        'PRINTSCR': [80],
 
 
     };
@@ -18,6 +18,8 @@ namespace GALLERY.Viewer {
 
 
     window.addEventListener('keydown', function (e) {
+
+
         // space and arrow keys
         if ([32, 37, 38, 39, 40].indexOf(e.keyCode) != -1) {
 
@@ -171,8 +173,9 @@ namespace GALLERY.Viewer {
 
             //r(scene,scene.engine, scene.camera);
             BABYLON.Tools.CreateScreenshot(engine, scene.activeCamera, {
-                width: 3840,
-                height: 2160
+                precision: 1,
+                //width: 3840,
+                //height: 2160
             }, function (screenshot) {
 
                 let filename = "screenshot-4K-gallery-" + (new Date()) + ".png";

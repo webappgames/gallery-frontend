@@ -120,11 +120,13 @@ namespace GALLERY.Viewer {
                 camera.rotation = babylon_rotation;
             }
 
+            renderTick();
+
             return;
         }
 
-        if (!GALLERY.Viewer.LOCKED) {
-            GALLERY.Viewer.LOCKED = true;
+        if (!LOCKED) {
+            LOCKED = true;
         }
 
 
@@ -141,7 +143,9 @@ namespace GALLERY.Viewer {
         scene._pendingData = [];
 
 
+        const enginePlayReasonMoving = new EnginePlayReason('moving');
 
+        playEngine(enginePlayReasonMoving);
 
 
         let animation = BABYLON.Animation.CreateAndStartAnimation(
@@ -157,7 +161,9 @@ namespace GALLERY.Viewer {
             function () {
 
                 console.log("Animation Finished!");
-                GALLERY.Viewer.LOCKED = false;
+                LOCKED = false;
+
+                pauseEngine(enginePlayReasonMoving);
 
             }
         );
@@ -191,6 +197,11 @@ namespace GALLERY.Viewer {
         if (diff < -Math.PI)camera.rotation.y += Math.PI * 2;
 
 
+
+        const enginePlayReasonRotating = new EnginePlayReason('rotating');
+        playEngine(enginePlayReasonRotating);
+        LOCKED = true;
+
         BABYLON.Animation.CreateAndStartAnimation(
             "anim",
             camera,
@@ -200,7 +211,15 @@ namespace GALLERY.Viewer {
             camera.rotation,
             babylon_rotation,
             BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE,
-            easingFunction
+            easingFunction,
+            function () {
+
+                console.log("Animation Finished!");
+                LOCKED = false;
+
+                pauseEngine(enginePlayReasonRotating);
+
+            }
         );
 
 

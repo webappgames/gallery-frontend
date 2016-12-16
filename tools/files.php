@@ -110,10 +110,12 @@ function ftp_put_directory($conn_id, $src_dir, $dst_dir) {
             if (is_dir($src_dir."/".$file)) { // do the following if it is a directory
                 if (!@ftp_chdir($conn_id, $dst_dir."/".$file)) {
                     ftp_mkdir($conn_id, $dst_dir."/".$file); // create directories that do not yet exist
+                    ftp_chmod($conn_id,0777,$dst_dir."/".$file);
                 }
                 ftp_put_directory($conn_id, $src_dir."/".$file, $dst_dir."/".$file); // recursive part
             } else {
                 $upload = ftp_put($conn_id, $dst_dir."/".$file, $src_dir."/".$file, FTP_BINARY); // put the files
+                ftp_chmod($conn_id,0777,$dst_dir."/".$file);
             }
         }
     }

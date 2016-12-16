@@ -74,7 +74,7 @@ namespace GALLERY.Viewer {
 
                 r('pick', object);
 
-
+                if(object)
                 if (current.getUri() == object.getUri()) {
                     goToParent();
 

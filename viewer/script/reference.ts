@@ -13,10 +13,12 @@
 /// <reference path="babylon-plugins/babylon-stairs" />
 
 
+/// <reference path="compatibility" />
+/// <reference path="scene" />
+/// <reference path="engine" />
 /// <reference path="run-viewer" />
 /// <reference path="run-world" />
 /// <reference path="keys" />
-/// <reference path="scene" />
 /// <reference path="scene-collide" />
 /// <reference path="scene-pick" />
 /// <reference path="move-to" />
@@ -25,6 +27,7 @@
 /// <reference path="gates" />
 /// <reference path="sounds" />
 /// <reference path="stat" />
+/// <reference path="fps-meter" />
 
 
 /// <reference path="data-uri-to-blob" />
@@ -32,10 +35,11 @@
 
 /// <reference path="develop-menu" />
 /// <reference path="develop-deploy" />
+/// <reference path="error-reporting" />
 
 
 
 /// <reference path="date-functions" />
-/// <reference path="pointer-lock" />
+/// <reference path="game-mode" />
 
 

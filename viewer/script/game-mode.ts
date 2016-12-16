@@ -5,6 +5,8 @@ namespace GALLERY.Viewer {
 
 
 
+    const enginePlayReasonGameMode = new EnginePlayReason('game mode');
+
 
     let pointer_lock = document.getElementById("pointer-lock");
     let wasd = document.getElementById("wasd");
@@ -50,6 +52,7 @@ namespace GALLERY.Viewer {
 
             MODE = 'GAME';
             camera.angularSensibility = MOUSE_ANGULAR_SENSIBILITY;
+            playEngine(enginePlayReasonGameMode);
             //triggerMouseEvent (canvas, "mousedown");
 
 
@@ -73,6 +76,7 @@ namespace GALLERY.Viewer {
 
             MODE = 'WEB';
             camera.angularSensibility = -MOUSE_ANGULAR_SENSIBILITY;
+            pauseEngine(enginePlayReasonGameMode);
 
         }
 

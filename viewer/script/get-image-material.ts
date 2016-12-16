@@ -2,10 +2,49 @@
 
 namespace GALLERY.Viewer {
 
-    let imagesMaterials = {};//todo DI
+
+
+
+    /*
+    let image_texture = new BABYLON.Texture('/media/images/sprite.jpg', scene);
+    image_texture.hasAlpha = false;
+
+
+
+
     export function getImageMaterial(src: string, isEmitting: boolean, hasAlpha: boolean, backFace: boolean) {
 
-        let key = src + isEmitting + hasAlpha + backFace;//todo better - maybe hash
+
+        let material = new BABYLON.StandardMaterial("texture4", scene);
+        material.diffuseTexture = image_texture;
+        return(material);
+
+
+    }*/
+
+    const enginePlayReasonLoadingTextures = new EnginePlayReason('loading textures');
+    playEngine(enginePlayReasonLoadingTextures);
+
+    let texturesCount = 0;
+    let texturesLoaded = 0;
+    let onTextureLoad = function () {
+        texturesLoaded++;
+        //r('Loaded texture '+texturesLoaded+' / '+texturesCount);
+        if(texturesLoaded == texturesCount){
+
+            pauseEngine(enginePlayReasonLoadingTextures);
+            //renderTick();
+
+        }
+
+    };
+
+
+
+    let imagesMaterials = {};//todo DI
+    export function getImageMaterial(src: string, width: number, isEmitting: boolean, hasAlpha: boolean, backFace: boolean) {
+
+        let key = src + width + isEmitting + hasAlpha + backFace;//todo better - maybe hash
 
         if (typeof imagesMaterials[key] === 'undefined') {
 
@@ -16,11 +55,20 @@ namespace GALLERY.Viewer {
             var src = src;
             var src_uri = URI(src)//todo Di
                 .removeSearch("width");
-            var src_normal = src_uri.addSearch({width: 512}).toString();
+            var src_normal = src_uri.addSearch({width: width}).toString();
 
 
-            let image_texture = new BABYLON.Texture(src_normal, scene);
+            let onLoad = function () {
+                r('Loaded texture!');
+                renderTick();
+            };
+
+
+            texturesCount++;
+            let image_texture = new BABYLON.Texture(src_normal, scene, false, true, BABYLON.Texture.TRILINEAR_SAMPLINGMODE, onTextureLoad);
             image_texture.hasAlpha = hasAlpha;
+
+
             //image_texture.delayLoadState = BABYLON.Engine.DELAYLOADSTATE_NOTLOADED;
 
 

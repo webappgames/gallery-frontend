@@ -72,7 +72,7 @@ namespace GALLERY.Viewer {
 
                 var object = objects.getObjectById(pickResult.pickedMesh.name);
 
-                r('pick', object);
+                r('pick', object, current);
 
                 if(object)
                 if (current.getUri() == object.getUri()) {

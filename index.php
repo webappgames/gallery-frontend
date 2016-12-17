@@ -72,7 +72,7 @@ if($route == $routeRoot){
 
     <script src="/node_modules/jszip/dist/jszip.min.js"></script>
     <script src="/node_modules/file-saver/FileSaver.min.js"></script>
-    <script src="https://cdn.ravenjs.com/3.9.1/raven.min.js"></script>
+    <!--<script src="https://cdn.ravenjs.com/3.9.1/raven.min.js"></script>-->
 
     <meta property="og:image" content="<?=addslashes('http://'.$_SERVER['HTTP_HOST'].'/'.$route['screenshot'])?>"/>
 

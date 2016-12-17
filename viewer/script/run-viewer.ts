@@ -11,6 +11,8 @@ namespace GALLERY.Viewer{
 
     export function run(compiled_objects: GALLERY.Objects.CompiledArray, develop_=false, deployObject_=null,analyticsObject_=null){
 
+        //r(compiled_objects);aaa;
+
         running = true;
         develop = develop_;
         deployObject = deployObject_;
@@ -29,6 +31,9 @@ namespace GALLERY.Viewer{
             $('.develop-menu').draggable();
         }else{
             runStats();
+
+            Raven.config('https://71d6fb2b651845dea3ef3861e8df529d@sentry.io/122195').install({});
+
         }
 
 

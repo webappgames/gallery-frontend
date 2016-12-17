@@ -55,49 +55,15 @@ namespace GALLERY.Viewer {
         hooverLayer.blurVerticalSize = 0.5;*/
 
 
-        //-----------------------------------------------------zoneMaterial
-        let zoneMaterial = new BABYLON.StandardMaterial("texture1", scene);
-        zoneMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-
-
-        if(develop){
-            zoneMaterial.alpha = 0.2;
-            //zoneMaterial.alpha = 0.2;
-            //zoneMaterial.wireframe = true;
-        }else{
-            zoneMaterial.alpha = 0;
-        }
-
-
-
-        //-----------------------------------------------------
-
-
         //==================================================================================================================
 
         let zoneIdsCreatedForImages = [];
 
 
-        function getBabylonPositionForObject(object){
-
-            //todo use getBabylonPosition
-            object.storey = object.storey || '1NP';
-            let level = BLOCKS_STOREYS_LEVELS[object.storey];
-
-            let position = new BABYLON.Vector3(
-                object.position.x * -BLOCK_SIZE,
-                (level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE,//(0.5 - 0.9) * BLOCK_SIZE,
-                object.position.y * BLOCK_SIZE
-            );
-
-            return(position);
-        }
-
-
 
         function processObject(object) {
 
-            let position = getBabylonPositionForObject(object);
+            let position = object.getBabylonPosition();
 
 
             if (object.type == 'environment') {
@@ -159,7 +125,7 @@ namespace GALLERY.Viewer {
 
                         r('asshole',holeObject);
 
-                        let holePosition = getBabylonPositionForObject(holeObject);
+                        let holePosition = holeObject.getBabylonPosition();
                         let holeMesh = BABYLON.Mesh.CreateBox(holeObject.id, BLOCK_SIZE, scene);
                         holeMesh.material = groundMesh.material;//getMaterial('#00ff00',1,true);
                         holeMesh.position = holePosition;
@@ -263,7 +229,7 @@ namespace GALLERY.Viewer {
                     zoneIdsCreatedForImages.push(object.id);//todo rename zoneIdsCreatedForImages
 
 
-                    let zone = {
+                    let zone = new Objects.Zone({
 
                         id: createGuid(),
                         type: 'zone',
@@ -281,7 +247,7 @@ namespace GALLERY.Viewer {
                         uri: 'none',
                         uri_level: 1,//todo better low priority
 
-                    };
+                    });
 
 
                     processObject(zone);//todo better
@@ -301,90 +267,7 @@ namespace GALLERY.Viewer {
 
             } else if (object.type == 'zone') {
 
-
-                if (object.name || object.html) {
-
-                    let isNext = false;
-                    let label = objects.filterTypes('label').findBy('uri', object.uri);
-                    if (label) {
-                        if (label.next !== 'none') {
-                            isNext = true;
-                        }
-
-                    }
-
-
-                    let element = document.createElement('div');
-                    element.id = 'zone-' + object.id;
-                    element.style.display = 'none';
-                    element.classList.add('zone');
-                    element.innerHTML = ''
-
-                        //+'<div class="previous"><i class="fa fa-chevron-up" aria-hidden="true"></i></div>'
-                        + (object.name ? '<h1>' + object.name + '</h1>' : '')
-                        + '<div class="text">' + object.html + '</div>'
-                        + (isNext ? '<div class="next"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
-
-
-                    element.onclick = appStateNext;
-
-
-                    document.getElementById('zones').appendChild(element);
-
-                }
-
-
-                let mesh;
-                if(object.isPickable && false) {
-                    mesh = BABYLON.Mesh.CreateBox(object.id, BLOCK_SIZE, scene);
-
-
-                    mesh.material = zoneMaterial;
-
-
-                    //mesh.material = getMaterial('stone-plain',0.5);
-                    mesh.position = position;
-
-                    position.y += BLOCK_SIZE * BLOCKS_2D_3D_SHAPES.room.length / 2;
-                    mesh.scaling.y = BLOCKS_2D_3D_SHAPES.room.length;
-
-                    mesh.scaling.x = object.width;
-                    mesh.scaling.z = object.height;
-
-
-                    mesh.checkCollisions = false;
-                    mesh.isPickable = false;//object.isPickable;
-                    /*if(!object.isPickable){
-                        hooverLayer.addExcludedMesh(mesh);
-                    }*/
-
-                    meshes.push(mesh);
-
-
-
-                }else{
-
-                    mesh = null;
-                }
-
-
-
-                //r(mesh);
-
-                zones.push({
-                    mesh: mesh,
-                    element: element,
-                    object: object
-
-
-                });
-
-
-
-                /*return(mesh);
-                 r(object);
-                 var mesh = object.createBabylonMesh(BABYLON);
-                 meshes_zones.push(mesh);*/
+                zones.push(object);
 
 
             } else if (object.type == 'block') {
@@ -526,7 +409,7 @@ namespace GALLERY.Viewer {
 
 
 
-                            let zone = {
+                            let zone = new Objects.Zone({
 
                                 id: createGuid(),
                                 type: 'zone',
@@ -547,14 +430,14 @@ namespace GALLERY.Viewer {
                                 uri: uri,
                                 uri_level: 10000,//todo better low priority
 
-                            };
+                            });
 
 
                             processObject(zone);//todo better
                             objects.push(zone);
 
 
-                            let label = {
+                            let label = new Objects.Label({
 
                                 id: createGuid(),
                                 type: 'label',
@@ -573,7 +456,7 @@ namespace GALLERY.Viewer {
                                 uri: uri,
                                 parent: object.parent,
 
-                            };
+                            });
 
 
                             processObject(label);//todo better

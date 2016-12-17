@@ -85,6 +85,7 @@ namespace GALLERY.Viewer {
     // Resize
     window.addEventListener("resize", function () {
         engine.resize();
+        renderTick();
     });
 
 

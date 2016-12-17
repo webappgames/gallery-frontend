@@ -7,10 +7,10 @@ namespace GALLERY.Objects{
     export class Array{
 
 
-        public objects:GALLERY.Objects.Object[];
+        public objects:Object[];
         public index:number;
 
-        constructor(objects:GALLERY.Objects.Object[] = []) {
+        constructor(objects:Object[] = []) {
 
 
             this.objects=[];
@@ -25,7 +25,7 @@ namespace GALLERY.Objects{
 
         }
 
-        next():GALLERY.Objects.Object {
+        next():Object {
 
             if(this.objects.length <= this.index){
                 return null;
@@ -40,12 +40,12 @@ namespace GALLERY.Objects{
         }
 
 
-        getAll():GALLERY.Objects.Object[] {
+        getAll():Object[] {
             return this.objects;
         }
 
 
-        getObjectByIndex(index:number):GALLERY.Objects.Object {
+        getObjectByIndex(index:number):Object {
             return this.objects[index];
         }
 
@@ -55,20 +55,20 @@ namespace GALLERY.Objects{
         }
 
 
-        sort(callback: (object1:GALLERY.Objects.Object,object2:GALLERY.Objects.Object)=>void): Array {
+        sort(callback: (object1:Object,object2:Object)=>void): Array {
             this.objects.sort(callback);
             return this;
         }
 
 
         push(object:Object): void {
-            this.objects.push(GALLERY.Objects.Object.init(object));
+            this.objects.push(Object.init(object));
         }
 
 
-        findBy(key:string, value:string | number | boolean):GALLERY.Objects.Object {
+        findBy(key:string, value:string | number | boolean):Object {
 
-            r('findBy',key,value);
+            //r('findBy',key,value);
 
             let value_: any;
 

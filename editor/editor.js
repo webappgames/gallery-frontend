@@ -1091,10 +1091,10 @@ var GALLERY;
                 return this;
             };
             Array.prototype.push = function (object) {
-                this.objects.push(GALLERY.Objects.Object.init(object));
+                this.objects.push(Objects.Object.init(object));
             };
             Array.prototype.findBy = function (key, value) {
-                r('findBy', key, value);
+                //r('findBy',key,value);
                 var value_;
                 for (var i = 0, l = this.objects.length; i < l; i++) {
                     value_ = this.objects[i][key];
@@ -1534,54 +1534,54 @@ var GALLERY;
                 }
             }
             Object.init = function (object) {
-                if (object instanceof GALLERY.Objects.Object) {
+                if (object instanceof Object) {
                     return (object);
                 }
                 //----------------------------------
                 if (object.type == 'environment') {
-                    object = new GALLERY.Objects.Environment(object);
+                    object = new Objects.Environment(object);
                 }
                 else if (object.type == 'block') {
-                    object = new GALLERY.Objects.Block(object);
+                    object = new Objects.Block(object);
                 }
                 else if (object.type == 'multiblock') {
-                    object = new GALLERY.Objects.MultiBlock(object);
+                    object = new Objects.MultiBlock(object);
                 }
                 else if (object.type == 'light') {
-                    object = new GALLERY.Objects.Light(object);
+                    object = new Objects.Light(object);
                 }
                 else if (object.type == 'label') {
-                    object = new GALLERY.Objects.Label(object);
+                    object = new Objects.Label(object);
                 }
                 else if (object.type == 'image') {
-                    object = new GALLERY.Objects.Image(object);
+                    object = new Objects.Image(object);
                 }
                 else if (object.type == 'tree') {
-                    object = new GALLERY.Objects.Tree(object);
+                    object = new Objects.Tree(object);
                 }
                 else if (object.type == 'stairs') {
-                    object = new GALLERY.Objects.Stairs(object);
+                    object = new Objects.Stairs(object);
                 }
                 else if (object.type == 'link') {
-                    object = new GALLERY.Objects.Link(object);
+                    object = new Objects.Link(object);
                 }
                 else if (object.type == 'gate') {
-                    object = new GALLERY.Objects.Gate(object);
+                    object = new Objects.Gate(object);
                 }
                 else if (object.type == 'zone') {
-                    object = new GALLERY.Objects.Zone(object);
+                    object = new Objects.Zone(object);
                 }
                 else if (object.type == 'groundhole') {
-                    object = new GALLERY.Objects.GroundHole(object);
+                    object = new Objects.GroundHole(object);
                 }
                 else if (object.type == 'deploy') {
-                    object = new GALLERY.Objects.Deploy(object);
+                    object = new Objects.Deploy(object);
                 }
                 else if (object.type == 'analytics') {
-                    object = new GALLERY.Objects.Analytics(object);
+                    object = new Objects.Analytics(object);
                 }
                 else if (object.type == 'board') {
-                    object = new GALLERY.Objects.Board(object);
+                    object = new Objects.Board(object);
                 }
                 else {
                     console.log(object);
@@ -1626,9 +1626,9 @@ var GALLERY;
                 return ($element);
             };
             Object.prototype.getBabylonPosition = function () {
-                var level = BLOCKS_STOREYS_LEVELS[object.storey];
-                var position = new BABYLON.Vector3(object.position.x * -BLOCK_SIZE, (level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
-                object.position.y * BLOCK_SIZE);
+                var level = BLOCKS_STOREYS_LEVELS[this.storey || '1NP'];
+                var position = new BABYLON.Vector3(this.position.x * -BLOCK_SIZE, (level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
+                this.position.y * BLOCK_SIZE);
                 return (position);
             };
             return Object;
@@ -2105,7 +2105,6 @@ var GALLERY;
     (function (Objects) {
         var Zone = (function (_super) {
             __extends(Zone, _super);
-            //public selector: string;
             function Zone(object) {
                 _super.call(this, object);
                 this.width = this.width || 1;
@@ -2133,6 +2132,87 @@ var GALLERY;
                 $element.append($block);
                 //$element.css('transform','rotate('+object.rotation+'deg)');
                 return $element;
+            };
+            Zone.prototype._createMesh = function (scene) {
+                var mesh = BABYLON.Mesh.CreateBox(this.id, BLOCK_SIZE, scene);
+                mesh.material = new BABYLON.StandardMaterial("texture1", scene);
+                mesh.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+                mesh.position = this.getBabylonPosition();
+                mesh.position.y += BLOCK_SIZE; //* BLOCKS_2D_3D_SHAPES.room.length / 2;
+                mesh.scaling.y = 1;
+                mesh.scaling.x = this.width;
+                mesh.scaling.z = this.height;
+                mesh.checkCollisions = false;
+                mesh.isPickable = false;
+                //meshes.push(mesh);
+                return (mesh);
+            };
+            Zone.prototype.getMesh = function (scene) {
+                if ("_mesh" in this) {
+                }
+                else {
+                    this._mesh = this._createMesh(scene);
+                }
+                return this._mesh;
+            };
+            Zone.prototype.isIn = function (position, scene) {
+                var center = this.getBabylonPosition();
+                //center.y += BLOCK_SIZE * BLOCKS_2D_3D_SHAPES.room.length / 2;
+                //let scaling = new BABYLON.Vector3(BLOCK_SIZE,BLOCK_SIZE,BLOCK_SIZE);
+                var scaling = { x: BLOCK_SIZE, y: BLOCK_SIZE, z: BLOCK_SIZE };
+                //scaling.y = scaling.y * BLOCKS_2D_3D_SHAPES.room.length;
+                scaling.x = scaling.x * this.width * 0.5;
+                scaling.z = scaling.z * this.height * 0.5;
+                //r((center.x-scaling.x)+' - '+position.x+' - '+(center.x+scaling.x));
+                var isIn = (center.x - scaling.x <= position.x &&
+                    center.x + scaling.x >= position.x &&
+                    /*center.y-scaling.y <= position.y &&
+                    center.y+scaling.y >= position.y &&*/
+                    center.z - scaling.z <= position.z &&
+                    center.z + scaling.z >= position.z);
+                if (isIn) {
+                    this.getMesh(scene).material.alpha = 0.2;
+                }
+                else {
+                    this.getMesh(scene).material.alpha = 0;
+                }
+                return (isIn);
+            };
+            Zone.prototype._createBoard = function () {
+                //if (object.name || object.html) {
+                var isNext = false;
+                var label = objects.filterTypes('label').findBy('uri', this.uri);
+                if (label) {
+                    if (label.next !== 'none') {
+                        isNext = true;
+                    }
+                }
+                var element = document.createElement('div');
+                element.id = 'zone-' + this.id;
+                element.style.display = 'none';
+                element.classList.add('zone');
+                element.innerHTML = ''
+                    + (this.name ? '<h1>' + this.name + '</h1>' : '')
+                    + '<div class="text">' + this.html + '</div>'
+                    + (isNext ? '<div class="next"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
+                element.onclick = Viewer.appStateNext;
+                document.getElementById('zones').appendChild(element);
+                return (element);
+                //}
+            };
+            Zone.prototype.getBoard = function () {
+                if ("_board" in this) {
+                }
+                else {
+                    this._board = this._createBoard();
+                }
+                return this._board;
+            };
+            Zone.prototype.showBoard = function () {
+                this.getBoard().style.display = 'block';
+            };
+            Zone.prototype.hideBoard = function () {
+                this.getBoard().style.display = 'none';
             };
             return Zone;
         }(Objects.Object));
@@ -3343,11 +3423,13 @@ var GALLERY;
             var deployObject = objects.filterTypes('deploy').findBy('deployType', 'ftp');
             var previewLoaded = setInterval(function () {
                 try {
-                    preview.GALLERY.Viewer.run.call(preview, compiled_objects, true, deployObject, analyticsObject);
+                    var compiled_objects_ = new preview.GALLERY.Objects.Array(JSON.parse(JSON.stringify(compiled_objects.getAll())));
+                    preview.GALLERY.Viewer.run.call(preview, compiled_objects_, true, deployObject, analyticsObject);
                     clearInterval(previewLoaded);
                 }
                 catch (e) {
-                    r('Not yet loaded!', e);
+                    r('Not yet loaded!');
+                    r(e);
                 }
             }, 500);
             /*var theWindow = window.open("../viewer", "gallery-preview"),

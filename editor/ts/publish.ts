@@ -141,12 +141,14 @@ namespace GALLERY.Editor{
 
             try{
 
-                preview.GALLERY.Viewer.run.call(preview,compiled_objects,true,deployObject,analyticsObject);
+                let compiled_objects_ = new preview.GALLERY.Objects.Array(JSON.parse(JSON.stringify(compiled_objects.getAll())));
+                preview.GALLERY.Viewer.run.call(preview,compiled_objects_,true,deployObject,analyticsObject);
                 clearInterval(previewLoaded);
 
             }catch(e){
 
-                r('Not yet loaded!',e);
+                r('Not yet loaded!');
+                r(e);
             }
 
 

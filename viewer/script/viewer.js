@@ -1107,10 +1107,10 @@ var GALLERY;
                 return this;
             };
             Array.prototype.push = function (object) {
-                this.objects.push(GALLERY.Objects.Object.init(object));
+                this.objects.push(Objects.Object.init(object));
             };
             Array.prototype.findBy = function (key, value) {
-                r('findBy', key, value);
+                //r('findBy',key,value);
                 var value_;
                 for (var i = 0, l = this.objects.length; i < l; i++) {
                     value_ = this.objects[i][key];
@@ -1550,54 +1550,54 @@ var GALLERY;
                 }
             }
             Object.init = function (object) {
-                if (object instanceof GALLERY.Objects.Object) {
+                if (object instanceof Object) {
                     return (object);
                 }
                 //----------------------------------
                 if (object.type == 'environment') {
-                    object = new GALLERY.Objects.Environment(object);
+                    object = new Objects.Environment(object);
                 }
                 else if (object.type == 'block') {
-                    object = new GALLERY.Objects.Block(object);
+                    object = new Objects.Block(object);
                 }
                 else if (object.type == 'multiblock') {
-                    object = new GALLERY.Objects.MultiBlock(object);
+                    object = new Objects.MultiBlock(object);
                 }
                 else if (object.type == 'light') {
-                    object = new GALLERY.Objects.Light(object);
+                    object = new Objects.Light(object);
                 }
                 else if (object.type == 'label') {
-                    object = new GALLERY.Objects.Label(object);
+                    object = new Objects.Label(object);
                 }
                 else if (object.type == 'image') {
-                    object = new GALLERY.Objects.Image(object);
+                    object = new Objects.Image(object);
                 }
                 else if (object.type == 'tree') {
-                    object = new GALLERY.Objects.Tree(object);
+                    object = new Objects.Tree(object);
                 }
                 else if (object.type == 'stairs') {
-                    object = new GALLERY.Objects.Stairs(object);
+                    object = new Objects.Stairs(object);
                 }
                 else if (object.type == 'link') {
-                    object = new GALLERY.Objects.Link(object);
+                    object = new Objects.Link(object);
                 }
                 else if (object.type == 'gate') {
-                    object = new GALLERY.Objects.Gate(object);
+                    object = new Objects.Gate(object);
                 }
                 else if (object.type == 'zone') {
-                    object = new GALLERY.Objects.Zone(object);
+                    object = new Objects.Zone(object);
                 }
                 else if (object.type == 'groundhole') {
-                    object = new GALLERY.Objects.GroundHole(object);
+                    object = new Objects.GroundHole(object);
                 }
                 else if (object.type == 'deploy') {
-                    object = new GALLERY.Objects.Deploy(object);
+                    object = new Objects.Deploy(object);
                 }
                 else if (object.type == 'analytics') {
-                    object = new GALLERY.Objects.Analytics(object);
+                    object = new Objects.Analytics(object);
                 }
                 else if (object.type == 'board') {
-                    object = new GALLERY.Objects.Board(object);
+                    object = new Objects.Board(object);
                 }
                 else {
                     console.log(object);
@@ -1642,9 +1642,9 @@ var GALLERY;
                 return ($element);
             };
             Object.prototype.getBabylonPosition = function () {
-                var level = BLOCKS_STOREYS_LEVELS[object.storey];
-                var position = new BABYLON.Vector3(object.position.x * -BLOCK_SIZE, (level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
-                object.position.y * BLOCK_SIZE);
+                var level = BLOCKS_STOREYS_LEVELS[this.storey || '1NP'];
+                var position = new BABYLON.Vector3(this.position.x * -BLOCK_SIZE, (level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
+                this.position.y * BLOCK_SIZE);
                 return (position);
             };
             return Object;
@@ -2121,7 +2121,6 @@ var GALLERY;
     (function (Objects) {
         var Zone = (function (_super) {
             __extends(Zone, _super);
-            //public selector: string;
             function Zone(object) {
                 _super.call(this, object);
                 this.width = this.width || 1;
@@ -2149,6 +2148,87 @@ var GALLERY;
                 $element.append($block);
                 //$element.css('transform','rotate('+object.rotation+'deg)');
                 return $element;
+            };
+            Zone.prototype._createMesh = function (scene) {
+                var mesh = BABYLON.Mesh.CreateBox(this.id, BLOCK_SIZE, scene);
+                mesh.material = new BABYLON.StandardMaterial("texture1", scene);
+                mesh.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+                mesh.position = this.getBabylonPosition();
+                mesh.position.y += BLOCK_SIZE; //* BLOCKS_2D_3D_SHAPES.room.length / 2;
+                mesh.scaling.y = 1;
+                mesh.scaling.x = this.width;
+                mesh.scaling.z = this.height;
+                mesh.checkCollisions = false;
+                mesh.isPickable = false;
+                //meshes.push(mesh);
+                return (mesh);
+            };
+            Zone.prototype.getMesh = function (scene) {
+                if ("_mesh" in this) {
+                }
+                else {
+                    this._mesh = this._createMesh(scene);
+                }
+                return this._mesh;
+            };
+            Zone.prototype.isIn = function (position, scene) {
+                var center = this.getBabylonPosition();
+                //center.y += BLOCK_SIZE * BLOCKS_2D_3D_SHAPES.room.length / 2;
+                //let scaling = new BABYLON.Vector3(BLOCK_SIZE,BLOCK_SIZE,BLOCK_SIZE);
+                var scaling = { x: BLOCK_SIZE, y: BLOCK_SIZE, z: BLOCK_SIZE };
+                //scaling.y = scaling.y * BLOCKS_2D_3D_SHAPES.room.length;
+                scaling.x = scaling.x * this.width * 0.5;
+                scaling.z = scaling.z * this.height * 0.5;
+                //r((center.x-scaling.x)+' - '+position.x+' - '+(center.x+scaling.x));
+                var isIn = (center.x - scaling.x <= position.x &&
+                    center.x + scaling.x >= position.x &&
+                    /*center.y-scaling.y <= position.y &&
+                    center.y+scaling.y >= position.y &&*/
+                    center.z - scaling.z <= position.z &&
+                    center.z + scaling.z >= position.z);
+                if (isIn) {
+                    this.getMesh(scene).material.alpha = 0.2;
+                }
+                else {
+                    this.getMesh(scene).material.alpha = 0;
+                }
+                return (isIn);
+            };
+            Zone.prototype._createBoard = function () {
+                //if (object.name || object.html) {
+                var isNext = false;
+                var label = objects.filterTypes('label').findBy('uri', this.uri);
+                if (label) {
+                    if (label.next !== 'none') {
+                        isNext = true;
+                    }
+                }
+                var element = document.createElement('div');
+                element.id = 'zone-' + this.id;
+                element.style.display = 'none';
+                element.classList.add('zone');
+                element.innerHTML = ''
+                    + (this.name ? '<h1>' + this.name + '</h1>' : '')
+                    + '<div class="text">' + this.html + '</div>'
+                    + (isNext ? '<div class="next"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
+                element.onclick = GALLERY.Viewer.appStateNext;
+                document.getElementById('zones').appendChild(element);
+                return (element);
+                //}
+            };
+            Zone.prototype.getBoard = function () {
+                if ("_board" in this) {
+                }
+                else {
+                    this._board = this._createBoard();
+                }
+                return this._board;
+            };
+            Zone.prototype.showBoard = function () {
+                this.getBoard().style.display = 'block';
+            };
+            Zone.prototype.hideBoard = function () {
+                this.getBoard().style.display = 'none';
             };
             return Zone;
         }(Objects.Object));
@@ -3496,7 +3576,7 @@ var GALLERY;
                 var pickResult = Viewer.scene.pick(Viewer.scene.pointerX, Viewer.scene.pointerY);
                 Viewer.onPointerHover(event, pickResult);
             });
-            var zones_last = [];
+            var inZonesLast = [];
             Viewer.scene.registerBeforeRender(function () {
                 if (GALLERY.Viewer.MODE == 'WEB') {
                     if (Viewer.current_label) {
@@ -3530,45 +3610,33 @@ var GALLERY;
                 if (camera.rotation.x > limit) {
                     camera.rotation.x = limit;
                 }
-                //----------------------------------------------------------Zones
-                var zones_ids = [];
-                /*zones.forEach(function (zone) {
-    
-    
-                    if (zone.mesh.intersectsPoint(camera.position)) {
-    
-                        zones_ids.push(zone.mesh.name);
-                        //r('in zone');
-                        zone.mesh.isPickable = false;
-    
-                    }else{
-                        zone.mesh.isPickable = zone.object.isPickable;
-    
+                //=============================================================Zones
+                var inZones = [];
+                //r(zones);aaa;
+                Viewer.zones.forEach(function (zone) {
+                    if (zone.isIn(camera.position, Viewer.scene)) {
+                        inZones.push(zone);
                     }
-    
-    
-                });*/
-                var zones_plus = [];
-                var zones_minus = [];
-                for (var i = 0, l = zones_ids.length; i < l; i++) {
-                    if (zones_last.indexOf(zones_ids[i]) == -1) {
-                        zones_plus.push(zones_ids[i]);
+                });
+                var inZonesPlus = [];
+                var inZonesMinus = [];
+                for (var i = 0, l = inZones.length; i < l; i++) {
+                    if (inZonesLast.indexOf(inZones[i]) == -1) {
+                        inZonesPlus.push(inZones[i]);
                     }
                 }
-                for (var i = 0, l = zones_last.length; i < l; i++) {
-                    if (zones_ids.indexOf(zones_last[i]) == -1) {
-                        zones_minus.push(zones_last[i]);
+                for (var i = 0, l = inZonesLast.length; i < l; i++) {
+                    if (inZones.indexOf(inZonesLast[i]) == -1) {
+                        inZonesMinus.push(inZonesLast[i]);
                     }
                 }
-                zones_last = zones_ids; //.slice();
-                if (zones_plus.length || zones_minus.length) {
-                    var zones_1 = zones_ids.map(function (zone_id) {
-                        return objects.getObjectById(zone_id);
-                    });
-                    zones_1 = zones_1.filter(function (zone) {
+                inZonesLast = inZones; //.slice();
+                //----------------------------------------------------------Creating new app state
+                if (inZonesPlus.length || inZonesMinus.length) {
+                    inZones = inZones.filter(function (zone) {
                         return (zone.uri.substr(0, 1) == '/');
                     });
-                    zones_1.sort(function (zone_a, zone_b) {
+                    inZones.sort(function (zone_a, zone_b) {
                         if (zone_a.uri_level > zone_b.uri_level) {
                             return (-1);
                         }
@@ -3579,39 +3647,39 @@ var GALLERY;
                             return (0);
                         }
                     });
-                    r(zones_1);
-                    r('Creating new app uri from zone ', zones_1[0]);
+                    r(inZones);
+                    r('Creating new app uri from zone ', inZones[0]);
                     var uri = void 0;
-                    if (zones_1.length == 0) {
+                    if (inZones.length == 0) {
                         uri = '/';
                     }
                     else {
-                        uri = zones_1[0].uri;
+                        uri = inZones[0].uri;
                     }
-                    /*let uri = '/';
-                     zones.forEach(function (zone) {
-                     uri += zone.uri;
-                     });
-                     uri = uri.split('//').join('/');*/
                     GALLERY.Viewer.appState(uri + window.location.hash, true);
                 }
-                //r(zones_plus,zones_minus);
-                zones_plus.forEach(function (zone_id) {
+                //----------------------------------------------------------
+                //----------------------------------------------------------Showing/hiding divs
+                inZonesPlus.forEach(function (zone) {
                     //$('#zone-'+zone_id).show();
-                    r('In the zone ' + zone_id);
-                    var $zone_sections = $('#zone-' + zone_id);
-                    $zone_sections.stop().slideDown();
+                    r('In the zone ' + zone.name);
+                    zone.showBoard();
+                    //let $zone_sections = $('#zone-' + zone_id);
+                    //$zone_sections.stop().slideDown();
                     //$zone_sections.show().stop().animate({'margin-top': '50px'},1000);
                 });
-                zones_minus.forEach(function (zone_id) {
+                inZonesMinus.forEach(function (zone) {
                     //$('#zone-'+zone_id).hide();
-                    r('Out of the zone ' + zone_id);
+                    r('Out of the zone ' + zone.name);
+                    zone.hideBoard();
                     //let zone = objects.getObjectById(zone_id);
-                    var $zone_sections = $('#zone-' + zone_id);
-                    $zone_sections.stop().slideUp();
+                    //let $zone_sections = $('#zone-' + zone_id);
+                    //$zone_sections.stop().slideUp();
                     //$zone_sections.stop().hide('slide', {direction: 'up'}, 1400);
                 });
-                //----------------------------------------------------------Boards
+                //----------------------------------------------------------
+                //=============================================================
+                //=============================================================Boards
                 Viewer.boards.forEach(function (board) {
                     /*r(mesh.position);
     
@@ -3645,7 +3713,7 @@ var GALLERY;
                     board.element.style.top = (position.y / zoom) + 'px';
                     board.element.style.display = 'block';
                 });
-                //----------------------------------------------------------
+                //=============================================================
             });
             //r(camera.viewport);
             //r(camera.viewport.toGlobal(engine));
@@ -3813,6 +3881,7 @@ var GALLERY;
         // Resize
         window.addEventListener("resize", function () {
             Viewer.engine.resize();
+            renderTick();
         });
         BABYLON.SceneOptimizer.OptimizeAsync(Viewer.scene, BABYLON.SceneOptimizerOptions.HighDegradationAllowed(), function () {
         }, function () {
@@ -3828,6 +3897,7 @@ var GALLERY;
         Viewer.deployObject = '';
         Viewer.analyticsObject = '';
         function run(compiled_objects, develop_, deployObject_, analyticsObject_) {
+            //r(compiled_objects);aaa;
             if (develop_ === void 0) { develop_ = false; }
             if (deployObject_ === void 0) { deployObject_ = null; }
             if (analyticsObject_ === void 0) { analyticsObject_ = null; }
@@ -3844,6 +3914,7 @@ var GALLERY;
             }
             else {
                 Viewer.runStats();
+                Raven.config('https://71d6fb2b651845dea3ef3861e8df529d@sentry.io/122195').install({});
             }
             /*
             todo
@@ -3916,28 +3987,10 @@ var GALLERY;
             /*hooverLayer = new BABYLON.HighlightLayer("hooverLayer", scene, {camera: camera});
             hooverLayer.blurHorizontalSize = 0.5;
             hooverLayer.blurVerticalSize = 0.5;*/
-            //-----------------------------------------------------zoneMaterial
-            var zoneMaterial = new BABYLON.StandardMaterial("texture1", Viewer.scene);
-            zoneMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-            if (Viewer.develop) {
-                zoneMaterial.alpha = 0.2;
-            }
-            else {
-                zoneMaterial.alpha = 0;
-            }
-            //-----------------------------------------------------
             //==================================================================================================================
             var zoneIdsCreatedForImages = [];
-            function getBabylonPositionForObject(object) {
-                //todo use getBabylonPosition
-                object.storey = object.storey || '1NP';
-                var level = BLOCKS_STOREYS_LEVELS[object.storey];
-                var position = new BABYLON.Vector3(object.position.x * -BLOCK_SIZE, (level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
-                object.position.y * BLOCK_SIZE);
-                return (position);
-            }
             function processObject(object) {
-                var position = getBabylonPositionForObject(object);
+                var position = object.getBabylonPosition();
                 if (object.type == 'environment') {
                     endlessStructures = object.endlessStructures;
                     endlessStructuresFromStorey = object.endlessStructuresFromStorey;
@@ -3965,7 +4018,7 @@ var GALLERY;
                         //groundMesh.material.backFaceCulling = false;
                         objects_world.filterTypes('groundhole').forEach(function (holeObject) {
                             r('asshole', holeObject);
-                            var holePosition = getBabylonPositionForObject(holeObject);
+                            var holePosition = holeObject.getBabylonPosition();
                             var holeMesh = BABYLON.Mesh.CreateBox(holeObject.id, BLOCK_SIZE, Viewer.scene);
                             holeMesh.material = groundMesh_1.material; //getMaterial('#00ff00',1,true);
                             holeMesh.position = holePosition;
@@ -4021,7 +4074,7 @@ var GALLERY;
                     if (Viewer.develop && (zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
                         r('Creating zone for ' + object.name);
                         zoneIdsCreatedForImages.push(object.id); //todo rename zoneIdsCreatedForImages
-                        var zone = {
+                        var zone = new GALLERY.Objects.Zone({
                             id: createGuid(),
                             type: 'zone',
                             world: object.world,
@@ -4036,57 +4089,13 @@ var GALLERY;
                             html: object.html,
                             uri: 'none',
                             uri_level: 1,
-                        };
+                        });
                         processObject(zone); //todo better
                         objects.push(zone);
                     }
                 }
                 else if (object.type == 'zone') {
-                    if (object.name || object.html) {
-                        var isNext = false;
-                        var label = objects.filterTypes('label').findBy('uri', object.uri);
-                        if (label) {
-                            if (label.next !== 'none') {
-                                isNext = true;
-                            }
-                        }
-                        var element = document.createElement('div');
-                        element.id = 'zone-' + object.id;
-                        element.style.display = 'none';
-                        element.classList.add('zone');
-                        element.innerHTML = ''
-                            + (object.name ? '<h1>' + object.name + '</h1>' : '')
-                            + '<div class="text">' + object.html + '</div>'
-                            + (isNext ? '<div class="next"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
-                        element.onclick = Viewer.appStateNext;
-                        document.getElementById('zones').appendChild(element);
-                    }
-                    var mesh = void 0;
-                    if (object.isPickable && false) {
-                        mesh = BABYLON.Mesh.CreateBox(object.id, BLOCK_SIZE, Viewer.scene);
-                        mesh.material = zoneMaterial;
-                        //mesh.material = getMaterial('stone-plain',0.5);
-                        mesh.position = position;
-                        position.y += BLOCK_SIZE * BLOCKS_2D_3D_SHAPES.room.length / 2;
-                        mesh.scaling.y = BLOCKS_2D_3D_SHAPES.room.length;
-                        mesh.scaling.x = object.width;
-                        mesh.scaling.z = object.height;
-                        mesh.checkCollisions = false;
-                        mesh.isPickable = false; //object.isPickable;
-                        /*if(!object.isPickable){
-                            hooverLayer.addExcludedMesh(mesh);
-                        }*/
-                        Viewer.meshes.push(mesh);
-                    }
-                    else {
-                        mesh = null;
-                    }
-                    //r(mesh);
-                    Viewer.zones.push({
-                        mesh: mesh,
-                        element: element,
-                        object: object
-                    });
+                    Viewer.zones.push(object);
                 }
                 else if (object.type == 'block') {
                     throw new Error('Block should not be in compiled objects.');
@@ -4163,7 +4172,7 @@ var GALLERY;
                                 var size = Math.max(object.width, object.height);
                                 var x = Math.sin(rotation_rad_1) * size / -2;
                                 var y = Math.cos(rotation_rad_1) * size / 2;
-                                var zone = {
+                                var zone = new GALLERY.Objects.Zone({
                                     id: createGuid(),
                                     type: 'zone',
                                     world: object.world,
@@ -4178,10 +4187,10 @@ var GALLERY;
                                     html: object.html,
                                     uri: uri,
                                     uri_level: 10000,
-                                };
+                                });
                                 processObject(zone); //todo better
                                 objects.push(zone);
-                                var label = {
+                                var label = new GALLERY.Objects.Label({
                                     id: createGuid(),
                                     type: 'label',
                                     world: object.world,
@@ -4194,7 +4203,7 @@ var GALLERY;
                                     name: object.name,
                                     uri: uri,
                                     parent: object.parent,
-                                };
+                                });
                                 processObject(label); //todo better
                                 objects.push(label);
                             }
@@ -4481,11 +4490,7 @@ var GALLERY;
         function onCollide(collidedMesh) {
             //r(collidedMesh);
             //collidedMesh.checkCollisions = false;
-            if (['ground', 'room', 'stairs'].indexOf(collidedMesh.id) !== -1) {
-                //on_air = false;
-                //r('collide with '+collidedMesh.id);
-                ion.sound.play("step-" + collidedMesh.id);
-                return;
+            if (['ground', 'room', 'stairs', 'ground_merged', 'room_merged', 'stairs_merged'].indexOf(collidedMesh.id) !== -1) {
             }
             var object = objects.getObjectById(collidedMesh.name);
             if (object) {
@@ -4571,7 +4576,7 @@ var GALLERY;
                 }
                 else {
                     var object = objects.getObjectById(pickResult.pickedMesh.name);
-                    r('pick', object);
+                    r('pick', object, current);
                     if (object)
                         if (current.getUri() == object.getUri()) {
                             goToParent();
@@ -5258,12 +5263,6 @@ var GALLERY;
         Viewer.deployToFTP = deployToFTP;
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="reference.ts" />
-if (!GALLERY.Viewer.develop) {
-    Raven.config('https://71d6fb2b651845dea3ef3861e8df529d@sentry.io/122195').install({
-        environment: (GALLERY.Viewer.develop ? 'develop' : 'production'),
-    });
-}
 //document.getElementById("para1").innerHTML = dateToSmartString(new Date('2016-01-01T13:39:45.794Z'));
 function dayOfUniverse(date) {
     return Math.round((date) / 8.64e7);

@@ -8,13 +8,13 @@ namespace GALLERY.Viewer {
         //collidedMesh.checkCollisions = false;
 
 
-        if (['ground', 'room', 'stairs'].indexOf(collidedMesh.id) !== -1) {
+        if (['ground', 'room', 'stairs','ground_merged', 'room_merged', 'stairs_merged'].indexOf(collidedMesh.id) !== -1) {
 
             //on_air = false;
 
             //r('collide with '+collidedMesh.id);
-            ion.sound.play("step-" + collidedMesh.id);
-            return;
+            //ion.sound.play("step-" + collidedMesh.id);
+            //return;
         }
 
 

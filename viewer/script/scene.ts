@@ -5,7 +5,6 @@ namespace GALLERY.Viewer {
 
 
 
-
     export function createScene(engine,canvas) {
         scene = new BABYLON.Scene(engine);
 
@@ -105,7 +104,7 @@ namespace GALLERY.Viewer {
 
 
 
-        var zones_last = [];
+        var inZonesLast = [];
         scene.registerBeforeRender(function () {
 
 
@@ -159,63 +158,55 @@ namespace GALLERY.Viewer {
             }
 
 
-            //----------------------------------------------------------Zones
+            //=============================================================Zones
 
-            let zones_ids = [];
-
-
-            /*zones.forEach(function (zone) {
+            let inZones = [];
 
 
-                if (zone.mesh.intersectsPoint(camera.position)) {
+            //r(zones);aaa;
 
-                    zones_ids.push(zone.mesh.name);
-                    //r('in zone');
-                    zone.mesh.isPickable = false;
+            zones.forEach(function (zone) {
 
-                }else{
-                    zone.mesh.isPickable = zone.object.isPickable;
-
+                if (zone.isIn(camera.position,scene)) {
+                    inZones.push(zone);
                 }
+            });
 
 
-            });*/
 
 
-            let zones_plus = [];
-            let zones_minus = [];
+            let inZonesPlus = [];
+            let inZonesMinus = [];
 
-            for (var i = 0, l = zones_ids.length; i < l; i++) {
-                if (zones_last.indexOf(zones_ids[i]) == -1) {
-                    zones_plus.push(zones_ids[i]);
+            for (var i = 0, l = inZones.length; i < l; i++) {
+                if (inZonesLast.indexOf(inZones[i]) == -1) {
+                    inZonesPlus.push(inZones[i]);
                 }
             }
 
 
-            for (var i = 0, l = zones_last.length; i < l; i++) {
-                if (zones_ids.indexOf(zones_last[i]) == -1) {
-                    zones_minus.push(zones_last[i]);
+            for (var i = 0, l = inZonesLast.length; i < l; i++) {
+                if (inZones.indexOf(inZonesLast[i]) == -1) {
+                    inZonesMinus.push(inZonesLast[i]);
                 }
             }
 
 
-            zones_last = zones_ids;//.slice();
+            inZonesLast = inZones;//.slice();
 
 
-            if (zones_plus.length || zones_minus.length) {
+            //----------------------------------------------------------Creating new app state
+            if (inZonesPlus.length || inZonesMinus.length) {
 
 
-                let zones = zones_ids.map(function (zone_id) {
-                    return objects.getObjectById(zone_id);
-                });
 
-
-                zones = zones.filter(function (zone) {
+                inZones = inZones.filter(function (zone) {
                     return (zone.uri.substr(0, 1) == '/');
                 });
 
 
-                zones.sort(function (zone_a, zone_b) {
+
+                inZones.sort(function (zone_a, zone_b) {
                     if (zone_a.uri_level > zone_b.uri_level) {
                         return (-1);
                     } else if (zone_a.uri_level < zone_b.uri_level) {
@@ -225,55 +216,54 @@ namespace GALLERY.Viewer {
                     }
                 });
 
-                r(zones);
-                r('Creating new app uri from zone ', zones[0]);
+                r(inZones);
+                r('Creating new app uri from zone ', inZones[0]);
 
                 let uri: string;
-                if (zones.length == 0) {
+                if (inZones.length == 0) {
                     uri = '/';
                 } else {
-                    uri = zones[0].uri;
+                    uri = inZones[0].uri;
                 }
 
 
-                /*let uri = '/';
-                 zones.forEach(function (zone) {
-                 uri += zone.uri;
-                 });
-                 uri = uri.split('//').join('/');*/
-
                 GALLERY.Viewer.appState(uri + window.location.hash, true);
 
-
             }
+            //----------------------------------------------------------
 
 
-            //r(zones_plus,zones_minus);
 
-            zones_plus.forEach(function (zone_id) {
+            //----------------------------------------------------------Showing/hiding divs
+            inZonesPlus.forEach(function (zone) {
                 //$('#zone-'+zone_id).show();
-                r('In the zone ' + zone_id);
+                r('In the zone ' + zone.name);
 
-                let $zone_sections = $('#zone-' + zone_id);
-                $zone_sections.stop().slideDown();
+                zone.showBoard();
+                //let $zone_sections = $('#zone-' + zone_id);
+                //$zone_sections.stop().slideDown();
                 //$zone_sections.show().stop().animate({'margin-top': '50px'},1000);
 
 
             });
-            zones_minus.forEach(function (zone_id) {
+            inZonesMinus.forEach(function (zone) {
                 //$('#zone-'+zone_id).hide();
-                r('Out of the zone ' + zone_id);
+                r('Out of the zone ' + zone.name);
 
+                zone.hideBoard();
                 //let zone = objects.getObjectById(zone_id);
-                let $zone_sections = $('#zone-' + zone_id);
-                $zone_sections.stop().slideUp();
+                //let $zone_sections = $('#zone-' + zone_id);
+                //$zone_sections.stop().slideUp();
                 //$zone_sections.stop().hide('slide', {direction: 'up'}, 1400);
 
 
             });
+            //----------------------------------------------------------
+            //=============================================================
 
 
-            //----------------------------------------------------------Boards
+
+            //=============================================================Boards
 
 
             boards.forEach(function (board) {
@@ -336,7 +326,7 @@ namespace GALLERY.Viewer {
             });
 
 
-            //----------------------------------------------------------
+            //=============================================================
 
         });
 

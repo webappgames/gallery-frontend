@@ -46,69 +46,70 @@ namespace GALLERY.Objects{
 
         static init(object) {
 
-            if(object instanceof GALLERY.Objects.Object){
+            if(object instanceof Object){
                 return (object);
             }
 
             //----------------------------------
             if (object.type == 'environment') {
 
-                object = new GALLERY.Objects.Environment(object);
+                object = new Environment(object);
 
             } else if (object.type == 'block') {
 
-                object = new GALLERY.Objects.Block(object);
+                object = new Block(object);
 
             } else if (object.type == 'multiblock') {
 
-                object = new GALLERY.Objects.MultiBlock(object);
+                object = new MultiBlock(object);
 
             } else if (object.type == 'light') {
 
-                object = new GALLERY.Objects.Light(object);
+                object = new Light(object);
 
             } else if (object.type == 'label') {
 
-                object = new GALLERY.Objects.Label(object);
+                object = new Label(object);
 
             } else if (object.type == 'image') {
 
-                object = new GALLERY.Objects.Image(object);
+                object = new Image(object);
 
             } else if (object.type == 'tree') {
 
-                 object = new GALLERY.Objects.Tree(object);
+                 object = new Tree(object);
 
             } else if (object.type == 'stairs') {
 
-            object = new GALLERY.Objects.Stairs(object);
+            object = new Stairs(object);
 
             }else if (object.type == 'link') {
 
-                object = new GALLERY.Objects.Link(object);
+                object = new Link(object);
 
             }else if (object.type == 'gate') {
 
-                object = new GALLERY.Objects.Gate(object);
+                object = new Gate(object);
 
             }else if (object.type == 'zone') {
 
-                object = new GALLERY.Objects.Zone(object);
+                object = new Zone(object);
+
             }else if (object.type == 'groundhole') {
 
-                object = new GALLERY.Objects.GroundHole(object);
+                object = new GroundHole(object);
 
             }else if (object.type == 'deploy') {
 
-                object = new GALLERY.Objects.Deploy(object);
+                object = new Deploy(object);
 
             }else if (object.type == 'analytics') {
 
-                object = new GALLERY.Objects.Analytics(object);
+                object = new Analytics(object);
 
             }else if (object.type == 'board') {
 
-                object = new GALLERY.Objects.Board(object);
+                object = new Board(object);
 
             }
             else {
@@ -200,12 +201,12 @@ namespace GALLERY.Objects{
 
         getBabylonPosition(){
 
-            var level = BLOCKS_STOREYS_LEVELS[object.storey];
+            let level = BLOCKS_STOREYS_LEVELS[this.storey || '1NP'];
 
-            var position = new BABYLON.Vector3(
-                object.position.x * -BLOCK_SIZE,
-                (level+BLOCKS_1NP_LEVEL) * BLOCK_SIZE,//(0.5 - 0.9) * BLOCK_SIZE,
-                object.position.y * BLOCK_SIZE
+            let position = new BABYLON.Vector3(
+                this.position.x * -BLOCK_SIZE,
+                (level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE,//(0.5 - 0.9) * BLOCK_SIZE,
+                this.position.y * BLOCK_SIZE
             );
 
             return(position);

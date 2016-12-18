@@ -74,6 +74,24 @@ if($route == $routeRoot){
     <script src="/node_modules/file-saver/FileSaver.min.js"></script>
     <!--<script src="https://cdn.ravenjs.com/3.9.1/raven.min.js"></script>-->
 
+
+
+   <!-- <script id="dsq-count-scr" src="//EXAMPLE.disqus.com/count.js" async></script>-->
+
+
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/cs_CZ/sdk.js#xfbml=1&version=v2.8&appId=602465393294706";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
     <meta property="og:image" content="<?=addslashes('http://'.$_SERVER['HTTP_HOST'].'/'.$route['screenshot'])?>"/>
 
 

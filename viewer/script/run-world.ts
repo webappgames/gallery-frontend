@@ -268,6 +268,7 @@ namespace GALLERY.Viewer {
             } else if (object.type == 'zone') {
 
                 zones.push(object);
+                meshes.push(object.getMesh(scene));
 
 
             } else if (object.type == 'block') {

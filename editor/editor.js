@@ -2137,6 +2137,7 @@ var GALLERY;
                 var mesh = BABYLON.Mesh.CreateBox(this.id, BLOCK_SIZE, scene);
                 mesh.material = new BABYLON.StandardMaterial("texture1", scene);
                 mesh.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+                mesh.material.alpha = 0.2;
                 mesh.position = this.getBabylonPosition();
                 mesh.position.y += BLOCK_SIZE; //* BLOCKS_2D_3D_SHAPES.room.length / 2;
                 mesh.scaling.y = 1;
@@ -2155,28 +2156,20 @@ var GALLERY;
                 }
                 return this._mesh;
             };
-            Zone.prototype.isIn = function (position, scene) {
+            Zone.prototype.isIn = function (position) {
                 var center = this.getBabylonPosition();
                 //center.y += BLOCK_SIZE * BLOCKS_2D_3D_SHAPES.room.length / 2;
-                //let scaling = new BABYLON.Vector3(BLOCK_SIZE,BLOCK_SIZE,BLOCK_SIZE);
-                var scaling = { x: BLOCK_SIZE, y: BLOCK_SIZE, z: BLOCK_SIZE };
-                //scaling.y = scaling.y * BLOCKS_2D_3D_SHAPES.room.length;
-                scaling.x = scaling.x * this.width * 0.5;
-                scaling.z = scaling.z * this.height * 0.5;
+                var scaling = new BABYLON.Vector3(BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+                scaling.y = scaling.y * BLOCKS_2D_3D_SHAPES.room.length;
+                scaling.x = Math.abs(scaling.x * this.width);
+                scaling.z = Math.abs(scaling.z * this.height);
                 //r((center.x-scaling.x)+' - '+position.x+' - '+(center.x+scaling.x));
-                var isIn = (center.x - scaling.x <= position.x &&
-                    center.x + scaling.x >= position.x &&
-                    /*center.y-scaling.y <= position.y &&
-                    center.y+scaling.y >= position.y &&*/
-                    center.z - scaling.z <= position.z &&
-                    center.z + scaling.z >= position.z);
-                if (isIn) {
-                    this.getMesh(scene).material.alpha = 0.2;
-                }
-                else {
-                    this.getMesh(scene).material.alpha = 0;
-                }
-                return (isIn);
+                return (center.x - scaling.x / 2 <= position.x &&
+                    center.x + scaling.x / 2 >= position.x &&
+                    center.y - scaling.y / 2 <= position.y &&
+                    center.y + scaling.y / 2 >= position.y &&
+                    center.z - scaling.z / 2 <= position.z &&
+                    center.z + scaling.z / 2 >= position.z);
             };
             Zone.prototype._createBoard = function () {
                 //if (object.name || object.html) {
@@ -2195,6 +2188,27 @@ var GALLERY;
                     + (this.name ? '<h1>' + this.name + '</h1>' : '')
                     + '<div class="text">' + this.html + '</div>'
                     + (isNext ? '<div class="next"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
+                /*element.innerHTML +=
+                `
+                    <div id="disqus_thread"></div>
+                    <script>
+    
+                    
+                    var disqus_config = function () {
+                    this.page.url = window.location;  // Replace PAGE_URL with your page's canonical URL variable
+                    this.page.identifier = 'image'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+                    };
+                    
+                    (function() { // DON'T EDIT BELOW THIS LINE
+                    var d = document, s = d.createElement('script');
+                    s.src = '//galerie-fotobernovska-cz.disqus.com/embed.js';
+                    s.setAttribute('data-timestamp', +new Date());
+                    (d.head || d.body).appendChild(s);
+                    })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                `;*/
+                element.innerHTML += "<div class=\"fb-comments\" data-href=\"http://gallery.local/zatisi\" data-mobile=\"1\" data-numposts=\"5\"></div>";
                 element.onclick = Viewer.appStateNext;
                 document.getElementById('zones').appendChild(element);
                 return (element);

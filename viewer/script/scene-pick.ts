@@ -3,24 +3,31 @@
 namespace GALLERY.Viewer {
 
 
+    export function goToParent() {
+
+        let current = GALLERY.Viewer.getAppStateLabel();
+
+        //r(current);
+        if (current.parent && current.parent !== 'none') {
+
+            //r('Going to parent');
+            GALLERY.Viewer.appState(current.parent, false, false);
+        } else if (current.next && current.next !== 'none') {
+            //todo context menu
+            //GALLERY.Viewer.appState(current.next, false, false);
+        }
+
+
+    }
+
+
+
     export function onPointerUp(evt, pickResult) {
 
         let current = GALLERY.Viewer.getAppStateLabel();
         r('current', current);
 
 
-        function goToParent() {
-
-            if (current.parent && current.parent !== 'none') {
-
-                GALLERY.Viewer.appState(current.parent, false, false);
-            } else if (current.next && current.next !== 'none') {
-                //todo context menu
-                //GALLERY.Viewer.appState(current.next, false, false);
-            }
-
-
-        }
 
         //canvas.requestPointerLock();
 
@@ -30,9 +37,9 @@ namespace GALLERY.Viewer {
 
             //r(pickResult.pickedMesh.name);
 
-            if (pickResult.pickedMesh.name == 'ground') {
+            if (['ground','ground_merged','room','room_merged'].indexOf(pickResult.pickedMesh.name)!=-1) {
 
-                r('ground picked');
+                r(pickResult.pickedMesh.name+' picked');
                 goToParent();
 
                 /*var rad = Math.atan2(
@@ -61,12 +68,6 @@ namespace GALLERY.Viewer {
                  );
 
                  moveToBabylon(babylon_position,babylon_rotation,false);*/
-
-
-            } else if (pickResult.pickedMesh.name == 'room') {
-
-                r('room picked');
-                goToParent();
 
             } else {
 

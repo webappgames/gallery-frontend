@@ -43,7 +43,7 @@ namespace GALLERY.Viewer {
     //let hoverColor = BABYLON.Color3.White();//BABYLON.Color3.FromHexString('#37beff');
 
     export function onPointerEnter(mesh) {
-        r('onPointerEnter',mesh);
+        //r('onPointerEnter',mesh);
 
         let distance = BABYLON.Vector3.Distance(camera.position,mesh.position)/BLOCK_SIZE;
 
@@ -74,7 +74,7 @@ namespace GALLERY.Viewer {
 
 
     export function onPointerLeave(mesh) {
-        r('onPointerLeave');
+        //r('onPointerLeave');
         //clearInterval(hooverInterval);
         mesh.scaling = beforeHoverScaling;
         renderTick();

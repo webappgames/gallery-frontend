@@ -313,21 +313,11 @@ namespace GALLERY.Viewer {
             });
 
 
-            scripts.push(
-                'GALLERY.Viewer.run(new GALLERY.Objects.CompiledArray('+JSON.stringify(objects.getAll().map(function (object) {
-
-                    let pureObject = {};
-                    for (var key in object) {
-                        if(key.substr(0,1)!=='_'){
-                            pureObject[key] = object[key];
-                        }
-                    }
-
-                    return(pureObject);
-
-
-                }))+'))'
-            );
+            scripts.push(`
+            $.get('/objects.compiled.json').done(function(response){
+                GALLERY.Viewer.run(new GALLERY.Objects.CompiledArray(response));
+            });
+`);
 
 
             /*scripts.push(`(function(d, s, id) {
@@ -350,7 +340,21 @@ namespace GALLERY.Viewer {
 
 
             zip.file('script-bundle.js',script);
-            zip.file('objects.compiled.json',JSON.stringify(objects.getAll(),null,true));
+            zip.file('objects.compiled.json',JSON.stringify(objects.getAll().map(function (object) {
+
+                let pureObject = {};
+                for (var key in object) {
+                    if(key.substr(0,1)!=='_'){
+                        pureObject[key] = object[key];
+                    }
+                }
+
+                return(pureObject);
+
+
+            }),null,true));
+
+
             zip.file('.htaccess',`
 RewriteEngine On
 

@@ -152,6 +152,16 @@ namespace GALLERY.Viewer{
         rotateToBabylon(babylon_rotation);
 
     }
+    export function appStateTurnBack(){
+
+        let babylon_rotation = new BABYLON.Vector3(
+            0,
+            camera.rotation.y + Math.PI,
+            0
+        );
+        rotateToBabylon(babylon_rotation);
+
+    }
 
 
 
@@ -161,8 +171,14 @@ namespace GALLERY.Viewer{
 
         //r(objects.filterTypes('label'),window.document.location);
 
-
-        return objects.filterTypes('label').findBy('uri',window.document.location.pathname);
+        let pathname = window.document.location.pathname;
+        return objects.filterTypes('label').findBy('uri',pathname);
+        /*if(pathname.substr(0,2)=='/:'){
+            //r(pathname.substr(2));
+            return objects.findBy('id',pathname.substr(2));
+        }else{
+            return objects.filterTypes('label').findBy('uri',pathname);
+        }*/
 
     }
 

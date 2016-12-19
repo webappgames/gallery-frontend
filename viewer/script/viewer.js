@@ -104,9 +104,21 @@ var GALLERY;
             Viewer.rotateToBabylon(babylon_rotation);
         }
         Viewer.appStateTurnRight = appStateTurnRight;
+        function appStateTurnBack() {
+            var babylon_rotation = new BABYLON.Vector3(0, Viewer.camera.rotation.y + Math.PI, 0);
+            Viewer.rotateToBabylon(babylon_rotation);
+        }
+        Viewer.appStateTurnBack = appStateTurnBack;
         function getAppStateLabel() {
             //r(objects.filterTypes('label'),window.document.location);
-            return objects.filterTypes('label').findBy('uri', window.document.location.pathname);
+            var pathname = window.document.location.pathname;
+            return objects.filterTypes('label').findBy('uri', pathname);
+            /*if(pathname.substr(0,2)=='/:'){
+                //r(pathname.substr(2));
+                return objects.findBy('id',pathname.substr(2));
+            }else{
+                return objects.filterTypes('label').findBy('uri',pathname);
+            }*/
         }
         Viewer.getAppStateLabel = getAppStateLabel;
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
@@ -2227,7 +2239,9 @@ var GALLERY;
                 r(fullUrl);
                 if (this.design == 'board' && !isNext) {
                     //element.innerHTML += `<button class="fb-share-button" data-href="http://www.your-domain.com/your-page.html"></button>`;
-                    element.innerHTML += "<button class=\"discuss\" onclick=\"fbDiscuss('" + fullUrl + "');\">P\u0159idat koment\u00E1\u0159</button>";
+                    element.innerHTML += "<button onclick=\"GALLERY.Viewer.goToParent();\"><i class=\"fa fa-arrow-left\" aria-hidden=\"true\"></i> Zp\u011Bt</button>";
+                    element.innerHTML += "<button onclick=\"GALLERY.Viewer.appStateTurnBack();\"><i class=\"fa fa-repeat\" aria-hidden=\"true\"></i> Oto\u010Dit se</button>";
+                    element.innerHTML += "<button class=\"discuss\" onclick=\"fbDiscuss('" + fullUrl + "');\"><i class=\"fa fa-pencil\" aria-hidden=\"true\"></i> P\u0159idat koment\u00E1\u0159</button>";
                     $.ajax({
                         url: 'http://graph.facebook.com/v2.1/' + encodeURIComponent(fullUrl),
                         dataType: 'jsonp',
@@ -2235,25 +2249,25 @@ var GALLERY;
                             data.share = data.share || {};
                             var count = data.share.comment_count || 0;
                             r(data, count);
-                            var text;
+                            var text = '<i class="fa fa-pencil" aria-hidden="true"></i> ';
                             if (count == 0) {
-                                text = 'Přidat komentář';
+                                text += 'Přidat komentář';
                             }
                             else if (count == 1) {
-                                text = '1 komentář';
+                                text += '1 komentář';
                             }
                             else if (count < 5) {
-                                text = count + ' komentáře';
+                                text += count + ' komentáře';
                             }
                             else if (count >= 5) {
-                                text = count + ' komentářů';
+                                text += count + ' komentářů';
                             }
-                            element.getElementsByClassName('discuss')[0].innerText = text;
+                            element.getElementsByClassName('discuss')[0].innerHTML = text;
                             //alert("comments: " + data.comments);
                         }
                     });
                 }
-                if (this.design == 'board') {
+                if (this.design == 'board' && isNext) {
                     element.onclick = GALLERY.Viewer.appStateNext;
                 }
                 document.getElementById('zones').appendChild(element);
@@ -4438,13 +4452,27 @@ var GALLERY;
             //'REFRESH': [80],
             'PRINTSCR': [80],
         };
+        var merged_keys = [];
+        for (var keyName in controls_keys) {
+            controls_keys[keyName].forEach(function (key) {
+                merged_keys.push(key);
+            });
+        }
         //------------------------------------------------------------
         window.addEventListener('keydown', function (e) {
+            if (merged_keys.indexOf(e.keyCode) != -1) {
+                e.preventDefault();
+                r('Pressed ket ' + e.keyCode + ' - prevented default.');
+            }
             // space and arrow keys
-            if ([32, 37, 38, 39, 40].indexOf(e.keyCode) != -1) {
+            /*if ([32, 37, 38, 39, 40].indexOf(e.keyCode) != -1) {
+    
                 //if(T.UI.Status.focusOnMap()){
                 e.preventDefault();
-            }
+                //}
+    
+    
+            }*/
         }, false);
         //------------------------------------------------------------
         var keys = [];
@@ -4636,26 +4664,26 @@ var GALLERY;
 (function (GALLERY) {
     var Viewer;
     (function (Viewer) {
+        function goToParent() {
+            var current = GALLERY.Viewer.getAppStateLabel();
+            //r(current);
+            if (current.parent && current.parent !== 'none') {
+                //r('Going to parent');
+                GALLERY.Viewer.appState(current.parent, false, false);
+            }
+            else if (current.next && current.next !== 'none') {
+            }
+        }
+        Viewer.goToParent = goToParent;
         function onPointerUp(evt, pickResult) {
             var current = GALLERY.Viewer.getAppStateLabel();
             r('current', current);
-            function goToParent() {
-                if (current.parent && current.parent !== 'none') {
-                    GALLERY.Viewer.appState(current.parent, false, false);
-                }
-                else if (current.next && current.next !== 'none') {
-                }
-            }
             //canvas.requestPointerLock();
             // if the click hits the ground object, we change the impact position
             if (pickResult.hit) {
                 //r(pickResult.pickedMesh.name);
-                if (pickResult.pickedMesh.name == 'ground') {
-                    r('ground picked');
-                    goToParent();
-                }
-                else if (pickResult.pickedMesh.name == 'room') {
-                    r('room picked');
+                if (['ground', 'ground_merged', 'room', 'room_merged'].indexOf(pickResult.pickedMesh.name) != -1) {
+                    r(pickResult.pickedMesh.name + ' picked');
                     goToParent();
                 }
                 else {
@@ -5304,15 +5332,7 @@ var GALLERY;
                 var scripts = jsFiles.map(function (file) {
                     return file.content;
                 });
-                scripts.push('GALLERY.Viewer.run(new GALLERY.Objects.CompiledArray(' + JSON.stringify(objects.getAll().map(function (object) {
-                    var pureObject = {};
-                    for (var key in object) {
-                        if (key.substr(0, 1) !== '_') {
-                            pureObject[key] = object[key];
-                        }
-                    }
-                    return (pureObject);
-                })) + '))');
+                scripts.push("\n            $.get('/objects.compiled.json').done(function(response){\n                GALLERY.Viewer.run(new GALLERY.Objects.CompiledArray(response));\n            });\n");
                 /*scripts.push(`(function(d, s, id) {
             var js, fjs = d.getElementsByTagName(s)[0];
             if (d.getElementById(id)) return;
@@ -5325,7 +5345,15 @@ var GALLERY;
                 var zip = new JSZip();
                 //let zipRoot = zip.folder(gallery_folder);
                 zip.file('script-bundle.js', script);
-                zip.file('objects.compiled.json', JSON.stringify(objects.getAll(), null, true));
+                zip.file('objects.compiled.json', JSON.stringify(objects.getAll().map(function (object) {
+                    var pureObject = {};
+                    for (var key in object) {
+                        if (key.substr(0, 1) !== '_') {
+                            pureObject[key] = object[key];
+                        }
+                    }
+                    return (pureObject);
+                }), null, true));
                 zip.file('.htaccess', "\nRewriteEngine On\n\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule . / [L,QSA]\n");
                 //r(deployFiles);
                 deployFiles.forEach(function (deployFile) {
@@ -6068,7 +6096,7 @@ var GALLERY;
         //let hooverInterval;
         //let hoverColor = BABYLON.Color3.White();//BABYLON.Color3.FromHexString('#37beff');
         function onPointerEnter(mesh) {
-            r('onPointerEnter', mesh);
+            //r('onPointerEnter',mesh);
             var distance = BABYLON.Vector3.Distance(Viewer.camera.position, mesh.position) / BLOCK_SIZE;
             beforeHoverScaling = mesh.scaling;
             mesh.scaling = beforeHoverScaling.clone();
@@ -6092,7 +6120,7 @@ var GALLERY;
         }
         Viewer.onPointerEnter = onPointerEnter;
         function onPointerLeave(mesh) {
-            r('onPointerLeave');
+            //r('onPointerLeave');
             //clearInterval(hooverInterval);
             mesh.scaling = beforeHoverScaling;
             Viewer.renderTick();

@@ -2,7 +2,7 @@
 
 
 namespace GALLERY.Viewer {
-    var controls_keys = {
+    const controls_keys = {
         'UP': [38, 87],
         'DOWN': [40, 83],
         'LEFT': [37, 65],
@@ -14,21 +14,38 @@ namespace GALLERY.Viewer {
 
     };
 
+    let merged_keys = [];
+    for(let keyName in controls_keys){
+        controls_keys[keyName].forEach(function (key) {
+            merged_keys.push(key);
+        });
+
+    }
+
+
+
 //------------------------------------------------------------
 
 
     window.addEventListener('keydown', function (e) {
 
+        if(merged_keys.indexOf(e.keyCode)!=-1){
+
+            e.preventDefault();
+            r('Pressed ket '+e.keyCode+' - prevented default.');
+
+        }
+
 
         // space and arrow keys
-        if ([32, 37, 38, 39, 40].indexOf(e.keyCode) != -1) {
+        /*if ([32, 37, 38, 39, 40].indexOf(e.keyCode) != -1) {
 
             //if(T.UI.Status.focusOnMap()){
             e.preventDefault();
             //}
 
 
-        }
+        }*/
     }, false);
 
 //------------------------------------------------------------

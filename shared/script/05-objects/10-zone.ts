@@ -187,7 +187,10 @@ namespace GALLERY.Objects{
             if(/*this.design=='panel'*/this.design=='board' && !isNext) {
 
                 //element.innerHTML += `<button class="fb-share-button" data-href="http://www.your-domain.com/your-page.html"></button>`;
-                element.innerHTML += `<button class="discuss" onclick="fbDiscuss('`+fullUrl+`');">Přidat komentář</button>`;
+
+                element.innerHTML += `<button onclick="GALLERY.Viewer.goToParent();"><i class="fa fa-arrow-left" aria-hidden="true"></i> Zpět</button>`;
+                element.innerHTML += `<button onclick="GALLERY.Viewer.appStateTurnBack();"><i class="fa fa-repeat" aria-hidden="true"></i> Otočit se</button>`;
+                element.innerHTML += `<button class="discuss" onclick="fbDiscuss('`+fullUrl+`');"><i class="fa fa-pencil" aria-hidden="true"></i> Přidat komentář</button>`;
 
                 $.ajax({
                     url: 'http://graph.facebook.com/v2.1/'+encodeURIComponent(fullUrl),
@@ -197,22 +200,22 @@ namespace GALLERY.Objects{
                         data.share = data.share || {};
                         let count = data.share.comment_count || 0;
                         r(data,count);
-                        let text;
+                        let text = '<i class="fa fa-pencil" aria-hidden="true"></i> ';
 
                         if(count==0){
-                            text = 'Přidat komentář';
+                            text += 'Přidat komentář';
                         }else
                         if(count==1){
-                            text = '1 komentář';
+                            text += '1 komentář';
                         }else
                         if(count<5){
-                            text = count+' komentáře';
+                            text += count+' komentáře';
                         }else
                         if(count>=5){
-                            text = count+' komentářů';
+                            text += count+' komentářů';
                         }
 
-                        element.getElementsByClassName('discuss')[0].innerText = text;
+                        element.getElementsByClassName('discuss')[0].innerHTML = text;
                         //alert("comments: " + data.comments);
                     }
                 });
@@ -226,7 +229,7 @@ namespace GALLERY.Objects{
             }
 
 
-            if(this.design=='board'){
+            if(this.design=='board' && isNext){
                 element.onclick = Viewer.appStateNext;
             }
 

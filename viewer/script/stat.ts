@@ -1,7 +1,7 @@
 
 
 
-
+/*
 namespace GALLERY.Viewer{
 
 
@@ -82,4 +82,4 @@ namespace GALLERY.Viewer{
 
     }
 
-}
+}*/

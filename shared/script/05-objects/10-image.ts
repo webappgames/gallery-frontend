@@ -5,6 +5,7 @@ namespace GALLERY.Objects{
     export class Image extends Object{
 
         public storey: string;
+        public design:string;
         public name:string;
         public html: string;
 
@@ -30,6 +31,7 @@ namespace GALLERY.Objects{
 
             super(object);
 
+            this.design = this.design || 'board';
             this.name = this.name || '';
             this.html = this.html || '';
 

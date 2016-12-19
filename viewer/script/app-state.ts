@@ -8,6 +8,18 @@ namespace GALLERY.Viewer{
 
 
 
+    export function currentLinks() {
+        $('a').each(function () {
+
+            if ($(this).attr('href') == window.document.location.pathname) {
+                $(this).addClass('current');
+            } else {
+                $(this).removeClass('current');
+            }
+        });
+    }
+    currentLinks();
+
 
 
     export function appState(location:string,standGround=false,immediately=true) {
@@ -20,7 +32,7 @@ namespace GALLERY.Viewer{
         history.pushState(null, "Gallery", location);//todo normal name
         GALLERY.Viewer.processStateFromLocation(/*window.document.location*/location,standGround,immediately);
 
-
+        currentLinks();
     }
 
     export function appStateBack(standGround=false,immediately=true) {

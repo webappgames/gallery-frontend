@@ -8,14 +8,14 @@ namespace GALLERY.Viewer {
         //collidedMesh.checkCollisions = false;
 
 
-        if (['ground', 'room', 'stairs','ground_merged', 'room_merged', 'stairs_merged'].indexOf(collidedMesh.id) !== -1) {
+        /*if (['ground', 'room', 'stairs','ground_merged', 'room_merged', 'stairs_merged'].indexOf(collidedMesh.id) !== -1) {
 
             //on_air = false;
 
             //r('collide with '+collidedMesh.id);
             //ion.sound.play("step-" + collidedMesh.id);
             //return;
-        }
+        }*/
 
 
         var object = objects.getObjectById(collidedMesh.name);
@@ -124,7 +124,7 @@ namespace GALLERY.Viewer {
 
         } else {
 
-            r('collide with ' + collidedMesh.name);
+            //r('collide with ' + collidedMesh.name);
 
         }
 

@@ -224,7 +224,7 @@ namespace GALLERY.Viewer {
 
 
 
-                if (develop && /*(object.uri || object.name) &&*/ (zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
+                if (/*develop && /*(object.uri || object.name) &&*/ (zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
                     r('Creating zone for ' + object.name);
                     zoneIdsCreatedForImages.push(object.id);//todo rename zoneIdsCreatedForImages
 
@@ -242,10 +242,13 @@ namespace GALLERY.Viewer {
                         width: 500,
                         height: 500,
 
+                        design: object.design,
                         name: object.name,
                         html: object.html,
                         uri: 'none',
                         uri_level: 1,//todo better low priority
+
+                        isImportant: true
 
                     });
 
@@ -268,7 +271,7 @@ namespace GALLERY.Viewer {
             } else if (object.type == 'zone') {
 
                 zones.push(object);
-                meshes.push(object.getMesh(scene));
+                //meshes.push(object.getMesh(scene));
 
 
             } else if (object.type == 'block') {
@@ -372,7 +375,7 @@ namespace GALLERY.Viewer {
                         image.position.y += (EYE_VERTICAL - BLOCKS_1NP_LEVEL) * BLOCK_SIZE;
 
 
-                        if (develop && /*(object.uri || object.name) &&*/ (zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
+                        if (/*develop && /*(object.uri || object.name) &&*/ (zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
 
                             r('Creating zone for ' + object.name);
 
@@ -426,6 +429,7 @@ namespace GALLERY.Viewer {
                                 width: object.width*Math.cos(rotation_rad)+size*Math.sin(rotation_rad),
                                 height: object.width*Math.sin(rotation_rad)+size*Math.cos(rotation_rad),
 
+                                design: object.design,
                                 name: object.name,
                                 html: object.html,
                                 uri: uri,

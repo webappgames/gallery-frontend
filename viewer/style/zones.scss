@@ -4,7 +4,7 @@
 
 section#zones{
 
-  z-index: 6000;
+  z-index: 5000;
 
   display: block;
   position: fixed;
@@ -16,81 +16,6 @@ section#zones{
   text-align: center;
 
   //border: 2px solod red;
-
-
-  div.zone{
-
-
-
-
-    display: block;
-
-    cursor: pointer;
-
-    width: 250px;
-
-    background-color: #fff;
-    border-radius: 3px;
-
-    margin: 4px;
-    padding: 4px;
-
-
-
-
-
-    h1{
-      margin: 0px;
-      font-size: 2em;
-
-      width:calc(100% - 12px);
-
-      background-color: #ddd;
-      padding: 6px;
-      margin-bottom: 10px;
-
-    }
-
-    h1.important{
-      font-size: 1.5em;
-    }
-
-
-    .text {
-      font-size: 1.5em;
-
-    }
-
-
-
-    .next, .previous{
-      font-size: 2em;
-
-      &:hover{
-
-        color: #37beff;
-
-      }
-    }
-
-
-
-
-
-    &:hover{
-
-      .next{
-        color: #37beff;
-
-
-      }
-    }
-
-
-
-
-  }
-
 
 
 

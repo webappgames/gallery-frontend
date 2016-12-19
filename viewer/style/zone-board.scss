@@ -1,0 +1,79 @@
+
+
+
+
+.zone-board{
+
+
+
+
+  display: block;
+
+  cursor: pointer;
+
+  width: 320px;
+  max-height: calc( 100vh - 100px );
+
+  background-color: #fff;
+  border-radius: 3px;
+
+  margin: 4px;
+  padding: 4px;
+
+
+  //overflow-y: scroll;
+
+
+
+
+  h1{
+    margin: 0px;
+    font-size: 2em;
+
+    width:calc(100% - 12px);
+
+    background-color: #ddd;
+    padding: 6px;
+    margin-bottom: 10px;
+
+  }
+
+  h1.important{
+    font-size: 1.5em;
+  }
+
+
+  .text {
+    font-size: 1.5em;
+
+  }
+
+
+
+  .next, .previous{
+    font-size: 2em;
+
+    &:hover{
+
+      color: #37beff;
+
+    }
+  }
+
+
+
+
+
+  &:hover{
+
+    .next{
+      color: #37beff;
+
+
+    }
+  }
+
+
+
+
+}

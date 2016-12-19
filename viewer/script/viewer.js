@@ -10,6 +10,18 @@ var GALLERY;
         Viewer.MODE = 'WEB';
         Viewer.LOCKED = false;
         Viewer.current_label = null;
+        function currentLinks() {
+            $('a').each(function () {
+                if ($(this).attr('href') == window.document.location.pathname) {
+                    $(this).addClass('current');
+                }
+                else {
+                    $(this).removeClass('current');
+                }
+            });
+        }
+        Viewer.currentLinks = currentLinks;
+        currentLinks();
         function appState(location, standGround, immediately) {
             if (standGround === void 0) { standGround = false; }
             if (immediately === void 0) { immediately = true; }
@@ -17,6 +29,7 @@ var GALLERY;
             history.replaceState(null, "Gallery", location); //todo normal name
             history.pushState(null, "Gallery", location); //todo normal name
             GALLERY.Viewer.processStateFromLocation(/*window.document.location*/ location, standGround, immediately);
+            currentLinks();
         }
         Viewer.appState = appState;
         function appStateBack(standGround, immediately) {
@@ -1671,6 +1684,7 @@ var GALLERY;
                 this.endlessStructures = this.endlessStructures || false;
                 this.endlessStructuresFromStorey = this.endlessStructuresFromStorey || '1NP';
                 this.shadows = this.shadows || false;
+                this.design = this.design || 'board';
                 this.name = this.name || '';
                 this.html = this.html || '';
             }
@@ -1798,6 +1812,7 @@ var GALLERY;
             __extends(Image, _super);
             function Image(object) {
                 _super.call(this, object);
+                this.design = this.design || 'board';
                 this.name = this.name || '';
                 this.html = this.html || '';
                 this.uri = this.uri || 'none';
@@ -2119,6 +2134,7 @@ var GALLERY;
 (function (GALLERY) {
     var Objects;
     (function (Objects) {
+        var appState = GALLERY.Viewer.appState;
         var Zone = (function (_super) {
             __extends(Zone, _super);
             function Zone(object) {
@@ -2128,8 +2144,10 @@ var GALLERY;
                 this.uri = this.uri || '';
                 this.uri_level = this.uri_level || 0;
                 this.isPickable = this.isPickable || false;
+                this.design = this.design || 'board';
                 this.name = this.name || '';
                 this.html = this.html || '';
+                this.isImportant = this.isImportant || false;
                 //this.selector = this.selector || '';
             }
             Zone.prototype.create$Element = function () {
@@ -2198,35 +2216,51 @@ var GALLERY;
                 }
                 var element = document.createElement('div');
                 element.id = 'zone-' + this.id;
+                element.classList.add('zone-' + this.design);
                 element.style.display = 'none';
-                element.classList.add('zone');
                 element.innerHTML = ''
                     + (this.name ? '<h1>' + this.name + '</h1>' : '')
                     + '<div class="text">' + this.html + '</div>'
                     + (isNext ? '<div class="next"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
-                /*element.innerHTML +=
-                `
-                    <div id="disqus_thread"></div>
-                    <script>
-    
-                    
-                    var disqus_config = function () {
-                    this.page.url = window.location;  // Replace PAGE_URL with your page's canonical URL variable
-                    this.page.identifier = 'image'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-                    };
-                    
-                    (function() { // DON'T EDIT BELOW THIS LINE
-                    var d = document, s = d.createElement('script');
-                    s.src = '//galerie-fotobernovska-cz.disqus.com/embed.js';
-                    s.setAttribute('data-timestamp', +new Date());
-                    (d.head || d.body).appendChild(s);
-                    })();
-                    </script>
-                    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-                `;*/
-                element.innerHTML += "<div class=\"fb-comments\" data-href=\"http://gallery.local/zatisi\" data-mobile=\"1\" data-numposts=\"5\"></div>";
-                element.onclick = GALLERY.Viewer.appStateNext;
+                var fullUrl = 'http://' + window.location.hostname + '/' + this.getUri(); //+analyticsObject.domain;
+                //let fullUrl = 'http://'+analyticsObject.domain+this.getUri();
+                r(fullUrl);
+                if (this.design == 'board' && !isNext) {
+                    //element.innerHTML += `<button class="fb-share-button" data-href="http://www.your-domain.com/your-page.html"></button>`;
+                    element.innerHTML += "<button class=\"discuss\" onclick=\"fbDiscuss('" + fullUrl + "');\">P\u0159idat koment\u00E1\u0159</button>";
+                    $.ajax({
+                        url: 'http://graph.facebook.com/v2.1/' + encodeURIComponent(fullUrl),
+                        dataType: 'jsonp',
+                        success: function (data) {
+                            data.share = data.share || {};
+                            var count = data.share.comment_count || 0;
+                            r(data, count);
+                            var text;
+                            if (count == 0) {
+                                text = 'Přidat komentář';
+                            }
+                            else if (count == 1) {
+                                text = '1 komentář';
+                            }
+                            else if (count < 5) {
+                                text = count + ' komentáře';
+                            }
+                            else if (count >= 5) {
+                                text = count + ' komentářů';
+                            }
+                            element.getElementsByClassName('discuss')[0].innerText = text;
+                            //alert("comments: " + data.comments);
+                        }
+                    });
+                }
+                if (this.design == 'board') {
+                    element.onclick = GALLERY.Viewer.appStateNext;
+                }
                 document.getElementById('zones').appendChild(element);
+                $(element).find('a').click(function (e) {
+                    e.preventDefault();
+                    appState($(this).attr('href'), false, false);
+                });
                 return (element);
                 //}
             };
@@ -2239,10 +2273,12 @@ var GALLERY;
                 return this._board;
             };
             Zone.prototype.showBoard = function () {
-                this.getBoard().style.display = 'block';
+                //this.getBoard().style.display = 'block';
+                $(this.getBoard()).stop().slideDown();
             };
             Zone.prototype.hideBoard = function () {
-                this.getBoard().style.display = 'none';
+                //this.getBoard().style.display = 'none';
+                $(this.getBoard()).stop().slideUp();
             };
             return Zone;
         }(Objects.Object));
@@ -3625,11 +3661,37 @@ var GALLERY;
                     camera.rotation.x = limit;
                 }
                 //=============================================================Zones
-                var inZones = [];
+                var inZonesAll = [];
                 //r(zones);aaa;
                 Viewer.zones.forEach(function (zone) {
                     if (zone.isIn(camera.position)) {
-                        inZones.push(zone);
+                        inZonesAll.push(zone);
+                    }
+                });
+                inZonesAll.sort(function (zone_a, zone_b) {
+                    if (zone_a.uri_level > zone_b.uri_level) {
+                        return (-1);
+                    }
+                    else if (zone_a.uri_level < zone_b.uri_level) {
+                        return (1);
+                    }
+                    else {
+                        return (0);
+                    }
+                });
+                var oneUnimportant = false;
+                var inZones = inZonesAll.filter(function (inZone, i) {
+                    if (inZone.isImportant) {
+                        return (true);
+                    }
+                    else {
+                        if (!oneUnimportant) {
+                            oneUnimportant = true;
+                            return (true);
+                        }
+                        else {
+                            return (false);
+                        }
                     }
                 });
                 var inZonesPlus = [];
@@ -3887,7 +3949,7 @@ var GALLERY;
         }
         Viewer.pauseEngine = pauseEngine;
         Viewer.canvas = document.getElementById("scene");
-        Viewer.engine = new BABYLON.Engine(Viewer.canvas, true, { stencil: true, preserveDrawingBuffer: true });
+        Viewer.engine = new BABYLON.Engine(Viewer.canvas, true, { preserveDrawingBuffer: true });
         var scene_ = Viewer.createScene(Viewer.engine, Viewer.canvas);
         Viewer.scene = scene_.scene;
         Viewer.camera = scene_.camera;
@@ -3927,7 +3989,7 @@ var GALLERY;
                 $('.develop-menu').draggable();
             }
             else {
-                Viewer.runStats();
+                //runStats();
                 Raven.config('https://71d6fb2b651845dea3ef3861e8df529d@sentry.io/122195').install({});
             }
             /*
@@ -4085,7 +4147,7 @@ var GALLERY;
                     else {
                         Viewer.scene.fogMode = BABYLON.Scene.FOGMODE_NONE;
                     }
-                    if (Viewer.develop && (zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
+                    if ((zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
                         r('Creating zone for ' + object.name);
                         zoneIdsCreatedForImages.push(object.id); //todo rename zoneIdsCreatedForImages
                         var zone = new GALLERY.Objects.Zone({
@@ -4099,10 +4161,12 @@ var GALLERY;
                             },
                             width: 500,
                             height: 500,
+                            design: object.design,
                             name: object.name,
                             html: object.html,
                             uri: 'none',
                             uri_level: 1,
+                            isImportant: true
                         });
                         processObject(zone); //todo better
                         objects.push(zone);
@@ -4110,7 +4174,6 @@ var GALLERY;
                 }
                 else if (object.type == 'zone') {
                     Viewer.zones.push(object);
-                    Viewer.meshes.push(object.getMesh(Viewer.scene));
                 }
                 else if (object.type == 'block') {
                     throw new Error('Block should not be in compiled objects.');
@@ -4168,7 +4231,7 @@ var GALLERY;
                             //image.position.y = (/*level + BLOCKS_1NP_LEVEL +*/ EYE_VERTICAL) * BLOCK_SIZE ;
                             image.rotation.y = Math.PI + rotation_rad_1;
                             image.position.y += (EYE_VERTICAL - BLOCKS_1NP_LEVEL) * BLOCK_SIZE;
-                            if (Viewer.develop && (zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
+                            if ((zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
                                 r('Creating zone for ' + object.name);
                                 zoneIdsCreatedForImages.push(object.id);
                                 var uri = void 0;
@@ -4198,6 +4261,7 @@ var GALLERY;
                                     },
                                     width: object.width * Math.cos(rotation_rad_1) + size * Math.sin(rotation_rad_1),
                                     height: object.width * Math.sin(rotation_rad_1) + size * Math.cos(rotation_rad_1),
+                                    design: object.design,
                                     name: object.name,
                                     html: object.html,
                                     uri: uri,
@@ -4505,8 +4569,14 @@ var GALLERY;
         function onCollide(collidedMesh) {
             //r(collidedMesh);
             //collidedMesh.checkCollisions = false;
-            if (['ground', 'room', 'stairs', 'ground_merged', 'room_merged', 'stairs_merged'].indexOf(collidedMesh.id) !== -1) {
-            }
+            /*if (['ground', 'room', 'stairs','ground_merged', 'room_merged', 'stairs_merged'].indexOf(collidedMesh.id) !== -1) {
+    
+                //on_air = false;
+    
+                //r('collide with '+collidedMesh.id);
+                //ion.sound.play("step-" + collidedMesh.id);
+                //return;
+            }*/
             var object = objects.getObjectById(collidedMesh.name);
             if (object) {
                 r('collide', object);
@@ -4556,7 +4626,6 @@ var GALLERY;
                 }
             }
             else {
-                r('collide with ' + collidedMesh.name);
             }
         }
         Viewer.onCollide = onCollide;
@@ -4835,6 +4904,10 @@ Window.close = function (dont_run_close_callback) {
     }
     //-------------------------------------------
 };
+function fbDiscuss(url) {
+    Window.open('Diskuse', '<iframe src="?comments"></iframe>', function () {
+    }, 'VERTICAL');
+}
 var GALLERY;
 (function (GALLERY) {
     var Viewer;
@@ -4885,60 +4958,88 @@ ion.sound({
     multiplay: true,
     volume: 1
 });
-var GALLERY;
-(function (GALLERY) {
-    var Viewer;
-    (function (Viewer) {
-        function runStats() {
-            var cookie = window.localStorage.getItem('cookie');
-            if (!cookie) {
-                cookie = createGuid();
-                window.localStorage.setItem('cookie', cookie);
-            }
-            var session = createGuid();
-            $.post({
-                url: STATSERVER_URL + '/sessions',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    session: session,
-                    cookie: cookie,
-                    gallery: window.location.hostname,
-                })
-            }).done(function (response) {
-                r('Stats initialized!');
-            });
-            var xl, yl, zl;
-            setInterval(function () {
-                var x = Viewer.camera.position.x / -BLOCK_SIZE;
-                var y = Viewer.camera.position.z / BLOCK_SIZE;
-                var z = Viewer.camera.position.y / BLOCK_SIZE; //- BLOCKS_1NP_LEVEL;
-                x = Math.round(x * 100) / 100;
-                y = Math.round(y * 100) / 100;
-                z = Math.round(z * 100) / 100;
-                if (x != xl || y != yl || z != zl) {
-                    xl = x;
-                    yl = y;
-                    zl = z;
-                    $.post({
-                        url: STATSERVER_URL + '/states',
-                        contentType: 'application/json',
-                        data: JSON.stringify({
-                            session: session,
-                            world: Viewer.world_selected,
-                            time: new Date() / 1000,
-                            x: x,
-                            y: y,
-                            z: z
-                        })
-                    }).done(function (response) {
-                        r('Stats position send!');
-                    });
-                }
-            }, 300);
+/*
+namespace GALLERY.Viewer{
+
+
+
+    export function runStats() {
+
+
+        var cookie = window.localStorage.getItem('cookie');
+        if (!cookie) {
+            cookie = createGuid();
+            window.localStorage.setItem('cookie', cookie);
         }
-        Viewer.runStats = runStats;
-    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
-})(GALLERY || (GALLERY = {}));
+
+        var session = createGuid();
+
+
+        $.post({
+            url: STATSERVER_URL+'/sessions',
+
+            contentType: 'application/json',
+            data: JSON.stringify({
+                session: session,
+                cookie: cookie,
+                gallery: window.location.hostname,
+                //ip: String,
+                //user_agent: String
+            })
+
+        }).done(function (response) {
+            r('Stats initialized!');
+        });
+
+
+        var xl, yl, zl;
+
+
+        setInterval(function () {
+
+
+            let x = camera.position.x / -BLOCK_SIZE;
+            let y = camera.position.z / BLOCK_SIZE;
+            let z = camera.position.y / BLOCK_SIZE; //- BLOCKS_1NP_LEVEL;
+
+            x = Math.round(x * 100) / 100;
+            y = Math.round(y * 100) / 100;
+            z = Math.round(z * 100) / 100;
+
+
+            if (x != xl || y != yl || z != zl) {
+
+                xl = x;
+                yl = y;
+                zl = z;
+
+
+                $.post({
+                    url: STATSERVER_URL+'/states',
+
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        session: session,
+                        world: world_selected,
+                        time: new Date() / 1000,
+                        x: x,
+                        y: y,
+                        z: z
+                    })
+
+                }).done(function (response) {
+                    r('Stats position send!');
+                });
+
+            }
+
+
+        }, 300);
+
+
+    }
+
+}*/ 
 /// <reference path="reference.ts" />
 var GALLERY;
 (function (GALLERY) {
@@ -5043,26 +5144,47 @@ var GALLERY;
                 xhr.send();
             });
             screenshots = new Promise(function (resolve, reject) {
+                resolve([]);
+                /*
                 var labels = objects.filterTypes('label');
-                var width = Viewer.canvas.width;
-                var height = Viewer.canvas.height;
-                Viewer.canvas.width = 1920;
-                Viewer.canvas.height = 1080;
-                GALLERY.Viewer.makeScreenshots(labels, { precision: 1 }, function (screenshots) {
-                    var deployFiles = [];
-                    screenshots.forEach(function (screenshot, index) {
-                        var label = labels.getAll()[index]; //todo .getObjectByIndex(index);
-                        var name = label.uri.split('/').join('-');
-                        var screenshotName = 'screenshots/screenshot' + name + '.png';
-                        label.screenshot = '/' + screenshotName;
-                        deployFiles.push(new DeployFile(screenshotName, screenshot));
+    
+                let width = canvas.width;
+                let height = canvas.height;
+    
+                canvas.width = 1920;
+                canvas.height = 1080;
+                GALLERY.Viewer.makeScreenshots(labels, {precision: 1},function (screenshots) {
+    
+    
+    
+    
+                    let deployFiles = [];
+                    screenshots.forEach(function (screenshot,index) {
+    
+                        let label = labels.getAll()[index];//todo .getObjectByIndex(index);
+    
+                        let name = label.uri.split('/').join('-');
+                        let screenshotName = 'screenshots/screenshot'+name+'.png';
+    
+                        label.screenshot = '/'+screenshotName;
+    
+                        deployFiles.push(new DeployFile(screenshotName,screenshot));
                         //deployFiles.push(new DeployFile(routeName,``));
+    
+    
+    
                     });
-                    Viewer.canvas.width = width;
-                    Viewer.canvas.height = height;
+    
+    
+                    canvas.width = width;
+                    canvas.height = height;
+    
                     //r(deployFiles);
                     resolve(deployFiles);
+    
                 });
+    
+                /**/
             });
             media = new Promise(function (resolve, reject) {
                 var sources = [
@@ -5182,7 +5304,22 @@ var GALLERY;
                 var scripts = jsFiles.map(function (file) {
                     return file.content;
                 });
-                scripts.push('GALLERY.Viewer.run(new GALLERY.Objects.CompiledArray(' + JSON.stringify(objects.getAll()) + '))');
+                scripts.push('GALLERY.Viewer.run(new GALLERY.Objects.CompiledArray(' + JSON.stringify(objects.getAll().map(function (object) {
+                    var pureObject = {};
+                    for (var key in object) {
+                        if (key.substr(0, 1) !== '_') {
+                            pureObject[key] = object[key];
+                        }
+                    }
+                    return (pureObject);
+                })) + '))');
+                /*scripts.push(`(function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/cs_CZ/sdk.js#xfbml=1&version=v2.8&appId=602465393294706";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));`);*/
                 var script = scripts.join(';/**/\n');
                 //let gallery_folder = gallery_domain.split('.').join('-');
                 var zip = new JSZip();

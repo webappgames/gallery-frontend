@@ -57,6 +57,8 @@ namespace GALLERY.Viewer {
 
         screenshots = new Promise(function(resolve, reject) {
 
+            resolve([]);
+            /*
             var labels = objects.filterTypes('label');
 
             let width = canvas.width;
@@ -94,6 +96,8 @@ namespace GALLERY.Viewer {
                 resolve(deployFiles);
 
             });
+
+            /**/
 
         });
 
@@ -310,8 +314,29 @@ namespace GALLERY.Viewer {
 
 
             scripts.push(
-                'GALLERY.Viewer.run(new GALLERY.Objects.CompiledArray('+JSON.stringify(objects.getAll())+'))'
+                'GALLERY.Viewer.run(new GALLERY.Objects.CompiledArray('+JSON.stringify(objects.getAll().map(function (object) {
+
+                    let pureObject = {};
+                    for (var key in object) {
+                        if(key.substr(0,1)!=='_'){
+                            pureObject[key] = object[key];
+                        }
+                    }
+
+                    return(pureObject);
+
+
+                }))+'))'
             );
+
+
+            /*scripts.push(`(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/cs_CZ/sdk.js#xfbml=1&version=v2.8&appId=602465393294706";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));`);*/
 
 
             let script = scripts.join(';/**/\n');

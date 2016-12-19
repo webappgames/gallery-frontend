@@ -272,7 +272,7 @@ function createMap() {
             check_element=null;
 
 
-            if(['name','uri','next','parent','key','href','target','world','material','skybox','ground','url','server','username','password','directory','domain','endlessStructuresFromStorey'].indexOf(key)!==-1){
+            if(['name','design','uri','next','parent','key','href','target','world','material','skybox','ground','url','server','username','password','directory','domain','endlessStructuresFromStorey'].indexOf(key)!==-1){
                 input_element='<input type="text">';
             }else
             if(['script','html','selector'].indexOf(key)!==-1){

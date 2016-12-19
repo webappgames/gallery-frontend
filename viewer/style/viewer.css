@@ -293,37 +293,113 @@ button:hover, .button:hover, input[type="submit"]:hover {
   touch-action: none; }
 
 section#zones {
-  z-index: 6000;
+  z-index: 5000;
   display: block;
   position: fixed;
   bottom: 20px;
   left: 5px;
   text-align: center; }
-  section#zones div.zone {
-    display: block;
-    cursor: pointer;
-    width: 250px;
-    background-color: #fff;
-    border-radius: 3px;
-    margin: 4px;
-    padding: 4px; }
-    section#zones div.zone h1 {
-      margin: 0px;
-      font-size: 2em;
-      width: calc(100% - 12px);
-      background-color: #ddd;
-      padding: 6px;
-      margin-bottom: 10px; }
-    section#zones div.zone h1.important {
-      font-size: 1.5em; }
-    section#zones div.zone .text {
-      font-size: 1.5em; }
-    section#zones div.zone .next, section#zones div.zone .previous {
-      font-size: 2em; }
-      section#zones div.zone .next:hover, section#zones div.zone .previous:hover {
-        color: #37beff; }
-    section#zones div.zone:hover .next {
+
+.zone-board {
+  display: block;
+  cursor: pointer;
+  width: 320px;
+  max-height: calc(100vh - 100px );
+  background-color: #fff;
+  border-radius: 3px;
+  margin: 4px;
+  padding: 4px; }
+  .zone-board h1 {
+    margin: 0px;
+    font-size: 2em;
+    width: calc(100% - 12px);
+    background-color: #ddd;
+    padding: 6px;
+    margin-bottom: 10px; }
+  .zone-board h1.important {
+    font-size: 1.5em; }
+  .zone-board .text {
+    font-size: 1.5em; }
+  .zone-board .next, .zone-board .previous {
+    font-size: 2em; }
+    .zone-board .next:hover, .zone-board .previous:hover {
       color: #37beff; }
+  .zone-board:hover .next {
+    color: #37beff; }
+
+.zone-menu {
+  z-index: 10;
+  display: block;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  background-color: #111111;
+  /*background: #000 url("../data/backgrounds/menu.png");*/
+  padding: 5px;
+  margin: 0px;
+  text-align: center; }
+  .zone-menu * {
+    color: #cccccc;
+    text-decoration: none; }
+  .zone-menu h1 {
+    z-index: 1;
+    background-color: #111111;
+    display: inline-block;
+    float: left;
+    font-size: 1.3em;
+    font-weight: normal;
+    margin: 5px;
+    padding: 0;
+    text-align: left; }
+    .zone-menu h1 img {
+      float: left;
+      max-height: 30px;
+      border-radius: 3px;
+      margin: -5px;
+      margin-right: 7px; }
+  .zone-menu .text {
+    z-index: 2;
+    background-color: #111111;
+    display: inline-block;
+    margin: 5px;
+    vertical-align: middle; }
+    .zone-menu .text ul {
+      text-align: center;
+      display: inline-block;
+      list-style: none;
+      font-size: 1.1em;
+      margin: 0px;
+      padding: 0px; }
+      .zone-menu .text ul li {
+        display: inline-block;
+        list-style: none;
+        font-size: 1em; }
+        .zone-menu .text ul li a {
+          display: block;
+          width: 200px;
+          border-left: 1px solid #cccccc; }
+        .zone-menu .text ul li a.current {
+          color: #c3fffc;
+          font-weight: bold; }
+      .zone-menu .text ul li:first-child a {
+        border-left: none; }
+
+.zone-panel {
+  position: fixed;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  width: 320px;
+  background-color: #ccc; }
+  .zone-panel h1 {
+    margin: 0px;
+    font-size: 2em;
+    width: calc(100% - 12px);
+    background-color: #ddd;
+    padding: 6px;
+    margin-bottom: 10px;
+    margin-top: 40px; }
 
 nav .turn-right, nav .turn-left {
   margin: 5px;

@@ -2,6 +2,8 @@
 
 namespace GALLERY.Objects{
 
+    import analyticsObject = GALLERY.Viewer.analyticsObject;
+    import appState = GALLERY.Viewer.appState;
     export class Zone extends Object{
 
         public storey: string;
@@ -10,9 +12,14 @@ namespace GALLERY.Objects{
         public uri:string;
         public uri_level:number;
         public isPickable:boolean;
+        public isImportant:boolean;
 
+
+        public design: string;
         public name: string;
         public html: string;
+
+
         private _mesh;
         private _board:HTMLDivElement;
 
@@ -28,8 +35,10 @@ namespace GALLERY.Objects{
             this.uri = this.uri || '';
             this.uri_level = this.uri_level || 0;
             this.isPickable = this.isPickable || false;
+            this.design = this.design || 'board';
             this.name = this.name || '';
             this.html = this.html || '';
+            this.isImportant = this.isImportant || false;
             //this.selector = this.selector || '';
 
         }
@@ -157,8 +166,8 @@ namespace GALLERY.Objects{
 
             let element = document.createElement('div');
             element.id = 'zone-' + this.id;
+            element.classList.add('zone-'+this.design);
             element.style.display = 'none';
-            element.classList.add('zone');
             element.innerHTML = ''
 
                 //+'<div class="previous"><i class="fa fa-chevron-up" aria-hidden="true"></i></div>'
@@ -167,35 +176,70 @@ namespace GALLERY.Objects{
                 + (isNext ? '<div class="next"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
 
 
-            /*element.innerHTML +=
-            `
-                <div id="disqus_thread"></div>
-                <script>
-
-                
-                var disqus_config = function () {
-                this.page.url = window.location;  // Replace PAGE_URL with your page's canonical URL variable
-                this.page.identifier = 'image'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-                };
-                
-                (function() { // DON'T EDIT BELOW THIS LINE
-                var d = document, s = d.createElement('script');
-                s.src = '//galerie-fotobernovska-cz.disqus.com/embed.js';
-                s.setAttribute('data-timestamp', +new Date());
-                (d.head || d.body).appendChild(s);
-                })();
-                </script>
-                <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-            `;*/
 
 
-            element.innerHTML += `<div class="fb-comments" data-href="http://gallery.local/zatisi" data-mobile="1" data-numposts="5"></div>`;
+            let fullUrl = 'http://'+window.location.hostname+'/'+this.getUri();//+analyticsObject.domain;
+            //let fullUrl = 'http://'+analyticsObject.domain+this.getUri();
+            r(fullUrl);
 
 
 
-            element.onclick = Viewer.appStateNext;
+            if(/*this.design=='panel'*/this.design=='board' && !isNext) {
+
+                //element.innerHTML += `<button class="fb-share-button" data-href="http://www.your-domain.com/your-page.html"></button>`;
+                element.innerHTML += `<button class="discuss" onclick="fbDiscuss('`+fullUrl+`');">Přidat komentář</button>`;
+
+                $.ajax({
+                    url: 'http://graph.facebook.com/v2.1/'+encodeURIComponent(fullUrl),
+                    dataType: 'jsonp',
+                    success: function(data) {
+
+                        data.share = data.share || {};
+                        let count = data.share.comment_count || 0;
+                        r(data,count);
+                        let text;
+
+                        if(count==0){
+                            text = 'Přidat komentář';
+                        }else
+                        if(count==1){
+                            text = '1 komentář';
+                        }else
+                        if(count<5){
+                            text = count+' komentáře';
+                        }else
+                        if(count>=5){
+                            text = count+' komentářů';
+                        }
+
+                        element.getElementsByClassName('discuss')[0].innerText = text;
+                        //alert("comments: " + data.comments);
+                    }
+                });
+
+
+
+
+
+                //element.innerHTML += `<div class="fb-comments-count" data-href="`+fullUri+`">0</div>`;
+                //element.innerHTML += `com<div class="fb-comments" data-href="`+fullUri+`" data-mobile="1" data-numposts="5"></div>`;
+            }
+
+
+            if(this.design=='board'){
+                element.onclick = Viewer.appStateNext;
+            }
+
 
             document.getElementById('zones').appendChild(element);
+
+
+            $(element).find('a').click(function (e) {
+                e.preventDefault();
+                appState($(this).attr('href'),false,false);
+            });
+
+
             return(element);
 
             //}
@@ -217,12 +261,14 @@ namespace GALLERY.Objects{
 
 
         showBoard(){
-            this.getBoard().style.display = 'block';
+            //this.getBoard().style.display = 'block';
+            $(this.getBoard()).stop().slideDown();
         }
 
 
         hideBoard(){
-            this.getBoard().style.display = 'none';
+            //this.getBoard().style.display = 'none';
+            $(this.getBoard()).stop().slideUp();
         }
 
 

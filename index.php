@@ -16,15 +16,21 @@ function getRoute($labels,$uri){
         if(trim($object['uri'],'/') == $uri){
             return $object;
         }
+        //echo(':'.$object['id'] .' == '. $uri."\n");
+        if(':'.$object['id'] == $uri){
+            return $object;
+        }
     }
 }
 
 
 
 
-$route = getRoute($labels,$_SERVER['REQUEST_URI']);
+$route = getRoute($labels,explode('?',$_SERVER['REQUEST_URI'])[0]);
 $routeRoot = getRoute($labels,'/');
 
+//echo(1);
+//print_r($route);
 
 
 if(!$route){
@@ -46,6 +52,36 @@ if($route == $routeRoot){
 }
 
 
+
+$fullUrl = 'http://'.$_SERVER['HTTP_HOST'].$route['uri'];
+$fullScreenshotUrl = 'http://'.$_SERVER['HTTP_HOST'].'/'.$route['screenshot'];
+
+
+
+if(isset($_GET['comments'])){
+    ?>
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Comments</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    </head>
+    <body>
+    <div id="fb-root"></div>
+    <<?php ?>script>(function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/cs_CZ/sdk.js#xfbml=1&version=v2.8&appId=602465393294706";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));</script>
+    <div class="fb-comments" data-href="<?=addslashes($fullUrl)?>" data-mobile="1" data-num-posts="7"></div>
+
+    </body>
+    </html>
+    <?php
+    exit;
+}
 
 ?>
 
@@ -72,31 +108,25 @@ if($route == $routeRoot){
 
     <script src="/node_modules/jszip/dist/jszip.min.js"></script>
     <script src="/node_modules/file-saver/FileSaver.min.js"></script>
+
+
+
+    <script src="http://cssrefresh.frebsite.nl/js/cssrefresh.js"></script>
     <!--<script src="https://cdn.ravenjs.com/3.9.1/raven.min.js"></script>-->
 
 
 
-   <!-- <script id="dsq-count-scr" src="//EXAMPLE.disqus.com/count.js" async></script>-->
-
-
-    <div id="fb-root"></div>
-    <script>(function(d, s, id) {
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) return;
-            js = d.createElement(s); js.id = id;
-            js.src = "//connect.facebook.net/cs_CZ/sdk.js#xfbml=1&version=v2.8&appId=602465393294706";
-            fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));</script>
 
 
 
-
-
-    <meta property="og:image" content="<?=addslashes('http://'.$_SERVER['HTTP_HOST'].'/'.$route['screenshot'])?>"/>
+    <meta property="og:image" content="<?=addslashes($fullScreenshotUrl)?>"/>
 
 
 </head>
 <body>
+
+
+
 
 
 
@@ -113,7 +143,7 @@ if($route == $routeRoot){
 
 
 <button class="bottomright" id="pointer-lock">
-    <i class="fa fa-gamepad" aria-hidden="true"></i> Game mode
+    <i class="fa fa-gamepad" aria-hidden="true"></i> Herní mód<!--Game mode-->
     <!--<img src="/media/images/ui/mouse-lock.png" width="200">-->
 
 </button>
@@ -125,7 +155,7 @@ if($route == $routeRoot){
 <div class="bottomright" id="wasd" style="display: none;">
    <table>
        <tr>
-           <td colspan="3"><p class="hint">Move in gallery with theese keys <i class="fa fa-hand-o-down" aria-hidden="true"></i></p></td>
+           <td colspan="3"><p class="hint">Pohybujte se těmito klávesy<!--Move in gallery with theese keys--> <i class="fa fa-hand-o-down" aria-hidden="true"></i></p></td>
        </tr>
         <tr>
             <td></td>
@@ -177,10 +207,10 @@ if($route == $routeRoot){
 
 
 
-<nav>
+<!--<nav>
     <div class="turn-left" onclick="GALLERY.Viewer.appStateTurnLeft();"><i class="fa fa-chevron-left" aria-hidden="true"></i></div>
     <div class="turn-right" onclick="GALLERY.Viewer.appStateTurnRight();"><i class="fa fa-chevron-right" aria-hidden="true"></i></div>
-</nav>
+</nav>-->
 
 
 

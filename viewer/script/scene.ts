@@ -160,17 +160,45 @@ namespace GALLERY.Viewer {
 
             //=============================================================Zones
 
-            let inZones = [];
-
+            let inZonesAll = [];
 
             //r(zones);aaa;
 
             zones.forEach(function (zone) {
 
                 if (zone.isIn(camera.position)) {
-                    inZones.push(zone);
+                    inZonesAll.push(zone);
                 }
             });
+
+
+
+            inZonesAll.sort(function (zone_a, zone_b) {
+                if (zone_a.uri_level > zone_b.uri_level) {
+                    return (-1);
+                } else if (zone_a.uri_level < zone_b.uri_level) {
+                    return (1);
+                } else {
+                    return (0);
+                }
+            });
+
+
+
+            let oneUnimportant = false;
+            let inZones = inZonesAll.filter(function (inZone,i) {//todo better
+                if(inZone.isImportant){
+                    return(true);
+                }else{
+                    if(!oneUnimportant){
+                        oneUnimportant = true;
+                        return(true);
+                    }else{
+                        return(false);
+                    }
+                }
+            });
+
 
 
 

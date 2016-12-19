@@ -73,7 +73,7 @@ namespace GALLERY.Viewer {
 
 
     canvas = document.getElementById("scene");
-    engine = new BABYLON.Engine(canvas, true, { stencil: true, preserveDrawingBuffer: true });
+    engine = new BABYLON.Engine(canvas, true, { /*stencil: true,*/ preserveDrawingBuffer: true });
 
 
     let scene_ = createScene(engine,canvas);

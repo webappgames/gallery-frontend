@@ -1655,6 +1655,7 @@ var GALLERY;
                 this.endlessStructures = this.endlessStructures || false;
                 this.endlessStructuresFromStorey = this.endlessStructuresFromStorey || '1NP';
                 this.shadows = this.shadows || false;
+                this.design = this.design || 'board';
                 this.name = this.name || '';
                 this.html = this.html || '';
             }
@@ -1782,6 +1783,7 @@ var GALLERY;
             __extends(Image, _super);
             function Image(object) {
                 _super.call(this, object);
+                this.design = this.design || 'board';
                 this.name = this.name || '';
                 this.html = this.html || '';
                 this.uri = this.uri || 'none';
@@ -2103,6 +2105,7 @@ var GALLERY;
 (function (GALLERY) {
     var Objects;
     (function (Objects) {
+        var appState = GALLERY.Viewer.appState;
         var Zone = (function (_super) {
             __extends(Zone, _super);
             function Zone(object) {
@@ -2112,8 +2115,10 @@ var GALLERY;
                 this.uri = this.uri || '';
                 this.uri_level = this.uri_level || 0;
                 this.isPickable = this.isPickable || false;
+                this.design = this.design || 'board';
                 this.name = this.name || '';
                 this.html = this.html || '';
+                this.isImportant = this.isImportant || false;
                 //this.selector = this.selector || '';
             }
             Zone.prototype.create$Element = function () {
@@ -2182,35 +2187,51 @@ var GALLERY;
                 }
                 var element = document.createElement('div');
                 element.id = 'zone-' + this.id;
+                element.classList.add('zone-' + this.design);
                 element.style.display = 'none';
-                element.classList.add('zone');
                 element.innerHTML = ''
                     + (this.name ? '<h1>' + this.name + '</h1>' : '')
                     + '<div class="text">' + this.html + '</div>'
                     + (isNext ? '<div class="next"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
-                /*element.innerHTML +=
-                `
-                    <div id="disqus_thread"></div>
-                    <script>
-    
-                    
-                    var disqus_config = function () {
-                    this.page.url = window.location;  // Replace PAGE_URL with your page's canonical URL variable
-                    this.page.identifier = 'image'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-                    };
-                    
-                    (function() { // DON'T EDIT BELOW THIS LINE
-                    var d = document, s = d.createElement('script');
-                    s.src = '//galerie-fotobernovska-cz.disqus.com/embed.js';
-                    s.setAttribute('data-timestamp', +new Date());
-                    (d.head || d.body).appendChild(s);
-                    })();
-                    </script>
-                    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-                `;*/
-                element.innerHTML += "<div class=\"fb-comments\" data-href=\"http://gallery.local/zatisi\" data-mobile=\"1\" data-numposts=\"5\"></div>";
-                element.onclick = Viewer.appStateNext;
+                var fullUrl = 'http://' + window.location.hostname + '/' + this.getUri(); //+analyticsObject.domain;
+                //let fullUrl = 'http://'+analyticsObject.domain+this.getUri();
+                r(fullUrl);
+                if (this.design == 'board' && !isNext) {
+                    //element.innerHTML += `<button class="fb-share-button" data-href="http://www.your-domain.com/your-page.html"></button>`;
+                    element.innerHTML += "<button class=\"discuss\" onclick=\"fbDiscuss('" + fullUrl + "');\">P\u0159idat koment\u00E1\u0159</button>";
+                    $.ajax({
+                        url: 'http://graph.facebook.com/v2.1/' + encodeURIComponent(fullUrl),
+                        dataType: 'jsonp',
+                        success: function (data) {
+                            data.share = data.share || {};
+                            var count = data.share.comment_count || 0;
+                            r(data, count);
+                            var text;
+                            if (count == 0) {
+                                text = 'Přidat komentář';
+                            }
+                            else if (count == 1) {
+                                text = '1 komentář';
+                            }
+                            else if (count < 5) {
+                                text = count + ' komentáře';
+                            }
+                            else if (count >= 5) {
+                                text = count + ' komentářů';
+                            }
+                            element.getElementsByClassName('discuss')[0].innerText = text;
+                            //alert("comments: " + data.comments);
+                        }
+                    });
+                }
+                if (this.design == 'board') {
+                    element.onclick = Viewer.appStateNext;
+                }
                 document.getElementById('zones').appendChild(element);
+                $(element).find('a').click(function (e) {
+                    e.preventDefault();
+                    appState($(this).attr('href'), false, false);
+                });
                 return (element);
                 //}
             };
@@ -2223,10 +2244,12 @@ var GALLERY;
                 return this._board;
             };
             Zone.prototype.showBoard = function () {
-                this.getBoard().style.display = 'block';
+                //this.getBoard().style.display = 'block';
+                $(this.getBoard()).stop().slideDown();
             };
             Zone.prototype.hideBoard = function () {
-                this.getBoard().style.display = 'none';
+                //this.getBoard().style.display = 'none';
+                $(this.getBoard()).stop().slideUp();
             };
             return Zone;
         }(Objects.Object));
@@ -3752,7 +3775,7 @@ function createMap() {
         for (var key in object) {
             input_element = null;
             check_element = null;
-            if (['name', 'uri', 'next', 'parent', 'key', 'href', 'target', 'world', 'material', 'skybox', 'ground', 'url', 'server', 'username', 'password', 'directory', 'domain', 'endlessStructuresFromStorey'].indexOf(key) !== -1) {
+            if (['name', 'design', 'uri', 'next', 'parent', 'key', 'href', 'target', 'world', 'material', 'skybox', 'ground', 'url', 'server', 'username', 'password', 'directory', 'domain', 'endlessStructuresFromStorey'].indexOf(key) !== -1) {
                 input_element = '<input type="text">';
             }
             else if (['script', 'html', 'selector'].indexOf(key) !== -1) {

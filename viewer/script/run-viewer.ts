@@ -30,7 +30,7 @@ namespace GALLERY.Viewer{
 
             $('.develop-menu').draggable();
         }else{
-            runStats();
+            //runStats();
 
             Raven.config('https://71d6fb2b651845dea3ef3861e8df529d@sentry.io/122195').install({});
 

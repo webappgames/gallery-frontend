@@ -161,3 +161,16 @@ Window.close = function(dont_run_close_callback) {
 
 
 };
+
+
+
+
+
+
+
+function fbDiscuss(url){
+
+    Window.open('Diskuse', '<iframe src="?comments"></iframe>', function () {
+
+    }, 'VERTICAL');
+}

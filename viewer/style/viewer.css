@@ -308,7 +308,15 @@ section#zones {
   background-color: #fff;
   border-radius: 3px;
   margin: 4px;
-  padding: 4px; }
+  padding: 4px;
+  /*&:hover{
+
+    .next{
+      color: #37beff;
+
+
+    }
+  }*/ }
   .zone-board h1 {
     margin: 0px;
     font-size: 2em;
@@ -320,12 +328,19 @@ section#zones {
     font-size: 1.5em; }
   .zone-board .text {
     font-size: 1.5em; }
+    .zone-board .text .gallery {
+      display: block;
+      text-align: center; }
+      .zone-board .text .gallery img {
+        display: inline-block;
+        width: 90px; }
+        .zone-board .text .gallery img:hover {
+          width: 86px;
+          border: 2px solid #37beff; }
   .zone-board .next, .zone-board .previous {
     font-size: 2em; }
     .zone-board .next:hover, .zone-board .previous:hover {
       color: #37beff; }
-  .zone-board:hover .next {
-    color: #37beff; }
 
 .zone-menu {
   z-index: 10;
@@ -379,6 +394,8 @@ section#zones {
           display: block;
           width: 200px;
           border-left: 1px solid #cccccc; }
+          .zone-menu .text ul li a:hover {
+            color: #c3fffc; }
         .zone-menu .text ul li a.current {
           color: #c3fffc;
           font-weight: bold; }

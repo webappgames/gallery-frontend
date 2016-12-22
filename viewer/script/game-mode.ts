@@ -8,7 +8,7 @@ namespace GALLERY.Viewer {
     const enginePlayReasonGameMode = new EnginePlayReason('game mode');
 
 
-    let pointer_lock = document.getElementById("pointer-lock");
+    //let pointer_lock = document.getElementById("pointer-lock");
     let wasd = document.getElementById("wasd");
     //var $hints = $('.hints');
 
@@ -20,8 +20,12 @@ namespace GALLERY.Viewer {
         document.mozExitPointerLock;
 
 
+    export function gameMode(){
+        canvas.requestPointerLock();
+    }
+
     //canvas.requestPointerLock();
-    pointer_lock.onclick = function (e) {
+    /*pointer_lock.onclick = function (e) {
 
         e.preventDefault();
         //setTimeout(//todo is there a better solution?
@@ -30,7 +34,7 @@ namespace GALLERY.Viewer {
         //    }, IMMEDIATELY_MS
         //);
 
-    };
+    };*/
 
 
 // Hook pointer lock state change events for different browsers
@@ -46,7 +50,7 @@ namespace GALLERY.Viewer {
             canvas.focus();
             //pointer_lock.innerHTML='Web mode';
             //$hints.hide();
-            pointer_lock.style.display = 'none';
+            //pointer_lock.style.display = 'none';
             wasd.style.display = 'block';
 
 
@@ -63,7 +67,7 @@ namespace GALLERY.Viewer {
             //pointer_lock.innerHTML='Game mode';
             //$hints.show();
 
-            pointer_lock.style.display = 'block';
+            //pointer_lock.style.display = 'block';
             wasd.style.display = 'none';
 
             camera.detachControl(canvas);

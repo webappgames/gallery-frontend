@@ -143,6 +143,7 @@ namespace GALLERY.Viewer {
                 'https://cdn.ravenjs.com/3.9.1/raven.min.js',
                 '/node_modules/jszip/dist/jszip.min.js',
                 '/node_modules/file-saver/FileSaver.min.js',
+                '/node_modules/mustache/mustache.min.js',
 
                 '/viewer/script/lib/babylon.js',
                 '/node_modules/handjs/hand.min.js',

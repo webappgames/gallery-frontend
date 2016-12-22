@@ -108,6 +108,7 @@ if(isset($_GET['comments'])){
 
     <script src="/node_modules/jszip/dist/jszip.min.js"></script>
     <script src="/node_modules/file-saver/FileSaver.min.js"></script>
+    <script src="/node_modules/mustache/mustache.min.js"></script>
 
 
 
@@ -142,11 +143,9 @@ if(isset($_GET['comments'])){
 
 
 
-<button class="bottomright" id="pointer-lock">
-    <i class="fa fa-gamepad" aria-hidden="true"></i> Herní mód<!--Game mode-->
-    <!--<img src="/media/images/ui/mouse-lock.png" width="200">-->
-
-</button>
+<!--<button class="bottomright" id="pointer-lock">
+    <i class="fa fa-gamepad" aria-hidden="true"></i> Herní mód
+</button>-->
 
 
 

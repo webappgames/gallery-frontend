@@ -2,8 +2,10 @@
 
 namespace GALLERY.Objects{
 
-    import analyticsObject = GALLERY.Viewer.analyticsObject;
-    import appState = GALLERY.Viewer.appState;
+    //import analyticsObject = GALLERY.Viewer.analyticsObject;
+    //import appState = GALLERY.Viewer.appState;
+
+
     export class Zone extends Object{
 
         public storey: string;
@@ -168,12 +170,37 @@ namespace GALLERY.Objects{
             element.id = 'zone-' + this.id;
             element.classList.add('zone-'+this.design);
             element.style.display = 'none';
+
+
+
+            let html = this.html;
+
+            html = Mustache.render(html, {gallery: function () {return function (val, render) {
+
+                let images = objects.filterTypes('image');
+                let conds = JSON.parse(val);
+                for(let key in conds){
+                    images = images.filterBy(key,conds[key]);
+                }
+
+                let html = '';
+                images.forEach(function (image) {
+                    html += '<img src="'+image.getSrc(90,1)+'" onclick="GALLERY.Viewer.appState(\'/:'+image.id+'\', false, false);" />'
+                });
+                html = '<div class="gallery">'+html+'</div>';
+
+
+                return html;
+            }}});
+
+
+
             element.innerHTML = ''
 
                 //+'<div class="previous"><i class="fa fa-chevron-up" aria-hidden="true"></i></div>'
                 + (this.name ? '<h1>' + this.name + '</h1>' : '')
-                + '<div class="text">' + this.html + '</div>'
-                + (isNext ? '<div class="next"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
+                + '<div class="text">' + html + '</div>'
+                + (isNext ? '<div class="next" onclick="GALLERY.Viewer.appStateNext();"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
 
 
 
@@ -229,9 +256,8 @@ namespace GALLERY.Objects{
             }
 
 
-            if(this.design=='board' && isNext){
-                element.onclick = Viewer.appStateNext;
-            }
+
+
 
 
             document.getElementById('zones').appendChild(element);

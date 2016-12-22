@@ -1106,6 +1106,19 @@ var GALLERY;
                 }
                 return null;
             };
+            Array.prototype.filterBy = function (key, value) {
+                var filtered_objects = new Array();
+                var value_;
+                for (var i = 0, l = this.objects.length; i < l; i++) {
+                    value_ = this.objects[i][key];
+                    if (typeof value_ !== 'undefined') {
+                        if (value_ == value) {
+                            filtered_objects.push(this.objects[i]);
+                        }
+                    }
+                }
+                return (filtered_objects);
+            };
             Array.prototype.filter = function (callback) {
                 var filtered_objects = new Array();
                 this.forEach(function (object) {
@@ -1861,6 +1874,16 @@ var GALLERY;
                 }
                 return $element;
             };
+            Image.prototype.getSrc = function (width, ratio) {
+                if (width === void 0) { width = 0; }
+                if (ratio === void 0) { ratio = 0; }
+                var uri = URI(this.src);
+                if (width)
+                    uri.addSearch({ width: width });
+                if (ratio)
+                    uri.addSearch({ ratio: ratio });
+                return uri.toString();
+            };
             return Image;
         }(Objects.Object));
         Objects.Image = Image;
@@ -2105,7 +2128,8 @@ var GALLERY;
 (function (GALLERY) {
     var Objects;
     (function (Objects) {
-        var appState = GALLERY.Viewer.appState;
+        //import analyticsObject = GALLERY.Viewer.analyticsObject;
+        //import appState = GALLERY.Viewer.appState;
         var Zone = (function (_super) {
             __extends(Zone, _super);
             function Zone(object) {
@@ -2189,10 +2213,26 @@ var GALLERY;
                 element.id = 'zone-' + this.id;
                 element.classList.add('zone-' + this.design);
                 element.style.display = 'none';
+                var html = this.html;
+                html = Mustache.render(html, { gallery: function () {
+                        return function (val, render) {
+                            var images = objects.filterTypes('image');
+                            var conds = JSON.parse(val);
+                            for (var key in conds) {
+                                images = images.filterBy(key, conds[key]);
+                            }
+                            var html = '';
+                            images.forEach(function (image) {
+                                html += '<img src="' + image.getSrc(90, 1) + '" onclick="GALLERY.Viewer.appState(\'/:' + image.id + '\', false, false);" />';
+                            });
+                            html = '<div class="gallery">' + html + '</div>';
+                            return html;
+                        };
+                    } });
                 element.innerHTML = ''
                     + (this.name ? '<h1>' + this.name + '</h1>' : '')
-                    + '<div class="text">' + this.html + '</div>'
-                    + (isNext ? '<div class="next"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
+                    + '<div class="text">' + html + '</div>'
+                    + (isNext ? '<div class="next" onclick="GALLERY.Viewer.appStateNext();"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
                 var fullUrl = 'http://' + window.location.hostname + '/' + this.getUri(); //+analyticsObject.domain;
                 //let fullUrl = 'http://'+analyticsObject.domain+this.getUri();
                 r(fullUrl);
@@ -2225,9 +2265,6 @@ var GALLERY;
                             //alert("comments: " + data.comments);
                         }
                     });
-                }
-                if (this.design == 'board' && isNext) {
-                    element.onclick = Viewer.appStateNext;
                 }
                 document.getElementById('zones').appendChild(element);
                 $(element).find('a').click(function (e) {

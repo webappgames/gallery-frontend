@@ -89,6 +89,29 @@ namespace GALLERY.Objects{
 
 
 
+        filterBy(key:string, value:string | number | boolean):Object {
+
+            var filtered_objects = new Array();
+
+            let value_: any;
+
+            for(let i=0,l=this.objects.length;i<l;i++){
+
+                value_ = this.objects[i][key];
+                if(typeof value_ !== 'undefined') {
+                    if (value_ == value) {
+                        filtered_objects.push(this.objects[i]);
+                    }
+                }
+
+
+            }
+
+            return (filtered_objects);
+        }
+
+
+
         filter(callback: (object: Object) => boolean): Array {
 
             var filtered_objects = new Array();

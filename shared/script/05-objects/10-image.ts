@@ -155,6 +155,18 @@ namespace GALLERY.Objects{
 
 
 
+        getSrc(width=0,ratio=0){//todo use this
+
+            let uri = URI(this.src);
+
+            if(width)uri.addSearch({width: width});
+            if(ratio)uri.addSearch({ratio: ratio});
+
+            return uri.toString();
+
+
+        }
+
 
     }
 

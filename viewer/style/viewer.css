@@ -401,6 +401,22 @@ section#zones {
           font-weight: bold; }
       .zone-menu .text ul li:first-child a {
         border-left: none; }
+  .zone-menu .buttons {
+    display: inline-block;
+    float: right;
+    margin-right: 20px;
+    color: #fff;
+    vertical-align: top; }
+    .zone-menu .buttons * {
+      color: white; }
+    .zone-menu .buttons button {
+      padding: 0 10px;
+      margin: 2px;
+      min-width: 100px;
+      height: 25px;
+      line-height: 15px;
+      font-size: 16px;
+      border-radius: 3px; }
 
 .zone-panel {
   position: fixed;

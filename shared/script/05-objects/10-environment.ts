@@ -19,6 +19,7 @@ namespace GALLERY.Objects{
         public design: string;
         public name: string;
         public html: string;
+        public buttons: string;
 
 
 
@@ -40,6 +41,8 @@ namespace GALLERY.Objects{
             this.design = this.design || 'board';
             this.name = this.name || '';
             this.html = this.html || '';
+            this.buttons = this.buttons || '';
+
 
         }
 

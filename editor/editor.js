@@ -1671,6 +1671,7 @@ var GALLERY;
                 this.design = this.design || 'board';
                 this.name = this.name || '';
                 this.html = this.html || '';
+                this.buttons = this.buttons || '';
             }
             Environment.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -2142,6 +2143,7 @@ var GALLERY;
                 this.design = this.design || 'board';
                 this.name = this.name || '';
                 this.html = this.html || '';
+                this.buttons = this.buttons || '';
                 this.isImportant = this.isImportant || false;
                 //this.selector = this.selector || '';
             }
@@ -2232,6 +2234,7 @@ var GALLERY;
                 element.innerHTML = ''
                     + (this.name ? '<h1>' + this.name + '</h1>' : '')
                     + '<div class="text">' + html + '</div>'
+                    + (this.buttons ? '<div class="buttons">' + this.buttons + '</div>' : '')
                     + (isNext ? '<div class="next" onclick="GALLERY.Viewer.appStateNext();"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
                 var fullUrl = 'http://' + window.location.hostname + '/' + this.getUri(); //+analyticsObject.domain;
                 //let fullUrl = 'http://'+analyticsObject.domain+this.getUri();
@@ -2269,7 +2272,7 @@ var GALLERY;
                 document.getElementById('zones').appendChild(element);
                 $(element).find('a').click(function (e) {
                     e.preventDefault();
-                    appState($(this).attr('href'), false, false);
+                    Viewer.appState($(this).attr('href'), false, false);
                 });
                 return (element);
                 //}
@@ -3817,7 +3820,7 @@ function createMap() {
             if (['name', 'design', 'uri', 'next', 'parent', 'key', 'href', 'target', 'world', 'material', 'skybox', 'ground', 'url', 'server', 'username', 'password', 'directory', 'domain', 'endlessStructuresFromStorey'].indexOf(key) !== -1) {
                 input_element = '<input type="text">';
             }
-            else if (['script', 'html', 'selector'].indexOf(key) !== -1) {
+            else if (['script', 'html', 'buttons', 'selector'].indexOf(key) !== -1) {
                 input_element = ' <textarea></textarea>';
             }
             else if (key == 'intensity') {

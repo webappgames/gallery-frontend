@@ -275,7 +275,7 @@ function createMap() {
             if(['name','design','uri','next','parent','key','href','target','world','material','skybox','ground','url','server','username','password','directory','domain','endlessStructuresFromStorey'].indexOf(key)!==-1){
                 input_element='<input type="text">';
             }else
-            if(['script','html','selector'].indexOf(key)!==-1){
+            if(['script','html','buttons','selector'].indexOf(key)!==-1){
                 input_element=' <textarea></textarea>';
             }else
             if(key=='intensity'){

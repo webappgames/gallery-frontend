@@ -20,6 +20,7 @@ namespace GALLERY.Objects{
         public design: string;
         public name: string;
         public html: string;
+        public buttons: string;
 
 
         private _mesh;
@@ -40,6 +41,7 @@ namespace GALLERY.Objects{
             this.design = this.design || 'board';
             this.name = this.name || '';
             this.html = this.html || '';
+            this.buttons = this.buttons || '';
             this.isImportant = this.isImportant || false;
             //this.selector = this.selector || '';
 
@@ -200,6 +202,7 @@ namespace GALLERY.Objects{
                 //+'<div class="previous"><i class="fa fa-chevron-up" aria-hidden="true"></i></div>'
                 + (this.name ? '<h1>' + this.name + '</h1>' : '')
                 + '<div class="text">' + html + '</div>'
+                + (this.buttons?'<div class="buttons">' + this.buttons + '</div>':'')
                 + (isNext ? '<div class="next" onclick="GALLERY.Viewer.appStateNext();"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
 
 
@@ -265,7 +268,7 @@ namespace GALLERY.Objects{
 
             $(element).find('a').click(function (e) {
                 e.preventDefault();
-                appState($(this).attr('href'),false,false);
+                Viewer.appState($(this).attr('href'),false,false);
             });
 
 

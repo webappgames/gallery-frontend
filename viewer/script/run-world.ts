@@ -245,6 +245,7 @@ namespace GALLERY.Viewer {
                         design: object.design,
                         name: object.name,
                         html: object.html,
+                        buttons: object.buttons,
                         uri: 'none',
                         uri_level: 1,//todo better low priority
 

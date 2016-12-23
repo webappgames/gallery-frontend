@@ -1712,6 +1712,7 @@ var GALLERY;
                 this.design = this.design || 'board';
                 this.name = this.name || '';
                 this.html = this.html || '';
+                this.buttons = this.buttons || '';
             }
             Environment.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -2183,6 +2184,7 @@ var GALLERY;
                 this.design = this.design || 'board';
                 this.name = this.name || '';
                 this.html = this.html || '';
+                this.buttons = this.buttons || '';
                 this.isImportant = this.isImportant || false;
                 //this.selector = this.selector || '';
             }
@@ -2273,6 +2275,7 @@ var GALLERY;
                 element.innerHTML = ''
                     + (this.name ? '<h1>' + this.name + '</h1>' : '')
                     + '<div class="text">' + html + '</div>'
+                    + (this.buttons ? '<div class="buttons">' + this.buttons + '</div>' : '')
                     + (isNext ? '<div class="next" onclick="GALLERY.Viewer.appStateNext();"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
                 var fullUrl = 'http://' + window.location.hostname + '/' + this.getUri(); //+analyticsObject.domain;
                 //let fullUrl = 'http://'+analyticsObject.domain+this.getUri();
@@ -2310,7 +2313,7 @@ var GALLERY;
                 document.getElementById('zones').appendChild(element);
                 $(element).find('a').click(function (e) {
                     e.preventDefault();
-                    appState($(this).attr('href'), false, false);
+                    GALLERY.Viewer.appState($(this).attr('href'), false, false);
                 });
                 return (element);
                 //}
@@ -4215,6 +4218,7 @@ var GALLERY;
                             design: object.design,
                             name: object.name,
                             html: object.html,
+                            buttons: object.buttons,
                             uri: 'none',
                             uri_level: 1,
                             isImportant: true

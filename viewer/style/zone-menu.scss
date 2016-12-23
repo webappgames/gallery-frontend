@@ -32,6 +32,8 @@
     color: #cccccc;
     text-decoration: none;
 
+    //border: 1px solid #ff0000;
+
   }
 
 
@@ -142,8 +144,43 @@
 
 
     }
+
+
   }
 
+
+  .buttons{
+
+    display: inline-block;
+    float: right;
+
+    margin-right: 20px;
+
+    color: #fff;
+
+    vertical-align: top;
+
+    //border: 1px solid #00ff34;
+
+
+    *{
+      color: white;
+    }
+
+
+    button{
+
+      padding: 0 10px;
+      margin: 2px;
+      min-width: 100px;
+      height: 25px;
+      line-height: 15px;
+      font-size: 16px;
+      border-radius: 3px;
+    }
+
+
+  }
 
 
 

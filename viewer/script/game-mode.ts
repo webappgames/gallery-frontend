@@ -21,6 +21,8 @@ namespace GALLERY.Viewer {
 
 
     export function gameMode(){
+
+        //r(this);
         canvas.requestPointerLock();
     }
 
@@ -51,6 +53,7 @@ namespace GALLERY.Viewer {
             //pointer_lock.innerHTML='Web mode';
             //$hints.hide();
             //pointer_lock.style.display = 'none';
+            $('.game-mode').css('opacity','0.2');
             wasd.style.display = 'block';
 
 
@@ -68,6 +71,7 @@ namespace GALLERY.Viewer {
             //$hints.show();
 
             //pointer_lock.style.display = 'block';
+            $('.game-mode').css('opacity','1');
             wasd.style.display = 'none';
 
             camera.detachControl(canvas);

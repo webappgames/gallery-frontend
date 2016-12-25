@@ -5541,6 +5541,7 @@ var GALLERY;
         document.exitPointerLock = document.exitPointerLock ||
             document.mozExitPointerLock;
         function gameMode() {
+            //r(this);
             Viewer.canvas.requestPointerLock();
         }
         Viewer.gameMode = gameMode;
@@ -5567,6 +5568,7 @@ var GALLERY;
                 //pointer_lock.innerHTML='Web mode';
                 //$hints.hide();
                 //pointer_lock.style.display = 'none';
+                $('.game-mode').css('opacity', '0.2');
                 wasd.style.display = 'block';
                 Viewer.MODE = 'GAME';
                 Viewer.camera.angularSensibility = MOUSE_ANGULAR_SENSIBILITY;
@@ -5578,6 +5580,7 @@ var GALLERY;
                 //pointer_lock.innerHTML='Game mode';
                 //$hints.show();
                 //pointer_lock.style.display = 'block';
+                $('.game-mode').css('opacity', '1');
                 wasd.style.display = 'none';
                 Viewer.camera.detachControl(Viewer.canvas);
                 setTimeout(function () {

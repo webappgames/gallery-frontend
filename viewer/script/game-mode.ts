@@ -5,6 +5,57 @@ namespace GALLERY.Viewer {
 
 
 
+    export function gameMode(){
+
+
+        Window.open('herni mod'
+            , `
+        
+            xxxxxxxxx
+            <input type="text" id="player-name" />
+            
+            <div class="bottomright" id="wasd" style="display: none;">
+               <table>
+                     <tr>
+                       <td colspan="3"><p class="hint">Pohybujte se těmito klávesy<!--Move in gallery with theese keys--> <i class="fa fa-hand-o-down" aria-hidden="true"></i></p></td>
+                   </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><div class="key"><p>W</p></div></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><div class="key"><p>A</p></div></td>
+                        <td><div class="key"><p>S</p></div></td>
+                        <td><div class="key"><p>D</p></div></td>
+                    </tr>
+               </table>
+            </div>
+            
+            <button onclick="gameMode(window.document.getElementById('player-name').value);">
+                Začít
+            </button>
+            
+
+        `, function () {}, 'VERTICAL');
+
+
+    }
+
+
+    let playerName:string;
+
+    export function gameModeStart(_playerName:string){
+        canvas.requestPointerLock();
+        playerName = _playerName;
+    }
+
+
     const enginePlayReasonGameMode = new EnginePlayReason('game mode');
 
 
@@ -20,28 +71,16 @@ namespace GALLERY.Viewer {
         document.mozExitPointerLock;
 
 
-    export function gameMode(){
-
-        //r(this);
-        canvas.requestPointerLock();
-    }
-
-    //canvas.requestPointerLock();
-    /*pointer_lock.onclick = function (e) {
-
-        e.preventDefault();
-        //setTimeout(//todo is there a better solution?
-        //    function () {
-        canvas.requestPointerLock();
-        //    }, IMMEDIATELY_MS
-        //);
-
-    };*/
 
 
-// Hook pointer lock state change events for different browsers
+
+    // Hook pointer lock state change events for different browsers
     document.addEventListener('pointerlockchange', lockChangeAlert, false);
     document.addEventListener('mozpointerlockchange', lockChangeAlert, false);
+
+    const WS_SERVER = 'localhost:1338';
+    let gameSync = null;
+
 
     function lockChangeAlert() {
         if (document.pointerLockElement === canvas ||
@@ -61,6 +100,9 @@ namespace GALLERY.Viewer {
             camera.angularSensibility = MOUSE_ANGULAR_SENSIBILITY;
             playEngine(enginePlayReasonGameMode);
             //triggerMouseEvent (canvas, "mousedown");
+
+            gameSync = new GameSync(WS_SERVER,playerName,camera,scene,playerMeshGenerator);
+            gameSync.connect();
 
 
         } else {
@@ -86,6 +128,8 @@ namespace GALLERY.Viewer {
             camera.angularSensibility = -MOUSE_ANGULAR_SENSIBILITY;
             pauseEngine(enginePlayReasonGameMode);
 
+            gameSync.disconnect();
+            gameSync = null;
         }
 
 

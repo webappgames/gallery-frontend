@@ -4,6 +4,11 @@ var Window={};
 var window_opened = false;
 var IMMEDIATELY_MS = 50;
 
+
+
+
+
+
 /**
  * Changes title of opened popup window
  * @param title

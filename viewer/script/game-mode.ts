@@ -1,4 +1,5 @@
 /// <reference path="reference.ts" />
+/// <reference path="game-sync" />
 
 
 namespace GALLERY.Viewer {
@@ -37,7 +38,7 @@ namespace GALLERY.Viewer {
                </table>
             </div>
             
-            <button onclick="gameMode(window.document.getElementById('player-name').value);">
+            <button onclick="GALLERY.Viewer.gameModeStart(window.document.getElementById('player-name').value);">
                 Začít
             </button>
             
@@ -51,6 +52,7 @@ namespace GALLERY.Viewer {
     let playerName:string;
 
     export function gameModeStart(_playerName:string){
+        Window.close();
         canvas.requestPointerLock();
         playerName = _playerName;
     }
@@ -78,8 +80,8 @@ namespace GALLERY.Viewer {
     document.addEventListener('pointerlockchange', lockChangeAlert, false);
     document.addEventListener('mozpointerlockchange', lockChangeAlert, false);
 
-    const WS_SERVER = 'localhost:1338';
-    let gameSync = null;
+    const WS_SERVER = 'localhost:1357';
+    let gameSync = new GameSync(WS_SERVER,playerName,camera,scene);
 
 
     function lockChangeAlert() {
@@ -101,7 +103,7 @@ namespace GALLERY.Viewer {
             playEngine(enginePlayReasonGameMode);
             //triggerMouseEvent (canvas, "mousedown");
 
-            gameSync = new GameSync(WS_SERVER,playerName,camera,scene,playerMeshGenerator);
+
             gameSync.connect();
 
 
@@ -126,10 +128,9 @@ namespace GALLERY.Viewer {
 
             MODE = 'WEB';
             camera.angularSensibility = -MOUSE_ANGULAR_SENSIBILITY;
-            pauseEngine(enginePlayReasonGameMode);
+            //pauseEngine(enginePlayReasonGameMode);
 
-            gameSync.disconnect();
-            gameSync = null;
+            /*gameSync.disconnect();*/
         }
 
 

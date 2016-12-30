@@ -5527,11 +5527,109 @@ function dateFromDotString(str) {
     //todo minutes seconds hours
     return (date);
 }
-/// <reference path="reference.ts" />
 var GALLERY;
 (function (GALLERY) {
     var Viewer;
     (function (Viewer) {
+        var GameSync = (function () {
+            function GameSync(server, playerName, camera, scene) {
+                this.server = server;
+                this.camera = camera;
+                this.scene = scene;
+                this.connected = false;
+            }
+            GameSync.prototype.connect = function () {
+                if (this.connected) {
+                    console.warn('Already connected.');
+                    return;
+                }
+                this.connected = true;
+                var self = this;
+                //todo connect to ws
+                //todo listen to ws
+                this.ws = new WebSocket("ws://" + this.server);
+                //r(this.ws);
+                this.ws.onopen = function () {
+                    // Web Socket is connected, send data using send()
+                    //ws.send("Message to send");
+                    //alert("Message is sent...");
+                    self.ws.send(JSON.stringify({
+                        gallery: window.location.hostname,
+                        name: self.playerName
+                    }));
+                };
+                this.playerMeshes = {};
+                this.ws.onmessage = function (evt) {
+                    //var received_msg = evt.data;
+                    //alert("Message is received...");
+                    var players = JSON.parse(evt.data);
+                    for (var player in players) {
+                        var _ = players[player].position;
+                        var position = new BABYLON.Vector3(_.x * -BLOCK_SIZE, _.z * BLOCK_SIZE, _.y * BLOCK_SIZE);
+                        if (!(player in self.playerMeshes)) {
+                            self.playerMeshes[player] = new Viewer.PlayerMesh(players[player].name, players[player].message, position, self.scene);
+                        }
+                        else {
+                            self.playerMeshes[player].setPosition(position);
+                        }
+                    }
+                };
+                this.ws.onclose = function () {
+                    this.connected = false;
+                    clearInterval(self.loop);
+                    //alert("Closed");
+                };
+                //let xl, yl, zl;
+                this.loop = setInterval(function () {
+                    var x = Viewer.camera.position.x / -BLOCK_SIZE;
+                    var y = Viewer.camera.position.z / BLOCK_SIZE;
+                    var z = Viewer.camera.position.y / BLOCK_SIZE; //- BLOCKS_1NP_LEVEL;
+                    x = Math.round(x * 100) / 100;
+                    y = Math.round(y * 100) / 100;
+                    z = Math.round(z * 100) / 100;
+                    /*if (x != xl || y != yl || z != zl) {
+    
+                        xl = x;
+                        yl = y;
+                        zl = z;*/
+                    //todo send
+                    self.ws.send(JSON.stringify({
+                        position: {
+                            x: x,
+                            y: y,
+                            z: z
+                        }
+                    }));
+                    //}
+                }, 100);
+            };
+            GameSync.prototype.disconnect = function () {
+                //alert("Closing");
+                this.ws.close();
+                //todo
+            };
+            return GameSync;
+        }());
+        Viewer.GameSync = GameSync;
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="reference.ts" />
+/// <reference path="game-sync" />
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        function gameMode() {
+            Window.open('herni mod', "\n        \n            xxxxxxxxx\n            <input type=\"text\" id=\"player-name\" />\n            \n            <div class=\"bottomright\" id=\"wasd\" style=\"display: none;\">\n               <table>\n                     <tr>\n                       <td colspan=\"3\"><p class=\"hint\">Pohybujte se t\u011Bmito kl\u00E1vesy<!--Move in gallery with theese keys--> <i class=\"fa fa-hand-o-down\" aria-hidden=\"true\"></i></p></td>\n                   </tr>\n                    <tr>\n                        <td></td>\n                        <td></td>\n                        <td></td>\n                    </tr>\n                    <tr>\n                        <td></td>\n                        <td><div class=\"key\"><p>W</p></div></td>\n                        <td></td>\n                    </tr>\n                    <tr>\n                        <td><div class=\"key\"><p>A</p></div></td>\n                        <td><div class=\"key\"><p>S</p></div></td>\n                        <td><div class=\"key\"><p>D</p></div></td>\n                    </tr>\n               </table>\n            </div>\n            \n            <button onclick=\"GALLERY.Viewer.gameModeStart(window.document.getElementById('player-name').value);\">\n                Za\u010D\u00EDt\n            </button>\n            \n\n        ", function () { }, 'VERTICAL');
+        }
+        Viewer.gameMode = gameMode;
+        var playerName;
+        function gameModeStart(_playerName) {
+            Window.close();
+            Viewer.canvas.requestPointerLock();
+            playerName = _playerName;
+        }
+        Viewer.gameModeStart = gameModeStart;
         var enginePlayReasonGameMode = new Viewer.EnginePlayReason('game mode');
         //let pointer_lock = document.getElementById("pointer-lock");
         var wasd = document.getElementById("wasd");
@@ -5540,25 +5638,11 @@ var GALLERY;
             Viewer.canvas.mozRequestPointerLock;
         document.exitPointerLock = document.exitPointerLock ||
             document.mozExitPointerLock;
-        function gameMode() {
-            //r(this);
-            Viewer.canvas.requestPointerLock();
-        }
-        Viewer.gameMode = gameMode;
-        //canvas.requestPointerLock();
-        /*pointer_lock.onclick = function (e) {
-    
-            e.preventDefault();
-            //setTimeout(//todo is there a better solution?
-            //    function () {
-            canvas.requestPointerLock();
-            //    }, IMMEDIATELY_MS
-            //);
-    
-        };*/
         // Hook pointer lock state change events for different browsers
         document.addEventListener('pointerlockchange', lockChangeAlert, false);
         document.addEventListener('mozpointerlockchange', lockChangeAlert, false);
+        var WS_SERVER = 'localhost:1357';
+        var gameSync = new Viewer.GameSync(WS_SERVER, playerName, Viewer.camera, Viewer.scene);
         function lockChangeAlert() {
             if (document.pointerLockElement === Viewer.canvas ||
                 document.mozPointerLockElement === Viewer.canvas) {
@@ -5573,6 +5657,8 @@ var GALLERY;
                 Viewer.MODE = 'GAME';
                 Viewer.camera.angularSensibility = MOUSE_ANGULAR_SENSIBILITY;
                 Viewer.playEngine(enginePlayReasonGameMode);
+                //triggerMouseEvent (canvas, "mousedown");
+                gameSync.connect();
             }
             else {
                 console.log('The pointer lock status is now unlocked');
@@ -5589,7 +5675,6 @@ var GALLERY;
                 //$(canvas).trigger('mouseup');
                 Viewer.MODE = 'WEB';
                 Viewer.camera.angularSensibility = -MOUSE_ANGULAR_SENSIBILITY;
-                Viewer.pauseEngine(enginePlayReasonGameMode);
             }
         }
         window.addEventListener('keydown', function (e) {
@@ -6111,6 +6196,36 @@ var GALLERY;
             }, 40);
         }
         Viewer.makeScreenshots = makeScreenshots;
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="reference.ts" />
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        var PlayerMesh = (function () {
+            function PlayerMesh(name, message, position, scene) {
+                this.name = name;
+                this.scene = scene;
+                this.mesh = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
+                this.setMessage(message);
+                this.setPosition(position);
+            }
+            PlayerMesh.prototype.setPosition = function (position, first) {
+                if (first === void 0) { first = false; }
+                if (first) {
+                    this.mesh.position = position;
+                }
+                else {
+                    BABYLON.Animation.CreateAndStartAnimation("anim", this.mesh, "position", 30, 30 * 0.1, this.mesh.position, position, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
+                }
+            };
+            PlayerMesh.prototype.setMessage = function (message) {
+                this.message = message;
+            };
+            return PlayerMesh;
+        }());
+        Viewer.PlayerMesh = PlayerMesh;
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
 })(GALLERY || (GALLERY = {}));
 /// <reference path="reference.ts" />

@@ -15,6 +15,14 @@ namespace GALLERY.Viewer {
 
             this.mesh = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
 
+            this.mesh.material = new BABYLON.StandardMaterial("Mat", scene);
+
+            this.mesh.material.diffuseTexture = new BABYLON.Texture('/face.png', scene);
+            this.mesh.material.diffuseTexture.uScale = 1;
+            this.mesh.material.diffuseTexture.vScale = 1;
+
+
+
             this.setMessage(message);
             this.setPosition(position);
 
@@ -32,7 +40,7 @@ namespace GALLERY.Viewer {
                     "anim",
                     this.mesh,
                     "position",
-                    30,
+                    30,//todo what is that
                     30 * 0.1,
                     this.mesh.position,
                     position,
@@ -44,6 +52,24 @@ namespace GALLERY.Viewer {
 
 
         }
+
+
+        public setRotation(rotation:BABYLON.Vector3){
+
+            //this.mesh.rotation = rotation;
+            BABYLON.Animation.CreateAndStartAnimation(
+                "anim",
+                this.mesh,
+                "rotation",
+                30,
+                30 * 0.1,
+                this.mesh.rotation,
+                rotation,
+                BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE
+            );
+
+        }
+
 
         public setMessage(message:string){
             this.message = message;

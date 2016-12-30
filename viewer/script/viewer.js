@@ -5572,6 +5572,7 @@ var GALLERY;
                         else {
                             self.playerMeshes[player].setPosition(position);
                         }
+                        self.playerMeshes[player].setRotation(new BABYLON.Vector3(players[player].rotation.x, players[player].rotation.y, players[player].rotation.z));
                     }
                 };
                 this.ws.onclose = function () {
@@ -5598,6 +5599,11 @@ var GALLERY;
                             x: x,
                             y: y,
                             z: z
+                        },
+                        rotation: {
+                            x: Viewer.camera.rotation.x,
+                            y: Viewer.camera.rotation.y,
+                            z: Viewer.camera.rotation.z
                         }
                     }));
                     //}
@@ -6208,6 +6214,10 @@ var GALLERY;
                 this.name = name;
                 this.scene = scene;
                 this.mesh = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
+                this.mesh.material = new BABYLON.StandardMaterial("Mat", scene);
+                this.mesh.material.diffuseTexture = new BABYLON.Texture('/face.png', scene);
+                this.mesh.material.diffuseTexture.uScale = 1;
+                this.mesh.material.diffuseTexture.vScale = 1;
                 this.setMessage(message);
                 this.setPosition(position);
             }
@@ -6217,8 +6227,13 @@ var GALLERY;
                     this.mesh.position = position;
                 }
                 else {
-                    BABYLON.Animation.CreateAndStartAnimation("anim", this.mesh, "position", 30, 30 * 0.1, this.mesh.position, position, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
+                    BABYLON.Animation.CreateAndStartAnimation("anim", this.mesh, "position", 30, //todo what is that
+                    30 * 0.1, this.mesh.position, position, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
                 }
+            };
+            PlayerMesh.prototype.setRotation = function (rotation) {
+                //this.mesh.rotation = rotation;
+                BABYLON.Animation.CreateAndStartAnimation("anim", this.mesh, "rotation", 30, 30 * 0.1, this.mesh.rotation, rotation, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
             };
             PlayerMesh.prototype.setMessage = function (message) {
                 this.message = message;

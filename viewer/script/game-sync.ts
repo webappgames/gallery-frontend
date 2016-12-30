@@ -81,6 +81,13 @@ namespace GALLERY.Viewer {
                     }
 
 
+                    self.playerMeshes[player].setRotation( new BABYLON.Vector3(
+                        players[player].rotation.x,
+                        players[player].rotation.y,
+                        players[player].rotation.z
+                    ));
+
+
 
                 }
 
@@ -124,6 +131,11 @@ namespace GALLERY.Viewer {
                             x: x,
                             y: y,
                             z: z
+                        },
+                        rotation: {
+                            x: camera.rotation.x,
+                            y: camera.rotation.y,
+                            z: camera.rotation.z
                         }
                     }));
 

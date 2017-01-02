@@ -11,7 +11,7 @@ namespace GALLERY.Viewer {
         private ws;
         private playerMeshes;
 
-        constructor(public server:string, playerName:string, public camera, private scene) {
+        constructor(public server:string, public camera, private scene) {
             this.connected = false;
         }
 
@@ -88,6 +88,9 @@ namespace GALLERY.Viewer {
                     ));
 
 
+                    self.playerMeshes[player].setMessage(players[player].message);
+
+
 
                 }
 
@@ -145,6 +148,20 @@ namespace GALLERY.Viewer {
 
 
         }
+
+        public setName(name:string){
+            this.ws.send(JSON.stringify({
+                name: name
+            }));
+        }
+
+
+        public sendMessage(message:string){
+            this.ws.send(JSON.stringify({
+                message: message
+            }));
+        }
+
 
         public disconnect(){
 

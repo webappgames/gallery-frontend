@@ -296,6 +296,7 @@ namespace GALLERY.Viewer {
 
             boards.forEach(function (board) {
 
+                r( board.mesh.position.x);
                 /*r(mesh.position);
 
                  var p = BABYLON.Vector3.Project(

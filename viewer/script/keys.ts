@@ -10,6 +10,7 @@ namespace GALLERY.Viewer {
         'JUMP': [32],
         //'REFRESH': [80],
         'PRINTSCR': [80],
+        'CHAT': [13],
 
 
     };
@@ -218,6 +219,24 @@ namespace GALLERY.Viewer {
 
 
         }
+
+
+
+        if (controls_down.CHAT) {
+
+            controls_down.CHAT = false;
+            r('chat');
+
+
+            let message = prompt('Say:');
+            if(message){
+                gameSync.sendMessage(message);
+            }
+
+
+        }
+
+
 
 
         requestAnimationFrame(keys_tick);

@@ -9,9 +9,14 @@ namespace GALLERY.Viewer {
         private name:string;
         private message:string;
         private mesh;
+        private element;
 
 
         constructor(private name:string, message:string, position:BABYLON.Vector3, private scene){
+
+
+            r('Creating player '+this.name);
+
 
             this.mesh = BABYLON.Mesh.CreateSphere("player", 16, 2, scene);
 
@@ -23,8 +28,47 @@ namespace GALLERY.Viewer {
 
 
 
+
+
+
+            /*let board = new BABYLON.Mesh.CreateSphere(createGuid(), 2, 4 * BLOCK_SIZE, scene);
+            board.position = position;
+            board.position.y += EYE_VERTICAL * BLOCK_SIZE;
+
+
+            board.material = new BABYLON.StandardMaterial("texture2", scene);
+            board.material.diffuseColor = BABYLON.Color3.FromHexString('#000000');
+            board.material.alpha = 0;
+
+            board.checkCollisions = false;*/
+
+
+            this.element = document.createElement('div');
+            this.element.style.position = 'fixed';
+            this.element.classList.add('zone-player');
+            //element.innerHTML = 'xxx '+this.name;
+
+            document.getElementById('zones').appendChild(this.element);
+
+
+            boards.push({//todo DI
+                mesh: this.mesh,
+                element: this.element
+            });
+            //todo meshes.push(board);
+
+
+
+
+
+
             this.setMessage(message);
             this.setPosition(position);
+
+
+
+
+
 
 
         }
@@ -80,6 +124,13 @@ namespace GALLERY.Viewer {
 
         public setMessage(message:string){
             this.message = message;
+
+            if(this.message){
+                this.element.innerHTML = 'xxx '+this.message;
+            }else{
+                this.element.innerHTML = 'xxx '+this.name;
+            }
+
         }
 
 

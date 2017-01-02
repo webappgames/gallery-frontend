@@ -49,12 +49,13 @@ namespace GALLERY.Viewer {
     }
 
 
-    let playerName:string;
+    //let playerName:string;
 
-    export function gameModeStart(_playerName:string){
+    export function gameModeStart(playerName:string){
         Window.close();
         canvas.requestPointerLock();
-        playerName = _playerName;
+        gameSync.setName(playerName);
+        //playerName = _playerName;
     }
 
 
@@ -81,7 +82,9 @@ namespace GALLERY.Viewer {
     document.addEventListener('mozpointerlockchange', lockChangeAlert, false);
 
     const WS_SERVER = 'localhost:1357';
-    let gameSync = new GameSync(WS_SERVER,playerName,camera,scene);
+    export let gameSync = new GameSync(WS_SERVER,camera,scene);
+    gameSync.connect();
+    playEngine(enginePlayReasonGameMode);
 
 
     function lockChangeAlert() {
@@ -103,8 +106,7 @@ namespace GALLERY.Viewer {
             playEngine(enginePlayReasonGameMode);
             //triggerMouseEvent (canvas, "mousedown");
 
-
-            gameSync.connect();
+            //gameSync.connect();
 
 
         } else {

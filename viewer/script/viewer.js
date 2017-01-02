@@ -3811,6 +3811,7 @@ var GALLERY;
                 //=============================================================
                 //=============================================================Boards
                 Viewer.boards.forEach(function (board) {
+                    r(board.mesh.position.x);
                     /*r(mesh.position);
     
                      var p = BABYLON.Vector3.Project(
@@ -4492,6 +4493,7 @@ var GALLERY;
             'JUMP': [32],
             //'REFRESH': [80],
             'PRINTSCR': [80],
+            'CHAT': [13],
         };
         var merged_keys = [];
         for (var keyName in controls_keys) {
@@ -4623,6 +4625,14 @@ var GALLERY;
                      downloadURI(screenshot, filename);*/
                     saveAs(dataURItoBlob(screenshot), filename);
                 });
+            }
+            if (controls_down.CHAT) {
+                controls_down.CHAT = false;
+                r('chat');
+                var message = prompt('Say:');
+                if (message) {
+                    Viewer.gameSync.sendMessage(message);
+                }
             }
             requestAnimationFrame(keys_tick);
         };
@@ -5574,6 +5584,7 @@ var GALLERY;
                             self.playerMeshes[player].setPosition(position);
                         }
                         self.playerMeshes[player].setRotation(new BABYLON.Vector3(players[player].rotation.x, players[player].rotation.y, players[player].rotation.z));
+                        self.playerMeshes[player].setMessage(players[player].message);
                     }
                 };
                 this.ws.onclose = function () {
@@ -5609,6 +5620,11 @@ var GALLERY;
                     }));
                     //}
                 }, 100);
+            };
+            GameSync.prototype.sendMessage = function (message) {
+                this.ws.send(JSON.stringify({
+                    message: message
+                }));
             };
             GameSync.prototype.disconnect = function () {
                 //alert("Closing");
@@ -5649,7 +5665,9 @@ var GALLERY;
         document.addEventListener('pointerlockchange', lockChangeAlert, false);
         document.addEventListener('mozpointerlockchange', lockChangeAlert, false);
         var WS_SERVER = 'localhost:1357';
-        var gameSync = new Viewer.GameSync(WS_SERVER, playerName, Viewer.camera, Viewer.scene);
+        Viewer.gameSync = new Viewer.GameSync(WS_SERVER, playerName, Viewer.camera, Viewer.scene);
+        Viewer.gameSync.connect();
+        Viewer.playEngine(enginePlayReasonGameMode);
         function lockChangeAlert() {
             if (document.pointerLockElement === Viewer.canvas ||
                 document.mozPointerLockElement === Viewer.canvas) {
@@ -5664,8 +5682,6 @@ var GALLERY;
                 Viewer.MODE = 'GAME';
                 Viewer.camera.angularSensibility = MOUSE_ANGULAR_SENSIBILITY;
                 Viewer.playEngine(enginePlayReasonGameMode);
-                //triggerMouseEvent (canvas, "mousedown");
-                gameSync.connect();
             }
             else {
                 console.log('The pointer lock status is now unlocked');
@@ -6214,11 +6230,32 @@ var GALLERY;
             function PlayerMesh(name, message, position, scene) {
                 this.name = name;
                 this.scene = scene;
+                r('Creating player ' + this.name);
                 this.mesh = BABYLON.Mesh.CreateSphere("player", 16, 2, scene);
                 this.mesh.material = new BABYLON.StandardMaterial("Mat", scene);
                 this.mesh.material.diffuseTexture = new BABYLON.Texture('/media/images/other/eye.jpg', scene);
                 this.mesh.material.diffuseTexture.uScale = 1;
                 this.mesh.material.diffuseTexture.vScale = 1;
+                /*let board = new BABYLON.Mesh.CreateSphere(createGuid(), 2, 4 * BLOCK_SIZE, scene);
+                board.position = position;
+                board.position.y += EYE_VERTICAL * BLOCK_SIZE;
+    
+    
+                board.material = new BABYLON.StandardMaterial("texture2", scene);
+                board.material.diffuseColor = BABYLON.Color3.FromHexString('#000000');
+                board.material.alpha = 0;
+    
+                board.checkCollisions = false;*/
+                this.element = document.createElement('div');
+                this.element.style.position = 'fixed';
+                this.element.classList.add('zone-player');
+                //element.innerHTML = 'xxx '+this.name;
+                document.getElementById('zones').appendChild(this.element);
+                Viewer.boards.push({
+                    mesh: this.mesh,
+                    element: this.element
+                });
+                //todo meshes.push(board);
                 this.setMessage(message);
                 this.setPosition(position);
             }
@@ -6242,6 +6279,12 @@ var GALLERY;
             };
             PlayerMesh.prototype.setMessage = function (message) {
                 this.message = message;
+                if (this.message) {
+                    this.element.innerHTML = 'xxx ' + this.message;
+                }
+                else {
+                    this.element.innerHTML = 'xxx ' + this.name;
+                }
             };
             return PlayerMesh;
         }());

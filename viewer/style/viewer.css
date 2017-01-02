@@ -434,6 +434,11 @@ section#zones {
     margin-bottom: 10px;
     margin-top: 40px; }
 
+.zone-player {
+  display: block;
+  color: #ccc;
+  text-shadow: #000 0px 0px 5px; }
+
 nav .turn-right, nav .turn-left {
   margin: 5px;
   padding: 7px;

@@ -3811,7 +3811,7 @@ var GALLERY;
                 //=============================================================
                 //=============================================================Boards
                 Viewer.boards.forEach(function (board) {
-                    r(board.mesh.position.x);
+                    //r( board.mesh.position.x);
                     /*r(mesh.position);
     
                      var p = BABYLON.Vector3.Project(
@@ -3841,7 +3841,7 @@ var GALLERY;
                     board.element.style.zoom = zoom;
                     //r(board.element.clientWidth);
                     board.element.style.left = (position.x / zoom) - (board.element.clientWidth / 2) + 'px';
-                    board.element.style.top = (position.y / zoom) + 'px';
+                    board.element.style.top = (position.y / zoom - board.top) + 'px';
                     board.element.style.display = 'block';
                 });
                 //=============================================================
@@ -4436,7 +4436,8 @@ var GALLERY;
                     document.getElementById('zones').appendChild(element);
                     Viewer.boards.push({
                         mesh: board,
-                        element: element
+                        element: element,
+                        top: 0
                     });
                     Viewer.meshes.push(board);
                 }
@@ -4629,7 +4630,19 @@ var GALLERY;
             if (controls_down.CHAT) {
                 controls_down.CHAT = false;
                 r('chat');
-                var message = prompt('Say:');
+                Window.open('herni mod', "\n            <input type=\"text\" id=\"player-message\" />\n                    ", function () { }, 'VERTICAL');
+                document.getElementById('player-message').focus();
+                /*let _MODE = MODE;
+                let message = prompt('Say:');
+                r(_MODE);
+                if(_MODE=='GAME'){
+    
+    
+                    setTimeout(function () {
+                        gameModeStart();
+                    },100);
+    
+                }*/
                 if (message) {
                     Viewer.gameSync.sendMessage(message);
                 }
@@ -4944,19 +4957,19 @@ Window.open = function (title, content, close_callback, format) {
     $('.overlay').unbind('click').click(function (e) {
         //e.preventDefault();
         Window.close(false);
-        canvas.requestPointerLock();
+        //canvas.requestPointerLock();
     });
     $('.js-popup-window-close').unbind('click').click(function (e) {
         //e.preventDefault();
         Window.close(false);
-        canvas.requestPointerLock();
+        //canvas.requestPointerLock();
     });
     /*$('.popup-window .content').unbind('mousedown').mousedown(function () {
 
         $('body').enableSelection();
     });
     $('body').enableSelection();*/
-    document.exitPointerLock();
+    //document.exitPointerLock();
     window_opened = true;
 };
 /**
@@ -5543,7 +5556,7 @@ var GALLERY;
     var Viewer;
     (function (Viewer) {
         var GameSync = (function () {
-            function GameSync(server, playerName, camera, scene) {
+            function GameSync(server, camera, scene) {
                 this.server = server;
                 this.camera = camera;
                 this.scene = scene;
@@ -5621,6 +5634,11 @@ var GALLERY;
                     //}
                 }, 100);
             };
+            GameSync.prototype.setName = function (name) {
+                this.ws.send(JSON.stringify({
+                    name: name
+                }));
+            };
             GameSync.prototype.sendMessage = function (message) {
                 this.ws.send(JSON.stringify({
                     message: message
@@ -5646,11 +5664,15 @@ var GALLERY;
             Window.open('herni mod', "\n        \n            xxxxxxxxx\n            <input type=\"text\" id=\"player-name\" />\n            \n            <div class=\"bottomright\" id=\"wasd\" style=\"display: none;\">\n               <table>\n                     <tr>\n                       <td colspan=\"3\"><p class=\"hint\">Pohybujte se t\u011Bmito kl\u00E1vesy<!--Move in gallery with theese keys--> <i class=\"fa fa-hand-o-down\" aria-hidden=\"true\"></i></p></td>\n                   </tr>\n                    <tr>\n                        <td></td>\n                        <td></td>\n                        <td></td>\n                    </tr>\n                    <tr>\n                        <td></td>\n                        <td><div class=\"key\"><p>W</p></div></td>\n                        <td></td>\n                    </tr>\n                    <tr>\n                        <td><div class=\"key\"><p>A</p></div></td>\n                        <td><div class=\"key\"><p>S</p></div></td>\n                        <td><div class=\"key\"><p>D</p></div></td>\n                    </tr>\n               </table>\n            </div>\n            \n            <button onclick=\"GALLERY.Viewer.gameModeStart(window.document.getElementById('player-name').value);\">\n                Za\u010D\u00EDt\n            </button>\n            \n\n        ", function () { }, 'VERTICAL');
         }
         Viewer.gameMode = gameMode;
-        var playerName;
-        function gameModeStart(_playerName) {
+        //let playerName:string;
+        function gameModeStart(playerName) {
             Window.close();
             Viewer.canvas.requestPointerLock();
-            playerName = _playerName;
+            r('canvas.requestPointerLock();');
+            if (typeof playerName === 'string') {
+                Viewer.gameSync.setName(playerName);
+            }
+            //playerName = _playerName;
         }
         Viewer.gameModeStart = gameModeStart;
         var enginePlayReasonGameMode = new Viewer.EnginePlayReason('game mode');
@@ -5665,7 +5687,7 @@ var GALLERY;
         document.addEventListener('pointerlockchange', lockChangeAlert, false);
         document.addEventListener('mozpointerlockchange', lockChangeAlert, false);
         var WS_SERVER = 'localhost:1357';
-        Viewer.gameSync = new Viewer.GameSync(WS_SERVER, playerName, Viewer.camera, Viewer.scene);
+        Viewer.gameSync = new Viewer.GameSync(WS_SERVER, Viewer.camera, Viewer.scene);
         Viewer.gameSync.connect();
         Viewer.playEngine(enginePlayReasonGameMode);
         function lockChangeAlert() {
@@ -6253,7 +6275,8 @@ var GALLERY;
                 document.getElementById('zones').appendChild(this.element);
                 Viewer.boards.push({
                     mesh: this.mesh,
-                    element: this.element
+                    element: this.element,
+                    top: 20
                 });
                 //todo meshes.push(board);
                 this.setMessage(message);

@@ -228,7 +228,27 @@ namespace GALLERY.Viewer {
             r('chat');
 
 
+            Window.open('herni mod'
+                , `
+            <input type="text" id="player-message" />
+                    `, function () {}, 'SMALL');
+
+
+            document.getElementById('player-message').focus();
+
+            /*let _MODE = MODE;
             let message = prompt('Say:');
+            r(_MODE);
+            if(_MODE=='GAME'){
+
+
+                setTimeout(function () {
+                    gameModeStart();
+                },100);
+
+            }*/
+
+
             if(message){
                 gameSync.sendMessage(message);
             }

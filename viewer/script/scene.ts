@@ -296,7 +296,7 @@ namespace GALLERY.Viewer {
 
             boards.forEach(function (board) {
 
-                r( board.mesh.position.x);
+                //r( board.mesh.position.x);
                 /*r(mesh.position);
 
                  var p = BABYLON.Vector3.Project(
@@ -348,7 +348,7 @@ namespace GALLERY.Viewer {
                 //r(board.element.clientWidth);
 
                 board.element.style.left = (position.x / zoom) - (board.element.clientWidth / 2) + 'px';
-                board.element.style.top = (position.y / zoom) + 'px';
+                board.element.style.top = (position.y / zoom - board.top) + 'px';
                 board.element.style.display = 'block';
 
 

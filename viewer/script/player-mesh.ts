@@ -53,7 +53,8 @@ namespace GALLERY.Viewer {
 
             boards.push({//todo DI
                 mesh: this.mesh,
-                element: this.element
+                element: this.element,
+                top: 20
             });
             //todo meshes.push(board);
 

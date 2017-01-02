@@ -104,12 +104,12 @@ Window.open = function(title, content, close_callback, format) {
     $('.overlay').unbind('click').click(function (e) {
         //e.preventDefault();
         Window.close(false);
-        canvas.requestPointerLock();
+        //canvas.requestPointerLock();
     });
     $('.js-popup-window-close').unbind('click').click(function (e) {
         //e.preventDefault();
         Window.close(false);
-        canvas.requestPointerLock();
+        //canvas.requestPointerLock();
     });
 
 
@@ -121,7 +121,7 @@ Window.open = function(title, content, close_callback, format) {
     $('body').enableSelection();*/
 
 
-    document.exitPointerLock();
+    //document.exitPointerLock();
 
 
 

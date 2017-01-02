@@ -623,7 +623,8 @@ namespace GALLERY.Viewer {
 
                 boards.push({
                     mesh: board,
-                    element: element
+                    element: element,
+                    top: 0
                  });
                 meshes.push(board);
 

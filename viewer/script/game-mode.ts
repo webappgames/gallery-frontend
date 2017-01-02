@@ -51,10 +51,15 @@ namespace GALLERY.Viewer {
 
     //let playerName:string;
 
-    export function gameModeStart(playerName:string){
+    export function gameModeStart(playerName?:string){
         Window.close();
         canvas.requestPointerLock();
-        gameSync.setName(playerName);
+        r('canvas.requestPointerLock();');
+
+        if(typeof playerName === 'string'){
+            gameSync.setName(playerName);
+        }
+
         //playerName = _playerName;
     }
 

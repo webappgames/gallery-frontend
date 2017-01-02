@@ -137,6 +137,9 @@ namespace GALLERY.Viewer {
                 'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_lf.jpg',*/
 
 
+                '/media/images/other/eye.jpg',
+
+
 
                 'https://code.jquery.com/jquery-2.2.4.min.js',
                 'https://code.jquery.com/ui/1.12.0/jquery-ui.min.js',

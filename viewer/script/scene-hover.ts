@@ -10,7 +10,7 @@ namespace GALLERY.Viewer {
 
         let hoovered_mesh;
         if (pickResult.hit) {
-            if(pickResult.pickedMesh.name.substr(0,4)=='room' || pickResult.pickedMesh.name.substr(0,6)=='ground'){
+            if(pickResult.pickedMesh.name.substr(0,4)=='room' || pickResult.pickedMesh.name.substr(0,6)=='ground' || pickResult.pickedMesh.name.substr(0,6)=='player'){
                 hoovered_mesh = null;
             }else{
                 hoovered_mesh=pickResult.pickedMesh;

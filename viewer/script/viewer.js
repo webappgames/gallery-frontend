@@ -5278,6 +5278,7 @@ var GALLERY;
                     'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_bk.jpg',
                     'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_dn.jpg',
                     'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_lf.jpg',*/
+                    '/media/images/other/eye.jpg',
                     'https://code.jquery.com/jquery-2.2.4.min.js',
                     'https://code.jquery.com/ui/1.12.0/jquery-ui.min.js',
                     'https://cdn.ravenjs.com/3.9.1/raven.min.js',
@@ -6213,9 +6214,9 @@ var GALLERY;
             function PlayerMesh(name, message, position, scene) {
                 this.name = name;
                 this.scene = scene;
-                this.mesh = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
+                this.mesh = BABYLON.Mesh.CreateSphere("player", 16, 2, scene);
                 this.mesh.material = new BABYLON.StandardMaterial("Mat", scene);
-                this.mesh.material.diffuseTexture = new BABYLON.Texture('/face.png', scene);
+                this.mesh.material.diffuseTexture = new BABYLON.Texture('/media/images/other/eye.jpg', scene);
                 this.mesh.material.diffuseTexture.uScale = 1;
                 this.mesh.material.diffuseTexture.vScale = 1;
                 this.setMessage(message);
@@ -6232,6 +6233,10 @@ var GALLERY;
                 }
             };
             PlayerMesh.prototype.setRotation = function (rotation) {
+                rotation.y += Math.PI / 2;
+                var _ = rotation.x;
+                rotation.x = rotation.z;
+                rotation.z = _;
                 //this.mesh.rotation = rotation;
                 BABYLON.Animation.CreateAndStartAnimation("anim", this.mesh, "rotation", 30, 30 * 0.1, this.mesh.rotation, rotation, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
             };
@@ -6252,7 +6257,7 @@ var GALLERY;
         function onPointerHover(evt, pickResult) {
             var hoovered_mesh;
             if (pickResult.hit) {
-                if (pickResult.pickedMesh.name.substr(0, 4) == 'room' || pickResult.pickedMesh.name.substr(0, 6) == 'ground') {
+                if (pickResult.pickedMesh.name.substr(0, 4) == 'room' || pickResult.pickedMesh.name.substr(0, 6) == 'ground' || pickResult.pickedMesh.name.substr(0, 6) == 'player') {
                     hoovered_mesh = null;
                 }
                 else {

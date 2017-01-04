@@ -4630,7 +4630,7 @@ var GALLERY;
             if (controls_down.CHAT) {
                 controls_down.CHAT = false;
                 r('chat');
-                Window.open('herni mod', "\n            <input type=\"text\" id=\"player-message\" />\n                    ", function () { }, 'VERTICAL');
+                Window.open('herni mod', "\n            <input type=\"text\" id=\"player-message\" />\n                    ", function () { }, 'SMALL');
                 document.getElementById('player-message').focus();
                 /*let _MODE = MODE;
                 let message = prompt('Say:');
@@ -5579,25 +5579,39 @@ var GALLERY;
                     //alert("Message is sent...");
                     self.ws.send(JSON.stringify({
                         gallery: window.location.hostname,
-                        name: self.playerName
                     }));
                 };
-                this.playerMeshes = {};
+                this.gamePlayers = {};
                 this.ws.onmessage = function (evt) {
                     //var received_msg = evt.data;
                     //alert("Message is received...");
                     var players = JSON.parse(evt.data);
                     for (var player in players) {
-                        var _ = players[player].position;
-                        var position = new BABYLON.Vector3(_.x * -BLOCK_SIZE, _.z * BLOCK_SIZE, _.y * BLOCK_SIZE);
-                        if (!(player in self.playerMeshes)) {
-                            self.playerMeshes[player] = new Viewer.PlayerMesh(players[player].name, players[player].message, position, self.scene);
+                        if (players[player]) {
+                            if (!(player in self.gamePlayers)) {
+                                self.gamePlayers[player] = new Viewer.GamePlayer(self.scene);
+                                r('Player ' + player + ' connected.');
+                            }
+                            if ("name" in players[player]) {
+                                self.gamePlayers[player].setName(players[player].name);
+                            }
+                            if ("message" in players[player]) {
+                                self.gamePlayers[player].setMessage(players[player].message);
+                            }
+                            if ("position" in players[player]) {
+                                var _ = players[player].position;
+                                var position = new BABYLON.Vector3(_.x * -BLOCK_SIZE, _.z * BLOCK_SIZE, _.y * BLOCK_SIZE);
+                                self.gamePlayers[player].setPosition(position);
+                            }
+                            if ("rotation" in players[player]) {
+                                self.gamePlayers[player].setRotation(new BABYLON.Vector3(players[player].rotation.x, players[player].rotation.y, players[player].rotation.z));
+                            }
                         }
                         else {
-                            self.playerMeshes[player].setPosition(position);
+                            r('Player ' + player + ' disconnected.');
+                            self.gamePlayers[player].destruct();
+                            delete self.gamePlayers[player];
                         }
-                        self.playerMeshes[player].setRotation(new BABYLON.Vector3(players[player].rotation.x, players[player].rotation.y, players[player].rotation.z));
-                        self.playerMeshes[player].setMessage(players[player].message);
                     }
                 };
                 this.ws.onclose = function () {
@@ -5605,7 +5619,7 @@ var GALLERY;
                     clearInterval(self.loop);
                     //alert("Closed");
                 };
-                //let xl, yl, zl;
+                var _last;
                 this.loop = setInterval(function () {
                     var x = Viewer.camera.position.x / -BLOCK_SIZE;
                     var y = Viewer.camera.position.z / BLOCK_SIZE;
@@ -5613,25 +5627,24 @@ var GALLERY;
                     x = Math.round(x * 100) / 100;
                     y = Math.round(y * 100) / 100;
                     z = Math.round(z * 100) / 100;
-                    /*if (x != xl || y != yl || z != zl) {
-    
-                        xl = x;
-                        yl = y;
-                        zl = z;*/
-                    //todo send
-                    self.ws.send(JSON.stringify({
-                        position: {
-                            x: x,
-                            y: y,
-                            z: z
-                        },
-                        rotation: {
-                            x: Viewer.camera.rotation.x,
-                            y: Viewer.camera.rotation.y,
-                            z: Viewer.camera.rotation.z
-                        }
-                    }));
-                    //}
+                    var _current = [
+                        x, y, z, Viewer.camera.rotation.x, Viewer.camera.rotation.y, Viewer.camera.rotation.z
+                    ].join(',');
+                    if (_last != _current) {
+                        _last = _current;
+                        self.ws.send(JSON.stringify({
+                            position: {
+                                x: x,
+                                y: y,
+                                z: z
+                            },
+                            rotation: {
+                                x: Viewer.camera.rotation.x,
+                                y: Viewer.camera.rotation.y,
+                                z: Viewer.camera.rotation.z
+                            }
+                        }));
+                    }
                 }, 100);
             };
             GameSync.prototype.setName = function (name) {
@@ -6065,6 +6078,85 @@ var GALLERY;
         })(Effects = Viewer.Effects || (Viewer.Effects = {}));
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
 })(GALLERY || (GALLERY = {}));
+/// <reference path="reference.ts" />
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        var GamePlayer = (function () {
+            function GamePlayer(scene) {
+                //r('Creating player');
+                this.scene = scene;
+                this.mesh = BABYLON.Mesh.CreateSphere("player", 16, 2, scene);
+                this.mesh.material = new BABYLON.StandardMaterial("Mat", scene);
+                this.mesh.material.diffuseTexture = new BABYLON.Texture('/media/images/other/eye.jpg', scene);
+                this.mesh.material.diffuseTexture.uScale = 1;
+                this.mesh.material.diffuseTexture.vScale = 1;
+                /*let board = new BABYLON.Mesh.CreateSphere(createGuid(), 2, 4 * BLOCK_SIZE, scene);
+                board.position = position;
+                board.position.y += EYE_VERTICAL * BLOCK_SIZE;
+    
+    
+                board.material = new BABYLON.StandardMaterial("texture2", scene);
+                board.material.diffuseColor = BABYLON.Color3.FromHexString('#000000');
+                board.material.alpha = 0;
+    
+                board.checkCollisions = false;*/
+                this.element = document.createElement('div');
+                this.element.style.position = 'fixed';
+                this.element.classList.add('zone-player');
+                //element.innerHTML = 'xxx '+this.name;
+                document.getElementById('zones').appendChild(this.element);
+                Viewer.boards.push({
+                    mesh: this.mesh,
+                    element: this.element,
+                    top: 20
+                });
+                //todo meshes.push(board);
+            }
+            GamePlayer.prototype._redrawBoard = function () {
+                if (this.message) {
+                    this.element.innerHTML = 'xxx ' + this.message;
+                }
+                else {
+                    this.element.innerHTML = 'xxx ' + this.name;
+                }
+            };
+            GamePlayer.prototype.setName = function (name) {
+                this.name = name;
+                this._redrawBoard();
+            };
+            GamePlayer.prototype.setPosition = function (position, first) {
+                if (first === void 0) { first = false; }
+                if (first) {
+                    this.mesh.position = position;
+                }
+                else {
+                    BABYLON.Animation.CreateAndStartAnimation("anim", this.mesh, "position", 30, //todo what is that
+                    30 * 0.1, this.mesh.position, position, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
+                }
+            };
+            GamePlayer.prototype.setRotation = function (rotation) {
+                rotation.y += Math.PI / 2;
+                var _ = rotation.x;
+                rotation.x = rotation.z;
+                rotation.z = _;
+                //this.mesh.rotation = rotation;
+                BABYLON.Animation.CreateAndStartAnimation("anim", this.mesh, "rotation", 30, 30 * 0.1, this.mesh.rotation, rotation, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
+            };
+            GamePlayer.prototype.setMessage = function (message) {
+                this.message = message;
+                this._redrawBoard();
+            };
+            GamePlayer.prototype.destruct = function () {
+                this.mesh.dispose();
+                this.element.parentNode.removeChild(this.element);
+            };
+            return GamePlayer;
+        }());
+        Viewer.GamePlayer = GamePlayer;
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
 var GALLERY;
 (function (GALLERY) {
     var Viewer;
@@ -6241,77 +6333,6 @@ var GALLERY;
             }, 40);
         }
         Viewer.makeScreenshots = makeScreenshots;
-    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
-})(GALLERY || (GALLERY = {}));
-/// <reference path="reference.ts" />
-var GALLERY;
-(function (GALLERY) {
-    var Viewer;
-    (function (Viewer) {
-        var PlayerMesh = (function () {
-            function PlayerMesh(name, message, position, scene) {
-                this.name = name;
-                this.scene = scene;
-                r('Creating player ' + this.name);
-                this.mesh = BABYLON.Mesh.CreateSphere("player", 16, 2, scene);
-                this.mesh.material = new BABYLON.StandardMaterial("Mat", scene);
-                this.mesh.material.diffuseTexture = new BABYLON.Texture('/media/images/other/eye.jpg', scene);
-                this.mesh.material.diffuseTexture.uScale = 1;
-                this.mesh.material.diffuseTexture.vScale = 1;
-                /*let board = new BABYLON.Mesh.CreateSphere(createGuid(), 2, 4 * BLOCK_SIZE, scene);
-                board.position = position;
-                board.position.y += EYE_VERTICAL * BLOCK_SIZE;
-    
-    
-                board.material = new BABYLON.StandardMaterial("texture2", scene);
-                board.material.diffuseColor = BABYLON.Color3.FromHexString('#000000');
-                board.material.alpha = 0;
-    
-                board.checkCollisions = false;*/
-                this.element = document.createElement('div');
-                this.element.style.position = 'fixed';
-                this.element.classList.add('zone-player');
-                //element.innerHTML = 'xxx '+this.name;
-                document.getElementById('zones').appendChild(this.element);
-                Viewer.boards.push({
-                    mesh: this.mesh,
-                    element: this.element,
-                    top: 20
-                });
-                //todo meshes.push(board);
-                this.setMessage(message);
-                this.setPosition(position);
-            }
-            PlayerMesh.prototype.setPosition = function (position, first) {
-                if (first === void 0) { first = false; }
-                if (first) {
-                    this.mesh.position = position;
-                }
-                else {
-                    BABYLON.Animation.CreateAndStartAnimation("anim", this.mesh, "position", 30, //todo what is that
-                    30 * 0.1, this.mesh.position, position, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
-                }
-            };
-            PlayerMesh.prototype.setRotation = function (rotation) {
-                rotation.y += Math.PI / 2;
-                var _ = rotation.x;
-                rotation.x = rotation.z;
-                rotation.z = _;
-                //this.mesh.rotation = rotation;
-                BABYLON.Animation.CreateAndStartAnimation("anim", this.mesh, "rotation", 30, 30 * 0.1, this.mesh.rotation, rotation, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
-            };
-            PlayerMesh.prototype.setMessage = function (message) {
-                this.message = message;
-                if (this.message) {
-                    this.element.innerHTML = 'xxx ' + this.message;
-                }
-                else {
-                    this.element.innerHTML = 'xxx ' + this.name;
-                }
-            };
-            return PlayerMesh;
-        }());
-        Viewer.PlayerMesh = PlayerMesh;
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
 })(GALLERY || (GALLERY = {}));
 /// <reference path="reference.ts" />

@@ -9,7 +9,7 @@ namespace GALLERY.Viewer {
         private connected:boolean;
         private loop;
         private ws;
-        private playerMeshes;
+        private gamePlayers;
 
         constructor(public server:string, public camera, private scene) {
             this.connected = false;
@@ -37,12 +37,12 @@ namespace GALLERY.Viewer {
                 //alert("Message is sent...");
                 self.ws.send(JSON.stringify({
                     gallery: window.location.hostname,
-                    name: self.playerName
+                    //name: self.playerName
                 }));
 
             };
 
-            this.playerMeshes = {};
+            this.gamePlayers = {};
 
             this.ws.onmessage = function (evt){
                 //var received_msg = evt.data;
@@ -56,40 +56,55 @@ namespace GALLERY.Viewer {
                 for(let player in players){
 
 
-                    let _ = players[player].position;
-                    let position = new BABYLON.Vector3(
-                        _.x * -BLOCK_SIZE,
-                        _.z * BLOCK_SIZE,
-                        _.y * BLOCK_SIZE
-                    );
+                    if(players[player]) {
 
 
+                        if (!(player in self.gamePlayers)) {
 
-                    if(!(player in self.playerMeshes)){
+                            self.gamePlayers[player] = new GamePlayer(self.scene);
+                            r('Player '+player+' connected.');
 
-                        self.playerMeshes[player] = new PlayerMesh(
-                            players[player].name,
-                            players[player].message,
-                            position,
-                            self.scene,
-                        );
+                        }
+
+
+                        if ("name" in players[player]) {
+                            self.gamePlayers[player].setName(players[player].name);
+                        }
+
+
+                        if ("message" in players[player]) {
+                            self.gamePlayers[player].setMessage(players[player].message);
+                        }
+
+
+                        if ("position" in players[player]) {
+                            let _ = players[player].position;
+                            let position = new BABYLON.Vector3(
+                                _.x * -BLOCK_SIZE,
+                                _.z * BLOCK_SIZE,
+                                _.y * BLOCK_SIZE
+                            );
+                            self.gamePlayers[player].setPosition(position);
+                        }
+
+
+                        if ("rotation" in players[player]) {
+                            self.gamePlayers[player].setRotation(new BABYLON.Vector3(
+                                players[player].rotation.x,
+                                players[player].rotation.y,
+                                players[player].rotation.z
+                            ));
+                        }
 
                     }else{
 
-                        self.playerMeshes[player].setPosition(position);
+                        r('Player '+player+' disconnected.');
+
+                        self.gamePlayers[player].destruct();
+                        delete self.gamePlayers[player];
+
 
                     }
-
-
-                    self.playerMeshes[player].setRotation( new BABYLON.Vector3(
-                        players[player].rotation.x,
-                        players[player].rotation.y,
-                        players[player].rotation.z
-                    ));
-
-
-                    self.playerMeshes[player].setMessage(players[player].message);
-
 
 
                 }
@@ -109,7 +124,7 @@ namespace GALLERY.Viewer {
 
 
 
-            //let xl, yl, zl;
+            let _last;
             this.loop = setInterval(function () {
 
 
@@ -122,13 +137,15 @@ namespace GALLERY.Viewer {
                 z = Math.round(z * 100) / 100;
 
 
-                /*if (x != xl || y != yl || z != zl) {
+                let _current = [
+                    x,y,z,camera.rotation.x,camera.rotation.y,camera.rotation.z
+                ].join(',');
 
-                    xl = x;
-                    yl = y;
-                    zl = z;*/
 
-                    //todo send
+                if (_last != _current) {
+
+                    _last = _current;
+
                     self.ws.send(JSON.stringify({
                         position: {
                             x: x,
@@ -142,7 +159,7 @@ namespace GALLERY.Viewer {
                         }
                     }));
 
-                //}
+                }
 
             }, 100);
 

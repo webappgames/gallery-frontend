@@ -4,7 +4,7 @@
 namespace GALLERY.Viewer {
 
 
-    export class PlayerMesh{
+    export class GamePlayer{
 
         private name:string;
         private message:string;
@@ -12,10 +12,10 @@ namespace GALLERY.Viewer {
         private element;
 
 
-        constructor(private name:string, message:string, position:BABYLON.Vector3, private scene){
+        constructor(private scene){
 
 
-            r('Creating player '+this.name);
+            //r('Creating player');
 
 
             this.mesh = BABYLON.Mesh.CreateSphere("player", 16, 2, scene);
@@ -62,17 +62,28 @@ namespace GALLERY.Viewer {
 
 
 
+        }
 
-            this.setMessage(message);
-            this.setPosition(position);
-
-
-
-
-
-
+        private _redrawBoard(){
+            if(this.message){
+                this.element.innerHTML = 'xxx '+this.message;
+            }else{
+                this.element.innerHTML = 'xxx '+this.name;
+            }
 
         }
+
+
+
+
+        public setName(name:string){
+            this.name = name;
+            this._redrawBoard();
+
+        }
+
+
+
 
         public setPosition(position:BABYLON.Vector3,first=false){
 
@@ -125,15 +136,17 @@ namespace GALLERY.Viewer {
 
         public setMessage(message:string){
             this.message = message;
-
-            if(this.message){
-                this.element.innerHTML = 'xxx '+this.message;
-            }else{
-                this.element.innerHTML = 'xxx '+this.name;
-            }
-
+            this._redrawBoard();
         }
 
+
+
+        public destruct(){
+
+            this.mesh.dispose();
+            this.element.parentNode.removeChild(this.element);
+
+        }
 
 
 

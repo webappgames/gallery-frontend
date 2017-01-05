@@ -234,14 +234,14 @@ namespace GALLERY.Viewer {
 
             if(!_chatting){_chatting=true;
 
-                Window.open(''
+                Window.open('Napsat zprávu'
                     , `
             <input type="text" id="player-message" />
                     `, function () {
 
                         gameSync.sendMessage(document.getElementById('player-message').value);
 
-                    }, 'SMALL');
+                    }, 'COMMAND');
 
 
                 document.getElementById('player-message').focus();

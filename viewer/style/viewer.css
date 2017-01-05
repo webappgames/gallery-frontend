@@ -204,7 +204,7 @@ button:hover, .button:hover, input[type="submit"]:hover {
       border: none;
       width: 100%;
       height: 100%; }
-  .popup-window .close, .popup-window .back {
+  .popup-window .close, .popup-window .confirm {
     position: absolute;
     top: 0px;
     height: 40px;
@@ -214,9 +214,9 @@ button:hover, .button:hover, input[type="submit"]:hover {
     justify-content: center;
     cursor: pointer; }
   .popup-window .close {
-    right: 0px; }
-  .popup-window .back {
     left: 0px; }
+  .popup-window .confirm {
+    right: 0px; }
 
 .popup-window-small {
   max-width: 500px;
@@ -231,6 +231,19 @@ button:hover, .button:hover, input[type="submit"]:hover {
   bottom: 0;
   top: calc(70px);
   bottom: calc(120px); }
+
+.popup-window-command {
+  max-width: 500px;
+  max-height: 100px;
+  top: 20vh; }
+  .popup-window-command .content {
+    padding: 0; }
+    .popup-window-command .content input {
+      width: 100%;
+      height: 100%;
+      font-size: 1.5em;
+      padding: 2px;
+      padding-left: 10px; }
 
 .popup-window-iframe {
   width: 100%;

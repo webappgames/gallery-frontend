@@ -42,12 +42,14 @@ Window.setContent = function(content) {
 
 /**
  * Changes format of opened popup window
- * @param format NORMAL, SMALL
+ * @param format NORMAL, SMALL, VERTICAL, COMMAND
  */
 Window.setFormat = function(format) {
 
     $('.popup-window').removeClass('popup-window-small');
     $('.popup-window').removeClass('popup-window-vertical');
+    $('.popup-window').removeClass('popup-window-command');
+
 
     if (format == "SMALL") {
 
@@ -57,6 +59,12 @@ Window.setFormat = function(format) {
     if (format == "VERTICAL") {
 
         $('.popup-window').addClass('popup-window-vertical');
+
+    }else
+    if (format == "COMMAND") {
+
+
+        $('.popup-window').addClass('popup-window-command');
 
     }
 

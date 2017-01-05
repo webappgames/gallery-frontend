@@ -4633,9 +4633,9 @@ var GALLERY;
                 r('chat');
                 if (!_chatting) {
                     _chatting = true;
-                    Window.open('', "\n            <input type=\"text\" id=\"player-message\" />\n                    ", function () {
+                    Window.open('Napsat zprávu', "\n            <input type=\"text\" id=\"player-message\" />\n                    ", function () {
                         Viewer.gameSync.sendMessage(document.getElementById('player-message').value);
-                    }, 'SMALL');
+                    }, 'COMMAND');
                     document.getElementById('player-message').focus();
                 }
                 else {
@@ -4916,16 +4916,20 @@ Window.setContent = function (content) {
 };
 /**
  * Changes format of opened popup window
- * @param format NORMAL, SMALL
+ * @param format NORMAL, SMALL, VERTICAL, COMMAND
  */
 Window.setFormat = function (format) {
     $('.popup-window').removeClass('popup-window-small');
     $('.popup-window').removeClass('popup-window-vertical');
+    $('.popup-window').removeClass('popup-window-command');
     if (format == "SMALL") {
         $('.popup-window').addClass('popup-window-small');
     }
     else if (format == "VERTICAL") {
         $('.popup-window').addClass('popup-window-vertical');
+    }
+    else if (format == "COMMAND") {
+        $('.popup-window').addClass('popup-window-command');
     }
 };
 /**

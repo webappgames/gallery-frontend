@@ -24,4 +24,58 @@
   text-shadow: #000 0px 0px 5px;
 
 
+  .name,.message{
+    display: block;
+  }
+
+
+}
+
+
+
+
+
+
+.chatbox{
+
+  position: fixed;
+  bottom: 0;
+  left: 0;
+
+  background-color: #ddd;
+
+  width: 500px;
+
+  p{
+    margin: 2px;
+
+    .date{
+      margin: 0px;
+      color: #0098ff;
+    }
+
+    .message{
+      margin-left: 10px;
+    }
+
+
+  }
+
+}
+
+
+
+
+
+
+
+.zone-player, .chatbox{
+
+  .name,.date{
+    font-weight: bold;
+
+  }
+
+
+
 }

@@ -54,6 +54,8 @@ namespace GALLERY.Viewer {
     var keys = [];
     var moving = false;
 
+    let _chatting = false;//todo move
+
 
     var controls_down = {
         update: function () {
@@ -222,19 +224,40 @@ namespace GALLERY.Viewer {
 
 
 
+
         if (controls_down.CHAT) {
 
             controls_down.CHAT = false;
             r('chat');
 
 
-            Window.open('herni mod'
-                , `
+
+            if(!_chatting){_chatting=true;
+
+                Window.open(''
+                    , `
             <input type="text" id="player-message" />
-                    `, function () {}, 'SMALL');
+                    `, function () {
+
+                        gameSync.sendMessage(document.getElementById('player-message').value);
+
+                    }, 'SMALL');
 
 
-            document.getElementById('player-message').focus();
+                document.getElementById('player-message').focus();
+
+
+            }else{_chatting=false;
+
+                //r(document.getElementById('player-message'));
+                //r(document.getElementById('player-message').value);
+
+
+                Window.close();
+
+
+            }
+
 
             /*let _MODE = MODE;
             let message = prompt('Say:');
@@ -248,10 +271,6 @@ namespace GALLERY.Viewer {
 
             }*/
 
-
-            if(message){
-                gameSync.sendMessage(message);
-            }
 
 
         }

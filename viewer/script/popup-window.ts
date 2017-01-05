@@ -135,7 +135,7 @@ Window.open = function(title, content, close_callback, format) {
  * Close popup window and run close callback
  * @param {boolean} dont_run_close_callback
  */
-Window.close = function(dont_run_close_callback) {
+Window.close = function(dont_run_close_callback=false) {
 
     //-------------------------------------------Play sound
     //todo sounds ion.sound.play("door_bump");

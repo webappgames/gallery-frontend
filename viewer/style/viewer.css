@@ -296,8 +296,8 @@ section#zones {
   z-index: 5000;
   display: block;
   position: fixed;
-  bottom: 20px;
-  left: 5px;
+  bottom: 0px;
+  right: 0px;
   text-align: center; }
 
 .zone-board {
@@ -438,6 +438,25 @@ section#zones {
   display: block;
   color: #ccc;
   text-shadow: #000 0px 0px 5px; }
+  .zone-player .name, .zone-player .message {
+    display: block; }
+
+.chatbox {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background-color: #ddd;
+  width: 500px; }
+  .chatbox p {
+    margin: 2px; }
+    .chatbox p .date {
+      margin: 0px;
+      color: #0098ff; }
+    .chatbox p .message {
+      margin-left: 10px; }
+
+.zone-player .name, .zone-player .date, .chatbox .name, .chatbox .date {
+  font-weight: bold; }
 
 nav .turn-right, nav .turn-left {
   margin: 5px;

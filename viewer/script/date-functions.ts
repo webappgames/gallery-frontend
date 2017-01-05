@@ -9,16 +9,30 @@ function dayOfUniverse(date){
 }
 
 
+
+function pad(n, width, z) {
+    z = z || '0';
+    n = n + '';
+    return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+}
+
+
+
 function dateToSmartString(date) {
 
 
-    var now = new Date();
+    let now = new Date();
 
+
+    let hours = pad(date.getHours(),2);
+    let minutes = pad(date.getMinutes(),2);
+    let hhmm = hours+':'+minutes;
 
     var day_name;
     if(dayOfUniverse(date)==dayOfUniverse(now)){
 
-        day_name='Today';
+        //day_name='Today';
+        return hhmm;
 
     }else
     if(dayOfUniverse(date)==dayOfUniverse(now)-1){
@@ -36,7 +50,7 @@ function dateToSmartString(date) {
 
     }
 
-    return day_name+' at '+date.getHours()+':'+date.getMinutes();
+    return day_name+' at '+hhmm;
 
 }
 

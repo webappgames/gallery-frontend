@@ -4521,6 +4521,7 @@ var GALLERY;
         //------------------------------------------------------------
         var keys = [];
         var moving = false;
+        var _chatting = false; //todo move
         var controls_down = {
             update: function () {
                 for (var control in controls_keys) {
@@ -4630,21 +4631,18 @@ var GALLERY;
             if (controls_down.CHAT) {
                 controls_down.CHAT = false;
                 r('chat');
-                Window.open('herni mod', "\n            <input type=\"text\" id=\"player-message\" />\n                    ", function () { }, 'SMALL');
-                document.getElementById('player-message').focus();
-                /*let _MODE = MODE;
-                let message = prompt('Say:');
-                r(_MODE);
-                if(_MODE=='GAME'){
-    
-    
-                    setTimeout(function () {
-                        gameModeStart();
-                    },100);
-    
-                }*/
-                if (message) {
-                    Viewer.gameSync.sendMessage(message);
+                if (!_chatting) {
+                    _chatting = true;
+                    Window.open('', "\n            <input type=\"text\" id=\"player-message\" />\n                    ", function () {
+                        Viewer.gameSync.sendMessage(document.getElementById('player-message').value);
+                    }, 'SMALL');
+                    document.getElementById('player-message').focus();
+                }
+                else {
+                    _chatting = false;
+                    //r(document.getElementById('player-message'));
+                    //r(document.getElementById('player-message').value);
+                    Window.close();
                 }
             }
             requestAnimationFrame(keys_tick);
@@ -4980,6 +4978,7 @@ Window.close = function (dont_run_close_callback) {
     //-------------------------------------------Play sound
     //todo sounds ion.sound.play("door_bump");
     //-------------------------------------------
+    if (dont_run_close_callback === void 0) { dont_run_close_callback = false; }
     //-------------------------------------------Hide popup window
     //todo document.title = T.Locale.get('page','title');
     $('.overlay').hide();
@@ -5513,11 +5512,20 @@ var GALLERY;
 function dayOfUniverse(date) {
     return Math.round((date) / 8.64e7);
 }
+function pad(n, width, z) {
+    z = z || '0';
+    n = n + '';
+    return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+}
 function dateToSmartString(date) {
     var now = new Date();
+    var hours = pad(date.getHours(), 2);
+    var minutes = pad(date.getMinutes(), 2);
+    var hhmm = hours + ':' + minutes;
     var day_name;
     if (dayOfUniverse(date) == dayOfUniverse(now)) {
-        day_name = 'Today';
+        //day_name='Today';
+        return hhmm;
     }
     else if (dayOfUniverse(date) == dayOfUniverse(now) - 1) {
         day_name = 'Yesterday';
@@ -5530,7 +5538,7 @@ function dateToSmartString(date) {
     }else*/ {
         return (date.getDate()) + '.' + (date.getMonth() + 1) + '.' + date.getFullYear();
     }
-    return day_name + ' at ' + date.getHours() + ':' + date.getMinutes();
+    return day_name + ' at ' + hhmm;
 }
 function isValidDate(d) {
     if (Object.prototype.toString.call(d) !== "[object Date]")
@@ -5560,67 +5568,75 @@ var GALLERY;
                 this.server = server;
                 this.camera = camera;
                 this.scene = scene;
-                this.connected = false;
+                this._connected = false;
+                this._name = '';
+                this._chatbox = document.createElement('div');
+                this._chatbox.classList.add('chatbox');
+                document.body.appendChild(this._chatbox);
             }
             GameSync.prototype.connect = function () {
-                if (this.connected) {
+                if (this._connected) {
                     console.warn('Already connected.');
                     return;
                 }
-                this.connected = true;
+                this._connected = true;
                 var self = this;
                 //todo connect to ws
                 //todo listen to ws
-                this.ws = new WebSocket("ws://" + this.server);
+                this._connection = new WebSocket("ws://" + this.server);
                 //r(this.ws);
-                this.ws.onopen = function () {
+                this._connection.onopen = function () {
                     // Web Socket is connected, send data using send()
                     //ws.send("Message to send");
                     //alert("Message is sent...");
-                    self.ws.send(JSON.stringify({
+                    self._connection.send(JSON.stringify({
                         gallery: window.location.hostname,
                     }));
                 };
-                this.gamePlayers = {};
-                this.ws.onmessage = function (evt) {
+                this._gamePlayers = {};
+                this._connection.onmessage = function (evt) {
                     //var received_msg = evt.data;
                     //alert("Message is received...");
                     var players = JSON.parse(evt.data);
                     for (var player in players) {
                         if (players[player]) {
-                            if (!(player in self.gamePlayers)) {
-                                self.gamePlayers[player] = new Viewer.GamePlayer(self.scene);
+                            if (!(player in self._gamePlayers)) {
+                                self._gamePlayers[player] = new Viewer.GamePlayer(self.scene);
                                 r('Player ' + player + ' connected.');
                             }
+                            if ("timestamp" in players[player]) {
+                                self._gamePlayers[player].date = new Date(players[player].timestamp * 1000);
+                            }
                             if ("name" in players[player]) {
-                                self.gamePlayers[player].setName(players[player].name);
+                                self._gamePlayers[player].setName(players[player].name);
                             }
                             if ("message" in players[player]) {
-                                self.gamePlayers[player].setMessage(players[player].message);
+                                self._gamePlayers[player].setMessage(players[player].message);
+                                self._addToChatbox(self._gamePlayers[player].name, self._gamePlayers[player].date, players[player].message);
                             }
                             if ("position" in players[player]) {
                                 var _ = players[player].position;
                                 var position = new BABYLON.Vector3(_.x * -BLOCK_SIZE, _.z * BLOCK_SIZE, _.y * BLOCK_SIZE);
-                                self.gamePlayers[player].setPosition(position);
+                                self._gamePlayers[player].setPosition(position);
                             }
                             if ("rotation" in players[player]) {
-                                self.gamePlayers[player].setRotation(new BABYLON.Vector3(players[player].rotation.x, players[player].rotation.y, players[player].rotation.z));
+                                self._gamePlayers[player].setRotation(new BABYLON.Vector3(players[player].rotation.x, players[player].rotation.y, players[player].rotation.z));
                             }
                         }
                         else {
                             r('Player ' + player + ' disconnected.');
-                            self.gamePlayers[player].destruct();
-                            delete self.gamePlayers[player];
+                            self._gamePlayers[player].destruct();
+                            delete self._gamePlayers[player];
                         }
                     }
                 };
-                this.ws.onclose = function () {
+                this._connection.onclose = function () {
                     this.connected = false;
-                    clearInterval(self.loop);
+                    clearInterval(self._loop);
                     //alert("Closed");
                 };
                 var _last;
-                this.loop = setInterval(function () {
+                this._loop = setInterval(function () {
                     var x = Viewer.camera.position.x / -BLOCK_SIZE;
                     var y = Viewer.camera.position.z / BLOCK_SIZE;
                     var z = Viewer.camera.position.y / BLOCK_SIZE; //- BLOCKS_1NP_LEVEL;
@@ -5632,7 +5648,7 @@ var GALLERY;
                     ].join(',');
                     if (_last != _current) {
                         _last = _current;
-                        self.ws.send(JSON.stringify({
+                        self._connection.send(JSON.stringify({
                             position: {
                                 x: x,
                                 y: y,
@@ -5647,19 +5663,43 @@ var GALLERY;
                     }
                 }, 100);
             };
+            GameSync.prototype._addToChatbox = function (playerName, date, message) {
+                var html = '';
+                if (date) {
+                    html += '<span class="date">[' + dateToSmartString(date) + ']</span>';
+                }
+                if (playerName) {
+                    html += '<span class="name">[' + playerName + ']</span>';
+                }
+                if (message) {
+                    html += '<span class="message">' + message + '</span>';
+                }
+                var message = document.createElement('p');
+                message.innerHTML = html;
+                this._chatbox.appendChild(message);
+                if (this._chatbox.childNodes.length > 8) {
+                    this._chatbox.removeChild(this._chatbox.firstChild);
+                }
+            };
             GameSync.prototype.setName = function (name) {
-                this.ws.send(JSON.stringify({
+                this._name = name;
+                this._connection.send(JSON.stringify({
                     name: name
                 }));
             };
+            GameSync.prototype.getName = function (name) {
+                return (this._name);
+            };
             GameSync.prototype.sendMessage = function (message) {
-                this.ws.send(JSON.stringify({
+                message = message.trim();
+                this._addToChatbox(this._name, new Date(), message);
+                this._connection.send(JSON.stringify({
                     message: message
                 }));
             };
             GameSync.prototype.disconnect = function () {
                 //alert("Closing");
-                this.ws.close();
+                this._connection.close();
                 //todo
             };
             return GameSync;
@@ -5674,7 +5714,8 @@ var GALLERY;
     var Viewer;
     (function (Viewer) {
         function gameMode() {
-            Window.open('herni mod', "\n        \n            xxxxxxxxx\n            <input type=\"text\" id=\"player-name\" />\n            \n            <div class=\"bottomright\" id=\"wasd\" style=\"display: none;\">\n               <table>\n                     <tr>\n                       <td colspan=\"3\"><p class=\"hint\">Pohybujte se t\u011Bmito kl\u00E1vesy<!--Move in gallery with theese keys--> <i class=\"fa fa-hand-o-down\" aria-hidden=\"true\"></i></p></td>\n                   </tr>\n                    <tr>\n                        <td></td>\n                        <td></td>\n                        <td></td>\n                    </tr>\n                    <tr>\n                        <td></td>\n                        <td><div class=\"key\"><p>W</p></div></td>\n                        <td></td>\n                    </tr>\n                    <tr>\n                        <td><div class=\"key\"><p>A</p></div></td>\n                        <td><div class=\"key\"><p>S</p></div></td>\n                        <td><div class=\"key\"><p>D</p></div></td>\n                    </tr>\n               </table>\n            </div>\n            \n            <button onclick=\"GALLERY.Viewer.gameModeStart(window.document.getElementById('player-name').value);\">\n                Za\u010D\u00EDt\n            </button>\n            \n\n        ", function () { }, 'VERTICAL');
+            Window.open('herni mod' //todo use mustache
+            , "\n        \n            xxxxxxxxx\n            <input type=\"text\" id=\"player-name\" value=\"" + Viewer.gameSync.getName() + "\" />\n            \n            <div class=\"bottomright\" id=\"wasd\" style=\"display: none;\">\n               <table>\n                     <tr>\n                       <td colspan=\"3\"><p class=\"hint\">Pohybujte se t\u011Bmito kl\u00E1vesy<!--Move in gallery with theese keys--> <i class=\"fa fa-hand-o-down\" aria-hidden=\"true\"></i></p></td>\n                   </tr>\n                    <tr>\n                        <td></td>\n                        <td></td>\n                        <td></td>\n                    </tr>\n                    <tr>\n                        <td></td>\n                        <td><div class=\"key\"><p>W</p></div></td>\n                        <td></td>\n                    </tr>\n                    <tr>\n                        <td><div class=\"key\"><p>A</p></div></td>\n                        <td><div class=\"key\"><p>S</p></div></td>\n                        <td><div class=\"key\"><p>D</p></div></td>\n                    </tr>\n               </table>\n            </div>\n            \n            <button onclick=\"GALLERY.Viewer.gameModeStart(window.document.getElementById('player-name').value);\">\n                Za\u010D\u00EDt\n            </button>\n            \n\n        ", function () { }, 'VERTICAL');
         }
         Viewer.gameMode = gameMode;
         //let playerName:string;
@@ -6112,14 +6153,17 @@ var GALLERY;
                     element: this.element,
                     top: 20
                 });
-                //todo meshes.push(board);
+                //todo remove meshes or meshes.push(board);
+                this.setName('');
+                this.setMessage('');
             }
             GamePlayer.prototype._redrawBoard = function () {
-                if (this.message) {
-                    this.element.innerHTML = 'xxx ' + this.message;
+                this.element.innerHTML = '';
+                if (this.name) {
+                    this.element.innerHTML += '<span class="name">[' + this.name + ']</span>';
                 }
-                else {
-                    this.element.innerHTML = 'xxx ' + this.name;
+                if (this.message) {
+                    this.element.innerHTML += '<span class="message">' + this.message + '</span>';
                 }
             };
             GamePlayer.prototype.setName = function (name) {

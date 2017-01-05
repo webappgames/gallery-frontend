@@ -9,11 +9,11 @@ namespace GALLERY.Viewer {
     export function gameMode(){
 
 
-        Window.open('herni mod'
+        Window.open('herni mod'//todo use mustache
             , `
         
             xxxxxxxxx
-            <input type="text" id="player-name" />
+            <input type="text" id="player-name" value="`+gameSync.getName()+`" />
             
             <div class="bottomright" id="wasd" style="display: none;">
                <table>

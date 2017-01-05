@@ -6,45 +6,58 @@ namespace GALLERY.Viewer {
     export class GameSync {
 
 
-        private connected:boolean;
-        private loop;
-        private ws;
-        private gamePlayers;
+        private _connected:boolean;
+        private _loop;
+        private _connection;
+        private _gamePlayers;
+        private _name;
+
+
+        private _chatbox;
+
 
         constructor(public server:string, public camera, private scene) {
-            this.connected = false;
+            this._connected = false;
+            this._name = '';
+
+
+            this._chatbox = document.createElement('div');
+            this._chatbox.classList.add('chatbox');
+
+            document.body.appendChild(this._chatbox);
+
         }
 
         public connect() {
 
-            if(this.connected){
+            if(this._connected){
                 console.warn('Already connected.');
                 return;
             }
 
 
-            this.connected = true;
+            this._connected = true;
             let self = this;
 
             //todo connect to ws
             //todo listen to ws
 
-            this.ws = new WebSocket("ws://"+this.server);
+            this._connection = new WebSocket("ws://"+this.server);
             //r(this.ws);
-            this.ws.onopen = function(){
+            this._connection.onopen = function(){
                 // Web Socket is connected, send data using send()
                 //ws.send("Message to send");
                 //alert("Message is sent...");
-                self.ws.send(JSON.stringify({
+                self._connection.send(JSON.stringify({
                     gallery: window.location.hostname,
                     //name: self.playerName
                 }));
 
             };
 
-            this.gamePlayers = {};
+            this._gamePlayers = {};
 
-            this.ws.onmessage = function (evt){
+            this._connection.onmessage = function (evt){
                 //var received_msg = evt.data;
                 //alert("Message is received...");
 
@@ -59,21 +72,34 @@ namespace GALLERY.Viewer {
                     if(players[player]) {
 
 
-                        if (!(player in self.gamePlayers)) {
+                        if (!(player in self._gamePlayers)) {
 
-                            self.gamePlayers[player] = new GamePlayer(self.scene);
+                            self._gamePlayers[player] = new GamePlayer(self.scene);
                             r('Player '+player+' connected.');
 
                         }
 
 
+                        if ("timestamp" in players[player]) {
+                            self._gamePlayers[player].date = new Date(players[player].timestamp*1000);
+                        }
+
+
+
                         if ("name" in players[player]) {
-                            self.gamePlayers[player].setName(players[player].name);
+                            self._gamePlayers[player].setName(players[player].name);
                         }
 
 
                         if ("message" in players[player]) {
-                            self.gamePlayers[player].setMessage(players[player].message);
+
+                            self._gamePlayers[player].setMessage(players[player].message);
+                            self._addToChatbox(
+                                self._gamePlayers[player].name,
+                                self._gamePlayers[player].date,
+                                players[player].message
+                            );
+
                         }
 
 
@@ -84,12 +110,12 @@ namespace GALLERY.Viewer {
                                 _.z * BLOCK_SIZE,
                                 _.y * BLOCK_SIZE
                             );
-                            self.gamePlayers[player].setPosition(position);
+                            self._gamePlayers[player].setPosition(position);
                         }
 
 
                         if ("rotation" in players[player]) {
-                            self.gamePlayers[player].setRotation(new BABYLON.Vector3(
+                            self._gamePlayers[player].setRotation(new BABYLON.Vector3(
                                 players[player].rotation.x,
                                 players[player].rotation.y,
                                 players[player].rotation.z
@@ -100,8 +126,8 @@ namespace GALLERY.Viewer {
 
                         r('Player '+player+' disconnected.');
 
-                        self.gamePlayers[player].destruct();
-                        delete self.gamePlayers[player];
+                        self._gamePlayers[player].destruct();
+                        delete self._gamePlayers[player];
 
 
                     }
@@ -112,10 +138,10 @@ namespace GALLERY.Viewer {
 
             };
 
-            this.ws.onclose = function(){
+            this._connection.onclose = function(){
 
                 this.connected = false;
-                clearInterval(self.loop);
+                clearInterval(self._loop);
                 //alert("Closed");
             };
 
@@ -125,7 +151,7 @@ namespace GALLERY.Viewer {
 
 
             let _last;
-            this.loop = setInterval(function () {
+            this._loop = setInterval(function () {
 
 
                 let x = camera.position.x / -BLOCK_SIZE;
@@ -146,7 +172,7 @@ namespace GALLERY.Viewer {
 
                     _last = _current;
 
-                    self.ws.send(JSON.stringify({
+                    self._connection.send(JSON.stringify({
                         position: {
                             x: x,
                             y: y,
@@ -166,15 +192,58 @@ namespace GALLERY.Viewer {
 
         }
 
+
+        private _addToChatbox(playerName,date,message){
+
+
+            var html = '';
+
+            if(date){
+                html += '<span class="date">['+dateToSmartString(date)+']</span>';
+            }
+            if(playerName){
+                html += '<span class="name">['+playerName+']</span>';
+            }
+            if(message){
+                html += '<span class="message">'+message+'</span>';
+            }
+
+
+
+            let message = document.createElement('p');
+            message.innerHTML = html;
+            this._chatbox.appendChild(message);
+            if(this._chatbox.childNodes.length>8){
+                this._chatbox.removeChild(this._chatbox.firstChild);
+
+            }
+        }
+
+
+
         public setName(name:string){
-            this.ws.send(JSON.stringify({
+            this._name = name;
+            this._connection.send(JSON.stringify({
                 name: name
             }));
         }
 
 
+        public getName(name:string){
+            return(this._name);
+        }
+
+
         public sendMessage(message:string){
-            this.ws.send(JSON.stringify({
+
+            message = message.trim();
+            this._addToChatbox(
+                this._name,
+                new Date(),
+                message
+            );
+
+            this._connection.send(JSON.stringify({
                 message: message
             }));
         }
@@ -183,7 +252,7 @@ namespace GALLERY.Viewer {
         public disconnect(){
 
             //alert("Closing");
-            this.ws.close();
+            this._connection.close();
             //todo
         }
 

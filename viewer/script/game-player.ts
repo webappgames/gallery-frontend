@@ -6,10 +6,12 @@ namespace GALLERY.Viewer {
 
     export class GamePlayer{
 
-        private name:string;
-        private message:string;
+        public date:Date;
+        public name:string;
+        public message:string;
         private mesh;
         private element;
+
 
 
         constructor(private scene){
@@ -56,20 +58,29 @@ namespace GALLERY.Viewer {
                 element: this.element,
                 top: 20
             });
-            //todo meshes.push(board);
+            //todo remove meshes or meshes.push(board);
 
 
 
+            this.setName('');
+            this.setMessage('');
 
 
         }
 
         private _redrawBoard(){
-            if(this.message){
-                this.element.innerHTML = 'xxx '+this.message;
-            }else{
-                this.element.innerHTML = 'xxx '+this.name;
+
+            this.element.innerHTML = '';
+
+            if(this.name){
+                this.element.innerHTML += '<span class="name">['+this.name+']</span>';
             }
+
+
+            if(this.message){
+                this.element.innerHTML += '<span class="message">'+this.message+'</span>';
+            }
+
 
         }
 

@@ -2145,6 +2145,9 @@ var GALLERY;
                 this.html = this.html || '';
                 this.buttons = this.buttons || '';
                 this.isImportant = this.isImportant || false;
+                this.limit = this.limit || false;
+                this.limitRotation = this.limitRotation || 0;
+                this.limitRotationTolerance = this.limitRotationTolerance || 0;
                 //this.selector = this.selector || '';
             }
             Zone.prototype.create$Element = function () {
@@ -2187,7 +2190,7 @@ var GALLERY;
                 }
                 return this._mesh;
             };
-            Zone.prototype.isIn = function (position) {
+            Zone.prototype.isIn = function (position, rotation) {
                 var center = this.getBabylonPosition();
                 //center.y += BLOCK_SIZE * BLOCKS_2D_3D_SHAPES.room.length / 2;
                 var scaling = new BABYLON.Vector3(BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
@@ -2195,12 +2198,30 @@ var GALLERY;
                 scaling.x = Math.abs(scaling.x * this.width);
                 scaling.z = Math.abs(scaling.z * this.height);
                 //r((center.x-scaling.x)+' - '+position.x+' - '+(center.x+scaling.x));
-                return (center.x - scaling.x / 2 <= position.x &&
+                var isInPosition = (center.x - scaling.x / 2 <= position.x &&
                     center.x + scaling.x / 2 >= position.x &&
                     center.y - scaling.y / 2 <= position.y &&
                     center.y + scaling.y / 2 >= position.y &&
                     center.z - scaling.z / 2 <= position.z &&
                     center.z + scaling.z / 2 >= position.z);
+                if (!isInPosition) {
+                    return false;
+                }
+                else if (!this.limit) {
+                    return true;
+                }
+                else {
+                    var rotation_deg = (rotation.y / Math.PI) * 180;
+                    var delta = rotation_deg - this.limitRotation;
+                    delta = Math.abs(delta % 360);
+                    //r(delta);
+                    if (delta < this.limitRotationTolerance / 2) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
             };
             Zone.prototype._createBoard = function () {
                 //if (object.name || object.html) {

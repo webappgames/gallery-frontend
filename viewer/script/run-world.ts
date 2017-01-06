@@ -427,6 +427,11 @@ namespace GALLERY.Viewer {
                                 },
 
 
+                                limit: true,
+                                limitRotation: object.rotation+180,
+                                limitRotationTolerance: 90,
+
+
                                 width: object.width*Math.cos(rotation_rad)+size*Math.sin(rotation_rad),
                                 height: object.width*Math.sin(rotation_rad)+size*Math.cos(rotation_rad),
 

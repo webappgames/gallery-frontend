@@ -23,6 +23,13 @@ namespace GALLERY.Objects{
         public buttons: string;
 
 
+        public limit: number;
+        public limitRotation: number;
+        public limitRotationTolerance: number;
+
+
+
+
         private _mesh;
         private _board:HTMLDivElement;
 
@@ -43,6 +50,10 @@ namespace GALLERY.Objects{
             this.html = this.html || '';
             this.buttons = this.buttons || '';
             this.isImportant = this.isImportant || false;
+
+            this.limit = this.limit || false;
+            this.limitRotation = this.limitRotation || 0;
+            this.limitRotationTolerance = this.limitRotationTolerance || 0;
             //this.selector = this.selector || '';
 
         }
@@ -120,7 +131,7 @@ namespace GALLERY.Objects{
         }
 
 
-        isIn(position:BABYLON.Vector3){
+        isIn(position:BABYLON.Vector3,rotation:BABYLON.Vector3){
 
 
             let center = this.getBabylonPosition();
@@ -135,7 +146,7 @@ namespace GALLERY.Objects{
 
             //r((center.x-scaling.x)+' - '+position.x+' - '+(center.x+scaling.x));
 
-            return(
+            let isInPosition = (
 
                 center.x-scaling.x/2 <= position.x &&
                 center.x+scaling.x/2 >= position.x &&
@@ -146,6 +157,35 @@ namespace GALLERY.Objects{
                 center.z-scaling.z/2 <= position.z &&
                 center.z+scaling.z/2 >= position.z
             );
+
+
+
+
+            if(!isInPosition){
+                return false;
+            }else
+            if(!this.limit){
+                return true;
+            }else{
+
+                let rotation_deg = (rotation.y / Math.PI ) *180;
+
+                let delta = rotation_deg - this.limitRotation;
+                delta = Math.abs(delta%360);
+                //r(delta);
+
+                if(delta<this.limitRotationTolerance/2){
+                    return true;
+                }else{
+                    return false;
+                }
+
+
+
+            }
+
+
+
 
 
 

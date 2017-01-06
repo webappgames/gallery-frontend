@@ -166,7 +166,7 @@ namespace GALLERY.Viewer {
 
             zones.forEach(function (zone) {
 
-                if (zone.isIn(camera.position)) {
+                if (zone.isIn(camera.position,camera.rotation)) {
                     inZonesAll.push(zone);
                 }
             });

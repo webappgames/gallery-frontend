@@ -30,23 +30,14 @@ namespace GALLERY.Viewer {
 
     window.addEventListener('keydown', function (e) {
 
-        if(merged_keys.indexOf(e.keyCode)!=-1){
+        if(window_opened===false) {
+            if (merged_keys.indexOf(e.keyCode) != -1) {
 
-            e.preventDefault();
-            r('Pressed ket '+e.keyCode+' - prevented default.');
+                e.preventDefault();
+                r('Pressed ket ' + e.keyCode + ' - prevented default.');
 
+            }
         }
-
-
-        // space and arrow keys
-        /*if ([32, 37, 38, 39, 40].indexOf(e.keyCode) != -1) {
-
-            //if(T.UI.Status.focusOnMap()){
-            e.preventDefault();
-            //}
-
-
-        }*/
     }, false);
 
 //------------------------------------------------------------
@@ -54,7 +45,7 @@ namespace GALLERY.Viewer {
     var keys = [];
     var moving = false;
 
-    let _chatting = false;//todo move
+    let _lastMessage = '';//todo move
 
 
     var controls_down = {
@@ -80,16 +71,16 @@ namespace GALLERY.Viewer {
 
     window.addEventListener('keydown', function (e) {
 
-        //if(T.UI.Status.focusOnMap()) {
-        r('DOWN', e.keyCode);
+        if(window_opened===false) {
+            r('DOWN', e.keyCode);
 
-        if (keys.indexOf(e.keyCode) === -1) {
-            keys.push(e.keyCode);
+            if (keys.indexOf(e.keyCode) === -1) {
+                keys.push(e.keyCode);
 
-            controls_down.update();
+                controls_down.update();
 
+            }
         }
-        //}
 
     });
 
@@ -228,48 +219,34 @@ namespace GALLERY.Viewer {
         if (controls_down.CHAT) {
 
             controls_down.CHAT = false;
-            r('chat');
+            r('chat '+_lastMessage);
 
 
 
-            if(!_chatting){_chatting=true;
-
-                Window.open('Napsat zprávu'
+            Window.open('Napsat zprávu'
                     , `
             <input type="text" id="player-message" />
-                    `, function () {
+                    `, function (status) {
 
-                        gameSync.sendMessage(document.getElementById('player-message').value);
+                        r(status);
+                        if(status){
+
+                            gameSync.sendMessage(document.getElementById('player-message').value);
+                            _lastMessage = '';
+
+                        }else{
+
+                            _lastMessage = document.getElementById('player-message').value;
+                        }
+
 
                     }, 'COMMAND');
 
 
-                document.getElementById('player-message').focus();
+            document.getElementById('player-message').value = _lastMessage;
+            document.getElementById('player-message').focus();
 
 
-            }else{_chatting=false;
-
-                //r(document.getElementById('player-message'));
-                //r(document.getElementById('player-message').value);
-
-
-                Window.close();
-
-
-            }
-
-
-            /*let _MODE = MODE;
-            let message = prompt('Say:');
-            r(_MODE);
-            if(_MODE=='GAME'){
-
-
-                setTimeout(function () {
-                    gameModeStart();
-                },100);
-
-            }*/
 
 
 

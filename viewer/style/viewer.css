@@ -455,12 +455,19 @@ section#zones {
     display: block; }
 
 .chatbox {
+  pointer-events: none;
   position: fixed;
   bottom: 0;
   left: 0;
-  background-color: #ddd;
   width: 500px; }
   .chatbox p {
+    display: inline-block;
+    float: left;
+    width: auto;
+    max-width: 15vw;
+    clear: both;
+    word-wrap: break-word;
+    pointer-events: auto;
     margin: 2px; }
     .chatbox p .date {
       margin: 0px;

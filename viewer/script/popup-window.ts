@@ -1,11 +1,28 @@
 /// <reference path="reference.ts" />
 
 var Window={};
-var window_opened = false;
-var IMMEDIATELY_MS = 50;
+let window_opened = false;
+const IMMEDIATELY_MS = 50;
 
 
 
+
+Window._listenToKeys = function (e) {
+
+    if(e.keyCode == 13){
+        e.preventDefault();
+
+        Window.close(true);
+
+    }else
+    if(e.keyCode == 27){
+        e.preventDefault();
+
+        Window.close(false);
+
+    }
+
+};
 
 
 
@@ -82,7 +99,7 @@ Window.open = function(title, content, close_callback, format) {
 
 
     if (window_opened) {
-        Window.close();
+        Window.close(false);
     }
 
 
@@ -110,16 +127,17 @@ Window.open = function(title, content, close_callback, format) {
 
 
     $('.overlay').unbind('click').click(function (e) {
-        //e.preventDefault();
         Window.close(false);
-        //canvas.requestPointerLock();
-    });
-    $('.js-popup-window-close').unbind('click').click(function (e) {
-        //e.preventDefault();
-        Window.close(false);
-        //canvas.requestPointerLock();
     });
 
+
+    $('.js-popup-window-close').unbind('click').click(function (e) {
+        Window.close(false);
+    });
+
+    $('.js-popup-window-confirm').unbind('click').click(function (e) {
+        Window.close(true);
+    });
 
 
     /*$('.popup-window .content').unbind('mousedown').mousedown(function () {
@@ -135,6 +153,8 @@ Window.open = function(title, content, close_callback, format) {
 
     window_opened = true;
 
+    window.addEventListener('keydown', Window._listenToKeys, false);
+
 
 };
 
@@ -143,7 +163,11 @@ Window.open = function(title, content, close_callback, format) {
  * Close popup window and run close callback
  * @param {boolean} dont_run_close_callback
  */
-Window.close = function(dont_run_close_callback=false) {
+Window.close = function(close_status=true,dont_run_close_callback=false) {
+
+
+    r('Closing window status='+close_status);
+
 
     //-------------------------------------------Play sound
     //todo sounds ion.sound.play("door_bump");
@@ -165,13 +189,15 @@ Window.close = function(dont_run_close_callback=false) {
     if (Window.closeCallback) {
 
         if (dont_run_close_callback === false) {
-            Window.closeCallback();
+            Window.closeCallback(close_status);
         }
 
         delete Window.closeCallback;
     }
     //-------------------------------------------
 
+    window.removeEventListener('keydown', Window._listenToKeys, false);
+    document.getElementById('scene').focus();
 
 };
 

@@ -4504,24 +4504,17 @@ var GALLERY;
         }
         //------------------------------------------------------------
         window.addEventListener('keydown', function (e) {
-            if (merged_keys.indexOf(e.keyCode) != -1) {
-                e.preventDefault();
-                r('Pressed ket ' + e.keyCode + ' - prevented default.');
+            if (window_opened === false) {
+                if (merged_keys.indexOf(e.keyCode) != -1) {
+                    e.preventDefault();
+                    r('Pressed ket ' + e.keyCode + ' - prevented default.');
+                }
             }
-            // space and arrow keys
-            /*if ([32, 37, 38, 39, 40].indexOf(e.keyCode) != -1) {
-    
-                //if(T.UI.Status.focusOnMap()){
-                e.preventDefault();
-                //}
-    
-    
-            }*/
         }, false);
         //------------------------------------------------------------
         var keys = [];
         var moving = false;
-        var _chatting = false; //todo move
+        var _lastMessage = ''; //todo move
         var controls_down = {
             update: function () {
                 for (var control in controls_keys) {
@@ -4535,13 +4528,13 @@ var GALLERY;
             }
         };
         window.addEventListener('keydown', function (e) {
-            //if(T.UI.Status.focusOnMap()) {
-            r('DOWN', e.keyCode);
-            if (keys.indexOf(e.keyCode) === -1) {
-                keys.push(e.keyCode);
-                controls_down.update();
+            if (window_opened === false) {
+                r('DOWN', e.keyCode);
+                if (keys.indexOf(e.keyCode) === -1) {
+                    keys.push(e.keyCode);
+                    controls_down.update();
+                }
             }
-            //}
         });
         window.addEventListener('keyup', function (e) {
             //if(T.UI.Status.focusOnMap()) {
@@ -4630,20 +4623,19 @@ var GALLERY;
             }
             if (controls_down.CHAT) {
                 controls_down.CHAT = false;
-                r('chat');
-                if (!_chatting) {
-                    _chatting = true;
-                    Window.open('Napsat zprávu', "\n            <input type=\"text\" id=\"player-message\" />\n                    ", function () {
+                r('chat ' + _lastMessage);
+                Window.open('Napsat zprávu', "\n            <input type=\"text\" id=\"player-message\" />\n                    ", function (status) {
+                    r(status);
+                    if (status) {
                         Viewer.gameSync.sendMessage(document.getElementById('player-message').value);
-                    }, 'COMMAND');
-                    document.getElementById('player-message').focus();
-                }
-                else {
-                    _chatting = false;
-                    //r(document.getElementById('player-message'));
-                    //r(document.getElementById('player-message').value);
-                    Window.close();
-                }
+                        _lastMessage = '';
+                    }
+                    else {
+                        _lastMessage = document.getElementById('player-message').value;
+                    }
+                }, 'COMMAND');
+                document.getElementById('player-message').value = _lastMessage;
+                document.getElementById('player-message').focus();
             }
             requestAnimationFrame(keys_tick);
         };
@@ -4896,6 +4888,16 @@ var GALLERY;
 var Window = {};
 var window_opened = false;
 var IMMEDIATELY_MS = 50;
+Window._listenToKeys = function (e) {
+    if (e.keyCode == 13) {
+        e.preventDefault();
+        Window.close(true);
+    }
+    else if (e.keyCode == 27) {
+        e.preventDefault();
+        Window.close(false);
+    }
+};
 /**
  * Changes title of opened popup window
  * @param title
@@ -4940,7 +4942,7 @@ Window.setFormat = function (format) {
  */
 Window.open = function (title, content, close_callback, format) {
     if (window_opened) {
-        Window.close();
+        Window.close(false);
     }
     if (close_callback) {
         Window.closeCallback = close_callback;
@@ -4957,14 +4959,13 @@ Window.open = function (title, content, close_callback, format) {
     $('.overlay').show();
     $('.popup-window').show();
     $('.overlay').unbind('click').click(function (e) {
-        //e.preventDefault();
         Window.close(false);
-        //canvas.requestPointerLock();
     });
     $('.js-popup-window-close').unbind('click').click(function (e) {
-        //e.preventDefault();
         Window.close(false);
-        //canvas.requestPointerLock();
+    });
+    $('.js-popup-window-confirm').unbind('click').click(function (e) {
+        Window.close(true);
     });
     /*$('.popup-window .content').unbind('mousedown').mousedown(function () {
 
@@ -4973,16 +4974,19 @@ Window.open = function (title, content, close_callback, format) {
     $('body').enableSelection();*/
     //document.exitPointerLock();
     window_opened = true;
+    window.addEventListener('keydown', Window._listenToKeys, false);
 };
 /**
  * Close popup window and run close callback
  * @param {boolean} dont_run_close_callback
  */
-Window.close = function (dont_run_close_callback) {
+Window.close = function (close_status, dont_run_close_callback) {
+    if (close_status === void 0) { close_status = true; }
+    if (dont_run_close_callback === void 0) { dont_run_close_callback = false; }
+    r('Closing window status=' + close_status);
     //-------------------------------------------Play sound
     //todo sounds ion.sound.play("door_bump");
     //-------------------------------------------
-    if (dont_run_close_callback === void 0) { dont_run_close_callback = false; }
     //-------------------------------------------Hide popup window
     //todo document.title = T.Locale.get('page','title');
     $('.overlay').hide();
@@ -4993,11 +4997,13 @@ Window.close = function (dont_run_close_callback) {
     //-------------------------------------------Run close callback
     if (Window.closeCallback) {
         if (dont_run_close_callback === false) {
-            Window.closeCallback();
+            Window.closeCallback(close_status);
         }
         delete Window.closeCallback;
     }
     //-------------------------------------------
+    window.removeEventListener('keydown', Window._listenToKeys, false);
+    document.getElementById('scene').focus();
 };
 function fbDiscuss(url) {
     Window.open('Diskuse', '<iframe src="?comments"></iframe>', function () {

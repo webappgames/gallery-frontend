@@ -228,16 +228,47 @@ namespace GALLERY.Viewer {
             <input type="text" id="player-message" />
                     `, function (status) {
 
-                        r(status);
-                        if(status){
 
+                    gameSync.connect(function () {
+
+                        let send;
+                        if (status === false) {
+                            send = false;
+                        } else {
+
+                            if (gameSync.getName()) {
+
+                                send = true;
+
+                            } else {
+
+                                let name = prompt('Vyplňte prosím své jméno nebo přezdívku, abyste mohli poslat zprávu:', '');
+                                if (name) {
+
+                                    gameSync.setName(name);
+                                    send = true;
+
+                                } else {
+
+                                    alert('Zpráva nebyla poslána ale uložena, dokud nevyplníte svoje jnéno nebo přezdívku.');//todo maybe Info popup
+                                    send = false;
+
+                                }
+                            }
+
+                        }
+
+
+                        if (send) {
                             gameSync.sendMessage(document.getElementById('player-message').value);
                             _lastMessage = '';
 
-                        }else{
+                        } else {
 
                             _lastMessage = document.getElementById('player-message').value;
                         }
+
+                    });
 
 
                     }, 'COMMAND');

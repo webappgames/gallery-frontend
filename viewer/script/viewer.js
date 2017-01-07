@@ -4649,14 +4649,35 @@ var GALLERY;
                 controls_down.CHAT = false;
                 r('chat ' + _lastMessage);
                 Window.open('Napsat zprávu', "\n            <input type=\"text\" id=\"player-message\" />\n                    ", function (status) {
-                    r(status);
-                    if (status) {
-                        Viewer.gameSync.sendMessage(document.getElementById('player-message').value);
-                        _lastMessage = '';
-                    }
-                    else {
-                        _lastMessage = document.getElementById('player-message').value;
-                    }
+                    Viewer.gameSync.connect(function () {
+                        var send;
+                        if (status === false) {
+                            send = false;
+                        }
+                        else {
+                            if (Viewer.gameSync.getName()) {
+                                send = true;
+                            }
+                            else {
+                                var name_1 = prompt('Vyplňte prosím své jméno nebo přezdívku, abyste mohli poslat zprávu:', '');
+                                if (name_1) {
+                                    Viewer.gameSync.setName(name_1);
+                                    send = true;
+                                }
+                                else {
+                                    alert('Zpráva nebyla poslána ale uložena, dokud nevyplníte svoje jnéno nebo přezdívku.'); //todo maybe Info popup
+                                    send = false;
+                                }
+                            }
+                        }
+                        if (send) {
+                            Viewer.gameSync.sendMessage(document.getElementById('player-message').value);
+                            _lastMessage = '';
+                        }
+                        else {
+                            _lastMessage = document.getElementById('player-message').value;
+                        }
+                    });
                 }, 'COMMAND');
                 document.getElementById('player-message').value = _lastMessage;
                 document.getElementById('player-message').focus();
@@ -5608,12 +5629,12 @@ var GALLERY;
                 this._chatbox.classList.add('chatbox');
                 document.body.appendChild(this._chatbox);
             }
-            GameSync.prototype.connect = function () {
+            GameSync.prototype.connect = function (onDone) {
                 if (this._connected) {
                     console.warn('Already connected.');
+                    onDone();
                     return;
                 }
-                this._connected = true;
                 var self = this;
                 //todo connect to ws
                 //todo listen to ws
@@ -5626,6 +5647,8 @@ var GALLERY;
                     self._connection.send(JSON.stringify({
                         gallery: window.location.hostname,
                     }));
+                    self._connected = true;
+                    onDone();
                 };
                 this._gamePlayers = {};
                 this._connection.onmessage = function (evt) {
@@ -5717,14 +5740,28 @@ var GALLERY;
             };
             GameSync.prototype.setName = function (name) {
                 this._name = name;
+                /*let self = this;
+                if(!this._connected){
+                    this.connect(function () {
+                        self.setName(name);
+                    });
+                    return;
+                }*/
                 this._connection.send(JSON.stringify({
                     name: name
                 }));
             };
-            GameSync.prototype.getName = function (name) {
+            GameSync.prototype.getName = function () {
                 return (this._name);
             };
             GameSync.prototype.sendMessage = function (message) {
+                /*let self = this;
+                if(!this._connected){
+                    this.connect(function () {
+                        self.sendMessage(message);
+                    });
+                    return;
+                }*/
                 message = message.trim();
                 this._addToChatbox(this._name, new Date(), message);
                 this._connection.send(JSON.stringify({
@@ -5748,13 +5785,17 @@ var GALLERY;
     var Viewer;
     (function (Viewer) {
         function gameMode() {
-            Window.open('herni mod' //todo use mustache
-            , "\n        \n            xxxxxxxxx\n            <input type=\"text\" id=\"player-name\" value=\"" + Viewer.gameSync.getName() + "\" />\n            \n            <div class=\"bottomright\" id=\"wasd\" style=\"display: none;\">\n               <table>\n                     <tr>\n                       <td colspan=\"3\"><p class=\"hint\">Pohybujte se t\u011Bmito kl\u00E1vesy<!--Move in gallery with theese keys--> <i class=\"fa fa-hand-o-down\" aria-hidden=\"true\"></i></p></td>\n                   </tr>\n                    <tr>\n                        <td></td>\n                        <td></td>\n                        <td></td>\n                    </tr>\n                    <tr>\n                        <td></td>\n                        <td><div class=\"key\"><p>W</p></div></td>\n                        <td></td>\n                    </tr>\n                    <tr>\n                        <td><div class=\"key\"><p>A</p></div></td>\n                        <td><div class=\"key\"><p>S</p></div></td>\n                        <td><div class=\"key\"><p>D</p></div></td>\n                    </tr>\n               </table>\n            </div>\n            \n            <button onclick=\"GALLERY.Viewer.gameModeStart(window.document.getElementById('player-name').value);\">\n                Za\u010D\u00EDt\n            </button>\n            \n\n        ", function () { }, 'VERTICAL');
+            Window.open('Herní mód' //todo use mustache
+            , "\n        \n            <p>\n            V hern\u00EDm m\u00F3du se budete moci pohybovat galeri\u00ED zcela voln\u011B pomoc\u00ED <b>my\u0161i</b> a kl\u00E1ves <span class=\"inline-key\">W</span><span class=\"inline-key\">A</span><span class=\"inline-key\">S</span><span class=\"inline-key\">D</span> nebo <b>\u0161ipek</b>. Tak\u00E9 budete vid\u011Bt dal\u0161\u00ED p\u0159ipojen\u00E9 \"hr\u00E1\u010De\" a oni v\u00E1s, proto mus\u00EDte zadat sv\u00E9 jm\u00E9no nebo p\u0159ezd\u00EDvku. Pomoc\u00ED kl\u00E1vesy <span class=\"inline-key\">Enter</span> m\u016F\u017Eete ps\u00E1t zpr\u00E1vy.\n            </p>\n          \n            \n            <div>\n            <label>\n                Va\u0161e jm\u00E9no:\n                <input type=\"text\" id=\"player-name\" value=\"" + Viewer.gameSync.getName() + "\" placeholder=\"nap\u0159.: Jan Nov\u00E1k, tester123,...\" />\n            </label>\n            \n         \n            \n            <button onclick=\"Window.close(true);\">\n                Za\u010D\u00EDt\n            </button>\n             </div>\n            \n            \n\n        ", function (status) {
+                if (status) {
+                    GALLERY.Viewer.gameModeStart(window.document.getElementById('player-name').value);
+                }
+            }, 'SMALL');
         }
         Viewer.gameMode = gameMode;
         //let playerName:string;
         function gameModeStart(playerName) {
-            Window.close();
+            //Window.close();
             Viewer.canvas.requestPointerLock();
             r('canvas.requestPointerLock();');
             if (typeof playerName === 'string') {
@@ -5774,10 +5815,10 @@ var GALLERY;
         // Hook pointer lock state change events for different browsers
         document.addEventListener('pointerlockchange', lockChangeAlert, false);
         document.addEventListener('mozpointerlockchange', lockChangeAlert, false);
-        var WS_SERVER = 'localhost:1357';
+        var WS_SERVER = 'webappgames.com:1357';
         Viewer.gameSync = new Viewer.GameSync(WS_SERVER, Viewer.camera, Viewer.scene);
-        Viewer.gameSync.connect();
-        Viewer.playEngine(enginePlayReasonGameMode);
+        //gameSync.connect();
+        //playEngine(enginePlayReasonGameMode);
         function lockChangeAlert() {
             if (document.pointerLockElement === Viewer.canvas ||
                 document.mozPointerLockElement === Viewer.canvas) {
@@ -5792,6 +5833,8 @@ var GALLERY;
                 Viewer.MODE = 'GAME';
                 Viewer.camera.angularSensibility = MOUSE_ANGULAR_SENSIBILITY;
                 Viewer.playEngine(enginePlayReasonGameMode);
+                //triggerMouseEvent (canvas, "mousedown");
+                Viewer.gameSync.connect();
             }
             else {
                 console.log('The pointer lock status is now unlocked');

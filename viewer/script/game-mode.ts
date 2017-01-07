@@ -9,41 +9,41 @@ namespace GALLERY.Viewer {
     export function gameMode(){
 
 
-        Window.open('herni mod'//todo use mustache
+        Window.open('Herní mód'//todo use mustache
             , `
         
-            xxxxxxxxx
-            <input type="text" id="player-name" value="`+gameSync.getName()+`" />
+            <p>
+            V herním módu se budete moci pohybovat galerií zcela volně pomocí <b>myši</b> a kláves <span class="inline-key">W</span><span class="inline-key">A</span><span class="inline-key">S</span><span class="inline-key">D</span> nebo <b>šipek</b>. Také budete vidět další připojené "hráče" a oni vás, proto musíte zadat své jméno nebo přezdívku. Pomocí klávesy <span class="inline-key">Enter</span> můžete psát zprávy.
+            </p>
+          
             
-            <div class="bottomright" id="wasd" style="display: none;">
-               <table>
-                     <tr>
-                       <td colspan="3"><p class="hint">Pohybujte se těmito klávesy<!--Move in gallery with theese keys--> <i class="fa fa-hand-o-down" aria-hidden="true"></i></p></td>
-                   </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td><div class="key"><p>W</p></div></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td><div class="key"><p>A</p></div></td>
-                        <td><div class="key"><p>S</p></div></td>
-                        <td><div class="key"><p>D</p></div></td>
-                    </tr>
-               </table>
-            </div>
+            <div>
+            <label>
+                Vaše jméno:
+                <input type="text" id="player-name" value="`+gameSync.getName()+`" placeholder="např.: Jan Novák, tester123,..." />
+            </label>
             
-            <button onclick="GALLERY.Viewer.gameModeStart(window.document.getElementById('player-name').value);">
+         
+            
+            <button onclick="Window.close(true);">
                 Začít
             </button>
+             </div>
+            
             
 
-        `, function () {}, 'VERTICAL');
+        `, function (status) {
+
+                if(status){
+
+                    GALLERY.Viewer.gameModeStart(window.document.getElementById('player-name').value);
+
+                }
+
+
+
+
+            }, 'SMALL');
 
 
     }
@@ -52,7 +52,7 @@ namespace GALLERY.Viewer {
     //let playerName:string;
 
     export function gameModeStart(playerName?:string){
-        Window.close();
+        //Window.close();
         canvas.requestPointerLock();
         r('canvas.requestPointerLock();');
 
@@ -86,10 +86,10 @@ namespace GALLERY.Viewer {
     document.addEventListener('pointerlockchange', lockChangeAlert, false);
     document.addEventListener('mozpointerlockchange', lockChangeAlert, false);
 
-    const WS_SERVER = 'localhost:1357';
+    const WS_SERVER = 'webappgames.com:1357';
     export let gameSync = new GameSync(WS_SERVER,camera,scene);
-    gameSync.connect();
-    playEngine(enginePlayReasonGameMode);
+    //gameSync.connect();
+    //playEngine(enginePlayReasonGameMode);
 
 
     function lockChangeAlert() {
@@ -111,7 +111,7 @@ namespace GALLERY.Viewer {
             playEngine(enginePlayReasonGameMode);
             //triggerMouseEvent (canvas, "mousedown");
 
-            //gameSync.connect();
+            gameSync.connect();
 
 
         } else {

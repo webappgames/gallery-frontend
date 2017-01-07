@@ -28,15 +28,16 @@ namespace GALLERY.Viewer {
 
         }
 
-        public connect() {
+        public connect(onDone?) {
 
             if(this._connected){
                 console.warn('Already connected.');
+                onDone();
                 return;
             }
 
 
-            this._connected = true;
+
             let self = this;
 
             //todo connect to ws
@@ -45,6 +46,7 @@ namespace GALLERY.Viewer {
             this._connection = new WebSocket("ws://"+this.server);
             //r(this.ws);
             this._connection.onopen = function(){
+
                 // Web Socket is connected, send data using send()
                 //ws.send("Message to send");
                 //alert("Message is sent...");
@@ -52,6 +54,9 @@ namespace GALLERY.Viewer {
                     gallery: window.location.hostname,
                     //name: self.playerName
                 }));
+
+                self._connected = true;
+                onDone();
 
             };
 
@@ -223,18 +228,38 @@ namespace GALLERY.Viewer {
 
         public setName(name:string){
             this._name = name;
+
+            /*let self = this;
+            if(!this._connected){
+                this.connect(function () {
+                    self.setName(name);
+                });
+                return;
+            }*/
+
+
             this._connection.send(JSON.stringify({
                 name: name
             }));
         }
 
 
-        public getName(name:string){
+        public getName(){
             return(this._name);
         }
 
 
         public sendMessage(message:string){
+
+            /*let self = this;
+            if(!this._connected){
+                this.connect(function () {
+                    self.sendMessage(message);
+                });
+                return;
+            }*/
+
+
 
             message = message.trim();
             this._addToChatbox(

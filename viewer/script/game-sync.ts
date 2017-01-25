@@ -155,7 +155,7 @@ namespace GALLERY.Viewer {
 
 
 
-            let _last;
+            let _lastPosition,_lastRotation;
             this._loop = setInterval(function () {
 
 
@@ -168,21 +168,37 @@ namespace GALLERY.Viewer {
                 z = Math.round(z * 100) / 100;
 
 
-                let _current = [
-                    x,y,z,camera.rotation.x,camera.rotation.y,camera.rotation.z
+                let _currentPosition = [
+                    x,y,z
+                ].join(',');
+                let _currentRotation = [
+                    camera.rotation.x,camera.rotation.y,camera.rotation.z
                 ].join(',');
 
 
-                if (_last != _current) {
 
-                    _last = _current;
+
+                if (_lastPosition != _currentPosition) {
+
+                    _lastPosition = _currentPosition;
 
                     self._connection.send(JSON.stringify({
                         position: {
                             x: x,
                             y: y,
                             z: z
-                        },
+                        }
+                    }));
+
+                }
+
+
+
+                if (_lastRotation != _currentRotation) {
+
+                    _lastRotation = _currentRotation;
+
+                    self._connection.send(JSON.stringify({
                         rotation: {
                             x: camera.rotation.x,
                             y: camera.rotation.y,
@@ -191,6 +207,9 @@ namespace GALLERY.Viewer {
                     }));
 
                 }
+
+
+
 
             }, 100);
 

@@ -616,15 +616,17 @@ namespace GALLERY.Viewer {
                 board.checkCollisions = false;
 
 
-                let element = document.createElement('div');
+                /*let element = document.createElement('div');
                 element.style.position = 'fixed';
                 element.classList.add('zone');
                 //element.style.zIndex = '100000';
                 element.innerHTML = object.html;
 
 
-                document.getElementById('zones').appendChild(element);
+                document.getElementById('zones').appendChild(element);*/
 
+                let element = object.getBoard();
+                element.style.position = 'fixed';
 
                 boards.push({
                     mesh: board,

@@ -2,7 +2,7 @@
 
 
 
-.zone-board{
+.zone-board, .zone-board-small{
 
 
 
@@ -44,7 +44,6 @@
 
 
   .text {
-    font-size: 1.5em;
 
 
 
@@ -113,5 +112,27 @@
 
 
 
+
+}
+
+
+
+
+.zone-board{
+  .text{
+    font-size: 1.5em;
+  }
+}
+
+
+
+
+
+
+.zone-board-small{
+
+  .text{
+    font-size: 1em;
+  }
 
 }

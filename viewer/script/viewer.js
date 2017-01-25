@@ -1572,6 +1572,8 @@ var GALLERY;
     var Objects;
     (function (Objects) {
         var Object = (function () {
+            //todo storey
+            //todo get parameters for editing
             function Object(object) {
                 object.world = object.world || 'main';
                 object.storey = object.storey || '1NP';
@@ -2165,7 +2167,119 @@ var GALLERY;
         Objects.Analytics = Analytics;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="../../reference.ts" />
+/// <reference path="05-object" />
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        //import analyticsObject = GALLERY.Viewer.analyticsObject;
+        //import appState = GALLERY.Viewer.appState;
+        var ProtoBoard = (function (_super) {
+            __extends(ProtoBoard, _super);
+            function ProtoBoard(object) {
+                _super.call(this, object);
+                this.design = this.design || 'board';
+                this.name = this.name || '';
+                this.html = this.html || '';
+                this.buttons = this.buttons || '';
+            }
+            ProtoBoard.prototype._createBoard = function () {
+                //if (object.name || object.html) {
+                var isNext = false;
+                var label = objects.filterTypes('label').findBy('uri', this.uri);
+                if (label) {
+                    if (label.next !== 'none') {
+                        isNext = true;
+                    }
+                }
+                var element = document.createElement('div');
+                element.id = 'zone-' + this.id;
+                element.classList.add('zone-' + this.design);
+                element.style.display = 'none';
+                var html = this.html;
+                html = Mustache.render(html, { gallery: function () {
+                        return function (val, render) {
+                            var images = objects.filterTypes('image');
+                            var conds = JSON.parse(val);
+                            for (var key in conds) {
+                                images = images.filterBy(key, conds[key]);
+                            }
+                            var html = '';
+                            images.forEach(function (image) {
+                                html += '<img src="' + image.getSrc(90, 1) + '" onclick="GALLERY.Viewer.appState(\'/:' + image.id + '\', false, false);" />';
+                            });
+                            html = '<div class="gallery">' + html + '</div>';
+                            return html;
+                        };
+                    } });
+                element.innerHTML = ''
+                    + (this.name ? '<h1>' + this.name + '</h1>' : '')
+                    + '<div class="text">' + html + '</div>'
+                    + (this.buttons ? '<div class="buttons">' + this.buttons + '</div>' : '')
+                    + (isNext ? '<div class="next" onclick="GALLERY.Viewer.appStateNext();"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
+                var fullUrl = 'http://' + window.location.hostname + '/' + this.getUri(); //+analyticsObject.domain;
+                //let fullUrl = 'http://'+analyticsObject.domain+this.getUri();
+                r(fullUrl);
+                if (this.design == 'board' && !isNext) {
+                    //element.innerHTML += `<button class="fb-share-button" data-href="http://www.your-domain.com/your-page.html"></button>`;
+                    element.innerHTML += "<button onclick=\"GALLERY.Viewer.goToParent();\"><i class=\"fa fa-arrow-left\" aria-hidden=\"true\"></i> Zp\u011Bt</button>";
+                    element.innerHTML += "<button onclick=\"GALLERY.Viewer.appStateTurnBack();\"><i class=\"fa fa-repeat\" aria-hidden=\"true\"></i> Oto\u010Dit se</button>";
+                    element.innerHTML += "<button class=\"discuss\" onclick=\"fbDiscuss('" + fullUrl + "');\"><i class=\"fa fa-pencil\" aria-hidden=\"true\"></i> P\u0159idat koment\u00E1\u0159</button>";
+                    $.ajax({
+                        url: 'http://graph.facebook.com/v2.1/' + encodeURIComponent(fullUrl),
+                        dataType: 'jsonp',
+                        success: function (data) {
+                            data.share = data.share || {};
+                            var count = data.share.comment_count || 0;
+                            r(data, count);
+                            var text = '<i class="fa fa-pencil" aria-hidden="true"></i> ';
+                            if (count == 0) {
+                                text += 'Přidat komentář';
+                            }
+                            else if (count == 1) {
+                                text += '1 komentář';
+                            }
+                            else if (count < 5) {
+                                text += count + ' komentáře';
+                            }
+                            else if (count >= 5) {
+                                text += count + ' komentářů';
+                            }
+                            element.getElementsByClassName('discuss')[0].innerHTML = text;
+                            //alert("comments: " + data.comments);
+                        }
+                    });
+                }
+                document.getElementById('zones').appendChild(element);
+                $(element).find('a').click(function (e) {
+                    e.preventDefault();
+                    GALLERY.Viewer.appState($(this).attr('href'), false, false);
+                });
+                return (element);
+                //}
+            };
+            ProtoBoard.prototype.getBoard = function () {
+                if ("_board" in this) {
+                }
+                else {
+                    this._board = this._createBoard();
+                }
+                return this._board;
+            };
+            ProtoBoard.prototype.showBoard = function () {
+                //this.getBoard().style.display = 'block';
+                $(this.getBoard()).stop().slideDown();
+            };
+            ProtoBoard.prototype.hideBoard = function () {
+                //this.getBoard().style.display = 'none';
+                $(this.getBoard()).stop().slideUp();
+            };
+            return ProtoBoard;
+        }(Objects.Object));
+        Objects.ProtoBoard = ProtoBoard;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="07-protoboard" />
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -2181,10 +2295,6 @@ var GALLERY;
                 this.uri = this.uri || '';
                 this.uri_level = this.uri_level || 0;
                 this.isPickable = this.isPickable || false;
-                this.design = this.design || 'board';
-                this.name = this.name || '';
-                this.html = this.html || '';
-                this.buttons = this.buttons || '';
                 this.isImportant = this.isImportant || false;
                 this.limit = this.limit || false;
                 this.limitRotation = this.limitRotation || 0;
@@ -2264,99 +2374,8 @@ var GALLERY;
                     }
                 }
             };
-            Zone.prototype._createBoard = function () {
-                //if (object.name || object.html) {
-                var isNext = false;
-                var label = objects.filterTypes('label').findBy('uri', this.uri);
-                if (label) {
-                    if (label.next !== 'none') {
-                        isNext = true;
-                    }
-                }
-                var element = document.createElement('div');
-                element.id = 'zone-' + this.id;
-                element.classList.add('zone-' + this.design);
-                element.style.display = 'none';
-                var html = this.html;
-                html = Mustache.render(html, { gallery: function () {
-                        return function (val, render) {
-                            var images = objects.filterTypes('image');
-                            var conds = JSON.parse(val);
-                            for (var key in conds) {
-                                images = images.filterBy(key, conds[key]);
-                            }
-                            var html = '';
-                            images.forEach(function (image) {
-                                html += '<img src="' + image.getSrc(90, 1) + '" onclick="GALLERY.Viewer.appState(\'/:' + image.id + '\', false, false);" />';
-                            });
-                            html = '<div class="gallery">' + html + '</div>';
-                            return html;
-                        };
-                    } });
-                element.innerHTML = ''
-                    + (this.name ? '<h1>' + this.name + '</h1>' : '')
-                    + '<div class="text">' + html + '</div>'
-                    + (this.buttons ? '<div class="buttons">' + this.buttons + '</div>' : '')
-                    + (isNext ? '<div class="next" onclick="GALLERY.Viewer.appStateNext();"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
-                var fullUrl = 'http://' + window.location.hostname + '/' + this.getUri(); //+analyticsObject.domain;
-                //let fullUrl = 'http://'+analyticsObject.domain+this.getUri();
-                r(fullUrl);
-                if (this.design == 'board' && !isNext) {
-                    //element.innerHTML += `<button class="fb-share-button" data-href="http://www.your-domain.com/your-page.html"></button>`;
-                    element.innerHTML += "<button onclick=\"GALLERY.Viewer.goToParent();\"><i class=\"fa fa-arrow-left\" aria-hidden=\"true\"></i> Zp\u011Bt</button>";
-                    element.innerHTML += "<button onclick=\"GALLERY.Viewer.appStateTurnBack();\"><i class=\"fa fa-repeat\" aria-hidden=\"true\"></i> Oto\u010Dit se</button>";
-                    element.innerHTML += "<button class=\"discuss\" onclick=\"fbDiscuss('" + fullUrl + "');\"><i class=\"fa fa-pencil\" aria-hidden=\"true\"></i> P\u0159idat koment\u00E1\u0159</button>";
-                    $.ajax({
-                        url: 'http://graph.facebook.com/v2.1/' + encodeURIComponent(fullUrl),
-                        dataType: 'jsonp',
-                        success: function (data) {
-                            data.share = data.share || {};
-                            var count = data.share.comment_count || 0;
-                            r(data, count);
-                            var text = '<i class="fa fa-pencil" aria-hidden="true"></i> ';
-                            if (count == 0) {
-                                text += 'Přidat komentář';
-                            }
-                            else if (count == 1) {
-                                text += '1 komentář';
-                            }
-                            else if (count < 5) {
-                                text += count + ' komentáře';
-                            }
-                            else if (count >= 5) {
-                                text += count + ' komentářů';
-                            }
-                            element.getElementsByClassName('discuss')[0].innerHTML = text;
-                            //alert("comments: " + data.comments);
-                        }
-                    });
-                }
-                document.getElementById('zones').appendChild(element);
-                $(element).find('a').click(function (e) {
-                    e.preventDefault();
-                    GALLERY.Viewer.appState($(this).attr('href'), false, false);
-                });
-                return (element);
-                //}
-            };
-            Zone.prototype.getBoard = function () {
-                if ("_board" in this) {
-                }
-                else {
-                    this._board = this._createBoard();
-                }
-                return this._board;
-            };
-            Zone.prototype.showBoard = function () {
-                //this.getBoard().style.display = 'block';
-                $(this.getBoard()).stop().slideDown();
-            };
-            Zone.prototype.hideBoard = function () {
-                //this.getBoard().style.display = 'none';
-                $(this.getBoard()).stop().slideUp();
-            };
             return Zone;
-        }(Objects.Object));
+        }(Objects.ProtoBoard));
         Objects.Zone = Zone;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
@@ -2394,7 +2413,7 @@ var GALLERY;
         Objects.GroundHole = GroundHole;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="../../reference.ts" />
+/// <reference path="07-protoboard" />
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -2403,7 +2422,7 @@ var GALLERY;
             __extends(Board, _super);
             function Board(object) {
                 _super.call(this, object);
-                this.html = this.html || '';
+                this.isPerspective = this.isPerspective || false;
             }
             Board.prototype.create$Element = function () {
                 var $element = this._create$Element();
@@ -2412,7 +2431,7 @@ var GALLERY;
                 return $element;
             };
             return Board;
-        }(Objects.Object));
+        }(Objects.ProtoBoard));
         Objects.Board = Board;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
@@ -4452,12 +4471,16 @@ var GALLERY;
                     board.material.diffuseColor = BABYLON.Color3.FromHexString('#000000');
                     board.material.alpha = 0;
                     board.checkCollisions = false;
-                    var element = document.createElement('div');
+                    /*let element = document.createElement('div');
                     element.style.position = 'fixed';
                     element.classList.add('zone');
                     //element.style.zIndex = '100000';
                     element.innerHTML = object.html;
-                    document.getElementById('zones').appendChild(element);
+    
+    
+                    document.getElementById('zones').appendChild(element);*/
+                    var element = object.getBoard();
+                    element.style.position = 'fixed';
                     Viewer.boards.push({
                         mesh: board,
                         element: element,

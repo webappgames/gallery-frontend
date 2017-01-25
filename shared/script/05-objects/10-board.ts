@@ -1,21 +1,20 @@
-/// <reference path="../../reference.ts" />
+/// <reference path="07-protoboard" />
+
 
 
 namespace GALLERY.Objects{
 
-    export class Board extends Object{
+    export class Board extends ProtoBoard{
 
-
-        public storey: string;
-        public html: string;
+        public isPerspective: boolean;
 
 
 
         constructor(object){
 
             super(object);
+            this.isPerspective = this.isPerspective || false;
 
-            this.html = this.html || '';
         }
 
 
@@ -36,6 +35,10 @@ namespace GALLERY.Objects{
             return $element;
 
         }
+
+
+
+
 
 
 

@@ -13,6 +13,8 @@ namespace GALLERY.Objects{
           y: number
         };
 
+        //todo storey
+        //todo get parameters for editing
 
         constructor(object){
 

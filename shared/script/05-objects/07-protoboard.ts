@@ -33,7 +33,7 @@ namespace GALLERY.Objects{
 
 
 
-        private _createBoard(){
+        private _createBoard(container:HTMLElement){
             //if (object.name || object.html) {
 
             let isNext = false;
@@ -141,7 +141,7 @@ namespace GALLERY.Objects{
 
 
 
-            document.getElementById('zones').appendChild(element);
+            container.appendChild(element);
 
 
             $(element).find('a').click(function (e) {
@@ -156,11 +156,14 @@ namespace GALLERY.Objects{
         }
 
 
-        getBoard(){
+        getBoard(container=null){
 
             if("_board" in this){
             }else{
-                this._board = this._createBoard();
+                if(!container){
+                    container = document.getElementById('zones');
+                }
+                this._board = this._createBoard(container);
             }
 
             return this._board;

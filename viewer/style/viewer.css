@@ -323,13 +323,29 @@ section#zones {
   right: 0px;
   text-align: center; }
 
+section#boards {
+  z-index: 4000;
+  display: block;
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  pointer-events: none; }
+  section#boards > div {
+    width: 10px;
+    height: 10px;
+    border: 2px solid red; }
+    section#boards > div > div {
+      transform: translate(-50%, -50%); }
+
 .zone-board, .zone-board-small {
   display: block;
   cursor: pointer;
   width: 320px;
   max-height: calc(100vh - 100px );
   background-color: #fff;
-  border-radius: 3px;
+  border-radiusodd: 3px;
   margin: 4px;
   padding: 4px;
   /*&:hover{

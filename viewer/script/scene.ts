@@ -338,17 +338,24 @@ namespace GALLERY.Viewer {
 
                 let distance = BABYLON.Vector3.Distance(camera.position, board.mesh.position);
                 let zoom = 1 / distance;
-                zoom = 1;
+                //zoom = 1;
 
 
                 board.element.style.zIndex = 1000000000 - distance;//todo better
-                board.element.style.zoom = zoom;
+                //board.element.style.zoom = zoom*100;
 
 
-                //r(board.element.clientWidth);
+                //board.element.style.transform = 'rotateY('+Math.round(camera.rotation.y /Math.PI * 180 -45)+'deg)';
+                //board.element.style.transform = 'translateZ('+(distance*-10)+'px)';
+                //board.element.childNodes[0].style.transform = 'scale('+(zoom*100)+')';
+                board.element.childNodes[0].style.zoom = zoom*100;
 
-                board.element.style.left = (position.x / zoom) - (board.element.clientWidth / 2) + 'px';
-                board.element.style.top = (position.y / zoom - board.top) + 'px';
+
+
+
+                board.element.style.position = 'absolute';
+                board.element.style.left = (position.x ) - (board.element.clientWidth / 2) + 'px';
+                board.element.style.top = (position.y  - board.top) + 'px';
                 board.element.style.display = 'block';
 
 
@@ -359,6 +366,8 @@ namespace GALLERY.Viewer {
 
         });
 
+
+        //document.getElementById('zones').style.perspective='500px';
 
         //r(camera.viewport);
         //r(camera.viewport.toGlobal(engine));

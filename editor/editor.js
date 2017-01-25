@@ -2142,7 +2142,7 @@ var GALLERY;
                 this.html = this.html || '';
                 this.buttons = this.buttons || '';
             }
-            ProtoBoard.prototype._createBoard = function () {
+            ProtoBoard.prototype._createBoard = function (container) {
                 //if (object.name || object.html) {
                 var isNext = false;
                 var label = objects.filterTypes('label').findBy('uri', this.uri);
@@ -2209,7 +2209,7 @@ var GALLERY;
                         }
                     });
                 }
-                document.getElementById('zones').appendChild(element);
+                container.appendChild(element);
                 $(element).find('a').click(function (e) {
                     e.preventDefault();
                     Viewer.appState($(this).attr('href'), false, false);
@@ -2217,11 +2217,15 @@ var GALLERY;
                 return (element);
                 //}
             };
-            ProtoBoard.prototype.getBoard = function () {
+            ProtoBoard.prototype.getBoard = function (container) {
+                if (container === void 0) { container = null; }
                 if ("_board" in this) {
                 }
                 else {
-                    this._board = this._createBoard();
+                    if (!container) {
+                        container = document.getElementById('zones');
+                    }
+                    this._board = this._createBoard(container);
                 }
                 return this._board;
             };

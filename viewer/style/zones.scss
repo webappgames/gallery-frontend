@@ -21,3 +21,42 @@ section#zones{
 
 
 }
+
+
+
+
+
+
+
+section#boards{
+
+  z-index: 4000;
+
+  display: block;
+  position: fixed;
+
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+
+  //perspective: 500px;
+
+
+  pointer-events: none;
+
+
+
+  &>div{
+    width: 10px;
+    height: 10px;
+    border: 2px solid red;
+
+
+    &>div{
+      transform: translate(-50%, -50%);
+    }
+
+  }
+
+}

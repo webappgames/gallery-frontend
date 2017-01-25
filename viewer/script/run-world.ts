@@ -625,12 +625,19 @@ namespace GALLERY.Viewer {
 
                 document.getElementById('zones').appendChild(element);*/
 
-                let element = object.getBoard();
-                element.style.position = 'fixed';
+
+
+                let container = document.createElement('div');
+                document.getElementById('boards').appendChild(container);
+
+
+                object.getBoard(container).style.display = 'block';
+                container.style.position = 'fixed';
+
 
                 boards.push({
                     mesh: board,
-                    element: element,
+                    element: container,
                     top: 0
                  });
                 meshes.push(board);

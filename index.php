@@ -206,6 +206,10 @@ if(isset($_GET['comments'])){
 
 
 
+<section id="boards">
+</section>
+
+
 <!--<nav>
     <div class="turn-left" onclick="GALLERY.Viewer.appStateTurnLeft();"><i class="fa fa-chevron-left" aria-hidden="true"></i></div>
     <div class="turn-right" onclick="GALLERY.Viewer.appStateTurnRight();"><i class="fa fa-chevron-right" aria-hidden="true"></i></div>

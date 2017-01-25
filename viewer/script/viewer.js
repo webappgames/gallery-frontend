@@ -2183,7 +2183,7 @@ var GALLERY;
                 this.html = this.html || '';
                 this.buttons = this.buttons || '';
             }
-            ProtoBoard.prototype._createBoard = function () {
+            ProtoBoard.prototype._createBoard = function (container) {
                 //if (object.name || object.html) {
                 var isNext = false;
                 var label = objects.filterTypes('label').findBy('uri', this.uri);
@@ -2250,7 +2250,7 @@ var GALLERY;
                         }
                     });
                 }
-                document.getElementById('zones').appendChild(element);
+                container.appendChild(element);
                 $(element).find('a').click(function (e) {
                     e.preventDefault();
                     GALLERY.Viewer.appState($(this).attr('href'), false, false);
@@ -2258,11 +2258,15 @@ var GALLERY;
                 return (element);
                 //}
             };
-            ProtoBoard.prototype.getBoard = function () {
+            ProtoBoard.prototype.getBoard = function (container) {
+                if (container === void 0) { container = null; }
                 if ("_board" in this) {
                 }
                 else {
-                    this._board = this._createBoard();
+                    if (!container) {
+                        container = document.getElementById('zones');
+                    }
+                    this._board = this._createBoard(container);
                 }
                 return this._board;
             };
@@ -3876,16 +3880,21 @@ var GALLERY;
                     //r(pickInfo.pickedMesh.name);
                     var distance = BABYLON.Vector3.Distance(camera.position, board.mesh.position);
                     var zoom = 1 / distance;
-                    zoom = 1;
+                    //zoom = 1;
                     board.element.style.zIndex = 1000000000 - distance; //todo better
-                    board.element.style.zoom = zoom;
-                    //r(board.element.clientWidth);
-                    board.element.style.left = (position.x / zoom) - (board.element.clientWidth / 2) + 'px';
-                    board.element.style.top = (position.y / zoom - board.top) + 'px';
+                    //board.element.style.zoom = zoom*100;
+                    //board.element.style.transform = 'rotateY('+Math.round(camera.rotation.y /Math.PI * 180 -45)+'deg)';
+                    //board.element.style.transform = 'translateZ('+(distance*-10)+'px)';
+                    //board.element.childNodes[0].style.transform = 'scale('+(zoom*100)+')';
+                    board.element.childNodes[0].style.zoom = zoom * 100;
+                    board.element.style.position = 'absolute';
+                    board.element.style.left = (position.x) - (board.element.clientWidth / 2) + 'px';
+                    board.element.style.top = (position.y - board.top) + 'px';
                     board.element.style.display = 'block';
                 });
                 //=============================================================
             });
+            //document.getElementById('zones').style.perspective='500px';
             //r(camera.viewport);
             //r(camera.viewport.toGlobal(engine));
             //camera.mode = 1;
@@ -4479,11 +4488,13 @@ var GALLERY;
     
     
                     document.getElementById('zones').appendChild(element);*/
-                    var element = object.getBoard();
-                    element.style.position = 'fixed';
+                    var container = document.createElement('div');
+                    document.getElementById('boards').appendChild(container);
+                    object.getBoard(container).style.display = 'block';
+                    container.style.position = 'fixed';
                     Viewer.boards.push({
                         mesh: board,
-                        element: element,
+                        element: container,
                         top: 0
                     });
                     Viewer.meshes.push(board);

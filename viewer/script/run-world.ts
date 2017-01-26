@@ -340,162 +340,22 @@ namespace GALLERY.Viewer {
                 meshes.push(light);
 
 
-            } else if (object.type == 'image') {
+            } else if (object.type == 'image' || object.type == 'poster') {
 
-                if (typeof object.rotation === 'number') {
 
+                let mesh = object.createBabylonMesh(getImageMesh);
+                meshes.push(mesh);
 
-                    let rotation_rad = (object.rotation / 180) * Math.PI;
 
-                    let image = getImageMesh(object);
 
 
-                    if (object.onGround) {
+                let virtualObjects = object.createVirtualObjects(zoneIdsCreatedForImages);
+                virtualObjects.forEach(function (object) {
+                    processObject(object);
+                    objects.push(object);
+                });
 
 
-                        image.position = position;
-                        image.position.y = (level + BLOCKS_1NP_LEVEL + 0.5) * BLOCK_SIZE + 0.1;
-
-
-                        image.rotation.x = Math.PI / 2;
-                        image.rotation.y = Math.PI + rotation_rad;
-
-
-                    } else {
-
-                        position.x += Math.sin(rotation_rad) * BLOCK_SIZE / 100;
-                        position.z += Math.cos(rotation_rad) * BLOCK_SIZE / 100;
-                        image.position = position;
-
-
-
-                        //(level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE
-                        //image.position.y = (/*level + BLOCKS_1NP_LEVEL +*/ EYE_VERTICAL) * BLOCK_SIZE ;
-
-                        image.rotation.y = Math.PI + rotation_rad;
-                        image.position.y += (EYE_VERTICAL - BLOCKS_1NP_LEVEL) * BLOCK_SIZE;
-
-
-                        if (/*develop && /*(object.uri || object.name) &&*/ (zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
-
-                            r('Creating zone for ' + object.name);
-
-
-                            zoneIdsCreatedForImages.push(object.id);
-
-
-
-
-                            let uri: string;
-                            if (object.uri && object.uri != 'none') {
-                                uri = object.uri;
-                            } else if (object.name) {
-                                uri = '/' + createUriFromName(object.name);
-                                object.uri = uri;
-                            }else{
-
-                                //uri = '/' + (object.id.split('-')[0]);
-                                uri = '/:' + object.id;
-                                //object.uri = uri;
-                            }
-
-
-                            object.zoneCreated = true;
-
-
-                            let size = Math.max(object.width,object.height);
-
-                            let x = Math.sin(rotation_rad) * size / -2;
-                            let y = Math.cos(rotation_rad) * size / 2;
-
-
-
-
-
-
-
-                            let zone = new Objects.Zone({
-
-                                id: createGuid(),
-                                type: 'zone',
-
-                                world: object.world,
-                                storey: object.storey,
-                                position: {
-                                    x: object.position.x + x,
-                                    y: object.position.y + y,
-                                },
-
-
-                                limit: true,
-                                limitRotation: object.rotation+180,
-                                limitRotationTolerance: 90,
-
-
-                                width: object.width*Math.cos(rotation_rad)+size*Math.sin(rotation_rad),
-                                height: object.width*Math.sin(rotation_rad)+size*Math.cos(rotation_rad),
-
-                                design: object.design,
-                                name: object.name,
-                                html: object.html,
-                                uri: uri,
-                                uri_level: 10000,//todo better low priority
-
-                            });
-
-
-                            processObject(zone);//todo better
-                            objects.push(zone);
-
-
-                            let label = new Objects.Label({
-
-                                id: createGuid(),
-                                type: 'label',
-
-                                world: object.world,
-                                storey: object.storey,
-                                position: {
-                                    x: object.position.x + (x * 1.9),
-                                    y: object.position.y + (y * 1.9),
-                                },
-
-                                rotation: object.rotation,
-
-
-                                name: object.name,
-                                uri: uri,
-                                parent: object.parent,
-
-                            });
-
-
-                            processObject(label);//todo better
-                            objects.push(label);
-
-
-                            //r(objects);
-
-
-                        }
-
-
-                    }
-
-
-                    image.scaling.x = object.width;
-                    image.scaling.y = object.height;
-                    //image.scaling.z = 0.1;
-
-
-                    image.checkCollisions = object.checkCollisions;
-
-                    meshes.push(image);
-                    //r(object);
-                    //r(image);
-
-
-                }
 
 
             } else if (object.type == 'label') {

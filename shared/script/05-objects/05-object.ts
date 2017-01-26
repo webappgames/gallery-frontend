@@ -201,13 +201,17 @@ namespace GALLERY.Objects{
 
 
 
+        getLevelNumber(){
+            return(BLOCKS_STOREYS_LEVELS[this.storey || '1NP']);
+        }
+
+
         getBabylonPosition(){
 
-            let level = BLOCKS_STOREYS_LEVELS[this.storey || '1NP'];
 
             let position = new BABYLON.Vector3(
                 this.position.x * -BLOCK_SIZE,
-                (level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE,//(0.5 - 0.9) * BLOCK_SIZE,
+                (this.getLevelNumber() + BLOCKS_1NP_LEVEL) * BLOCK_SIZE,//(0.5 - 0.9) * BLOCK_SIZE,
                 this.position.y * BLOCK_SIZE
             );
 

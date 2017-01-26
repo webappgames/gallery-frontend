@@ -175,17 +175,183 @@ namespace GALLERY.Objects{
 
 
 
+        createBabylonMesh(getImageMesh){
+
+            let object = this;
+            let position = this.getBabylonPosition();
 
 
-        createBabylonMesh(){
+
+            if (typeof this.rotation !== 'number') {this.rotation = 0;}//todo remove
+
+
+            let rotation_rad = (object.rotation / 180) * Math.PI;
+
+            let image = getImageMesh(object);
+
+
+            if (object.onGround) {
+
+
+                image.position = position;
+                image.position.y = (this.getLevelNumber() + BLOCKS_1NP_LEVEL + 0.5) * BLOCK_SIZE + 0.1;
+
+
+                image.rotation.x = Math.PI / 2;
+                image.rotation.y = Math.PI + rotation_rad;
+
+
+            } else {
+
+                position.x += Math.sin(rotation_rad) * BLOCK_SIZE / 100;
+                position.z += Math.cos(rotation_rad) * BLOCK_SIZE / 100;
+                image.position = position;
+
+
+
+                //(level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE
+                //image.position.y = (/*level + BLOCKS_1NP_LEVEL +*/ EYE_VERTICAL) * BLOCK_SIZE ;
+
+                image.rotation.y = Math.PI + rotation_rad;
+                image.position.y += (EYE_VERTICAL - BLOCKS_1NP_LEVEL) * BLOCK_SIZE;
+
+
+            }
+
+
+            image.scaling.x = object.width;
+            image.scaling.y = object.height;
+            //image.scaling.z = 0.1;
+
+
+            image.checkCollisions = object.checkCollisions;
+
+
+            return(image);
+
+            //r(object);
+            //r(image);
 
 
 
         }
 
 
-        createVirtualObjects(){
+        createVirtualObjects(zoneIdsCreatedForImages){
 
+            let virtualObjects = new Objects.Array();
+
+
+            let object = this;
+            let position = this.getBabylonPosition();
+
+
+
+            if (typeof this.rotation !== 'number') {this.rotation = 0;}//todo remove
+            let rotation_rad = (object.rotation / 180) * Math.PI;//todo method
+
+
+
+            if (typeof object.rotation === 'number') {
+                if (!object.onGround) {
+
+            if (/*develop && /*(object.uri || object.name) &&*/ (zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
+
+                r('Creating zone for ' + object.name);
+
+
+                zoneIdsCreatedForImages.push(object.id);
+
+
+                let uri: string;
+                if (object.uri && object.uri != 'none') {
+                    uri = object.uri;
+                } else if (object.name) {
+                    uri = '/' + createUriFromName(object.name);
+                    object.uri = uri;
+                } else {
+
+                    //uri = '/' + (object.id.split('-')[0]);
+                    uri = '/:' + object.id;
+                    //object.uri = uri;
+                }
+
+
+                object.zoneCreated = true;
+
+
+                let size = Math.max(object.width, object.height);
+
+                let x = Math.sin(rotation_rad) * size / -2;
+                let y = Math.cos(rotation_rad) * size / 2;
+
+
+                let zone = new Objects.Zone({
+
+                    id: createGuid(),
+                    type: 'zone',
+
+                    world: object.world,
+                    storey: object.storey,
+                    position: {
+                        x: object.position.x + x,
+                        y: object.position.y + y,
+                    },
+
+
+                    limit: true,
+                    limitRotation: object.rotation + 180,
+                    limitRotationTolerance: 90,
+
+
+                    width: object.width * Math.cos(rotation_rad) + size * Math.sin(rotation_rad),
+                    height: object.width * Math.sin(rotation_rad) + size * Math.cos(rotation_rad),
+
+                    design: object.design,
+                    name: object.name,
+                    html: object.html,
+                    uri: uri,
+                    uri_level: 10000,//todo better low priority
+
+                });
+
+
+                virtualObjects.push(zone);
+
+
+
+                let label = new Objects.Label({
+
+                    id: createGuid(),
+                    type: 'label',
+
+                    world: object.world,
+                    storey: object.storey,
+                    position: {
+                        x: object.position.x + (x * 1.9),
+                        y: object.position.y + (y * 1.9),
+                    },
+
+                    rotation: object.rotation,
+
+
+                    name: object.name,
+                    uri: uri,
+                    parent: object.parent,
+
+                });
+
+                virtualObjects.push(zone);
+                //processObject(label);//todo better
+                //objects.push(label);
+
+
+                //r(objects);
+
+            }
+            }
+
+            return(virtualObjects);
 
 
         }

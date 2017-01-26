@@ -1,5 +1,5 @@
 /// <reference path="../../reference.ts" />
-/*
+
 namespace GALLERY.Objects{
 
     export class Poster extends Image{
@@ -18,7 +18,7 @@ namespace GALLERY.Objects{
 
 
 
-        getSrc(width=0,ratio=0){//todo use this
+        /*getSrc(width=0,ratio=0){//todo use this
 
             let uri = URI(this.src);
 
@@ -28,9 +28,9 @@ namespace GALLERY.Objects{
             return uri.toString();
 
 
-        }
+        }*/
 
 
     }
 
-}*/
+}

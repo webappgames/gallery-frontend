@@ -1681,9 +1681,11 @@ var GALLERY;
                 $element.css('height', zoom_selected);
                 return ($element);
             };
+            Object.prototype.getLevelNumber = function () {
+                return (BLOCKS_STOREYS_LEVELS[this.storey || '1NP']);
+            };
             Object.prototype.getBabylonPosition = function () {
-                var level = BLOCKS_STOREYS_LEVELS[this.storey || '1NP'];
-                var position = new BABYLON.Vector3(this.position.x * -BLOCK_SIZE, (level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
+                var position = new BABYLON.Vector3(this.position.x * -BLOCK_SIZE, (this.getLevelNumber() + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
                 this.position.y * BLOCK_SIZE);
                 return (position);
             };
@@ -1931,9 +1933,106 @@ var GALLERY;
             Image.prototype.getTexture = function () {
                 return (this.src);
             };
-            Image.prototype.createBabylonMesh = function () {
+            Image.prototype.createBabylonMesh = function (getImageMesh) {
+                var object = this;
+                var position = this.getBabylonPosition();
+                if (typeof this.rotation !== 'number') {
+                    this.rotation = 0;
+                } //todo remove
+                var rotation_rad = (object.rotation / 180) * Math.PI;
+                var image = getImageMesh(object);
+                if (object.onGround) {
+                    image.position = position;
+                    image.position.y = (this.getLevelNumber() + BLOCKS_1NP_LEVEL + 0.5) * BLOCK_SIZE + 0.1;
+                    image.rotation.x = Math.PI / 2;
+                    image.rotation.y = Math.PI + rotation_rad;
+                }
+                else {
+                    position.x += Math.sin(rotation_rad) * BLOCK_SIZE / 100;
+                    position.z += Math.cos(rotation_rad) * BLOCK_SIZE / 100;
+                    image.position = position;
+                    //(level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE
+                    //image.position.y = (/*level + BLOCKS_1NP_LEVEL +*/ EYE_VERTICAL) * BLOCK_SIZE ;
+                    image.rotation.y = Math.PI + rotation_rad;
+                    image.position.y += (EYE_VERTICAL - BLOCKS_1NP_LEVEL) * BLOCK_SIZE;
+                }
+                image.scaling.x = object.width;
+                image.scaling.y = object.height;
+                //image.scaling.z = 0.1;
+                image.checkCollisions = object.checkCollisions;
+                return (image);
+                //r(object);
+                //r(image);
             };
-            Image.prototype.createVirtualObjects = function () {
+            Image.prototype.createVirtualObjects = function (zoneIdsCreatedForImages) {
+                var virtualObjects = new Objects.Array();
+                var object = this;
+                var position = this.getBabylonPosition();
+                if (typeof this.rotation !== 'number') {
+                    this.rotation = 0;
+                } //todo remove
+                var rotation_rad = (object.rotation / 180) * Math.PI; //todo method
+                if (typeof object.rotation === 'number') {
+                    if (!object.onGround) {
+                        if ((zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
+                            r('Creating zone for ' + object.name);
+                            zoneIdsCreatedForImages.push(object.id);
+                            var uri = void 0;
+                            if (object.uri && object.uri != 'none') {
+                                uri = object.uri;
+                            }
+                            else if (object.name) {
+                                uri = '/' + createUriFromName(object.name);
+                                object.uri = uri;
+                            }
+                            else {
+                                //uri = '/' + (object.id.split('-')[0]);
+                                uri = '/:' + object.id;
+                            }
+                            object.zoneCreated = true;
+                            var size = Math.max(object.width, object.height);
+                            var x = Math.sin(rotation_rad) * size / -2;
+                            var y = Math.cos(rotation_rad) * size / 2;
+                            var zone = new Objects.Zone({
+                                id: createGuid(),
+                                type: 'zone',
+                                world: object.world,
+                                storey: object.storey,
+                                position: {
+                                    x: object.position.x + x,
+                                    y: object.position.y + y,
+                                },
+                                limit: true,
+                                limitRotation: object.rotation + 180,
+                                limitRotationTolerance: 90,
+                                width: object.width * Math.cos(rotation_rad) + size * Math.sin(rotation_rad),
+                                height: object.width * Math.sin(rotation_rad) + size * Math.cos(rotation_rad),
+                                design: object.design,
+                                name: object.name,
+                                html: object.html,
+                                uri: uri,
+                                uri_level: 10000,
+                            });
+                            virtualObjects.push(zone);
+                            var label = new Objects.Label({
+                                id: createGuid(),
+                                type: 'label',
+                                world: object.world,
+                                storey: object.storey,
+                                position: {
+                                    x: object.position.x + (x * 1.9),
+                                    y: object.position.y + (y * 1.9),
+                                },
+                                rotation: object.rotation,
+                                name: object.name,
+                                uri: uri,
+                                parent: object.parent,
+                            });
+                            virtualObjects.push(zone);
+                        }
+                    }
+                    return (virtualObjects);
+                }
             };
             return Image;
         }(Objects.Object));
@@ -4326,88 +4425,13 @@ var GALLERY;
                     Viewer.meshes.push(light);
                 }
                 else if (object.type == 'image') {
-                    if (typeof object.rotation === 'number') {
-                        var rotation_rad_1 = (object.rotation / 180) * Math.PI;
-                        var image = Viewer.getImageMesh(object);
-                        if (object.onGround) {
-                            image.position = position;
-                            image.position.y = (level + BLOCKS_1NP_LEVEL + 0.5) * BLOCK_SIZE + 0.1;
-                            image.rotation.x = Math.PI / 2;
-                            image.rotation.y = Math.PI + rotation_rad_1;
-                        }
-                        else {
-                            position.x += Math.sin(rotation_rad_1) * BLOCK_SIZE / 100;
-                            position.z += Math.cos(rotation_rad_1) * BLOCK_SIZE / 100;
-                            image.position = position;
-                            //(level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE
-                            //image.position.y = (/*level + BLOCKS_1NP_LEVEL +*/ EYE_VERTICAL) * BLOCK_SIZE ;
-                            image.rotation.y = Math.PI + rotation_rad_1;
-                            image.position.y += (EYE_VERTICAL - BLOCKS_1NP_LEVEL) * BLOCK_SIZE;
-                            if ((zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
-                                r('Creating zone for ' + object.name);
-                                zoneIdsCreatedForImages.push(object.id);
-                                var uri = void 0;
-                                if (object.uri && object.uri != 'none') {
-                                    uri = object.uri;
-                                }
-                                else if (object.name) {
-                                    uri = '/' + createUriFromName(object.name);
-                                    object.uri = uri;
-                                }
-                                else {
-                                    //uri = '/' + (object.id.split('-')[0]);
-                                    uri = '/:' + object.id;
-                                }
-                                object.zoneCreated = true;
-                                var size = Math.max(object.width, object.height);
-                                var x = Math.sin(rotation_rad_1) * size / -2;
-                                var y = Math.cos(rotation_rad_1) * size / 2;
-                                var zone = new GALLERY.Objects.Zone({
-                                    id: createGuid(),
-                                    type: 'zone',
-                                    world: object.world,
-                                    storey: object.storey,
-                                    position: {
-                                        x: object.position.x + x,
-                                        y: object.position.y + y,
-                                    },
-                                    limit: true,
-                                    limitRotation: object.rotation + 180,
-                                    limitRotationTolerance: 90,
-                                    width: object.width * Math.cos(rotation_rad_1) + size * Math.sin(rotation_rad_1),
-                                    height: object.width * Math.sin(rotation_rad_1) + size * Math.cos(rotation_rad_1),
-                                    design: object.design,
-                                    name: object.name,
-                                    html: object.html,
-                                    uri: uri,
-                                    uri_level: 10000,
-                                });
-                                processObject(zone); //todo better
-                                objects.push(zone);
-                                var label = new GALLERY.Objects.Label({
-                                    id: createGuid(),
-                                    type: 'label',
-                                    world: object.world,
-                                    storey: object.storey,
-                                    position: {
-                                        x: object.position.x + (x * 1.9),
-                                        y: object.position.y + (y * 1.9),
-                                    },
-                                    rotation: object.rotation,
-                                    name: object.name,
-                                    uri: uri,
-                                    parent: object.parent,
-                                });
-                                processObject(label); //todo better
-                                objects.push(label);
-                            }
-                        }
-                        image.scaling.x = object.width;
-                        image.scaling.y = object.height;
-                        //image.scaling.z = 0.1;
-                        image.checkCollisions = object.checkCollisions;
-                        Viewer.meshes.push(image);
-                    }
+                    var mesh = object.createBabylonMesh(Viewer.getImageMesh);
+                    Viewer.meshes.push(mesh);
+                    var virtualObjects = object.createVirtualObjects(zoneIdsCreatedForImages);
+                    virtualObjects.forEach(function (object) {
+                        processObject(object);
+                        objects.push(object);
+                    });
                 }
                 else if (object.type == 'label') {
                 }

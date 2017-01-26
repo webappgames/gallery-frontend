@@ -51,39 +51,35 @@ namespace GALLERY.Objects{
 
 
 
-        getTexture(){
-            return(this.src);
-        }
-
 
 
         create$Element() {
 
 
             var $element = this._create$Element();
-            let object = this;
+            //let object = this;
 
 
-            var src = object.src;
+           /* var src = object.src;
             var src_uri = URI(src)
                 .removeSearch("width");
-            var src_normal = src_uri.addSearch({width: 100}).toString();
+            var src_normal = src_uri.addSearch({width: 100}).toString();*/
 
 
 
-            if(object.onGround) {
+            if(this.onGround) {
 
 
                 var $image = $('<img>').addClass('image');
 
 
-                var width = object.width * zoom_selected;
-                var height = object.height * zoom_selected;
+                var width = this.width * zoom_selected;
+                var height = this.height * zoom_selected;
 
                 $image.css('width', width);
                 $image.css('height', height);
 
-                $image.attr('src', src_normal);
+                $image.attr('src', this.getSrc(100));
 
                 $image.css('position', 'relative');
                 $image.css('top', -height / 2);
@@ -91,8 +87,8 @@ namespace GALLERY.Objects{
 
 
                 //r(object.rotation);
-                if(object.rotation) {
-                    $image.css('transform', 'rotate(' + object.rotation + 'deg)');
+                if(this.rotation) {
+                    $image.css('transform', 'rotate(' + this.rotation + 'deg)');
                 }
 
 
@@ -109,17 +105,17 @@ namespace GALLERY.Objects{
                 var $image_270 = $('<img>').addClass('image-270').hide();
 
 
-                $image_0.css('height', object.height * zoom_selected);
-                $image_180.css('height', object.height * zoom_selected);
-                $image_90.css('width', object.height * zoom_selected);
-                $image_270.css('width', object.height * zoom_selected);
+                $image_0  .css('height',this.height * zoom_selected);
+                $image_180.css('height',this.height * zoom_selected);
+                $image_90 .css('width', this.height * zoom_selected);
+                $image_270.css('width', this.height * zoom_selected);
 
 
 
-                $image_0.attr('src', src_normal);
-                $image_90.attr('src', src_normal + '&rotation=90');
-                $image_180.attr('src', src_normal + '&rotation=180');
-                $image_270.attr('src', src_normal + '&rotation=270');
+                $image_0  .attr('src', this.getSrc(100,0,0));
+                $image_90 .attr('src', this.getSrc(100,0,90));
+                $image_180.attr('src', this.getSrc(100,0,180));
+                $image_270.attr('src', this.getSrc(100,0,270));
 
 
                 //rotateImage($image_90[0],90);
@@ -127,13 +123,13 @@ namespace GALLERY.Objects{
                 //rotateImage($image_270[0],270);
 
 
-                if (object.rotation === 0) {
+                if (this.rotation === 0) {
                     $image_0.show();
-                } else if (object.rotation === 90) {
+                } else if (this.rotation === 90) {
                     $image_90.show();
-                } else if (object.rotation === 180) {
+                } else if (this.rotation === 180) {
                     $image_180.show();
-                } else if (object.rotation === 270) {
+                } else if (this.rotation === 270) {
                     $image_270.show();
                 } else {
                     $image_0.show();
@@ -155,17 +151,52 @@ namespace GALLERY.Objects{
 
 
 
-        getSrc(width=0,ratio=0){//todo use this
+        getSrc(width=0,ratio=0,rotation=0){//todo use this
 
             let uri = URI(this.src);
 
             if(width)uri.addSearch({width: width});
             if(ratio)uri.addSearch({ratio: ratio});
+            if(rotation)uri.addSearch({rotation: rotation});
 
             return uri.toString();
 
 
         }
+
+
+        getTexture(){
+            return(this.src);
+        }
+
+
+
+
+
+
+
+
+
+        createBabylonMesh(){
+
+
+
+        }
+
+
+        createVirtualObjects(){
+
+
+
+        }
+
+
+
+
+
+
+
+
 
 
     }

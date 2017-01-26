@@ -1854,29 +1854,26 @@ var GALLERY;
                 this.checkCollisions = this.checkCollisions || false;
                 this.backFace = this.backFace || false;
             }
-            Image.prototype.getTexture = function () {
-                return (this.src);
-            };
             Image.prototype.create$Element = function () {
                 var $element = this._create$Element();
-                var object = this;
-                var src = object.src;
-                var src_uri = URI(src)
-                    .removeSearch("width");
-                var src_normal = src_uri.addSearch({ width: 100 }).toString();
-                if (object.onGround) {
+                //let object = this;
+                /* var src = object.src;
+                 var src_uri = URI(src)
+                     .removeSearch("width");
+                 var src_normal = src_uri.addSearch({width: 100}).toString();*/
+                if (this.onGround) {
                     var $image = $('<img>').addClass('image');
-                    var width = object.width * zoom_selected;
-                    var height = object.height * zoom_selected;
+                    var width = this.width * zoom_selected;
+                    var height = this.height * zoom_selected;
                     $image.css('width', width);
                     $image.css('height', height);
-                    $image.attr('src', src_normal);
+                    $image.attr('src', this.getSrc(100));
                     $image.css('position', 'relative');
                     $image.css('top', -height / 2);
                     $image.css('left', -width / 2);
                     //r(object.rotation);
-                    if (object.rotation) {
-                        $image.css('transform', 'rotate(' + object.rotation + 'deg)');
+                    if (this.rotation) {
+                        $image.css('transform', 'rotate(' + this.rotation + 'deg)');
                     }
                     $element.append($image);
                 }
@@ -1885,27 +1882,27 @@ var GALLERY;
                     var $image_90 = $('<img>').addClass('image-90').hide();
                     var $image_180 = $('<img>').addClass('image-180').hide();
                     var $image_270 = $('<img>').addClass('image-270').hide();
-                    $image_0.css('height', object.height * zoom_selected);
-                    $image_180.css('height', object.height * zoom_selected);
-                    $image_90.css('width', object.height * zoom_selected);
-                    $image_270.css('width', object.height * zoom_selected);
-                    $image_0.attr('src', src_normal);
-                    $image_90.attr('src', src_normal + '&rotation=90');
-                    $image_180.attr('src', src_normal + '&rotation=180');
-                    $image_270.attr('src', src_normal + '&rotation=270');
+                    $image_0.css('height', this.height * zoom_selected);
+                    $image_180.css('height', this.height * zoom_selected);
+                    $image_90.css('width', this.height * zoom_selected);
+                    $image_270.css('width', this.height * zoom_selected);
+                    $image_0.attr('src', this.getSrc(100, 0, 0));
+                    $image_90.attr('src', this.getSrc(100, 0, 90));
+                    $image_180.attr('src', this.getSrc(100, 0, 180));
+                    $image_270.attr('src', this.getSrc(100, 0, 270));
                     //rotateImage($image_90[0],90);
                     //rotateImage($image_180[0],180);
                     //rotateImage($image_270[0],270);
-                    if (object.rotation === 0) {
+                    if (this.rotation === 0) {
                         $image_0.show();
                     }
-                    else if (object.rotation === 90) {
+                    else if (this.rotation === 90) {
                         $image_90.show();
                     }
-                    else if (object.rotation === 180) {
+                    else if (this.rotation === 180) {
                         $image_180.show();
                     }
-                    else if (object.rotation === 270) {
+                    else if (this.rotation === 270) {
                         $image_270.show();
                     }
                     else {
@@ -1918,15 +1915,25 @@ var GALLERY;
                 }
                 return $element;
             };
-            Image.prototype.getSrc = function (width, ratio) {
+            Image.prototype.getSrc = function (width, ratio, rotation) {
                 if (width === void 0) { width = 0; }
                 if (ratio === void 0) { ratio = 0; }
+                if (rotation === void 0) { rotation = 0; }
                 var uri = URI(this.src);
                 if (width)
                     uri.addSearch({ width: width });
                 if (ratio)
                     uri.addSearch({ ratio: ratio });
+                if (rotation)
+                    uri.addSearch({ rotation: rotation });
                 return uri.toString();
+            };
+            Image.prototype.getTexture = function () {
+                return (this.src);
+            };
+            Image.prototype.createBabylonMesh = function () {
+            };
+            Image.prototype.createVirtualObjects = function () {
             };
             return Image;
         }(Objects.Object));

@@ -16,6 +16,7 @@
 /// <reference path="script/05-objects/10-block.ts" />
 /// <reference path="script/05-objects/10-multiblock.ts" />
 /// <reference path="script/05-objects/10-image.ts" />
+/// <reference path="script/05-objects/10-poster.ts" />
 /// <reference path="script/05-objects/10-label.ts" />
 /// <reference path="script/05-objects/10-light.ts" />
 /// <reference path="script/05-objects/10-stairs.ts" />

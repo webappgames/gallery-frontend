@@ -14,6 +14,22 @@ namespace GALLERY.Objects{
 
             this.posterHtml = this.posterHtml || '';
 
+
+            this.src = this.src || 'http://cdn.pavolhejny.com/?file=5888cb789f36f-M2Q5OGMxNTk1N2M1ZjVkZDIyN2U1M2RiYzdjYmI2MGQuanBn';
+            this.width = this.width || 1;
+            this.height = this.height || 1;
+
+
+        }
+
+
+        getEditorInputHtml(key:string):string{
+
+            switch(key) {
+                case 'posterHtml': return('<textarea></textarea>');
+                default:  return(super.getEditorInputHtml(key));
+            }
+
         }
 
 

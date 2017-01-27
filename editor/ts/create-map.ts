@@ -198,7 +198,7 @@ function createMap() {
 
     let $blocks= $admin_world.find('.block');
     let $blocks_gates= $admin_world.find('.block[data-shape="gate"]');
-    let $images= $admin_world.find('.image');
+    let $images= $admin_world.find('.image, .poster');
     let $stairs= $admin_world.find('.stairs');
 
 
@@ -272,47 +272,38 @@ function createMap() {
             check_element=null;
 
 
-            if(['name','design','uri','next','parent','key','href','target','world','material','skybox','ground','url','server','username','password','directory','domain','endlessStructuresFromStorey'].indexOf(key)!==-1){
-                input_element='<input type="text">';
-            }else
-            if(['script','html','buttons','selector'].indexOf(key)!==-1){
-                input_element=' <textarea></textarea>';
-            }else
-            if(key=='intensity'){
-                input_element='<input type="range" min="0.1" max="5" step="0.1">';
-            }else
-            if(key=='opacity'){
-                input_element='<input type="range" min="0" max="1" step="0.1">';
-            }else
-            if(key=='radius'){
-                input_element='<input type="range" min="0.4" max="5" step="0.1">';
-            }else
-            if(key=='size'){
-                input_element='<input type="range" min="0.2" max="10" step="0.02">';
-            }else
-            if(key=='width' || key=='height'){
-                input_element='<input type="range" min="0.2" max="25" step="0.02">';
-            }else
-            if(key=='fogDensity'){
-                input_element='<input type="range" min="0" max="0.05" step="0.0001">';
-            }else
-            if(key=='color' || key=='fogColor' || key=='clearColor'){
-                input_element='<input type="color">';
-            }else
-            if(key=='skyboxSize' || key=='uri_level'){
-                input_element='<input type="number">';
-            }else
-            if(key=='rotation'/* && (object.type!=='image' && object.onGround!=='image' )*/){
-                input_element='<input type="range" min="0" max="360" step="10">';
-            }else
-            if(key=='rotationSpeed'){
-                input_element='<input type="number" min="-360" max="360" step="1">';
-            }else
-            if(/*['onGround','hasAlpha','isEmitting','checkCollisions','isFull'].indexOf(key)!==-1*/typeof object[key] === "boolean"){
+            input_element = object.getEditorInputHtml(key);
 
-                check_element='<input type="checkbox">';
+            if(!input_element) {
+                if (['name', 'design', 'uri', 'next', 'parent', 'key', 'href', 'target', 'world', 'material', 'skybox', 'ground', 'url', 'server', 'username', 'password', 'directory', 'domain', 'endlessStructuresFromStorey'].indexOf(key) !== -1) {
+                    input_element = '<input type="text">';
+                } else if (['script', 'html', 'buttons', 'selector'].indexOf(key) !== -1) {
+                    input_element = ' <textarea></textarea>';
+                } else if (key == 'intensity') {
+                    input_element = '<input type="range" min="0.1" max="5" step="0.1">';
+                } else if (key == 'opacity') {
+                    input_element = '<input type="range" min="0" max="1" step="0.1">';
+                } else if (key == 'radius') {
+                    input_element = '<input type="range" min="0.4" max="5" step="0.1">';
+                } else if (key == 'size') {
+                    input_element = '<input type="range" min="0.2" max="10" step="0.02">';
+                } else if (key == 'width' || key == 'height') {
+                    input_element = '<input type="range" min="0.2" max="25" step="0.02">';
+                } else if (key == 'fogDensity') {
+                    input_element = '<input type="range" min="0" max="0.05" step="0.0001">';
+                } else if (key == 'color' || key == 'fogColor' || key == 'clearColor') {
+                    input_element = '<input type="color">';
+                } else if (key == 'skyboxSize' || key == 'uri_level') {
+                    input_element = '<input type="number">';
+                } else if (key == 'rotation'/* && (object.type!=='image' && object.onGround!=='image' )*/) {
+                    input_element = '<input type="range" min="0" max="360" step="10">';
+                } else if (key == 'rotationSpeed') {
+                    input_element = '<input type="number" min="-360" max="360" step="1">';
+                } else if (/*['onGround','hasAlpha','isEmitting','checkCollisions','isFull'].indexOf(key)!==-1*/typeof object[key] === "boolean") {
+
+                    check_element = '<input type="checkbox">';
+                }
             }
-
 
 
 

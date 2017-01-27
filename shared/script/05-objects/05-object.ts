@@ -46,6 +46,16 @@ namespace GALLERY.Objects{
         }
 
 
+        getEditorInputHtml(key:string):string{
+
+            switch(key) {
+                case 'world': return('<input type="text">');
+                default:  return('');
+            }
+
+        }
+
+
         static init(object) {
 
             if(object instanceof Object){
@@ -76,6 +86,9 @@ namespace GALLERY.Objects{
             } else if (object.type == 'image') {
 
                 object = new Image(object);
+            } else if (object.type == 'poster') {
+
+                object = new Poster(object);
 
             } else if (object.type == 'tree') {
 

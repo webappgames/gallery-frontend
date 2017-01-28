@@ -27,6 +27,26 @@ namespace GALLERY.Objects{
 
         }
 
+        getEditorInputHtml(key:string):string{
+
+            switch(key) {
+                case 'material':
+                    return('<input type="text">');
+                case 'width':
+                    return('<input type="number">');
+                case 'height':
+                    return('<input type="number">');
+                case 'rotation':
+                    return('<input type="number">');
+                case 'isFull':
+                    return('<input type="checkbox">');
+                case 'opacity':
+                    return('<input type="number">');
+                default:
+                    return(super.getEditorInputHtml(key));
+            }
+
+        }
 
 
         create$Element(){

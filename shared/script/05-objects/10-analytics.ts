@@ -17,6 +17,22 @@ namespace GALLERY.Objects{
 
         }
 
+        getEditorInputHtml(key:string):string{
+
+            switch(key) {
+                case 'analyticsType':
+                    return('<input type="text">');
+                case 'domain':
+                    return('<input type="text">');
+                default:
+                    return(super.getEditorInputHtml(key));
+            }
+
+        }
+
+
+
+
         create$Element(){
 
 

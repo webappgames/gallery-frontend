@@ -20,6 +20,20 @@ namespace GALLERY.Objects{
         }
 
 
+        getEditorInputHtml(key:string):string{
+
+            switch(key) {
+                case 'width':
+                    return('<input type="number">');
+                case 'height':
+                    return('<input type="number">');
+                default:
+                    return(super.getEditorInputHtml(key));
+            }
+
+        }
+
+
 
         create$Element(){
 

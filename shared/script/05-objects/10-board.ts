@@ -19,6 +19,17 @@ namespace GALLERY.Objects{
 
 
 
+        getEditorInputHtml(key:string):string{
+
+            switch(key) {
+                case 'isPerspective':
+                    return('<input type="checkbox">');
+                default:
+                    return(super.getEditorInputHtml(key));
+            }
+
+        }
+
 
         create$Element(){
 

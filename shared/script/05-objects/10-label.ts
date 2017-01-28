@@ -27,6 +27,29 @@ namespace GALLERY.Objects{
 
         }
 
+        getEditorInputHtml(key:string):string{
+
+            switch(key) {
+                case 'name':
+                    return('<input type="text">');
+                case 'uri':
+                    return('<input type="text">');
+                case 'next':
+                    return('<input type="text">');
+                case 'rotation':
+                    return('<input type="number">');
+                case 'rotationNotImportant':
+                    return('<input type="checkbox">');
+                case 'rotationSpeed':
+                    return('<input type="number">');
+                default:
+                    return(super.getEditorInputHtml(key));
+            }
+
+        }
+
+
+
         create$Element(){
 
 

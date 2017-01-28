@@ -50,6 +50,23 @@ namespace GALLERY.Objects{
         }
 
 
+        getEditorInputHtml(key:string):string{
+
+            switch(key) {
+                case 'design':
+                    return('<input type="text">');
+                case 'name':
+                    return('<input type="text">');
+                case 'html':
+                    return('<textarea></textarea>');
+                case 'buttons':
+                    return('<textarea></textarea>');
+                default:
+                    return(super.getEditorInputHtml(key));
+            }
+
+        }
+
 
         create$Element(){
 

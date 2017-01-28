@@ -52,6 +52,46 @@ namespace GALLERY.Objects{
 
 
 
+        getEditorInputHtml(key:string):string{
+
+            switch(key) {
+
+                case 'uri':
+                    return('<input type="text">');
+                case 'parent':
+                    return('<input type="text">');
+                case 'rotation':
+                    return('<input type="number">');
+                case 'onGround':
+                    return('<input type="checkbox">');
+                case 'hasAlpha':
+                    return('<input type="checkbox">');
+                case 'isEmitting':
+                    return('<input type="checkbox">');
+                case 'checkCollisions':
+                    return('<input type="checkbox">');
+                case 'backFace':
+                    return('<input type="checkbox">');
+
+
+
+                case 'design':
+                    return('<input type="text">');
+                case 'name':
+                    return('<input type="text">');
+                case 'html':
+                    return('<textarea></textarea>');
+                case 'buttons':
+                    return('<textarea></textarea>');
+                default:  return(super.getEditorInputHtml(key));
+            }
+
+        }
+
+
+
+
+
 
         create$Element() {
 
@@ -147,6 +187,8 @@ namespace GALLERY.Objects{
             return $element;
 
         }
+
+
 
 
 

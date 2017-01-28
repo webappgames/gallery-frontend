@@ -23,6 +23,17 @@ namespace GALLERY.Objects{
         }
 
 
+        getEditorInputHtml(key:string):string{
+
+            switch(key) {
+                case 'posterHtml': return('<textarea></textarea>');
+                default:  return(super.getEditorInputHtml(key));
+            }
+
+        }
+
+
+
         /*getSrc(width=0,ratio=0,rotation=0):string{
 
             html2canvas($('body')[0], {
@@ -33,14 +44,7 @@ namespace GALLERY.Objects{
 
         }*/
 
-        getEditorInputHtml(key:string):string{
 
-            switch(key) {
-                case 'posterHtml': return('<textarea></textarea>');
-                default:  return(super.getEditorInputHtml(key));
-            }
-
-        }
 
 
 

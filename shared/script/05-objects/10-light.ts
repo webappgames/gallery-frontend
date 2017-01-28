@@ -18,6 +18,19 @@ namespace GALLERY.Objects{
 
         }
 
+        getEditorInputHtml(key:string):string{
+
+            switch(key) {
+                case 'color':
+                    return('<input type="color">');
+                case 'intensity':
+                    return('<input type="number">');
+                default:
+                    return(super.getEditorInputHtml(key));
+            }
+
+        }
+
 
 
         create$Element(){

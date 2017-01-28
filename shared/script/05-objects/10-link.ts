@@ -28,6 +28,28 @@ namespace GALLERY.Objects{
         }
 
 
+        getEditorInputHtml(key:string):string{
+
+            switch(key) {
+                case 'radius':
+                    return('<input type="number">');
+                case 'href':
+                    return('<input type="text">');
+                case 'script':
+                    return('<textarea></textarea>');
+                case 'target':
+                    return('<input type="text">');
+                case 'color':
+                    return('<input type="color">');
+                case 'hidden':
+                    return('<input type="checkbox">');
+                default:
+                    return(super.getEditorInputHtml(key));
+            }
+
+        }
+
+
 
         create$Element(){
 

@@ -26,6 +26,27 @@ namespace GALLERY.Objects{
 
         }
 
+
+        getEditorInputHtml(key:string):string{
+
+            switch(key) {
+                case 'deployType':
+                    return('<input type="text">');
+                case 'server':
+                    return('<input type="text">');
+                case 'username':
+                    return('<input type="text">');
+                case 'password':
+                    return('<input type="password">');
+                case 'directory':
+                    return('<input type="text">');
+                default:
+                    return(super.getEditorInputHtml(key));
+            }
+
+        }
+
+
         create$Element(){
 
 

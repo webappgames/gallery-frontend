@@ -22,6 +22,45 @@ namespace GALLERY.Objects{
         public buttons: string;
 
 
+        getEditorInputHtml(key:string):string{
+
+            switch(key) {
+                case 'ground':
+                    return('<input type="text">');
+                case 'skybox':
+                    return('<input type="text">');
+                case 'skyboxSize':
+                    return('<input type="number">');
+                case 'skybox_reverse':
+                    return('<input type="checkbox">');
+                case 'fogDensity':
+                    return('<input type="range" min="0" max="0.05" step="0.0001">');
+                case 'fogColor':
+                    return('<input type="color">');
+                case 'clearColor':
+                    return('<input type="color">');
+                case 'endlessStructures':
+                    return('<input type="checkbox">');
+                case 'endlessStructuresFromStorey':
+                    return('<input type="text">');
+                case 'shadows':
+                    return('<input type="checkbox">');
+
+
+                case 'design':
+                    return('<input type="text">');
+                case 'name':
+                    return('<input type="text">');
+                case 'html':
+                    return('<textarea></textarea>');
+                case 'buttons':
+                    return('<textarea></textarea>');
+                default:
+                    return(super.getEditorInputHtml(key));
+            }
+
+        }
+
 
         constructor(object){
 

@@ -26,6 +26,23 @@ namespace GALLERY.Objects{
         }
 
 
+        getEditorInputHtml(key:string):string{
+
+            switch(key) {
+                case 'size':
+                    return('<input type="number">');
+                case 'rotation':
+                    return('<input type="number">');
+                case 'color':
+                    return('<input type="color">');
+                case 'key':
+                    return('<input type="text">');
+                default:
+                    return(super.getEditorInputHtml(key));
+            }
+
+        }
+
 
 
 

@@ -24,6 +24,17 @@ namespace GALLERY.Objects{
         }
 
 
+        getEditorInputHtml(key:string):string{
+
+            switch(key) {
+                case 'opacity':
+                    return('<input type="range" min="0" max="1" step="0.1">');
+                default:
+                    return(super.getEditorInputHtml(key));
+            }
+
+        }
+
 
         create$Element(){
 

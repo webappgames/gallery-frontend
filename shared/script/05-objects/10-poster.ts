@@ -66,6 +66,20 @@ namespace GALLERY.Objects{
                 //posterElement.classList.add('zone-board');
                 posterElement.style.border = '2px solid red';
                 posterElement.style.backgroundColor = '#fff';
+
+
+
+                posterElement.style.width = object.width*100+'px';
+                posterElement.style.height = object.height*100+'px';
+                posterElement.style.overflow = 'hidden';
+
+
+
+
+
+
+
+
                 $('#zones').append(posterElement);
 
 

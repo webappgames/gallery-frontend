@@ -274,7 +274,7 @@ function createMap() {
 
             input_element = object.getEditorInputHtml(key);
 
-            if(!input_element) {
+            /*if(!input_element) {
                 if (['name', 'design', 'uri', 'next', 'parent', 'key', 'href', 'target', 'world', 'material', 'skybox', 'ground', 'url', 'server', 'username', 'password', 'directory', 'domain', 'endlessStructuresFromStorey'].indexOf(key) !== -1) {
                     input_element = '<input type="text">';
                 } else if (['script', 'html', 'buttons', 'selector'].indexOf(key) !== -1) {
@@ -295,15 +295,15 @@ function createMap() {
                     input_element = '<input type="color">';
                 } else if (key == 'skyboxSize' || key == 'uri_level') {
                     input_element = '<input type="number">';
-                } else if (key == 'rotation'/* && (object.type!=='image' && object.onGround!=='image' )*/) {
+                } else if (key == 'rotation'/!* && (object.type!=='image' && object.onGround!=='image' )*!/) {
                     input_element = '<input type="range" min="0" max="360" step="10">';
                 } else if (key == 'rotationSpeed') {
                     input_element = '<input type="number" min="-360" max="360" step="1">';
-                } else if (/*['onGround','hasAlpha','isEmitting','checkCollisions','isFull'].indexOf(key)!==-1*/typeof object[key] === "boolean") {
+                } else if (/!*['onGround','hasAlpha','isEmitting','checkCollisions','isFull'].indexOf(key)!==-1*!/typeof object[key] === "boolean") {
 
                     check_element = '<input type="checkbox">';
                 }
-            }
+            }*/
 
 
 

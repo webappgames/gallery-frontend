@@ -343,7 +343,7 @@ namespace GALLERY.Viewer {
             } else if (object.type == 'image' || object.type == 'poster') {
 
 
-                let mesh = object.createBabylonMesh(getImageMesh);
+                let mesh = object.createBabylonMesh(scene,getImageMesh);
                 meshes.push(mesh);
 
 

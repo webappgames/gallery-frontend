@@ -109,7 +109,7 @@ if(isset($_GET['comments'])){
     <script src="/node_modules/jszip/dist/jszip.min.js"></script>
     <script src="/node_modules/file-saver/FileSaver.min.js"></script>
     <script src="/node_modules/mustache/mustache.min.js"></script>
-
+    <script src="shared/lib/html2canvas.js"></script>
 
 
     <script src="http://cssrefresh.frebsite.nl/js/cssrefresh.js"></script>

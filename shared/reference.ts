@@ -2,6 +2,7 @@
 
 
 /// <reference path="lib/jquery.d.ts" />
+/// <reference path="lib/babylon.d.ts" />
 
 
 /// <reference path="script/uri-plugin.ts" />

@@ -151,7 +151,7 @@ namespace GALLERY.Objects{
 
 
 
-        getSrc(width=0,ratio=0,rotation=0){//todo use this
+        getSrc(width=0,ratio=0,rotation=0):string{//todo use this
 
             let uri = URI(this.src);
 
@@ -175,7 +175,7 @@ namespace GALLERY.Objects{
 
 
 
-        createBabylonMesh(getImageMesh){
+        createBabylonMesh(scene,getImageMesh){
 
             let object = this;
             let position = this.getBabylonPosition();

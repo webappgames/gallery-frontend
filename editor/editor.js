@@ -1901,7 +1901,7 @@ var GALLERY;
             Image.prototype.getTexture = function () {
                 return (this.src);
             };
-            Image.prototype.createBabylonMesh = function (getImageMesh) {
+            Image.prototype.createBabylonMesh = function (scene, getImageMesh) {
                 var object = this;
                 var position = this.getBabylonPosition();
                 if (typeof this.rotation !== 'number') {
@@ -2021,11 +2021,57 @@ var GALLERY;
                 this.width = this.width || 1;
                 this.height = this.height || 1;
             }
+            /*getSrc(width=0,ratio=0,rotation=0):string{
+    
+                html2canvas($('body')[0], {
+                    onrendered: function(canvas) {
+                        canvas.toDataURL();
+                    }
+                });
+    
+            }*/
             Poster.prototype.getEditorInputHtml = function (key) {
                 switch (key) {
                     case 'posterHtml': return ('<textarea></textarea>');
                     default: return (_super.prototype.getEditorInputHtml.call(this, key));
                 }
+            };
+            Poster.prototype.createBabylonMesh = function (scene) {
+                _super.prototype.createBabylonMesh.call(this, scene, function (object) {
+                    var posterElement = document.createElement('div');
+                    posterElement.innerHTML = object.posterHtml;
+                    //posterElement.classList.add('zone-board');
+                    posterElement.style.border = '2px solid red';
+                    posterElement.style.backgroundColor = '#fff';
+                    $('#zones').append(posterElement);
+                    html2canvas($(posterElement), {
+                        onrendered: function (canvas) {
+                            $('#zones').append(canvas);
+                            var image_texture = new BABYLON.DynamicTexture('posterTexture', { width: canvas.width, height: canvas.height }, scene, false);
+                            var image_texture_ctx = image_texture.getContext();
+                            image_texture_ctx.drawImage(canvas, 0, 0);
+                            image_texture.update();
+                            if (object.isEmitting) {
+                                material.emissiveTexture = image_texture;
+                                material.backFaceCulling = !(object.backFace);
+                                material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
+                                material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
+                                material.specularPower = 32;
+                                //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
+                                material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
+                                material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+                            }
+                            else {
+                                material.diffuseTexture = image_texture;
+                            }
+                        }
+                    });
+                    var material = new BABYLON.StandardMaterial("texture4", scene);
+                    //material.freeze();
+                    var image00 = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
+                    image00.material = material;
+                    return (image00);
+                });
             };
             return Poster;
         }(Objects.Image));
@@ -2666,6 +2712,7 @@ var PH;
     PH.Notification = Notification;
 })(PH || (PH = {}));
 /// <reference path="lib/jquery.d.ts" />
+/// <reference path="lib/babylon.d.ts" />
 /// <reference path="script/uri-plugin.ts" />
 /// <reference path="script/05-objects/00-array.ts" />
 /// <reference path="script/05-objects/05-compiled-array.ts" />

@@ -10,11 +10,19 @@ namespace GALLERY.Viewer {
 
         let hoovered_mesh;
         if (pickResult.hit) {
-            if(pickResult.pickedMesh.name.substr(0,4)=='room' || pickResult.pickedMesh.name.substr(0,6)=='ground' || pickResult.pickedMesh.name.substr(0,6)=='player'){
+
+
+            r(pickResult.pickedMesh.name);
+
+
+            if(pickResult.pickedMesh.name.split('-',2)[0]!=='image'){
                 hoovered_mesh = null;
             }else{
                 hoovered_mesh=pickResult.pickedMesh;
             }
+
+
+
         }else{
             hoovered_mesh = null;
         }

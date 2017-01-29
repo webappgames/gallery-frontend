@@ -1542,6 +1542,10 @@ var GALLERY;
                         this_key = 'id'; //todo maybe better solution
                     this[this_key] = object[key];
                 }
+                if (typeof this.id == 'string')
+                    if (this.id.split('-', 2)[0] !== this.type) {
+                        this.id = this.type + '-' + this.id;
+                    }
                 if ("uri" in this) {
                     if (this.uri == '/:' + this.id) {
                         this.uri = 'none';
@@ -1686,6 +1690,40 @@ var GALLERY;
                 this.html = this.html || '';
                 this.buttons = this.buttons || '';
             }
+            Environment.prototype.getEditorInputHtml = function (key) {
+                switch (key) {
+                    case 'ground':
+                        return ('<input type="text">');
+                    case 'skybox':
+                        return ('<input type="text">');
+                    case 'skyboxSize':
+                        return ('<input type="number">');
+                    case 'skybox_reverse':
+                        return ('<input type="checkbox">');
+                    case 'fogDensity':
+                        return ('<input type="range" min="0" max="0.05" step="0.0001">');
+                    case 'fogColor':
+                        return ('<input type="color">');
+                    case 'clearColor':
+                        return ('<input type="color">');
+                    case 'endlessStructures':
+                        return ('<input type="checkbox">');
+                    case 'endlessStructuresFromStorey':
+                        return ('<input type="text">');
+                    case 'shadows':
+                        return ('<input type="checkbox">');
+                    case 'design':
+                        return ('<input type="text">');
+                    case 'name':
+                        return ('<input type="text">');
+                    case 'html':
+                        return ('<textarea></textarea>');
+                    case 'buttons':
+                        return ('<textarea></textarea>');
+                    default:
+                        return (_super.prototype.getEditorInputHtml.call(this, key));
+                }
+            };
             Environment.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 var object = this;
@@ -1710,6 +1748,14 @@ var GALLERY;
                 _super.call(this, object);
                 this.opacity = this.opacity || 1;
             }
+            Block.prototype.getEditorInputHtml = function (key) {
+                switch (key) {
+                    case 'opacity':
+                        return ('<input type="range" min="0" max="1" step="0.1">');
+                    default:
+                        return (_super.prototype.getEditorInputHtml.call(this, key));
+                }
+            };
             Block.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 //r($element);
@@ -1824,6 +1870,39 @@ var GALLERY;
                 this.checkCollisions = this.checkCollisions || false;
                 this.backFace = this.backFace || false;
             }
+            Image.prototype.getEditorInputHtml = function (key) {
+                switch (key) {
+                    case 'width':
+                        return ('<input type="number">');
+                    case 'height':
+                        return ('<input type="number">');
+                    case 'uri':
+                        return ('<input type="text">');
+                    case 'parent':
+                        return ('<input type="text">');
+                    case 'rotation':
+                        return ('<input type="number">');
+                    case 'onGround':
+                        return ('<input type="checkbox">');
+                    case 'hasAlpha':
+                        return ('<input type="checkbox">');
+                    case 'isEmitting':
+                        return ('<input type="checkbox">');
+                    case 'checkCollisions':
+                        return ('<input type="checkbox">');
+                    case 'backFace':
+                        return ('<input type="checkbox">');
+                    case 'design':
+                        return ('<input type="text">');
+                    case 'name':
+                        return ('<input type="text">');
+                    case 'html':
+                        return ('<textarea></textarea>');
+                    case 'buttons':
+                        return ('<textarea></textarea>');
+                    default: return (_super.prototype.getEditorInputHtml.call(this, key));
+                }
+            };
             Image.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 //let object = this;
@@ -2017,10 +2096,19 @@ var GALLERY;
             function Poster(object) {
                 _super.call(this, object);
                 this.posterHtml = this.posterHtml || '';
+                this.posterDesign = this.posterDesign || 'board';
                 this.src = this.src || 'http://cdn.pavolhejny.com/?file=5888cb789f36f-M2Q5OGMxNTk1N2M1ZjVkZDIyN2U1M2RiYzdjYmI2MGQuanBn';
                 this.width = this.width || 1;
                 this.height = this.height || 1;
+                this.voxelPixelRatio = this.voxelPixelRatio || 10;
             }
+            Poster.prototype.getEditorInputHtml = function (key) {
+                switch (key) {
+                    case 'posterHtml': return ('<textarea></textarea>');
+                    case 'voxelPixelRatio': return ('<input type="number" />');
+                    default: return (_super.prototype.getEditorInputHtml.call(this, key));
+                }
+            };
             /*getSrc(width=0,ratio=0,rotation=0):string{
     
                 html2canvas($('body')[0], {
@@ -2030,42 +2118,46 @@ var GALLERY;
                 });
     
             }*/
-            Poster.prototype.getEditorInputHtml = function (key) {
-                switch (key) {
-                    case 'posterHtml': return ('<textarea></textarea>');
-                    default: return (_super.prototype.getEditorInputHtml.call(this, key));
-                }
-            };
             Poster.prototype.createBabylonMesh = function (scene) {
                 _super.prototype.createBabylonMesh.call(this, scene, function (object) {
                     var posterElement = document.createElement('div');
                     posterElement.innerHTML = object.posterHtml;
-                    //posterElement.classList.add('zone-board');
-                    posterElement.style.border = '2px solid red';
-                    posterElement.style.backgroundColor = '#fff';
-                    $('#zones').append(posterElement);
-                    html2canvas($(posterElement), {
-                        onrendered: function (canvas) {
-                            $('#zones').append(canvas);
-                            var image_texture = new BABYLON.DynamicTexture('posterTexture', { width: canvas.width, height: canvas.height }, scene, false);
-                            var image_texture_ctx = image_texture.getContext();
-                            image_texture_ctx.drawImage(canvas, 0, 0);
-                            image_texture.update();
-                            if (object.isEmitting) {
-                                material.emissiveTexture = image_texture;
-                                material.backFaceCulling = !(object.backFace);
-                                material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
-                                material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
-                                material.specularPower = 32;
-                                //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
-                                material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
-                                material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+                    posterElement.classList.add('zone-' + object.posterDesign);
+                    //posterElement.style.border = '2px solid red';
+                    //posterElement.style.backgroundColor = '#fff';
+                    posterElement.style.width = object.width * object.voxelPixelRatio + 'px';
+                    posterElement.style.height = object.height * object.voxelPixelRatio + 'px';
+                    posterElement.style.overflow = 'hidden';
+                    $('#posters').append(posterElement);
+                    var redraw = function () {
+                        html2canvas(posterElement, {
+                            onrendered: function (canvas) {
+                                var image_texture = new BABYLON.DynamicTexture('posterTexture', {
+                                    width: canvas.width,
+                                    height: canvas.height
+                                }, scene, false);
+                                var image_texture_ctx = image_texture.getContext();
+                                image_texture_ctx.drawImage(canvas, 0, 0);
+                                image_texture.update();
+                                if (object.isEmitting) {
+                                    material.emissiveTexture = image_texture;
+                                    material.backFaceCulling = !(object.backFace);
+                                    material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
+                                    material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
+                                    material.specularPower = 32;
+                                    //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
+                                    material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
+                                    material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+                                }
+                                else {
+                                    material.diffuseTexture = image_texture;
+                                }
+                                GALLERY.Viewer.renderTick();
                             }
-                            else {
-                                material.diffuseTexture = image_texture;
-                            }
-                        }
-                    });
+                        });
+                    };
+                    //posterElement.onmousemove = redraw;
+                    redraw();
                     var material = new BABYLON.StandardMaterial("texture4", scene);
                     //material.freeze();
                     var image00 = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
@@ -2094,6 +2186,24 @@ var GALLERY;
                 this.rotationNotImportant = this.rotationNotImportant || false;
                 this.rotationSpeed = this.rotationSpeed || 0;
             }
+            Label.prototype.getEditorInputHtml = function (key) {
+                switch (key) {
+                    case 'name':
+                        return ('<input type="text">');
+                    case 'uri':
+                        return ('<input type="text">');
+                    case 'next':
+                        return ('<input type="text">');
+                    case 'rotation':
+                        return ('<input type="number">');
+                    case 'rotationNotImportant':
+                        return ('<input type="checkbox">');
+                    case 'rotationSpeed':
+                        return ('<input type="number">');
+                    default:
+                        return (_super.prototype.getEditorInputHtml.call(this, key));
+                }
+            };
             Label.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 var object = this;
@@ -2119,6 +2229,16 @@ var GALLERY;
                 this.color = this.color || '#ffffff';
                 this.intensity = this.intensity || 1;
             }
+            Light.prototype.getEditorInputHtml = function (key) {
+                switch (key) {
+                    case 'color':
+                        return ('<input type="color">');
+                    case 'intensity':
+                        return ('<input type="number">');
+                    default:
+                        return (_super.prototype.getEditorInputHtml.call(this, key));
+                }
+            };
             Light.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 var object = this;
@@ -2146,6 +2266,24 @@ var GALLERY;
                 this.isFull = this.isFull || false;
                 this.opacity = this.opacity || 1;
             }
+            Stairs.prototype.getEditorInputHtml = function (key) {
+                switch (key) {
+                    case 'material':
+                        return ('<input type="text">');
+                    case 'width':
+                        return ('<input type="number">');
+                    case 'height':
+                        return ('<input type="number">');
+                    case 'rotation':
+                        return ('<input type="number">');
+                    case 'isFull':
+                        return ('<input type="checkbox">');
+                    case 'opacity':
+                        return ('<input type="number">');
+                    default:
+                        return (_super.prototype.getEditorInputHtml.call(this, key));
+                }
+            };
             Stairs.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 var object = this;
@@ -2205,6 +2343,24 @@ var GALLERY;
                 this.color = this.color || '#00ff00';
                 this.hidden = this.hidden || false;
             }
+            Link.prototype.getEditorInputHtml = function (key) {
+                switch (key) {
+                    case 'radius':
+                        return ('<input type="number">');
+                    case 'href':
+                        return ('<input type="text">');
+                    case 'script':
+                        return ('<textarea></textarea>');
+                    case 'target':
+                        return ('<input type="text">');
+                    case 'color':
+                        return ('<input type="color">');
+                    case 'hidden':
+                        return ('<input type="checkbox">');
+                    default:
+                        return (_super.prototype.getEditorInputHtml.call(this, key));
+                }
+            };
             Link.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 var object = this;
@@ -2235,6 +2391,20 @@ var GALLERY;
                 this.color = this.color || '#00ff00';
                 this.key = this.key || '#green';
             }
+            Gate.prototype.getEditorInputHtml = function (key) {
+                switch (key) {
+                    case 'size':
+                        return ('<input type="number">');
+                    case 'rotation':
+                        return ('<input type="number">');
+                    case 'color':
+                        return ('<input type="color">');
+                    case 'key':
+                        return ('<input type="text">');
+                    default:
+                        return (_super.prototype.getEditorInputHtml.call(this, key));
+                }
+            };
             Gate.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 var object = this;
@@ -2278,6 +2448,22 @@ var GALLERY;
                 this.password = this.password || '';
                 this.directory = this.directory || '';
             }
+            Deploy.prototype.getEditorInputHtml = function (key) {
+                switch (key) {
+                    case 'deployType':
+                        return ('<input type="text">');
+                    case 'server':
+                        return ('<input type="text">');
+                    case 'username':
+                        return ('<input type="text">');
+                    case 'password':
+                        return ('<input type="password">');
+                    case 'directory':
+                        return ('<input type="text">');
+                    default:
+                        return (_super.prototype.getEditorInputHtml.call(this, key));
+                }
+            };
             Deploy.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 var object = this;
@@ -2301,6 +2487,16 @@ var GALLERY;
                 this.analyticsType = this.analyticsType || 'gallery';
                 this.domain = this.domain || '';
             }
+            Analytics.prototype.getEditorInputHtml = function (key) {
+                switch (key) {
+                    case 'analyticsType':
+                        return ('<input type="text">');
+                    case 'domain':
+                        return ('<input type="text">');
+                    default:
+                        return (_super.prototype.getEditorInputHtml.call(this, key));
+                }
+            };
             Analytics.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 var object = this;
@@ -2328,6 +2524,20 @@ var GALLERY;
                 this.html = this.html || '';
                 this.buttons = this.buttons || '';
             }
+            ProtoBoard.prototype.getEditorInputHtml = function (key) {
+                switch (key) {
+                    case 'design':
+                        return ('<input type="text">');
+                    case 'name':
+                        return ('<input type="text">');
+                    case 'html':
+                        return ('<textarea></textarea>');
+                    case 'buttons':
+                        return ('<textarea></textarea>');
+                    default:
+                        return (_super.prototype.getEditorInputHtml.call(this, key));
+                }
+            };
             ProtoBoard.prototype._createBoard = function (container) {
                 //if (object.name || object.html) {
                 var isNext = false;
@@ -2450,6 +2660,20 @@ var GALLERY;
                 this.limitRotationTolerance = this.limitRotationTolerance || 0;
                 //this.selector = this.selector || '';
             }
+            Zone.prototype.getEditorInputHtml = function (key) {
+                switch (key) {
+                    case 'design':
+                        return ('<input type="text">');
+                    case 'name':
+                        return ('<input type="text">');
+                    case 'html':
+                        return ('<textarea></textarea>');
+                    case 'buttons':
+                        return ('<textarea></textarea>');
+                    default:
+                        return (_super.prototype.getEditorInputHtml.call(this, key));
+                }
+            };
             Zone.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 var object = this;
@@ -2540,6 +2764,16 @@ var GALLERY;
                 this.width = this.width || 1;
                 this.height = this.height || 1;
             }
+            GroundHole.prototype.getEditorInputHtml = function (key) {
+                switch (key) {
+                    case 'width':
+                        return ('<input type="number">');
+                    case 'height':
+                        return ('<input type="number">');
+                    default:
+                        return (_super.prototype.getEditorInputHtml.call(this, key));
+                }
+            };
             GroundHole.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 var object = this;
@@ -2573,6 +2807,14 @@ var GALLERY;
                 _super.call(this, object);
                 this.isPerspective = this.isPerspective || false;
             }
+            Board.prototype.getEditorInputHtml = function (key) {
+                switch (key) {
+                    case 'isPerspective':
+                        return ('<input type="checkbox">');
+                    default:
+                        return (_super.prototype.getEditorInputHtml.call(this, key));
+                }
+            };
             Board.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 var object = this;
@@ -4050,47 +4292,36 @@ function createMap() {
             input_element = null;
             check_element = null;
             input_element = object.getEditorInputHtml(key);
-            if (!input_element) {
+            /*if(!input_element) {
                 if (['name', 'design', 'uri', 'next', 'parent', 'key', 'href', 'target', 'world', 'material', 'skybox', 'ground', 'url', 'server', 'username', 'password', 'directory', 'domain', 'endlessStructuresFromStorey'].indexOf(key) !== -1) {
                     input_element = '<input type="text">';
-                }
-                else if (['script', 'html', 'buttons', 'selector'].indexOf(key) !== -1) {
+                } else if (['script', 'html', 'buttons', 'selector'].indexOf(key) !== -1) {
                     input_element = ' <textarea></textarea>';
-                }
-                else if (key == 'intensity') {
+                } else if (key == 'intensity') {
                     input_element = '<input type="range" min="0.1" max="5" step="0.1">';
-                }
-                else if (key == 'opacity') {
+                } else if (key == 'opacity') {
                     input_element = '<input type="range" min="0" max="1" step="0.1">';
-                }
-                else if (key == 'radius') {
+                } else if (key == 'radius') {
                     input_element = '<input type="range" min="0.4" max="5" step="0.1">';
-                }
-                else if (key == 'size') {
+                } else if (key == 'size') {
                     input_element = '<input type="range" min="0.2" max="10" step="0.02">';
-                }
-                else if (key == 'width' || key == 'height') {
+                } else if (key == 'width' || key == 'height') {
                     input_element = '<input type="range" min="0.2" max="25" step="0.02">';
-                }
-                else if (key == 'fogDensity') {
+                } else if (key == 'fogDensity') {
                     input_element = '<input type="range" min="0" max="0.05" step="0.0001">';
-                }
-                else if (key == 'color' || key == 'fogColor' || key == 'clearColor') {
+                } else if (key == 'color' || key == 'fogColor' || key == 'clearColor') {
                     input_element = '<input type="color">';
-                }
-                else if (key == 'skyboxSize' || key == 'uri_level') {
+                } else if (key == 'skyboxSize' || key == 'uri_level') {
                     input_element = '<input type="number">';
-                }
-                else if (key == 'rotation' /* && (object.type!=='image' && object.onGround!=='image' )*/) {
+                } else if (key == 'rotation'/!* && (object.type!=='image' && object.onGround!=='image' )*!/) {
                     input_element = '<input type="range" min="0" max="360" step="10">';
-                }
-                else if (key == 'rotationSpeed') {
+                } else if (key == 'rotationSpeed') {
                     input_element = '<input type="number" min="-360" max="360" step="1">';
-                }
-                else if (typeof object[key] === "boolean") {
+                } else if (/!*['onGround','hasAlpha','isEmitting','checkCollisions','isFull'].indexOf(key)!==-1*!/typeof object[key] === "boolean") {
+
                     check_element = '<input type="checkbox">';
                 }
-            }
+            }*/
             if (input_element) {
                 $input_element = $(input_element);
                 //r($input_element,object[key]);

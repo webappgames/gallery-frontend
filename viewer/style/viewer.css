@@ -308,6 +308,7 @@ button:hover, .button:hover, input[type="submit"]:hover {
 }*/
 #scene {
   display: block;
+  z-index: 1500;
   position: fixed;
   top: 0px;
   left: 0px;

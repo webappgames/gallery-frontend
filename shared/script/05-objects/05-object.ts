@@ -34,6 +34,13 @@ namespace GALLERY.Objects{
             }
 
 
+            if(typeof this.id == 'string')
+            if(this.id.split('-',2)[0] !== this.type){
+                this.id = this.type+'-'+this.id;
+            }
+
+
+
 
             if("uri" in this){
                 if(this.uri=='/:'+this.id){

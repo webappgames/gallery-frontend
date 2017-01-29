@@ -151,10 +151,10 @@ if(isset($_GET['comments'])){
 
 
 
-<div class="bottomright" id="wasd" style="display: none;">
+<!--<div class="bottomright" id="wasd" style="display: none;">
    <table>
        <tr>
-           <td colspan="3"><p class="hint">Pohybujte se těmito klávesy<!--Move in gallery with theese keys--> <i class="fa fa-hand-o-down" aria-hidden="true"></i></p></td>
+           <td colspan="3"><p class="hint">Pohybujte se těmito klávesy <i class="fa fa-hand-o-down" aria-hidden="true"></i></p></td>
        </tr>
         <tr>
             <td></td>
@@ -172,7 +172,7 @@ if(isset($_GET['comments'])){
             <td><div class="key"><p>D</p></div></td>
         </tr>
     </table>
-</div>
+</div>-->
 
 
 
@@ -200,14 +200,9 @@ if(isset($_GET['comments'])){
 
 
 
-
-<section id="zones">
-</section>
-
-
-
-<section id="boards">
-</section>
+<section id="zones"></section>
+<section id="boards"></section>
+<section id="posters"></section>
 
 
 <!--<nav>

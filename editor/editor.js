@@ -2105,6 +2105,7 @@ var GALLERY;
             Poster.prototype.getEditorInputHtml = function (key) {
                 switch (key) {
                     case 'posterHtml': return ('<textarea></textarea>');
+                    case 'posterDesign': return ('<input type="text" />');
                     case 'voxelPixelRatio': return ('<input type="number" />');
                     default: return (_super.prototype.getEditorInputHtml.call(this, key));
                 }
@@ -2137,6 +2138,7 @@ var GALLERY;
                                     height: canvas.height
                                 }, scene, false);
                                 var image_texture_ctx = image_texture.getContext();
+                                //object._ctx = image_texture_ctx;
                                 image_texture_ctx.drawImage(canvas, 0, 0);
                                 image_texture.update();
                                 if (object.isEmitting) {

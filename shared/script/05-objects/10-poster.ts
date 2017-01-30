@@ -6,7 +6,7 @@ namespace GALLERY.Objects{
 
         public posterHtml:string;
         public posterDesign:string;
-
+        public voxelPixelRatio:number;
 
 
         constructor(object){
@@ -30,6 +30,7 @@ namespace GALLERY.Objects{
 
             switch(key) {
                 case 'posterHtml': return('<textarea></textarea>');
+                case 'posterDesign': return('<input type="text" />');
                 case 'voxelPixelRatio': return('<input type="number" />');
                 default:  return(super.getEditorInputHtml(key));
             }
@@ -47,7 +48,6 @@ namespace GALLERY.Objects{
             });
 
         }*/
-
 
 
 
@@ -93,6 +93,8 @@ namespace GALLERY.Objects{
                                 height: canvas.height
                             }, scene, false);
                             let image_texture_ctx = image_texture.getContext();
+                            //object._ctx = image_texture_ctx;
+
 
                             image_texture_ctx.drawImage(canvas, 0, 0);
                             image_texture.update();

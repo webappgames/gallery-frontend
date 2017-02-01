@@ -89,11 +89,11 @@ namespace GALLERY.Viewer {
     });
 
 
-    BABYLON.SceneOptimizer.OptimizeAsync(scene, BABYLON.SceneOptimizerOptions.HighDegradationAllowed() ,
+    /*BABYLON.SceneOptimizer.OptimizeAsync(scene, BABYLON.SceneOptimizerOptions.HighDegradationAllowed() ,
         function() {
         }, function() {
         });
-
+*/
 
 
 

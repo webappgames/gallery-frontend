@@ -201,11 +201,14 @@ namespace GALLERY.Objects{
 
                     offsetHorizontal: (button.offsetLeft-posterElement.offsetLeft-posterElement.offsetWidth/2) / this.voxelPixelRatio,
                     offsetVertical: (button.offsetTop-posterElement.offsetTop-posterElement.offsetHeight/2) / this.voxelPixelRatio,
+                    offsetFrontal: 0.2,
 
 
                     posterHtml: button.outerHTML,
                     posterDesign: 'none',
                     voxelPixelRatio: this.voxelPixelRatio,
+
+                    isSolid: true,
 
 
                 });

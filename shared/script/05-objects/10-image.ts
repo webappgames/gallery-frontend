@@ -15,6 +15,8 @@ namespace GALLERY.Objects{
         public height: number;
         public offsetVertical: number;
         public offsetHorizontal: number;
+        public offsetFrontal: number;
+
 
         public src: string;
 
@@ -24,6 +26,7 @@ namespace GALLERY.Objects{
         public isEmitting: boolean;
         public checkCollisions: boolean;
         public backFace: boolean;
+        public isSolid: boolean;
 
 
 
@@ -49,9 +52,11 @@ namespace GALLERY.Objects{
             if(typeof this.isEmitting == 'undefined'){this.isEmitting=true;}
             this.checkCollisions = this.checkCollisions || false;
             this.backFace = this.backFace || false;
+            this.isSolid = this.isSolid || false;
 
             this.offsetHorizontal = this.offsetHorizontal || 0;
             this.offsetVertical = this.offsetVertical || 0;
+            if(typeof this.offsetFrontal == 'undefined'){this.offsetFrontal=1/100;}
 
 
 
@@ -68,6 +73,15 @@ namespace GALLERY.Objects{
                     return('<input type="number">');
                 case 'height':
                     return('<input type="number">');
+
+                case 'offsetHorizontal':
+                    return('<input type="number">');
+                case 'offsetVertical':
+                    return('<input type="number">');
+                case 'offsetFrontal':
+                    return('<input type="number">');
+
+
 
                 case 'uri':
                     return('<input type="text">');
@@ -245,6 +259,10 @@ namespace GALLERY.Objects{
             let image = getImageMesh(object);
 
 
+            image.scaling.x = object.width;
+            image.scaling.y = object.height;
+
+
             if (object.onGround) {
 
 
@@ -264,8 +282,8 @@ namespace GALLERY.Objects{
 
 
 
-                position.x += Math.sin(rotation_rad) * BLOCK_SIZE / 100;
-                position.z += Math.cos(rotation_rad) * BLOCK_SIZE / 100;
+                position.x += Math.sin(rotation_rad) * BLOCK_SIZE * this.offsetFrontal;
+                position.z += Math.cos(rotation_rad) * BLOCK_SIZE * this.offsetFrontal;
                 image.position = position;
 
 
@@ -278,11 +296,68 @@ namespace GALLERY.Objects{
 
 
 
+
+
+                if(object.isSolid){
+                    let boxMesh = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
+
+
+
+                    let textureA=image.material;
+
+                    let textureB=new BABYLON.StandardMaterial("material1",scene);
+                    textureB.diffuseColor=new BABYLON.Color3(0.5,0.5,0.5);
+
+
+
+
+                    let multiTexture=new BABYLON.MultiMaterial("multimaterial",scene);
+                    multiTexture.subMaterials.push(textureB);
+                    multiTexture.subMaterials.push(textureA);
+                    multiTexture.subMaterials.push(textureB);
+                    multiTexture.subMaterials.push(textureB);
+                    multiTexture.subMaterials.push(textureB);
+                    multiTexture.subMaterials.push(textureB);
+
+
+
+                    boxMesh.subMeshes=[];
+                    let verticesCount=boxMesh.getTotalVertices();
+                    boxMesh.subMeshes.push(new BABYLON.SubMesh(0, 0, verticesCount, 0, 6,  boxMesh));
+                    boxMesh.subMeshes.push(new BABYLON.SubMesh(1, 1, verticesCount, 6, 6,  boxMesh));
+                    boxMesh.subMeshes.push(new BABYLON.SubMesh(2, 2, verticesCount, 12, 6, boxMesh));
+                    boxMesh.subMeshes.push(new BABYLON.SubMesh(3, 3, verticesCount, 18, 6, boxMesh));
+                    boxMesh.subMeshes.push(new BABYLON.SubMesh(4, 4, verticesCount, 24, 6, boxMesh));
+                    boxMesh.subMeshes.push(new BABYLON.SubMesh(5, 5, verticesCount, 30, 6, boxMesh));
+                    boxMesh.material=multiTexture;
+
+
+
+
+                    boxMesh.rotation = image.rotation;
+                    boxMesh.position = image.position.clone();
+                    boxMesh.scaling = image.scaling.clone();
+                    boxMesh.scaling.z = this.offsetFrontal;
+
+                    boxMesh.position.x += Math.sin(rotation_rad) * BLOCK_SIZE * this.offsetFrontal * -0.5;
+                    boxMesh.position.z += Math.cos(rotation_rad) * BLOCK_SIZE * this.offsetFrontal * -0.5;
+
+                    image.dispose();
+                    return(boxMesh);
+
+                }
+
+
+
+
+
+
+
+
             }
 
 
-            image.scaling.x = object.width;
-            image.scaling.y = object.height;
+
             //image.scaling.z = 0.1;
 
 

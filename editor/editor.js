@@ -1878,14 +1878,24 @@ var GALLERY;
                 }
                 this.checkCollisions = this.checkCollisions || false;
                 this.backFace = this.backFace || false;
+                this.isSolid = this.isSolid || false;
                 this.offsetHorizontal = this.offsetHorizontal || 0;
                 this.offsetVertical = this.offsetVertical || 0;
+                if (typeof this.offsetFrontal == 'undefined') {
+                    this.offsetFrontal = 1 / 100;
+                }
             }
             Image.prototype.getEditorInputHtml = function (key) {
                 switch (key) {
                     case 'width':
                         return ('<input type="number">');
                     case 'height':
+                        return ('<input type="number">');
+                    case 'offsetHorizontal':
+                        return ('<input type="number">');
+                    case 'offsetVertical':
+                        return ('<input type="number">');
+                    case 'offsetFrontal':
                         return ('<input type="number">');
                     case 'uri':
                         return ('<input type="text">');
@@ -1999,6 +2009,8 @@ var GALLERY;
                 } //todo remove
                 var rotation_rad = (object.rotation / 180) * Math.PI;
                 var image = getImageMesh(object);
+                image.scaling.x = object.width;
+                image.scaling.y = object.height;
                 if (object.onGround) {
                     image.position = position;
                     image.position.y = (this.getLevelNumber() + BLOCKS_1NP_LEVEL + 0.5) * BLOCK_SIZE + 0.1;
@@ -2009,16 +2021,44 @@ var GALLERY;
                     position.y -= this.offsetVertical * BLOCK_SIZE;
                     position.x -= this.offsetHorizontal * Math.cos(rotation_rad) * BLOCK_SIZE;
                     position.z -= this.offsetHorizontal * Math.sin(rotation_rad) * BLOCK_SIZE;
-                    position.x += Math.sin(rotation_rad) * BLOCK_SIZE / 100;
-                    position.z += Math.cos(rotation_rad) * BLOCK_SIZE / 100;
+                    position.x += Math.sin(rotation_rad) * BLOCK_SIZE * this.offsetFrontal;
+                    position.z += Math.cos(rotation_rad) * BLOCK_SIZE * this.offsetFrontal;
                     image.position = position;
                     //(level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE
                     //image.position.y = (/*level + BLOCKS_1NP_LEVEL +*/ EYE_VERTICAL) * BLOCK_SIZE ;
                     image.rotation.y = Math.PI + rotation_rad;
                     image.position.y += (EYE_VERTICAL - BLOCKS_1NP_LEVEL) * BLOCK_SIZE;
+                    if (object.isSolid) {
+                        var boxMesh = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
+                        var textureA = image.material;
+                        var textureB = new BABYLON.StandardMaterial("material1", scene);
+                        textureB.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5);
+                        var multiTexture = new BABYLON.MultiMaterial("multimaterial", scene);
+                        multiTexture.subMaterials.push(textureB);
+                        multiTexture.subMaterials.push(textureA);
+                        multiTexture.subMaterials.push(textureB);
+                        multiTexture.subMaterials.push(textureB);
+                        multiTexture.subMaterials.push(textureB);
+                        multiTexture.subMaterials.push(textureB);
+                        boxMesh.subMeshes = [];
+                        var verticesCount = boxMesh.getTotalVertices();
+                        boxMesh.subMeshes.push(new BABYLON.SubMesh(0, 0, verticesCount, 0, 6, boxMesh));
+                        boxMesh.subMeshes.push(new BABYLON.SubMesh(1, 1, verticesCount, 6, 6, boxMesh));
+                        boxMesh.subMeshes.push(new BABYLON.SubMesh(2, 2, verticesCount, 12, 6, boxMesh));
+                        boxMesh.subMeshes.push(new BABYLON.SubMesh(3, 3, verticesCount, 18, 6, boxMesh));
+                        boxMesh.subMeshes.push(new BABYLON.SubMesh(4, 4, verticesCount, 24, 6, boxMesh));
+                        boxMesh.subMeshes.push(new BABYLON.SubMesh(5, 5, verticesCount, 30, 6, boxMesh));
+                        boxMesh.material = multiTexture;
+                        boxMesh.rotation = image.rotation;
+                        boxMesh.position = image.position.clone();
+                        boxMesh.scaling = image.scaling.clone();
+                        boxMesh.scaling.z = this.offsetFrontal;
+                        boxMesh.position.x += Math.sin(rotation_rad) * BLOCK_SIZE * this.offsetFrontal * -0.5;
+                        boxMesh.position.z += Math.cos(rotation_rad) * BLOCK_SIZE * this.offsetFrontal * -0.5;
+                        image.dispose();
+                        return (boxMesh);
+                    }
                 }
-                image.scaling.x = object.width;
-                image.scaling.y = object.height;
                 //image.scaling.z = 0.1;
                 image.checkCollisions = object.checkCollisions;
                 return (image);
@@ -2218,9 +2258,11 @@ var GALLERY;
                         height: button.offsetHeight / this.voxelPixelRatio,
                         offsetHorizontal: (button.offsetLeft - posterElement.offsetLeft - posterElement.offsetWidth / 2) / this.voxelPixelRatio,
                         offsetVertical: (button.offsetTop - posterElement.offsetTop - posterElement.offsetHeight / 2) / this.voxelPixelRatio,
+                        offsetFrontal: 0.2,
                         posterHtml: button.outerHTML,
                         posterDesign: 'none',
                         voxelPixelRatio: this.voxelPixelRatio,
+                        isSolid: true,
                     });
                     buttonMesh.offsetHorizontal += buttonMesh.width / 2;
                     buttonMesh.offsetVertical += buttonMesh.height / 2;

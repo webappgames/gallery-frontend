@@ -13,6 +13,9 @@ namespace GALLERY.Objects{
         public parent:string;
         public width:number;
         public height: number;
+        public offsetVertical: number;
+        public offsetHorizontal: number;
+
         public src: string;
 
         public rotation: number;
@@ -46,6 +49,11 @@ namespace GALLERY.Objects{
             if(typeof this.isEmitting == 'undefined'){this.isEmitting=true;}
             this.checkCollisions = this.checkCollisions || false;
             this.backFace = this.backFace || false;
+
+            this.offsetHorizontal = this.offsetHorizontal || 0;
+            this.offsetVertical = this.offsetVertical || 0;
+
+
 
         }
 
@@ -250,6 +258,12 @@ namespace GALLERY.Objects{
 
             } else {
 
+                position.y -= this.offsetVertical * BLOCK_SIZE;
+                position.x -= this.offsetHorizontal * Math.cos(rotation_rad) * BLOCK_SIZE ;
+                position.z -= this.offsetHorizontal * Math.sin(rotation_rad) * BLOCK_SIZE ;
+
+
+
                 position.x += Math.sin(rotation_rad) * BLOCK_SIZE / 100;
                 position.z += Math.cos(rotation_rad) * BLOCK_SIZE / 100;
                 image.position = position;
@@ -261,6 +275,7 @@ namespace GALLERY.Objects{
 
                 image.rotation.y = Math.PI + rotation_rad;
                 image.position.y += (EYE_VERTICAL - BLOCKS_1NP_LEVEL) * BLOCK_SIZE;
+
 
 
             }
@@ -284,7 +299,7 @@ namespace GALLERY.Objects{
         }
 
 
-        createVirtualObjects(zoneIdsCreatedForImages){
+        createVirtualObjects(zoneIdsCreatedForImages):Objects.Array{
 
             let virtualObjects = new Objects.Array();
 

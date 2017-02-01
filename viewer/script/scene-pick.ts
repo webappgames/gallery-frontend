@@ -96,8 +96,13 @@ namespace GALLERY.Viewer {
                     vec2.y *= object.height * object.voxelPixelRatio;
 
 
-                    let ctx = pickResult.pickedMesh.material.emissiveTexture.getContext();
+                    /*let posterElement = object.getPosterElement();
+                    r(posterElement);
+                    let subElement = posterElement.elementFromPoint( vec2.x, vec2.y);
 
+                    r(subElement);*/
+
+                    let ctx = pickResult.pickedMesh.material.emissiveTexture.getContext();
 
                     ctx.beginPath();
                     ctx.arc(vec2.x, vec2.y, 10, 0, 2 * Math.PI);

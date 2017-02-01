@@ -340,24 +340,6 @@ namespace GALLERY.Viewer {
                 meshes.push(light);
 
 
-            } else if (object.type == 'image' || object.type == 'poster') {
-
-
-                let mesh = object.createBabylonMesh(scene,getImageMesh);
-                meshes.push(mesh);
-
-
-
-
-                let virtualObjects = object.createVirtualObjects(zoneIdsCreatedForImages);
-                virtualObjects.forEach(function (object) {
-                    processObject(object);
-                    objects.push(object);
-                });
-
-
-
-
             } else if (object.type == 'label') {
                 /*if(object.uri=='/'){
                  r(object);
@@ -546,6 +528,31 @@ namespace GALLERY.Viewer {
 
                 console.warn('Unknown object type "' + object.type + '", maybe version mismatch between editor and this viewer.');
             }
+
+
+
+
+
+            if('createBabylonMesh' in object) {
+
+                let mesh = object.createBabylonMesh(scene, getImageMesh);
+                meshes.push(mesh);
+            }
+
+
+
+            if('createVirtualObjects' in object){
+
+                let virtualObjects = object.createVirtualObjects(zoneIdsCreatedForImages);
+                virtualObjects.forEach(function (object) {
+                    processObject(object);
+                    objects.push(object);
+                });
+            }
+
+
+
+
 
 
         }

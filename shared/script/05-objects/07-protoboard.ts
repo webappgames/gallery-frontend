@@ -50,7 +50,7 @@ namespace GALLERY.Objects{
         }
 
 
-        private _createBoard(container:HTMLElement){
+        private _createBoard(container:HTMLElement):HTMLElement{
             //if (object.name || object.html) {
 
             let isNext = false;
@@ -173,7 +173,7 @@ namespace GALLERY.Objects{
         }
 
 
-        getBoard(container=null){
+        getBoard(container=null):HTMLElement{
 
             if("_board" in this){
             }else{

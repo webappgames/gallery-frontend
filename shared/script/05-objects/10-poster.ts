@@ -8,6 +8,7 @@ namespace GALLERY.Objects{
         public posterDesign:string;
         public voxelPixelRatio:number;
 
+        private _posterElement;
 
         constructor(object){
 
@@ -51,39 +52,55 @@ namespace GALLERY.Objects{
 
 
 
+        createPosterElement(container){
+            let posterElement = document.createElement('div');
+            posterElement.innerHTML = this.posterHtml;
+            posterElement.classList.add('zone-'+this.posterDesign);
+
+            //posterElement.style.border = '2px solid red';
+            //posterElement.style.backgroundColor = '#fff';
+
+
+
+            posterElement.style.width = this.width*this.voxelPixelRatio+'px';
+            posterElement.style.height = this.height*this.voxelPixelRatio+'px';
+            posterElement.style.overflow = 'hidden';
+
+
+            container.appendChild(posterElement);
+
+            return(posterElement);
+
+
+        }
+
+
+        getPosterElement(container=null):HTMLElement{
+
+            if("_posterElement" in this){
+            }else{
+                if(!container){
+                    container = document.getElementById('zones');
+                }
+                this._posterElement = this.createPosterElement(container);
+            }
+
+            return this._posterElement;
+
+        }
 
 
         createBabylonMesh(scene){
-
-
-
-
 
 
             super.createBabylonMesh(scene,function(object){
 
 
 
-
-                let posterElement = document.createElement('div');
-                posterElement.innerHTML = object.posterHtml;
-                posterElement.classList.add('zone-'+object.posterDesign);
-
-                //posterElement.style.border = '2px solid red';
-                //posterElement.style.backgroundColor = '#fff';
-
-
-
-                posterElement.style.width = object.width*object.voxelPixelRatio+'px';
-                posterElement.style.height = object.height*object.voxelPixelRatio+'px';
-                posterElement.style.overflow = 'hidden';
-
-
-                $('#posters').append(posterElement);
-
-
-
                 let redraw = function() {
+
+                    let posterElement = object.getPosterElement(document.getElementById('posters'));
+
                     html2canvas(posterElement, {
                         onrendered: function (canvas) {
 
@@ -153,10 +170,56 @@ namespace GALLERY.Objects{
         }
 
 
-        /*createVirtualObjects(){
+        createVirtualObjects():Objects.Array{
             let virtualObjects = new Objects.Array();
-            return virtualObjects;
-        }*/
+
+            let posterElement = this.getPosterElement(document.getElementById('posters'));
+
+            r(posterElement);
+            let buttons = posterElement.getElementsByTagName('button');
+
+
+            for(let button of buttons){
+
+
+                let buttonMesh = new Objects.Button({
+
+                    id: createGuid(),
+                    type: 'button',
+
+                    world: this.world,
+                    storey: this.storey,
+                    position: {
+                        x: this.position.x,
+                        y: this.position.y,
+                    },
+
+                    rotation: this.rotation,
+
+                    width: button.offsetWidth / this.voxelPixelRatio,
+                    height:  button.offsetHeight / this.voxelPixelRatio,
+
+                    offsetHorizontal: (button.offsetLeft-posterElement.offsetLeft-posterElement.offsetWidth/2) / this.voxelPixelRatio,
+                    offsetVertical: (button.offsetTop-posterElement.offsetTop-posterElement.offsetHeight/2) / this.voxelPixelRatio,
+
+
+                    posterHtml: button.outerHTML,
+                    posterDesign: 'none',
+                    voxelPixelRatio: this.voxelPixelRatio,
+
+
+                });
+
+                buttonMesh.offsetHorizontal += buttonMesh.width/2;
+                buttonMesh.offsetVertical += buttonMesh.height/2;
+
+                virtualObjects.push(buttonMesh);
+
+            }
+
+            return(virtualObjects);
+
+        }
 
 
 

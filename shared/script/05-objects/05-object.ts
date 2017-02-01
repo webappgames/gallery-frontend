@@ -19,6 +19,14 @@ namespace GALLERY.Objects{
         constructor(object){
 
 
+            if(typeof object !=='object'){
+                throw new Error('In GALLERY.Objects.Object constructor should be Object!');
+            }
+            if(!object){
+                throw new Error('In GALLERY.Objects.Object constructor should not be null!');
+            }
+
+
             object.world = object.world || 'main';
             object.storey = object.storey || '1NP';
 
@@ -96,6 +104,11 @@ namespace GALLERY.Objects{
             } else if (object.type == 'poster') {
 
                 object = new Poster(object);
+
+            } else if (object.type == 'button') {
+
+                object = new Button(object);
+
 
             } else if (object.type == 'tree') {
 

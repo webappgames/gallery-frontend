@@ -121,23 +121,28 @@ namespace GALLERY.Editor{
     export function previewHTML(){
 
 
-        var preview = window.open("../", "gallery-preview");
+
+        let gallery_domain: string;
+        let gallery_password: string;
 
 
 
 
-        var gallery_domain: string;
-        var gallery_password: string;
+        let analyticsObject = objects.filterTypes('analytics').findBy('analyticsType','gallery');
+        let deployObject = objects.filterTypes('deploy').findBy('deployType','ftp');
 
 
 
+        localStorage.setItem('preview-compiledObjects', JSON.stringify(compiled_objects.getAll()));
+        localStorage.setItem('preview-analyticsObject', JSON.stringify(analyticsObject));
+        localStorage.setItem('preview-deployObject', JSON.stringify(deployObject));
 
-        var analyticsObject = objects.filterTypes('analytics').findBy('analyticsType','gallery');
-        var deployObject = objects.filterTypes('deploy').findBy('deployType','ftp');
 
 
+        let previewWindow = window.open("../#preview", "gallery-preview");
 
-        let previewLoaded = setInterval(function () {
+
+        /*let previewLoaded = setInterval(function () {
 
             try{
 
@@ -152,7 +157,7 @@ namespace GALLERY.Editor{
             }
 
 
-        },500);
+        },500);*/
 
 
 

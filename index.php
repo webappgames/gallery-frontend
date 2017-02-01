@@ -229,9 +229,37 @@ if(isset($_GET['comments'])){
 
 <script src="/viewer/script/viewer.js"></script>
 <script>
-    $.get('/objects.compiled.json').done(function(response){
+    /*$.get('/objects.compiled.json').done(function(response){
         GALLERY.Viewer.run(new GALLERY.Objects.CompiledArray(response));
-    });
+    });*/
+
+    //alert(window.location.hash);
+    if(window.location.hash=='#preview'){
+
+
+
+        var compiled_objects = new GALLERY.Objects.CompiledArray(JSON.parse(localStorage.getItem('preview-compiledObjects')));
+
+
+
+
+        var analyticsObject = JSON.parse(localStorage.getItem('preview-analyticsObject'));
+        if(analyticsObject){
+            analyticsObject = new GALLERY.Objects.Analytics(analyticsObject);
+        }
+
+
+        var deployObject = JSON.parse(localStorage.getItem('preview-deployObject'));
+        if(deployObject){
+            deployObject = new GALLERY.Objects.Deploy(deployObject);
+        }
+
+
+        GALLERY.Viewer.run(compiled_objects, true, deployObject,analyticsObject);
+    }
+
+
+
 </script>
 
 

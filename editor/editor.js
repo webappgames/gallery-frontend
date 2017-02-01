@@ -1534,6 +1534,12 @@ var GALLERY;
             //todo storey
             //todo get parameters for editing
             function Object(object) {
+                if (typeof object !== 'object') {
+                    throw new Error('In GALLERY.Objects.Object constructor should be Object!');
+                }
+                if (!object) {
+                    throw new Error('In GALLERY.Objects.Object constructor should not be null!');
+                }
                 object.world = object.world || 'main';
                 object.storey = object.storey || '1NP';
                 for (var key in object) {
@@ -1583,6 +1589,9 @@ var GALLERY;
                 }
                 else if (object.type == 'poster') {
                     object = new Objects.Poster(object);
+                }
+                else if (object.type == 'button') {
+                    object = new Objects.Button(object);
                 }
                 else if (object.type == 'tree') {
                     object = new Objects.Tree(object);
@@ -1869,6 +1878,8 @@ var GALLERY;
                 }
                 this.checkCollisions = this.checkCollisions || false;
                 this.backFace = this.backFace || false;
+                this.offsetHorizontal = this.offsetHorizontal || 0;
+                this.offsetVertical = this.offsetVertical || 0;
             }
             Image.prototype.getEditorInputHtml = function (key) {
                 switch (key) {
@@ -1995,6 +2006,9 @@ var GALLERY;
                     image.rotation.y = Math.PI + rotation_rad;
                 }
                 else {
+                    position.y -= this.offsetVertical * BLOCK_SIZE;
+                    position.x -= this.offsetHorizontal * Math.cos(rotation_rad) * BLOCK_SIZE;
+                    position.z -= this.offsetHorizontal * Math.sin(rotation_rad) * BLOCK_SIZE;
                     position.x += Math.sin(rotation_rad) * BLOCK_SIZE / 100;
                     position.z += Math.cos(rotation_rad) * BLOCK_SIZE / 100;
                     image.position = position;
@@ -2119,18 +2133,34 @@ var GALLERY;
                 });
     
             }*/
+            Poster.prototype.createPosterElement = function (container) {
+                var posterElement = document.createElement('div');
+                posterElement.innerHTML = this.posterHtml;
+                posterElement.classList.add('zone-' + this.posterDesign);
+                //posterElement.style.border = '2px solid red';
+                //posterElement.style.backgroundColor = '#fff';
+                posterElement.style.width = this.width * this.voxelPixelRatio + 'px';
+                posterElement.style.height = this.height * this.voxelPixelRatio + 'px';
+                posterElement.style.overflow = 'hidden';
+                container.appendChild(posterElement);
+                return (posterElement);
+            };
+            Poster.prototype.getPosterElement = function (container) {
+                if (container === void 0) { container = null; }
+                if ("_posterElement" in this) {
+                }
+                else {
+                    if (!container) {
+                        container = document.getElementById('zones');
+                    }
+                    this._posterElement = this.createPosterElement(container);
+                }
+                return this._posterElement;
+            };
             Poster.prototype.createBabylonMesh = function (scene) {
                 _super.prototype.createBabylonMesh.call(this, scene, function (object) {
-                    var posterElement = document.createElement('div');
-                    posterElement.innerHTML = object.posterHtml;
-                    posterElement.classList.add('zone-' + object.posterDesign);
-                    //posterElement.style.border = '2px solid red';
-                    //posterElement.style.backgroundColor = '#fff';
-                    posterElement.style.width = object.width * object.voxelPixelRatio + 'px';
-                    posterElement.style.height = object.height * object.voxelPixelRatio + 'px';
-                    posterElement.style.overflow = 'hidden';
-                    $('#posters').append(posterElement);
                     var redraw = function () {
+                        var posterElement = object.getPosterElement(document.getElementById('posters'));
                         html2canvas(posterElement, {
                             onrendered: function (canvas) {
                                 var image_texture = new BABYLON.DynamicTexture('posterTexture', {
@@ -2167,9 +2197,218 @@ var GALLERY;
                     return (image00);
                 });
             };
+            Poster.prototype.createVirtualObjects = function () {
+                var virtualObjects = new Objects.Array();
+                var posterElement = this.getPosterElement(document.getElementById('posters'));
+                r(posterElement);
+                var buttons = posterElement.getElementsByTagName('button');
+                for (var _i = 0, buttons_1 = buttons; _i < buttons_1.length; _i++) {
+                    var button = buttons_1[_i];
+                    var buttonMesh = new Objects.Button({
+                        id: createGuid(),
+                        type: 'button',
+                        world: this.world,
+                        storey: this.storey,
+                        position: {
+                            x: this.position.x,
+                            y: this.position.y,
+                        },
+                        rotation: this.rotation,
+                        width: button.offsetWidth / this.voxelPixelRatio,
+                        height: button.offsetHeight / this.voxelPixelRatio,
+                        offsetHorizontal: (button.offsetLeft - posterElement.offsetLeft - posterElement.offsetWidth / 2) / this.voxelPixelRatio,
+                        offsetVertical: (button.offsetTop - posterElement.offsetTop - posterElement.offsetHeight / 2) / this.voxelPixelRatio,
+                        posterHtml: button.outerHTML,
+                        posterDesign: 'none',
+                        voxelPixelRatio: this.voxelPixelRatio,
+                    });
+                    buttonMesh.offsetHorizontal += buttonMesh.width / 2;
+                    buttonMesh.offsetVertical += buttonMesh.height / 2;
+                    virtualObjects.push(buttonMesh);
+                }
+                return (virtualObjects);
+            };
             return Poster;
         }(Objects.Image));
         Objects.Poster = Poster;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="05-object" />
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        //import analyticsObject = GALLERY.Viewer.analyticsObject;
+        //import appState = GALLERY.Viewer.appState;
+        var ProtoBoard = (function (_super) {
+            __extends(ProtoBoard, _super);
+            function ProtoBoard(object) {
+                _super.call(this, object);
+                this.design = this.design || 'board';
+                this.name = this.name || '';
+                this.html = this.html || '';
+                this.buttons = this.buttons || '';
+            }
+            ProtoBoard.prototype.getEditorInputHtml = function (key) {
+                switch (key) {
+                    case 'design':
+                        return ('<input type="text">');
+                    case 'name':
+                        return ('<input type="text">');
+                    case 'html':
+                        return ('<textarea></textarea>');
+                    case 'buttons':
+                        return ('<textarea></textarea>');
+                    default:
+                        return (_super.prototype.getEditorInputHtml.call(this, key));
+                }
+            };
+            ProtoBoard.prototype._createBoard = function (container) {
+                //if (object.name || object.html) {
+                var isNext = false;
+                var label = objects.filterTypes('label').findBy('uri', this.uri);
+                if (label) {
+                    if (label.next !== 'none') {
+                        isNext = true;
+                    }
+                }
+                var element = document.createElement('div');
+                element.id = 'zone-' + this.id;
+                element.classList.add('zone-' + this.design);
+                element.style.display = 'none';
+                var html = this.html;
+                html = Mustache.render(html, { gallery: function () {
+                        return function (val, render) {
+                            var images = objects.filterTypes('image');
+                            var conds = JSON.parse(val);
+                            for (var key in conds) {
+                                images = images.filterBy(key, conds[key]);
+                            }
+                            var html = '';
+                            images.forEach(function (image) {
+                                html += '<img src="' + image.getSrc(90, 1) + '" onclick="GALLERY.Viewer.appState(\'/:' + image.id + '\', false, false);" />';
+                            });
+                            html = '<div class="gallery">' + html + '</div>';
+                            return html;
+                        };
+                    } });
+                element.innerHTML = ''
+                    + (this.name ? '<h1>' + this.name + '</h1>' : '')
+                    + '<div class="text">' + html + '</div>'
+                    + (this.buttons ? '<div class="buttons">' + this.buttons + '</div>' : '')
+                    + (isNext ? '<div class="next" onclick="GALLERY.Viewer.appStateNext();"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
+                var fullUrl = 'http://' + window.location.hostname + '/' + this.getUri(); //+analyticsObject.domain;
+                //let fullUrl = 'http://'+analyticsObject.domain+this.getUri();
+                r(fullUrl);
+                if (this.design == 'board' && !isNext) {
+                    //element.innerHTML += `<button class="fb-share-button" data-href="http://www.your-domain.com/your-page.html"></button>`;
+                    element.innerHTML += "<button onclick=\"GALLERY.Viewer.goToParent();\"><i class=\"fa fa-arrow-left\" aria-hidden=\"true\"></i> Zp\u011Bt</button>";
+                    element.innerHTML += "<button onclick=\"GALLERY.Viewer.appStateTurnBack();\"><i class=\"fa fa-repeat\" aria-hidden=\"true\"></i> Oto\u010Dit se</button>";
+                    element.innerHTML += "<button class=\"discuss\" onclick=\"fbDiscuss('" + fullUrl + "');\"><i class=\"fa fa-pencil\" aria-hidden=\"true\"></i> P\u0159idat koment\u00E1\u0159</button>";
+                    $.ajax({
+                        url: 'http://graph.facebook.com/v2.1/' + encodeURIComponent(fullUrl),
+                        dataType: 'jsonp',
+                        success: function (data) {
+                            data.share = data.share || {};
+                            var count = data.share.comment_count || 0;
+                            r(data, count);
+                            var text = '<i class="fa fa-pencil" aria-hidden="true"></i> ';
+                            if (count == 0) {
+                                text += 'Přidat komentář';
+                            }
+                            else if (count == 1) {
+                                text += '1 komentář';
+                            }
+                            else if (count < 5) {
+                                text += count + ' komentáře';
+                            }
+                            else if (count >= 5) {
+                                text += count + ' komentářů';
+                            }
+                            element.getElementsByClassName('discuss')[0].innerHTML = text;
+                            //alert("comments: " + data.comments);
+                        }
+                    });
+                }
+                container.appendChild(element);
+                $(element).find('a').click(function (e) {
+                    e.preventDefault();
+                    Viewer.appState($(this).attr('href'), false, false);
+                });
+                return (element);
+                //}
+            };
+            ProtoBoard.prototype.getBoard = function (container) {
+                if (container === void 0) { container = null; }
+                if ("_board" in this) {
+                }
+                else {
+                    if (!container) {
+                        container = document.getElementById('zones');
+                    }
+                    this._board = this._createBoard(container);
+                }
+                return this._board;
+            };
+            ProtoBoard.prototype.showBoard = function () {
+                //this.getBoard().style.display = 'block';
+                $(this.getBoard()).stop().slideDown();
+            };
+            ProtoBoard.prototype.hideBoard = function () {
+                //this.getBoard().style.display = 'none';
+                $(this.getBoard()).stop().slideUp();
+            };
+            return ProtoBoard;
+        }(Objects.Object));
+        Objects.ProtoBoard = ProtoBoard;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="07-protoboard" />
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        var Board = (function (_super) {
+            __extends(Board, _super);
+            function Board(object) {
+                _super.call(this, object);
+                this.isPerspective = this.isPerspective || false;
+            }
+            Board.prototype.getEditorInputHtml = function (key) {
+                switch (key) {
+                    case 'isPerspective':
+                        return ('<input type="checkbox">');
+                    default:
+                        return (_super.prototype.getEditorInputHtml.call(this, key));
+                }
+            };
+            Board.prototype.create$Element = function () {
+                var $element = this._create$Element();
+                var object = this;
+                $element.html('<i class="fa fa-file-text-o" aria-hidden="true"></i>');
+                return $element;
+            };
+            return Board;
+        }(Objects.ProtoBoard));
+        Objects.Board = Board;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="10-board" />
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        var Button = (function (_super) {
+            __extends(Button, _super);
+            function Button(object) {
+                _super.call(this, object);
+            }
+            Button.prototype.createVirtualObjects = function () {
+                return (new Objects.Array());
+            };
+            return Button;
+        }(Objects.Poster));
+        Objects.Button = Button;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
 /// <reference path="../../reference.ts" />
@@ -2510,136 +2749,6 @@ var GALLERY;
         Objects.Analytics = Analytics;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="05-object" />
-var GALLERY;
-(function (GALLERY) {
-    var Objects;
-    (function (Objects) {
-        //import analyticsObject = GALLERY.Viewer.analyticsObject;
-        //import appState = GALLERY.Viewer.appState;
-        var ProtoBoard = (function (_super) {
-            __extends(ProtoBoard, _super);
-            function ProtoBoard(object) {
-                _super.call(this, object);
-                this.design = this.design || 'board';
-                this.name = this.name || '';
-                this.html = this.html || '';
-                this.buttons = this.buttons || '';
-            }
-            ProtoBoard.prototype.getEditorInputHtml = function (key) {
-                switch (key) {
-                    case 'design':
-                        return ('<input type="text">');
-                    case 'name':
-                        return ('<input type="text">');
-                    case 'html':
-                        return ('<textarea></textarea>');
-                    case 'buttons':
-                        return ('<textarea></textarea>');
-                    default:
-                        return (_super.prototype.getEditorInputHtml.call(this, key));
-                }
-            };
-            ProtoBoard.prototype._createBoard = function (container) {
-                //if (object.name || object.html) {
-                var isNext = false;
-                var label = objects.filterTypes('label').findBy('uri', this.uri);
-                if (label) {
-                    if (label.next !== 'none') {
-                        isNext = true;
-                    }
-                }
-                var element = document.createElement('div');
-                element.id = 'zone-' + this.id;
-                element.classList.add('zone-' + this.design);
-                element.style.display = 'none';
-                var html = this.html;
-                html = Mustache.render(html, { gallery: function () {
-                        return function (val, render) {
-                            var images = objects.filterTypes('image');
-                            var conds = JSON.parse(val);
-                            for (var key in conds) {
-                                images = images.filterBy(key, conds[key]);
-                            }
-                            var html = '';
-                            images.forEach(function (image) {
-                                html += '<img src="' + image.getSrc(90, 1) + '" onclick="GALLERY.Viewer.appState(\'/:' + image.id + '\', false, false);" />';
-                            });
-                            html = '<div class="gallery">' + html + '</div>';
-                            return html;
-                        };
-                    } });
-                element.innerHTML = ''
-                    + (this.name ? '<h1>' + this.name + '</h1>' : '')
-                    + '<div class="text">' + html + '</div>'
-                    + (this.buttons ? '<div class="buttons">' + this.buttons + '</div>' : '')
-                    + (isNext ? '<div class="next" onclick="GALLERY.Viewer.appStateNext();"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
-                var fullUrl = 'http://' + window.location.hostname + '/' + this.getUri(); //+analyticsObject.domain;
-                //let fullUrl = 'http://'+analyticsObject.domain+this.getUri();
-                r(fullUrl);
-                if (this.design == 'board' && !isNext) {
-                    //element.innerHTML += `<button class="fb-share-button" data-href="http://www.your-domain.com/your-page.html"></button>`;
-                    element.innerHTML += "<button onclick=\"GALLERY.Viewer.goToParent();\"><i class=\"fa fa-arrow-left\" aria-hidden=\"true\"></i> Zp\u011Bt</button>";
-                    element.innerHTML += "<button onclick=\"GALLERY.Viewer.appStateTurnBack();\"><i class=\"fa fa-repeat\" aria-hidden=\"true\"></i> Oto\u010Dit se</button>";
-                    element.innerHTML += "<button class=\"discuss\" onclick=\"fbDiscuss('" + fullUrl + "');\"><i class=\"fa fa-pencil\" aria-hidden=\"true\"></i> P\u0159idat koment\u00E1\u0159</button>";
-                    $.ajax({
-                        url: 'http://graph.facebook.com/v2.1/' + encodeURIComponent(fullUrl),
-                        dataType: 'jsonp',
-                        success: function (data) {
-                            data.share = data.share || {};
-                            var count = data.share.comment_count || 0;
-                            r(data, count);
-                            var text = '<i class="fa fa-pencil" aria-hidden="true"></i> ';
-                            if (count == 0) {
-                                text += 'Přidat komentář';
-                            }
-                            else if (count == 1) {
-                                text += '1 komentář';
-                            }
-                            else if (count < 5) {
-                                text += count + ' komentáře';
-                            }
-                            else if (count >= 5) {
-                                text += count + ' komentářů';
-                            }
-                            element.getElementsByClassName('discuss')[0].innerHTML = text;
-                            //alert("comments: " + data.comments);
-                        }
-                    });
-                }
-                container.appendChild(element);
-                $(element).find('a').click(function (e) {
-                    e.preventDefault();
-                    Viewer.appState($(this).attr('href'), false, false);
-                });
-                return (element);
-                //}
-            };
-            ProtoBoard.prototype.getBoard = function (container) {
-                if (container === void 0) { container = null; }
-                if ("_board" in this) {
-                }
-                else {
-                    if (!container) {
-                        container = document.getElementById('zones');
-                    }
-                    this._board = this._createBoard(container);
-                }
-                return this._board;
-            };
-            ProtoBoard.prototype.showBoard = function () {
-                //this.getBoard().style.display = 'block';
-                $(this.getBoard()).stop().slideDown();
-            };
-            ProtoBoard.prototype.hideBoard = function () {
-                //this.getBoard().style.display = 'none';
-                $(this.getBoard()).stop().slideUp();
-            };
-            return ProtoBoard;
-        }(Objects.Object));
-        Objects.ProtoBoard = ProtoBoard;
-    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
-})(GALLERY || (GALLERY = {}));
 /// <reference path="07-protoboard" />
 var GALLERY;
 (function (GALLERY) {
@@ -2798,36 +2907,6 @@ var GALLERY;
         Objects.GroundHole = GroundHole;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
-/// <reference path="07-protoboard" />
-var GALLERY;
-(function (GALLERY) {
-    var Objects;
-    (function (Objects) {
-        var Board = (function (_super) {
-            __extends(Board, _super);
-            function Board(object) {
-                _super.call(this, object);
-                this.isPerspective = this.isPerspective || false;
-            }
-            Board.prototype.getEditorInputHtml = function (key) {
-                switch (key) {
-                    case 'isPerspective':
-                        return ('<input type="checkbox">');
-                    default:
-                        return (_super.prototype.getEditorInputHtml.call(this, key));
-                }
-            };
-            Board.prototype.create$Element = function () {
-                var $element = this._create$Element();
-                var object = this;
-                $element.html('<i class="fa fa-file-text-o" aria-hidden="true"></i>');
-                return $element;
-            };
-            return Board;
-        }(Objects.ProtoBoard));
-        Objects.Board = Board;
-    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
-})(GALLERY || (GALLERY = {}));
 var STATSERVER_URL = 'http://webappgames.com:48567';
 var OBJECT_TYPES = ['zone', 'groundhole', 'stairs', 'poster', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'analytics', 'board'];
 var DOT_OBJECTS = ['zone', 'groundhole', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'analytics', 'board'];
@@ -2966,6 +3045,7 @@ var PH;
 /// <reference path="script/05-objects/10-multiblock.ts" />
 /// <reference path="script/05-objects/10-image.ts" />
 /// <reference path="script/05-objects/10-poster.ts" />
+/// <reference path="script/05-objects/10-button.ts" />
 /// <reference path="script/05-objects/10-label.ts" />
 /// <reference path="script/05-objects/10-light.ts" />
 /// <reference path="script/05-objects/10-stairs.ts" />
@@ -3971,22 +4051,30 @@ var GALLERY;
         }
         Editor.compile = compile;
         function previewHTML() {
-            var preview = window.open("../", "gallery-preview");
             var gallery_domain;
             var gallery_password;
             var analyticsObject = objects.filterTypes('analytics').findBy('analyticsType', 'gallery');
             var deployObject = objects.filterTypes('deploy').findBy('deployType', 'ftp');
-            var previewLoaded = setInterval(function () {
-                try {
-                    var compiled_objects_ = new preview.GALLERY.Objects.Array(JSON.parse(JSON.stringify(compiled_objects.getAll())));
-                    preview.GALLERY.Viewer.run.call(preview, compiled_objects_, true, deployObject, analyticsObject);
+            localStorage.setItem('preview-compiledObjects', JSON.stringify(compiled_objects.getAll()));
+            localStorage.setItem('preview-analyticsObject', JSON.stringify(analyticsObject));
+            localStorage.setItem('preview-deployObject', JSON.stringify(deployObject));
+            var previewWindow = window.open("../#preview", "gallery-preview");
+            /*let previewLoaded = setInterval(function () {
+    
+                try{
+    
+                    let compiled_objects_ = new preview.GALLERY.Objects.Array(JSON.parse(JSON.stringify(compiled_objects.getAll())));
+                    preview.GALLERY.Viewer.run.call(preview,compiled_objects_,true,deployObject,analyticsObject);
                     clearInterval(previewLoaded);
-                }
-                catch (e) {
+    
+                }catch(e){
+    
                     r('Not yet loaded!');
                     r(e);
                 }
-            }, 500);
+    
+    
+            },500);*/
             /*var theWindow = window.open("../viewer", "gallery-preview"),
                 theDoc = theWindow.document,
                 theScript = document.createElement('script');

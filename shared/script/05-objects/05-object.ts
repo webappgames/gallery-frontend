@@ -13,6 +13,9 @@ namespace GALLERY.Objects{
           y: number
         };
 
+        private _babylonMesh:BABYLON.Mesh;
+
+
         //todo storey
         //todo get parameters for editing
 
@@ -69,6 +72,28 @@ namespace GALLERY.Objects{
             }
 
         }
+
+        getBabylonMesh(scene:BABYLON.Scene):BABYLON.Mesh {
+
+            if ("_babylonMesh" in this) {
+            } else {
+
+                this._babylonMesh = this.createBabylonMesh(scene);
+            }
+
+            return this._babylonMesh;
+
+        }
+
+
+        createBabylonMesh(scene:BABYLON.Scene):BABYLON.Mesh{
+            return(null);
+        }
+
+        createVirtualObjects():Objects.Array{
+            return(null);
+        }
+
 
 
         static init(object) {

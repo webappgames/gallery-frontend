@@ -1605,6 +1605,20 @@ var GALLERY;
                     default: return ('');
                 }
             };
+            Object.prototype.getBabylonMesh = function (scene) {
+                if ("_babylonMesh" in this) {
+                }
+                else {
+                    this._babylonMesh = this.createBabylonMesh(scene);
+                }
+                return this._babylonMesh;
+            };
+            Object.prototype.createBabylonMesh = function (scene) {
+                return (null);
+            };
+            Object.prototype.createVirtualObjects = function () {
+                return (null);
+            };
             Object.init = function (object) {
                 if (object instanceof Object) {
                     return (object);
@@ -2042,14 +2056,39 @@ var GALLERY;
             Image.prototype.getTexture = function () {
                 return (this.src);
             };
-            Image.prototype.createBabylonMesh = function (scene, getImageMesh) {
+            Image.prototype.createImageMesh = function (scene) {
+                var quality;
+                if (window.innerWidth > 1024) {
+                    quality = 1024;
+                }
+                else if (window.innerWidth > 512) {
+                    quality = 512;
+                }
+                else {
+                    quality = 256;
+                }
+                var distance = 5;
+                var image00 = BABYLON.Mesh.CreatePlane(this.id, BLOCK_SIZE, scene);
+                image00.material = GALLERY.Viewer.getImageMaterial(this.src, quality, this.isEmitting, this.hasAlpha, this.backFace);
+                var lods = 5;
+                var mesh;
+                for (var lod = 0; lod < lods; lod++) {
+                    quality = quality / 2;
+                    distance = distance * 2;
+                    mesh = BABYLON.Mesh.CreatePlane(this.id, BLOCK_SIZE, scene);
+                    mesh.material = GALLERY.Viewer.getImageMaterial(this.src, quality, this.isEmitting, this.hasAlpha, this.backFace);
+                    image00.addLODLevel(distance, mesh);
+                }
+                return image00;
+            };
+            Image.prototype.createBabylonMesh = function (scene) {
                 var object = this;
                 var position = this.getBabylonPosition();
                 if (typeof this.rotation !== 'number') {
                     this.rotation = 0;
                 } //todo remove
                 var rotation_rad = (object.rotation / 180) * Math.PI;
-                var image = getImageMesh(object);
+                var image = this.createImageMesh(scene);
                 image.scaling.x = object.width;
                 image.scaling.y = object.height;
                 if (object.onGround) {
@@ -2106,7 +2145,9 @@ var GALLERY;
                 //r(object);
                 //r(image);
             };
-            Image.prototype.createVirtualObjects = function (zoneIdsCreatedForImages) {
+            Image.prototype.reshape = function () {
+            };
+            Image.prototype.createVirtualObjects = function () {
                 var virtualObjects = new Objects.Array();
                 var object = this;
                 var position = this.getBabylonPosition();
@@ -2116,62 +2157,58 @@ var GALLERY;
                 var rotation_rad = (object.rotation / 180) * Math.PI; //todo method
                 if (typeof object.rotation === 'number') {
                     if (!object.onGround) {
-                        if ((zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
-                            r('Creating zone for ' + object.name);
-                            zoneIdsCreatedForImages.push(object.id);
-                            var uri = void 0;
-                            if (object.uri && object.uri != 'none') {
-                                uri = object.uri;
-                            }
-                            else if (object.name) {
-                                uri = '/' + createUriFromName(object.name);
-                                object.uri = uri;
-                            }
-                            else {
-                                //uri = '/' + (object.id.split('-')[0]);
-                                uri = '/:' + object.id;
-                            }
-                            object.zoneCreated = true;
-                            var size = Math.max(object.width, object.height);
-                            var x = Math.sin(rotation_rad) * size / -2;
-                            var y = Math.cos(rotation_rad) * size / 2;
-                            var zone = new Objects.Zone({
-                                id: createGuid(),
-                                type: 'zone',
-                                world: object.world,
-                                storey: object.storey,
-                                position: {
-                                    x: object.position.x + x,
-                                    y: object.position.y + y,
-                                },
-                                limit: true,
-                                limitRotation: object.rotation + 180,
-                                limitRotationTolerance: 90,
-                                width: object.width * Math.cos(rotation_rad) + size * Math.sin(rotation_rad),
-                                height: object.width * Math.sin(rotation_rad) + size * Math.cos(rotation_rad),
-                                design: object.design,
-                                name: object.name,
-                                html: object.html,
-                                uri: uri,
-                                uri_level: 10000,
-                            });
-                            virtualObjects.push(zone);
-                            var label = new Objects.Label({
-                                id: createGuid(),
-                                type: 'label',
-                                world: object.world,
-                                storey: object.storey,
-                                position: {
-                                    x: object.position.x + (x * 1.9),
-                                    y: object.position.y + (y * 1.9),
-                                },
-                                rotation: object.rotation,
-                                name: object.name,
-                                uri: uri,
-                                parent: object.parent,
-                            });
-                            virtualObjects.push(zone);
+                        r('Creating zone for ' + object.name);
+                        var uri = void 0;
+                        if (object.uri && object.uri != 'none') {
+                            uri = object.uri;
                         }
+                        else if (object.name) {
+                            uri = '/' + createUriFromName(object.name);
+                            object.uri = uri;
+                        }
+                        else {
+                            //uri = '/' + (object.id.split('-')[0]);
+                            uri = '/:' + object.id;
+                        }
+                        var size = Math.max(object.width, object.height);
+                        var x = Math.sin(rotation_rad) * size / -2;
+                        var y = Math.cos(rotation_rad) * size / 2;
+                        var zone = new Objects.Zone({
+                            id: createGuid(),
+                            type: 'zone',
+                            world: object.world,
+                            storey: object.storey,
+                            position: {
+                                x: object.position.x + x,
+                                y: object.position.y + y,
+                            },
+                            limit: true,
+                            limitRotation: object.rotation + 180,
+                            limitRotationTolerance: 90,
+                            width: object.width * Math.cos(rotation_rad) + size * Math.sin(rotation_rad),
+                            height: object.width * Math.sin(rotation_rad) + size * Math.cos(rotation_rad),
+                            design: object.design,
+                            name: object.name,
+                            html: object.html,
+                            uri: uri,
+                            uri_level: 10000,
+                        });
+                        virtualObjects.push(zone);
+                        var label = new Objects.Label({
+                            id: createGuid(),
+                            type: 'label',
+                            world: object.world,
+                            storey: object.storey,
+                            position: {
+                                x: object.position.x + (x * 1.9),
+                                y: object.position.y + (y * 1.9),
+                            },
+                            rotation: object.rotation,
+                            name: object.name,
+                            uri: uri,
+                            parent: object.parent,
+                        });
+                        virtualObjects.push(zone);
                     }
                     return (virtualObjects);
                 }
@@ -2192,7 +2229,7 @@ var GALLERY;
                 _super.call(this, object);
                 this.posterHtml = this.posterHtml || '';
                 this.posterDesign = this.posterDesign || 'board';
-                this.src = this.src || 'http://cdn.pavolhejny.com/?file=5888cb789f36f-M2Q5OGMxNTk1N2M1ZjVkZDIyN2U1M2RiYzdjYmI2MGQuanBn';
+                this.src = this.src || 'http://cdn.pavolhejny.com/?file=5888cb789f36f-M2Q5OGMxNTk1N2M1ZjVkZDIyN2U1M2RiYzdjYmI2MGQuanBn'; //todo remove
                 this.width = this.width || 1;
                 this.height = this.height || 1;
                 this.voxelPixelRatio = this.voxelPixelRatio || 10;
@@ -2238,45 +2275,44 @@ var GALLERY;
                 }
                 return this._posterElement;
             };
-            Poster.prototype.createBabylonMesh = function (scene) {
-                _super.prototype.createBabylonMesh.call(this, scene, function (object) {
-                    var redraw = function () {
-                        var posterElement = object.getPosterElement(document.getElementById('posters'));
-                        html2canvas(posterElement, {
-                            onrendered: function (canvas) {
-                                var image_texture = new BABYLON.DynamicTexture('posterTexture', {
-                                    width: canvas.width,
-                                    height: canvas.height
-                                }, scene, false);
-                                var image_texture_ctx = image_texture.getContext();
-                                //object._ctx = image_texture_ctx;
-                                image_texture_ctx.drawImage(canvas, 0, 0);
-                                image_texture.update();
-                                if (object.isEmitting) {
-                                    material.emissiveTexture = image_texture;
-                                    material.backFaceCulling = !(object.backFace);
-                                    material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
-                                    material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
-                                    material.specularPower = 32;
-                                    //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
-                                    material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
-                                    material.diffuseColor = new BABYLON.Color3(0, 0, 0);
-                                }
-                                else {
-                                    material.diffuseTexture = image_texture;
-                                }
-                                GALLERY.Viewer.renderTick();
-                            }
-                        });
-                    };
-                    //posterElement.onmousemove = redraw;
-                    redraw();
-                    var material = new BABYLON.StandardMaterial("texture4", scene);
-                    //material.freeze();
-                    var image00 = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
-                    image00.material = material;
-                    return (image00);
+            Poster.prototype.createImageMesh = function (scene) {
+                var object = this; //todo
+                var posterElement = object.getPosterElement(document.getElementById('posters'));
+                html2canvas(posterElement, {
+                    onrendered: function (canvas) {
+                        var image_texture = new BABYLON.DynamicTexture('posterTexture', {
+                            width: canvas.width,
+                            height: canvas.height
+                        }, scene, false);
+                        var image_texture_ctx = image_texture.getContext();
+                        //object._ctx = image_texture_ctx;
+                        image_texture_ctx.drawImage(canvas, 0, 0);
+                        image_texture.update();
+                        if (object.isEmitting) {
+                            material.emissiveTexture = image_texture;
+                            material.backFaceCulling = !(object.backFace);
+                            material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
+                            material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
+                            material.specularPower = 32;
+                            //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
+                            material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
+                            material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+                        }
+                        else {
+                            material.diffuseTexture = image_texture;
+                        }
+                        GALLERY.Viewer.renderTick();
+                    }
                 });
+                var redraw = function () {
+                };
+                //posterElement.onmousemove = redraw;
+                redraw();
+                var material = new BABYLON.StandardMaterial("texture4", scene);
+                //material.freeze();
+                var image00 = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
+                image00.material = material;
+                return (image00);
             };
             Poster.prototype.createVirtualObjects = function () {
                 var virtualObjects = new Objects.Array();
@@ -2487,7 +2523,10 @@ var GALLERY;
                 _super.call(this, object);
             }
             Button.prototype.createVirtualObjects = function () {
-                return (new Objects.Array());
+                return (null);
+            };
+            Button.prototype.handleEventPress = function () {
+                this.reshape();
             };
             return Button;
         }(Objects.Poster));
@@ -4991,12 +5030,12 @@ var GALLERY;
                 else {
                     console.warn('Unknown object type "' + object.type + '", maybe version mismatch between editor and this viewer.');
                 }
-                if ('createBabylonMesh' in object) {
-                    var mesh = object.createBabylonMesh(Viewer.scene, Viewer.getImageMesh);
+                var mesh = object.getBabylonMesh(Viewer.scene);
+                if (mesh) {
                     Viewer.meshes.push(mesh);
                 }
-                if ('createVirtualObjects' in object) {
-                    var virtualObjects = object.createVirtualObjects(zoneIdsCreatedForImages);
+                var virtualObjects = object.createVirtualObjects();
+                if (virtualObjects) {
                     virtualObjects.forEach(function (object) {
                         processObject(object);
                         objects.push(object);
@@ -6980,37 +7019,61 @@ var GALLERY;
         Viewer.getImageMaterial = getImageMaterial;
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
 })(GALLERY || (GALLERY = {}));
-var GALLERY;
-(function (GALLERY) {
-    var Viewer;
-    (function (Viewer) {
-        function getImageMesh(object) {
-            if (window.innerWidth > 1024) {
-                var quality = 1024;
-            }
-            else if (window.innerWidth > 512) {
-                var quality = 512;
-            }
-            else {
-                var quality = 256;
-            }
-            var distance = 5;
-            var image00 = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, Viewer.scene);
-            image00.material = Viewer.getImageMaterial(object.src, quality, object.isEmitting, object.hasAlpha, object.backFace);
-            var lods = 5;
-            var mesh;
-            for (var lod = 0; lod < lods; lod++) {
-                quality = quality / 2;
-                distance = distance * 2;
-                var mesh_1 = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, Viewer.scene);
-                mesh_1.material = Viewer.getImageMaterial(object.src, quality, object.isEmitting, object.hasAlpha, object.backFace);
-                image00.addLODLevel(distance, mesh_1);
-            }
-            return image00;
+/*
+todo delete file
+
+namespace GALLERY.Viewer {
+
+
+    export function getImageMesh(object){
+
+
+        if(window.innerWidth>1024){
+            let quality = 1024;
+        }else
+        if(window.innerWidth>512){
+            let quality = 512;
+        }else{
+            let quality = 256;
         }
-        Viewer.getImageMesh = getImageMesh;
-    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
-})(GALLERY || (GALLERY = {}));
+
+        let distance = 5;
+
+        let image00 = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
+        image00.material = getImageMaterial(object.src, quality, object.isEmitting, object.hasAlpha, object.backFace);
+
+
+
+        const lods = 5;
+        let mesh;
+
+        for(let lod=0;lod<lods;lod++){
+
+            quality = quality/2;
+            distance = distance*2;
+
+            let mesh = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
+            mesh.material = getImageMaterial(object.src, quality, object.isEmitting, object.hasAlpha, object.backFace);
+            image00.addLODLevel(distance,  mesh);
+
+
+        }
+
+
+
+
+
+        return image00;
+
+    }
+
+
+
+
+
+}
+
+*/ 
 var GALLERY;
 (function (GALLERY) {
     var Viewer;

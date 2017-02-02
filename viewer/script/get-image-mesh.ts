@@ -1,5 +1,6 @@
 
-
+/*
+todo delete file
 
 namespace GALLERY.Viewer {
 
@@ -52,3 +53,4 @@ namespace GALLERY.Viewer {
 
 }
 
+*/

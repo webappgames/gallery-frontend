@@ -241,10 +241,50 @@ namespace GALLERY.Objects{
 
 
 
+        createImageMesh(scene:BABYLON.Scene):BABYLON.Mesh{
+            let quality;
+
+            if(window.innerWidth>1024){
+                quality = 1024;
+            }else
+            if(window.innerWidth>512){
+                quality = 512;
+            }else{
+                quality = 256;
+            }
+
+            let distance = 5;
+
+            let image00 = BABYLON.Mesh.CreatePlane(this.id, BLOCK_SIZE, scene);
+            image00.material = Viewer.getImageMaterial(this.src, quality, this.isEmitting, this.hasAlpha, this.backFace);
 
 
 
-        createBabylonMesh(scene,getImageMesh){
+            const lods = 5;
+            let mesh;
+
+            for(let lod=0;lod<lods;lod++){
+
+                quality = quality/2;
+                distance = distance*2;
+
+                mesh = BABYLON.Mesh.CreatePlane(this.id, BLOCK_SIZE, scene);
+                mesh.material = Viewer.getImageMaterial(this.src, quality, this.isEmitting, this.hasAlpha, this.backFace);
+                image00.addLODLevel(distance,  mesh);
+
+
+            }
+
+
+
+            return image00;
+
+        }
+
+
+
+
+        createBabylonMesh(scene:BABYLON.Scene):BABYLON.Mesh{
 
             let object = this;
             let position = this.getBabylonPosition();
@@ -256,7 +296,7 @@ namespace GALLERY.Objects{
 
             let rotation_rad = (object.rotation / 180) * Math.PI;
 
-            let image = getImageMesh(object);
+            let image = this.createImageMesh(scene);
 
 
             image.scaling.x = object.width;
@@ -374,7 +414,14 @@ namespace GALLERY.Objects{
         }
 
 
-        createVirtualObjects(zoneIdsCreatedForImages):Objects.Array{
+
+        reshape(){
+
+        }
+
+
+
+        createVirtualObjects():Objects.Array{
 
             let virtualObjects = new Objects.Array();
 
@@ -392,12 +439,9 @@ namespace GALLERY.Objects{
             if (typeof object.rotation === 'number') {
                 if (!object.onGround) {
 
-            if (/*develop && /*(object.uri || object.name) &&*/ (zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
 
                 r('Creating zone for ' + object.name);
 
-
-                zoneIdsCreatedForImages.push(object.id);
 
 
                 let uri: string;
@@ -413,8 +457,6 @@ namespace GALLERY.Objects{
                     //object.uri = uri;
                 }
 
-
-                object.zoneCreated = true;
 
 
                 let size = Math.max(object.width, object.height);
@@ -485,7 +527,7 @@ namespace GALLERY.Objects{
 
                 //r(objects);
 
-            }
+
             }
 
             return(virtualObjects);

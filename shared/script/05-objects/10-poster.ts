@@ -18,7 +18,7 @@ namespace GALLERY.Objects{
             this.posterDesign = this.posterDesign || 'board';
 
 
-            this.src = this.src || 'http://cdn.pavolhejny.com/?file=5888cb789f36f-M2Q5OGMxNTk1N2M1ZjVkZDIyN2U1M2RiYzdjYmI2MGQuanBn';
+            this.src = this.src || 'http://cdn.pavolhejny.com/?file=5888cb789f36f-M2Q5OGMxNTk1N2M1ZjVkZDIyN2U1M2RiYzdjYmI2MGQuanBn';//todo remove
             this.width = this.width || 1;
             this.height = this.height || 1;
             this.voxelPixelRatio = this.voxelPixelRatio || 10;
@@ -90,84 +90,81 @@ namespace GALLERY.Objects{
         }
 
 
-        createBabylonMesh(scene){
+
+        createImageMesh(scene:BABYLON.Scene):BABYLON.Mesh{
+
+            let object = this;//todo
 
 
-            super.createBabylonMesh(scene,function(object){
+            let posterElement = object.getPosterElement(document.getElementById('posters'));
+
+            html2canvas(posterElement, {
+                onrendered: function (canvas) {
 
 
-
-                let redraw = function() {
-
-                    let posterElement = object.getPosterElement(document.getElementById('posters'));
-
-                    html2canvas(posterElement, {
-                        onrendered: function (canvas) {
-
-
-                            let image_texture = new BABYLON.DynamicTexture('posterTexture', {
-                                width: canvas.width,
-                                height: canvas.height
-                            }, scene, false);
-                            let image_texture_ctx = image_texture.getContext();
-                            //object._ctx = image_texture_ctx;
+                    let image_texture = new BABYLON.DynamicTexture('posterTexture', {
+                        width: canvas.width,
+                        height: canvas.height
+                    }, scene, false);
+                    let image_texture_ctx = image_texture.getContext();
+                    //object._ctx = image_texture_ctx;
 
 
-                            image_texture_ctx.drawImage(canvas, 0, 0);
-                            image_texture.update();
+                    image_texture_ctx.drawImage(canvas, 0, 0);
+                    image_texture.update();
 
-                            if (object.isEmitting) {
-
-
-                                material.emissiveTexture = image_texture;
+                    if (object.isEmitting) {
 
 
-                                material.backFaceCulling = !(object.backFace);
-                                material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
-                                material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
-                                material.specularPower = 32;
-                                //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
-                                material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
-                                material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+                        material.emissiveTexture = image_texture;
 
 
-                            } else {
+                        material.backFaceCulling = !(object.backFace);
+                        material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
+                        material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
+                        material.specularPower = 32;
+                        //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
+                        material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
+                        material.diffuseColor = new BABYLON.Color3(0, 0, 0);
 
-                                material.diffuseTexture = image_texture;
 
-                            }
+                    } else {
 
-                            GALLERY.Viewer.renderTick();
+                        material.diffuseTexture = image_texture;
+
+                    }
+
+                    GALLERY.Viewer.renderTick();
 
 
 
-                        }
-                    });
-                };
-
-                //posterElement.onmousemove = redraw;
-                redraw();
-
-
-                let material = new BABYLON.StandardMaterial("texture4", scene);
-
-                //material.freeze();
-
-
-
-                let image00 = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
-                image00.material = material;
-                return(image00);
-
-
+                }
             });
 
 
+            let redraw = function() {
 
+
+            };
+
+            //posterElement.onmousemove = redraw;
+            redraw();
+
+
+            let material = new BABYLON.StandardMaterial("texture4", scene);
+
+            //material.freeze();
+
+
+
+            let image00 = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
+            image00.material = material;
+            return(image00);
 
 
 
         }
+
 
 
         createVirtualObjects():Objects.Array{

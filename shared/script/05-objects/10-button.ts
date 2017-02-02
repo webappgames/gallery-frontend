@@ -15,8 +15,14 @@ namespace GALLERY.Objects{
 
 
         createVirtualObjects():Objects.Array{
-            return(new Objects.Array());
+            return(null);
         }
+
+
+        handleEventPress(){
+            this.reshape();
+        }
+
 
 
     }

@@ -533,22 +533,23 @@ namespace GALLERY.Viewer {
 
 
 
-            if('createBabylonMesh' in object) {
 
-                let mesh = object.createBabylonMesh(scene, getImageMesh);
+            let mesh = object.getBabylonMesh(scene);
+            if(mesh) {
                 meshes.push(mesh);
             }
 
 
 
-            if('createVirtualObjects' in object){
 
-                let virtualObjects = object.createVirtualObjects(zoneIdsCreatedForImages);
+            let virtualObjects = object.createVirtualObjects();
+            if(virtualObjects) {
                 virtualObjects.forEach(function (object) {
                     processObject(object);
                     objects.push(object);
                 });
             }
+
 
 
 

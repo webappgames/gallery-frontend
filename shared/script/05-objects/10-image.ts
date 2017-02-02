@@ -17,6 +17,10 @@ namespace GALLERY.Objects{
         public offsetHorizontal: number;
         public offsetFrontal: number;
 
+        public _vectorVertical: BABYLON.Vector3;
+        public _vectorHorizontal: BABYLON.Vector3;
+        public _vectorFrontal: BABYLON.Vector3;
+
 
         public src: string;
 
@@ -316,14 +320,46 @@ namespace GALLERY.Objects{
 
             } else {
 
-                position.y -= this.offsetVertical * BLOCK_SIZE;
+
+                this._vectorVertical = new BABYLON.Vector3(
+                     0
+                    ,-BLOCK_SIZE
+                    ,0
+                );
+                this._vectorHorizontal = new BABYLON.Vector3(
+                     -this.offsetHorizontal * Math.cos(rotation_rad)
+                    ,0
+                    ,-this.offsetHorizontal * Math.sin(rotation_rad)
+                );
+                this._vectorFrontal = new BABYLON.Vector3(
+                     Math.sin(rotation_rad) * BLOCK_SIZE
+                    ,0
+                    ,Math.cos(rotation_rad) * BLOCK_SIZE
+                );
+
+
+
+
+
+                position
+                    .addInPlace(this._vectorVertical  .scale(this.offsetVertical))
+                    .addInPlace(this._vectorHorizontal.scale(this.offsetHorizontal))
+                    .addInPlace(this._vectorFrontal   .scale(this.offsetFrontal));
+
+
+
+                /*position.y -= this.offsetVertical * BLOCK_SIZE;
+
                 position.x -= this.offsetHorizontal * Math.cos(rotation_rad) * BLOCK_SIZE ;
                 position.z -= this.offsetHorizontal * Math.sin(rotation_rad) * BLOCK_SIZE ;
 
 
-
                 position.x += Math.sin(rotation_rad) * BLOCK_SIZE * this.offsetFrontal;
-                position.z += Math.cos(rotation_rad) * BLOCK_SIZE * this.offsetFrontal;
+                position.z += Math.cos(rotation_rad) * BLOCK_SIZE * this.offsetFrontal;*/
+
+
+
+
                 image.position = position;
 
 
@@ -339,7 +375,7 @@ namespace GALLERY.Objects{
 
 
                 if(object.isSolid){
-                    let boxMesh = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
+                    let boxMesh = new BABYLON.Mesh.CreateBox(this.id, BLOCK_SIZE, scene);
 
 
 

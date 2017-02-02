@@ -4,6 +4,7 @@
 
 namespace GALLERY.Objects{
 
+    import renderTick = GALLERY.Viewer.renderTick;
     export class Button extends Poster{
 
 
@@ -19,8 +20,24 @@ namespace GALLERY.Objects{
         }
 
 
-        handleEventPress(){
-            this.reshape();
+
+        handlePointerPress(){
+            //todo DI Viewer.scene to object
+
+            let mesh = this.getBabylonMesh(Viewer.scene);
+            let vector = this._vectorFrontal.scale(-0.15);
+            mesh.position.addInPlace(vector);
+            //Viewer.renderTick();
+        }
+
+
+
+        handlePointerRelease(pressed:boolean){
+            let mesh = this.getBabylonMesh(Viewer.scene);
+            let vector = this._vectorFrontal.scale(-0.15);
+            mesh.position.subtractInPlace(vector);
+            //Viewer.renderTick();
+
         }
 
 

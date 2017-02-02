@@ -22,7 +22,7 @@ namespace GALLERY.Viewer {
 
 
 
-    export function onPointerUp(evt, pickResult) {
+    export function onPointerClick(evt, pickResult) {//todo move to objects
 
         let current = GALLERY.Viewer.getAppStateLabel();
         r('current', current);
@@ -72,6 +72,12 @@ namespace GALLERY.Viewer {
             } else {
 
                 var object = objects.getObjectById(pickResult.pickedMesh.name);
+
+
+                if('handleEventPress' in object){//in all objects
+                    //object.handlePointerPress();
+                    return;
+                }
 
 
                 if(object.type === 'poster'){

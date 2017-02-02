@@ -437,7 +437,7 @@ namespace GALLERY.Viewer {
         const enginePlayReasonDragging = new EnginePlayReason('dragging');
 
         //When pointer down event is raised
-        scene.onPointerDown = function () {
+        scene.onPointerDown = function (evt, pickResult) {
 
             pointerDown = true;
 
@@ -449,7 +449,15 @@ namespace GALLERY.Viewer {
 
                 playEngine(enginePlayReasonDragging);
 
+                if (pickResult.hit) {
+                    let object = objects.getObjectById(pickResult.pickedMesh.name);
+                    if(object)object.handlePointerPress();
+                }
+
+
             }
+
+
 
         };
         /*scene.onPointerMove = function(){
@@ -459,9 +467,14 @@ namespace GALLERY.Viewer {
 
 
          };*/
-        scene.onPointerUp = function () {
+
+
+        scene.onPointerUp = function (evt, pickResult) {
+
 
             pointerDown = false;
+
+            let pressed = false;
 
             if(MODE=='WEB') {
 
@@ -474,12 +487,28 @@ namespace GALLERY.Viewer {
 
 
                 } else {
-                    onPointerUp.apply(this, arguments);
+
+                    onPointerClick.apply(this, arguments);
+                    pressed = true;
+
                 }
+
+
+                if (pickResult.hit) {
+                    let object = objects.getObjectById(pickResult.pickedMesh.name);
+                    if(object)object.handlePointerRelease(pressed);
+                }
+
 
                 pauseEngine(enginePlayReasonDragging);
 
             }
+
+
+
+
+
+
         };
 
 

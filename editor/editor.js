@@ -1578,6 +1578,10 @@ var GALLERY;
             Object.prototype.createVirtualObjects = function () {
                 return (null);
             };
+            Object.prototype.handleEventPress = function () {
+            };
+            Object.prototype.handleEventRelease = function (pressed) {
+            };
             Object.init = function (object) {
                 if (object instanceof Object) {
                     return (object);
@@ -2057,18 +2061,28 @@ var GALLERY;
                     image.rotation.y = Math.PI + rotation_rad;
                 }
                 else {
-                    position.y -= this.offsetVertical * BLOCK_SIZE;
-                    position.x -= this.offsetHorizontal * Math.cos(rotation_rad) * BLOCK_SIZE;
-                    position.z -= this.offsetHorizontal * Math.sin(rotation_rad) * BLOCK_SIZE;
+                    this._vectorVertical = new BABYLON.Vector3(0, -BLOCK_SIZE, 0);
+                    this._vectorHorizontal = new BABYLON.Vector3(-this.offsetHorizontal * Math.cos(rotation_rad), 0, -this.offsetHorizontal * Math.sin(rotation_rad));
+                    this._vectorFrontal = new BABYLON.Vector3(Math.sin(rotation_rad) * BLOCK_SIZE, 0, Math.cos(rotation_rad) * BLOCK_SIZE);
+                    position
+                        .addInPlace(this._vectorVertical.scale(this.offsetVertical))
+                        .addInPlace(this._vectorHorizontal.scale(this.offsetHorizontal))
+                        .addInPlace(this._vectorFrontal.scale(this.offsetFrontal));
+                    /*position.y -= this.offsetVertical * BLOCK_SIZE;
+    
+                    position.x -= this.offsetHorizontal * Math.cos(rotation_rad) * BLOCK_SIZE ;
+                    position.z -= this.offsetHorizontal * Math.sin(rotation_rad) * BLOCK_SIZE ;
+    
+    
                     position.x += Math.sin(rotation_rad) * BLOCK_SIZE * this.offsetFrontal;
-                    position.z += Math.cos(rotation_rad) * BLOCK_SIZE * this.offsetFrontal;
+                    position.z += Math.cos(rotation_rad) * BLOCK_SIZE * this.offsetFrontal;*/
                     image.position = position;
                     //(level + BLOCKS_1NP_LEVEL) * BLOCK_SIZE
                     //image.position.y = (/*level + BLOCKS_1NP_LEVEL +*/ EYE_VERTICAL) * BLOCK_SIZE ;
                     image.rotation.y = Math.PI + rotation_rad;
                     image.position.y += (EYE_VERTICAL - BLOCKS_1NP_LEVEL) * BLOCK_SIZE;
                     if (object.isSolid) {
-                        var boxMesh = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
+                        var boxMesh = new BABYLON.Mesh.CreateBox(this.id, BLOCK_SIZE, scene);
                         var textureA = image.material;
                         var textureB = new BABYLON.StandardMaterial("material1", scene);
                         textureB.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5);
@@ -2236,42 +2250,49 @@ var GALLERY;
             };
             Poster.prototype.createImageMesh = function (scene) {
                 var object = this; //todo
-                var posterElement = object.getPosterElement(document.getElementById('posters'));
-                html2canvas(posterElement, {
-                    onrendered: function (canvas) {
-                        var image_texture = new BABYLON.DynamicTexture('posterTexture', {
-                            width: canvas.width,
-                            height: canvas.height
-                        }, scene, false);
-                        var image_texture_ctx = image_texture.getContext();
-                        //object._ctx = image_texture_ctx;
-                        image_texture_ctx.drawImage(canvas, 0, 0);
-                        image_texture.update();
-                        if (object.isEmitting) {
-                            material.emissiveTexture = image_texture;
-                            material.backFaceCulling = !(object.backFace);
-                            material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
-                            material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
-                            material.specularPower = 32;
-                            //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
-                            material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
-                            material.diffuseColor = new BABYLON.Color3(0, 0, 0);
-                        }
-                        else {
-                            material.diffuseTexture = image_texture;
-                        }
-                        GALLERY.Viewer.renderTick();
-                    }
-                });
-                var redraw = function () {
-                };
-                //posterElement.onmousemove = redraw;
-                redraw();
+                this._posterTexture = new BABYLON.DynamicTexture('posterTexture', {
+                    width: this.width * this.voxelPixelRatio,
+                    height: this.height * this.voxelPixelRatio
+                }, scene, false);
                 var material = new BABYLON.StandardMaterial("texture4", scene);
-                //material.freeze();
-                var image00 = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
+                if (this.isEmitting) {
+                    material.emissiveTexture = this._posterTexture;
+                    material.backFaceCulling = !(this.backFace);
+                    material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
+                    material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
+                    material.specularPower = 32;
+                    //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
+                    material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
+                    material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+                }
+                else {
+                    material.diffuseTexture = this._posterTexture;
+                }
+                /*setTimeout(function () {
+                    object.redrawPosterTexture();
+                },100);*/
+                this.redrawPosterTexture();
+                var image00 = BABYLON.Mesh.CreatePlane(this.id, BLOCK_SIZE, scene);
                 image00.material = material;
                 return (image00);
+            };
+            Poster.prototype.redrawPosterTexture = function () {
+                var object = this; //todo
+                var posterElement = this.getPosterElement(document.getElementById('posters')); //todo DI to constructor
+                html2canvas(posterElement, {
+                    background: '#FFFFFF',
+                    onrendered: function (canvas) {
+                        var posterTextureCtx = object._posterTexture.getContext();
+                        //object._ctx = image_texture_ctx;
+                        posterTextureCtx.drawImage(canvas, 0, 0);
+                        object._posterTexture.update();
+                        GALLERY.Viewer.renderTick(); //todo DI
+                    }
+                });
+            };
+            ;
+            Poster.prototype.handlePointerPress = function () {
+                this.redrawPosterTexture();
             };
             Poster.prototype.createVirtualObjects = function () {
                 var virtualObjects = new Objects.Array();
@@ -2484,8 +2505,18 @@ var GALLERY;
             Button.prototype.createVirtualObjects = function () {
                 return (null);
             };
-            Button.prototype.handleEventPress = function () {
-                this.reshape();
+            Button.prototype.handlePointerPress = function () {
+                //todo DI Viewer.scene to object
+                var mesh = this.getBabylonMesh(Viewer.scene);
+                var vector = this._vectorFrontal.scale(-0.15);
+                mesh.position.addInPlace(vector);
+                //Viewer.renderTick();
+            };
+            Button.prototype.handlePointerRelease = function (pressed) {
+                var mesh = this.getBabylonMesh(Viewer.scene);
+                var vector = this._vectorFrontal.scale(-0.15);
+                mesh.position.subtractInPlace(vector);
+                //Viewer.renderTick();
             };
             return Button;
         }(Objects.Poster));

@@ -2,13 +2,15 @@
 
 namespace GALLERY.Objects{
 
+    import scene = GALLERY.Viewer.scene;
     export class Poster extends Image{
 
         public posterHtml:string;
         public posterDesign:string;
         public voxelPixelRatio:number;
 
-        private _posterElement;
+        private _posterElement:HTMLElement;
+        private _posterTexture:BABYLON.DynamicTexture;
 
         constructor(object){
 
@@ -96,74 +98,91 @@ namespace GALLERY.Objects{
             let object = this;//todo
 
 
-            let posterElement = object.getPosterElement(document.getElementById('posters'));
+            this._posterTexture = new BABYLON.DynamicTexture('posterTexture', {
+                width: this.width*this.voxelPixelRatio,
+                height: this.height*this.voxelPixelRatio
+            }, scene, false);
 
-            html2canvas(posterElement, {
-                onrendered: function (canvas) {
-
-
-                    let image_texture = new BABYLON.DynamicTexture('posterTexture', {
-                        width: canvas.width,
-                        height: canvas.height
-                    }, scene, false);
-                    let image_texture_ctx = image_texture.getContext();
-                    //object._ctx = image_texture_ctx;
-
-
-                    image_texture_ctx.drawImage(canvas, 0, 0);
-                    image_texture.update();
-
-                    if (object.isEmitting) {
-
-
-                        material.emissiveTexture = image_texture;
-
-
-                        material.backFaceCulling = !(object.backFace);
-                        material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
-                        material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
-                        material.specularPower = 32;
-                        //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
-                        material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
-                        material.diffuseColor = new BABYLON.Color3(0, 0, 0);
-
-
-                    } else {
-
-                        material.diffuseTexture = image_texture;
-
-                    }
-
-                    GALLERY.Viewer.renderTick();
-
-
-
-                }
-            });
-
-
-            let redraw = function() {
-
-
-            };
-
-            //posterElement.onmousemove = redraw;
-            redraw();
 
 
             let material = new BABYLON.StandardMaterial("texture4", scene);
 
-            //material.freeze();
+
+            if (this.isEmitting) {
+
+
+                material.emissiveTexture = this._posterTexture;
+
+
+                material.backFaceCulling = !(this.backFace);
+                material.diffuseColor = new BABYLON.Color3(0, 0, 0); // No diffuse color
+                material.specularColor = new BABYLON.Color3(0, 0, 0); // No specular color
+                material.specularPower = 32;
+                //box.material.ambientColor = new BABYLON.Color3(1, 1, 1);
+                material.ambientColor = new BABYLON.Color3(0, 0, 0); // No ambient color
+                material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+
+
+            } else {
+
+                material.diffuseTexture = this._posterTexture;
+
+            }
+
+
+            /*setTimeout(function () {
+                object.redrawPosterTexture();
+            },100);*/
+            this.redrawPosterTexture();
 
 
 
-            let image00 = BABYLON.Mesh.CreatePlane(object.id, BLOCK_SIZE, scene);
+
+            let image00 = BABYLON.Mesh.CreatePlane(this.id, BLOCK_SIZE, scene);
             image00.material = material;
             return(image00);
 
 
-
         }
+
+
+
+        redrawPosterTexture(){
+            let object = this;//todo
+
+
+            let posterElement = this.getPosterElement(document.getElementById('posters'));//todo DI to constructor
+
+
+
+            html2canvas(posterElement, {
+                background :'#FFFFFF',
+                onrendered: function (canvas) {
+
+
+                    let posterTextureCtx = object._posterTexture.getContext();
+                    //object._ctx = image_texture_ctx;
+
+
+                    posterTextureCtx.drawImage(canvas, 0, 0);
+                    object._posterTexture.update();
+
+
+
+                    GALLERY.Viewer.renderTick();//todo DI
+
+
+                }
+            });
+        };
+
+
+
+        handlePointerPress(){
+            this.redrawPosterTexture();
+        }
+
+
 
 
 

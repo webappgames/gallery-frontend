@@ -96,6 +96,15 @@ namespace GALLERY.Objects{
 
 
 
+
+        handleEventPress(){
+        }
+
+        handleEventRelease(pressed:boolean){
+        }
+
+
+
         static init(object) {
 
             if(object instanceof Object){

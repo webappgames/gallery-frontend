@@ -436,6 +436,9 @@ namespace GALLERY.Viewer {
         let pointerDown = false;
         const enginePlayReasonDragging = new EnginePlayReason('dragging');
 
+        let eventObject;
+
+
         //When pointer down event is raised
         scene.onPointerDown = function (evt, pickResult) {
 
@@ -451,7 +454,8 @@ namespace GALLERY.Viewer {
 
                 if (pickResult.hit) {
                     let object = objects.getObjectById(pickResult.pickedMesh.name);
-                    if(object)object.handlePointerPress();
+                    if(object)object.handlePointerPress(evt, pickResult);
+                    eventObject = object;
                 }
 
 
@@ -495,8 +499,19 @@ namespace GALLERY.Viewer {
 
 
                 if (pickResult.hit) {
+
                     let object = objects.getObjectById(pickResult.pickedMesh.name);
-                    if(object)object.handlePointerRelease(pressed);
+
+
+                    if(object !== eventObject){
+                        pressed=false;
+                        object = eventObject;
+                    }
+
+                    if(object)object.handlePointerRelease(pressed, evt, pickResult);
+
+
+
                 }
 
 

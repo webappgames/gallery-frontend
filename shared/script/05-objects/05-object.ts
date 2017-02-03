@@ -97,10 +97,10 @@ namespace GALLERY.Objects{
 
 
 
-        handleEventPress(){
+        handlePointerPress(event, pickResult){
         }
 
-        handleEventRelease(pressed:boolean){
+        handlePointerRelease(pressed:boolean, event, pickResult){
         }
 
 

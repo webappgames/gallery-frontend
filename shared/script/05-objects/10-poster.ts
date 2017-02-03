@@ -133,7 +133,7 @@ namespace GALLERY.Objects{
             /*setTimeout(function () {
                 object.redrawPosterTexture();
             },100);*/
-            this.redrawPosterTexture();
+            //this.redrawPosterTexture();
 
 
 
@@ -154,8 +154,13 @@ namespace GALLERY.Objects{
             let posterElement = this.getPosterElement(document.getElementById('posters'));//todo DI to constructor
 
 
+            let buttons = posterElement.getElementsByTagName('button');
+            for(let button of buttons){
+                button.style.visibility = 'hidden';
+            }
 
-            html2canvas(posterElement, {
+
+                html2canvas(posterElement, {
                 background :'#FFFFFF',
                 onrendered: function (canvas) {
 
@@ -178,8 +183,47 @@ namespace GALLERY.Objects{
 
 
 
-        handlePointerPress(){
+        handlePointerPress(event, pickResult){
             this.redrawPosterTexture();
+
+
+            let object = this;//todo remove
+
+            let position = pickResult.pickedMesh.position.subtract(pickResult.pickedPoint);
+
+            let vec2 = {
+                x: /*Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.z, 2))*/(Math.abs(position.x)>Math.abs(position.z)?position.x:position.z),
+                y: position.y
+            };
+
+
+            vec2.x /= pickResult.pickedMesh.scaling.x * BLOCK_SIZE;
+            vec2.y /= pickResult.pickedMesh.scaling.y * BLOCK_SIZE;
+
+            vec2.x += 0.5;
+            vec2.y += 0.5;
+
+            vec2.x *= object.width * object.voxelPixelRatio;
+            vec2.y *= object.height * object.voxelPixelRatio;
+
+
+            /*let posterElement = object.getPosterElement();
+             r(posterElement);
+             let subElement = posterElement.elementFromPoint( vec2.x, vec2.y);
+
+             r(subElement);*/
+
+            let ctx = pickResult.pickedMesh.material.emissiveTexture.getContext();
+
+            ctx.beginPath();
+            ctx.arc(vec2.x, vec2.y, 10, 0, 2 * Math.PI);
+            ctx.fill();
+
+
+            pickResult.pickedMesh.material.emissiveTexture.update();//todo getBabylonMesh
+            //GALLERY.Viewer.renderTick();
+
+
         }
 
 
@@ -191,7 +235,7 @@ namespace GALLERY.Objects{
 
             let posterElement = this.getPosterElement(document.getElementById('posters'));
 
-            r(posterElement);
+            //r(posterElement);
             let buttons = posterElement.getElementsByTagName('button');
 
 
@@ -217,14 +261,15 @@ namespace GALLERY.Objects{
 
                     offsetHorizontal: (button.offsetLeft-posterElement.offsetLeft-posterElement.offsetWidth/2) / this.voxelPixelRatio,
                     offsetVertical: (button.offsetTop-posterElement.offsetTop-posterElement.offsetHeight/2) / this.voxelPixelRatio,
-                    offsetFrontal: 0.2,
 
 
-                    posterHtml: button.outerHTML,
-                    posterDesign: 'none',
+                    posterHtml: button.innerHTML,
                     voxelPixelRatio: this.voxelPixelRatio,
 
-                    isSolid: true,
+                    onClick: button.onclick
+
+
+
 
 
                 });
@@ -236,6 +281,72 @@ namespace GALLERY.Objects{
 
             }
 
+
+
+
+            //----------------------------------------------------
+
+
+            let tables = posterElement.getElementsByTagName('table');
+            for(let table of tables) {
+                let rows = table.getElementsByTagName('tr');
+                for (let row of rows) {
+                    let cells = row.getElementsByTagName('td');
+                    for (let cell of cells) {
+
+
+
+                        let buttonMesh = new Objects.Button({
+
+                            id: createGuid(),
+                            type: 'button',
+
+                            world: this.world,
+                            storey: this.storey,
+                            position: {
+                                x: this.position.x,
+                                y: this.position.y,
+                            },
+
+                            rotation: this.rotation,
+
+                            width: cell.offsetWidth / this.voxelPixelRatio,
+                            height:  cell.offsetHeight / this.voxelPixelRatio,
+
+                            offsetHorizontal: (cell.offsetLeft-posterElement.offsetLeft-posterElement.offsetWidth/2) / this.voxelPixelRatio,
+                            offsetVertical: (cell.offsetTop-posterElement.offsetTop-posterElement.offsetHeight/2) / this.voxelPixelRatio,
+
+
+                            posterHtml: cell.innerHTML,
+                            voxelPixelRatio: this.voxelPixelRatio,
+
+                            buttonBackgroundColor: '#ffffff',
+                            buttonTextColor: '#000000',
+
+                            //onClick: cell.onclick
+
+
+
+
+
+                        });
+
+                        buttonMesh.offsetHorizontal += buttonMesh.width/2;
+                        buttonMesh.offsetVertical += buttonMesh.height/2;
+
+                        virtualObjects.push(buttonMesh);
+
+
+
+
+
+                    }
+                }
+            }
+
+            //------------------------------------------------------------
+
+            r(virtualObjects);
             return(virtualObjects);
 
         }

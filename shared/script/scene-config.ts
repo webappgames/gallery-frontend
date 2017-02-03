@@ -3,7 +3,7 @@
 const STATSERVER_URL = 'http://webappgames.com:48567';
 
 
-const OBJECT_TYPES = ['zone','groundhole','stairs','poster','environment','light','label','tree','link','gate','deploy','analytics','board'];
+const OBJECT_TYPES = ['zone','groundhole','stairs','poster','button','environment','light','label','tree','link','gate','deploy','analytics','board'];
 const DOT_OBJECTS = ['zone','groundhole','environment','light','label','tree','link','gate','deploy','analytics','board'];
 
 

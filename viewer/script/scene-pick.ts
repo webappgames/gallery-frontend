@@ -74,54 +74,11 @@ namespace GALLERY.Viewer {
                 var object = objects.getObjectById(pickResult.pickedMesh.name);
 
 
-                if('handleEventPress' in object){//in all objects
+                if('handlePointerPress' in object){//in all objects
                     //object.handlePointerPress();
                     return;
                 }
 
-
-                if(object.type === 'poster'){
-
-
-
-                    let position = pickResult.pickedMesh.position.subtract(pickResult.pickedPoint);
-
-                    let vec2 = {
-                        x: /*Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.z, 2))*/(Math.abs(position.x)>Math.abs(position.z)?position.x:position.z),
-                        y: position.y
-                    };
-
-
-                    vec2.x /= pickResult.pickedMesh.scaling.x * BLOCK_SIZE;
-                    vec2.y /= pickResult.pickedMesh.scaling.y * BLOCK_SIZE;
-
-                    vec2.x += 0.5;
-                    vec2.y += 0.5;
-
-                    vec2.x *= object.width * object.voxelPixelRatio;
-                    vec2.y *= object.height * object.voxelPixelRatio;
-
-
-                    /*let posterElement = object.getPosterElement();
-                    r(posterElement);
-                    let subElement = posterElement.elementFromPoint( vec2.x, vec2.y);
-
-                    r(subElement);*/
-
-                    let ctx = pickResult.pickedMesh.material.emissiveTexture.getContext();
-
-                    ctx.beginPath();
-                    ctx.arc(vec2.x, vec2.y, 10, 0, 2 * Math.PI);
-                    ctx.fill();
-
-
-                    pickResult.pickedMesh.material.emissiveTexture.update();
-                    GALLERY.Viewer.renderTick();
-
-
-
-                    return;
-                }
 
 
 

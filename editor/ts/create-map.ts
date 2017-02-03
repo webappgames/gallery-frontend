@@ -198,7 +198,7 @@ function createMap() {
 
     let $blocks= $admin_world.find('.block');
     let $blocks_gates= $admin_world.find('.block[data-shape="gate"]');
-    let $images= $admin_world.find('.image, .poster');
+    let $images= $admin_world.find('.image, .poster, .button');
     let $stairs= $admin_world.find('.stairs');
 
 

@@ -1578,9 +1578,9 @@ var GALLERY;
             Object.prototype.createVirtualObjects = function () {
                 return (null);
             };
-            Object.prototype.handleEventPress = function () {
+            Object.prototype.handlePointerPress = function (event, pickResult) {
             };
-            Object.prototype.handleEventRelease = function (pressed) {
+            Object.prototype.handlePointerRelease = function (pressed, event, pickResult) {
             };
             Object.init = function (object) {
                 if (object instanceof Object) {
@@ -2271,7 +2271,7 @@ var GALLERY;
                 /*setTimeout(function () {
                     object.redrawPosterTexture();
                 },100);*/
-                this.redrawPosterTexture();
+                //this.redrawPosterTexture();
                 var image00 = BABYLON.Mesh.CreatePlane(this.id, BLOCK_SIZE, scene);
                 image00.material = material;
                 return (image00);
@@ -2279,6 +2279,11 @@ var GALLERY;
             Poster.prototype.redrawPosterTexture = function () {
                 var object = this; //todo
                 var posterElement = this.getPosterElement(document.getElementById('posters')); //todo DI to constructor
+                var buttons = posterElement.getElementsByTagName('button');
+                for (var _i = 0, buttons_1 = buttons; _i < buttons_1.length; _i++) {
+                    var button = buttons_1[_i];
+                    button.style.visibility = 'hidden';
+                }
                 html2canvas(posterElement, {
                     background: '#FFFFFF',
                     onrendered: function (canvas) {
@@ -2291,16 +2296,39 @@ var GALLERY;
                 });
             };
             ;
-            Poster.prototype.handlePointerPress = function () {
+            Poster.prototype.handlePointerPress = function (event, pickResult) {
                 this.redrawPosterTexture();
+                var object = this; //todo remove
+                var position = pickResult.pickedMesh.position.subtract(pickResult.pickedPoint);
+                var vec2 = {
+                    x: /*Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.z, 2))*/ (Math.abs(position.x) > Math.abs(position.z) ? position.x : position.z),
+                    y: position.y
+                };
+                vec2.x /= pickResult.pickedMesh.scaling.x * BLOCK_SIZE;
+                vec2.y /= pickResult.pickedMesh.scaling.y * BLOCK_SIZE;
+                vec2.x += 0.5;
+                vec2.y += 0.5;
+                vec2.x *= object.width * object.voxelPixelRatio;
+                vec2.y *= object.height * object.voxelPixelRatio;
+                /*let posterElement = object.getPosterElement();
+                 r(posterElement);
+                 let subElement = posterElement.elementFromPoint( vec2.x, vec2.y);
+    
+                 r(subElement);*/
+                var ctx = pickResult.pickedMesh.material.emissiveTexture.getContext();
+                ctx.beginPath();
+                ctx.arc(vec2.x, vec2.y, 10, 0, 2 * Math.PI);
+                ctx.fill();
+                pickResult.pickedMesh.material.emissiveTexture.update(); //todo getBabylonMesh
+                //GALLERY.Viewer.renderTick();
             };
             Poster.prototype.createVirtualObjects = function () {
                 var virtualObjects = new Objects.Array();
                 var posterElement = this.getPosterElement(document.getElementById('posters'));
-                r(posterElement);
+                //r(posterElement);
                 var buttons = posterElement.getElementsByTagName('button');
-                for (var _i = 0, buttons_1 = buttons; _i < buttons_1.length; _i++) {
-                    var button = buttons_1[_i];
+                for (var _i = 0, buttons_2 = buttons; _i < buttons_2.length; _i++) {
+                    var button = buttons_2[_i];
                     var buttonMesh = new Objects.Button({
                         id: createGuid(),
                         type: 'button',
@@ -2315,16 +2343,51 @@ var GALLERY;
                         height: button.offsetHeight / this.voxelPixelRatio,
                         offsetHorizontal: (button.offsetLeft - posterElement.offsetLeft - posterElement.offsetWidth / 2) / this.voxelPixelRatio,
                         offsetVertical: (button.offsetTop - posterElement.offsetTop - posterElement.offsetHeight / 2) / this.voxelPixelRatio,
-                        offsetFrontal: 0.2,
-                        posterHtml: button.outerHTML,
-                        posterDesign: 'none',
+                        posterHtml: button.innerHTML,
                         voxelPixelRatio: this.voxelPixelRatio,
-                        isSolid: true,
+                        onClick: button.onclick
                     });
                     buttonMesh.offsetHorizontal += buttonMesh.width / 2;
                     buttonMesh.offsetVertical += buttonMesh.height / 2;
                     virtualObjects.push(buttonMesh);
                 }
+                //----------------------------------------------------
+                var tables = posterElement.getElementsByTagName('table');
+                for (var _a = 0, tables_1 = tables; _a < tables_1.length; _a++) {
+                    var table = tables_1[_a];
+                    var rows = table.getElementsByTagName('tr');
+                    for (var _b = 0, rows_1 = rows; _b < rows_1.length; _b++) {
+                        var row = rows_1[_b];
+                        var cells = row.getElementsByTagName('td');
+                        for (var _c = 0, cells_1 = cells; _c < cells_1.length; _c++) {
+                            var cell = cells_1[_c];
+                            var buttonMesh = new Objects.Button({
+                                id: createGuid(),
+                                type: 'button',
+                                world: this.world,
+                                storey: this.storey,
+                                position: {
+                                    x: this.position.x,
+                                    y: this.position.y,
+                                },
+                                rotation: this.rotation,
+                                width: cell.offsetWidth / this.voxelPixelRatio,
+                                height: cell.offsetHeight / this.voxelPixelRatio,
+                                offsetHorizontal: (cell.offsetLeft - posterElement.offsetLeft - posterElement.offsetWidth / 2) / this.voxelPixelRatio,
+                                offsetVertical: (cell.offsetTop - posterElement.offsetTop - posterElement.offsetHeight / 2) / this.voxelPixelRatio,
+                                posterHtml: cell.innerHTML,
+                                voxelPixelRatio: this.voxelPixelRatio,
+                                buttonBackgroundColor: '#ffffff',
+                                buttonTextColor: '#000000',
+                            });
+                            buttonMesh.offsetHorizontal += buttonMesh.width / 2;
+                            buttonMesh.offsetVertical += buttonMesh.height / 2;
+                            virtualObjects.push(buttonMesh);
+                        }
+                    }
+                }
+                //------------------------------------------------------------
+                r(virtualObjects);
                 return (virtualObjects);
             };
             return Poster;
@@ -2500,23 +2563,60 @@ var GALLERY;
         var Button = (function (_super) {
             __extends(Button, _super);
             function Button(object) {
+                this.buttonBackgroundColor = this.buttonBackgroundColor || '#0098ff';
+                this.buttonTextColor = this.buttonTextColor || '#ffffff';
+                this.posterDesign = this.posterDesign || 'button';
+                if (typeof this.offsetFrontal == 'undefined') {
+                    this.offsetFrontal = 1 / 5;
+                }
+                if (typeof this.isSolid == 'undefined') {
+                    this.isSolid = true;
+                }
+                if (typeof this.offsetFrontalPressed == 'undefined') {
+                    this.offsetFrontalPressed = 1 / 20;
+                }
+                this.onClick = this.onClick || 'console.log("Button pressed!");';
                 _super.call(this, object);
             }
+            Button.prototype.getEditorInputHtml = function (key) {
+                switch (key) {
+                    case 'buttonBackgroundColor': return ('<input type="color" />');
+                    case 'buttonTextColor': return ('<input type="color" />');
+                    case 'offsetFrontalPressed': return ('<input type="number" />');
+                    case 'onClick': return ('<textarea></textarea>');
+                    default: return (_super.prototype.getEditorInputHtml.call(this, key));
+                }
+            };
+            Button.prototype.createPosterElement = function (container) {
+                var element = _super.prototype.createPosterElement.call(this, container);
+                element.style.backgroundColor = this.buttonBackgroundColor;
+                element.style.color = this.buttonTextColor;
+                return element;
+            };
             Button.prototype.createVirtualObjects = function () {
                 return (null);
             };
-            Button.prototype.handlePointerPress = function () {
+            Button.prototype.handlePointerPress = function (event, pickResult) {
                 //todo DI Viewer.scene to object
                 var mesh = this.getBabylonMesh(Viewer.scene);
-                var vector = this._vectorFrontal.scale(-0.15);
+                var vector = this._vectorFrontal.scale(this.offsetFrontalPressed - this.offsetFrontal);
                 mesh.position.addInPlace(vector);
                 //Viewer.renderTick();
             };
-            Button.prototype.handlePointerRelease = function (pressed) {
+            Button.prototype.handlePointerRelease = function (pressed, event, pickResult) {
                 var mesh = this.getBabylonMesh(Viewer.scene);
-                var vector = this._vectorFrontal.scale(-0.15);
+                var vector = this._vectorFrontal.scale(this.offsetFrontalPressed - this.offsetFrontal);
                 mesh.position.subtractInPlace(vector);
                 //Viewer.renderTick();
+                if (pressed) {
+                    r(this);
+                    if (typeof this.onClick == 'string') {
+                        eval(this.onClick);
+                    }
+                    else if (typeof this.onClick == 'function') {
+                        this.onClick();
+                    }
+                }
             };
             return Button;
         }(Objects.Poster));
@@ -3020,7 +3120,7 @@ var GALLERY;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
 var STATSERVER_URL = 'http://webappgames.com:48567';
-var OBJECT_TYPES = ['zone', 'groundhole', 'stairs', 'poster', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'analytics', 'board'];
+var OBJECT_TYPES = ['zone', 'groundhole', 'stairs', 'poster', 'button', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'analytics', 'board'];
 var DOT_OBJECTS = ['zone', 'groundhole', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'analytics', 'board'];
 var BLOCK_SIZE = 5;
 //var BLOCK_SIZE_VERTICAL=10;
@@ -4459,7 +4559,7 @@ function createMap() {
     $admin_world.disableSelection();
     var $blocks = $admin_world.find('.block');
     var $blocks_gates = $admin_world.find('.block[data-shape="gate"]');
-    var $images = $admin_world.find('.image, .poster');
+    var $images = $admin_world.find('.image, .poster, .button');
     var $stairs = $admin_world.find('.stairs');
     var $dot_objects = $admin_world.find(DOT_OBJECTS.map(function (item) { return ('.' + item); }).join(', '));
     $dot_objects.css('z-index', 2);

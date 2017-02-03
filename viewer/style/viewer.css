@@ -316,6 +316,109 @@ button:hover, .button:hover, input[type="submit"]:hover {
   height: 100vh;
   touch-action: none; }
 
+section#posters {
+  z-index: 21000;
+  /*.poster-board{
+
+
+
+    display: block;
+
+    cursor: pointer;
+
+    width: 320px;
+    max-height: calc( 100vh - 100px );
+
+    background-color: #fff;
+    border-radiusodd: 3px;
+
+    margin: 4px;
+    padding: 4px;
+
+
+    //overflow: auto;
+
+    //overflow-y: scroll;
+
+
+
+
+    h1{
+      margin: 0px;
+      font-size: 2em;
+
+      width:calc(100% - 12px);
+
+      background-color: #ddd;
+      padding: 6px;
+      margin-bottom: 10px;
+
+    }
+
+    h1.important{
+      font-size: 1.5em;
+    }
+
+
+    .text {
+
+
+
+      .gallery{
+
+        display: block;
+        text-align: center;
+
+        //border: 2px solid red;
+
+        img{
+
+
+          display: inline-block;
+          width: 90px;
+
+          //z-index: 1;
+          //border: 2px solid red;
+
+          &:hover{
+
+
+            //width: 100px;
+            //z-index: 2;
+            //position: relative;
+            //top: -5px;
+            //left: -5px;
+            //box-shadow: 5px 5px 0px #444;
+            width: 86px;
+            border: 2px solid #37beff;
+            //margin:-2px;
+          }
+        }
+
+      }
+
+
+
+
+    }
+
+
+
+    .next, .previous{
+      font-size: 2em;
+
+      &:hover{
+
+        color: #37beff;
+
+      }
+    }
+
+
+
+
+  }*/ }
+
 section#zones {
   z-index: 5000;
   display: block;
@@ -508,6 +611,17 @@ section#boards {
 
 .zone-player .name, .zone-player .date, .chatbox .name, .chatbox .date {
   font-weight: bold; }
+
+.zone-button {
+  display: block;
+  border: none;
+  padding: 0 10px;
+  margin: 2px;
+  min-width: 100px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 16px;
+  cursor: pointer; }
 
 nav .turn-right, nav .turn-left {
   margin: 5px;

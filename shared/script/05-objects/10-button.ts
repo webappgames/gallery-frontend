@@ -58,6 +58,22 @@ namespace GALLERY.Objects{
         }
 
 
+        createImageMesh(scene:BABYLON.Scene):BABYLON.Mesh{
+
+            let mesh = super.createImageMesh(scene);
+
+            let posterTextureCtx = this._posterTexture.getContext();
+            posterTextureCtx.beginPath();
+            posterTextureCtx.rect(0, 0, posterTextureCtx.canvas.width, posterTextureCtx.canvas.height);
+            posterTextureCtx.fillStyle = this.buttonBackgroundColor;
+            posterTextureCtx.fill();
+            this._posterTexture.update();
+
+            return mesh;
+
+        }
+
+
         createVirtualObjects():Objects.Array{
             return(null);
         }
@@ -66,6 +82,8 @@ namespace GALLERY.Objects{
 
         handlePointerPress(event, pickResult){
             //todo DI Viewer.scene to object
+
+            this.redrawPosterTexture();
 
             let mesh = this.getBabylonMesh(Viewer.scene);
             let vector = this._vectorFrontal.scale(this.offsetFrontalPressed - this.offsetFrontal);

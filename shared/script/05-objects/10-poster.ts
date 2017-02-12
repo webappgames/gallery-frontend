@@ -9,7 +9,8 @@ namespace GALLERY.Objects{
         public posterDesign:string;
         public voxelPixelRatio:number;
 
-        private _posterElement:HTMLElement;
+        //todo private _posterMesh
+        public _posterElement:HTMLElement;
         private _posterTexture:BABYLON.DynamicTexture;
 
         constructor(object){
@@ -130,10 +131,8 @@ namespace GALLERY.Objects{
             }
 
 
-            /*setTimeout(function () {
-                object.redrawPosterTexture();
-            },100);*/
-            //this.redrawPosterTexture();
+
+            //set interval this.redrawPosterTexture();
 
 
 
@@ -287,14 +286,98 @@ namespace GALLERY.Objects{
             //----------------------------------------------------
 
 
-            let tables = posterElement.getElementsByTagName('table');
+
+            var cumulativeOffset = function(element) {
+                var top = 0, left = 0;
+                do {
+                    top += element.offsetTop  || 0;
+                    left += element.offsetLeft || 0;
+                    element = element.offsetParent;
+                } while(element);
+
+                return {
+                    top: top,
+                    left: left
+                };
+            };
+
+            function offsetFromParent(element,parent){
+                let elementOffset = cumulativeOffset(element);
+                let parentOffset = cumulativeOffset(parent);
+
+                return {
+                    top: elementOffset.top - parentOffset.top,
+                    left: elementOffset.left - parentOffset.left
+                };
+
+            }
+
+
+            let cells = posterElement.getElementsByTagName('td');
+            for(let cell of cells) {
+
+                let offset = offsetFromParent(cell, posterElement);
+                r('row', offset);
+                //r(posterElement.offsetWidth,this.width);
+
+                let buttonMesh = new Objects.Button({
+
+                    id: createGuid(),
+                    type: 'button',
+
+                    world: this.world,
+                    storey: this.storey,
+                    position: {
+                        x: this.position.x,
+                        y: this.position.y,
+                    },
+
+                    rotation: this.rotation,
+
+                    width: cell.offsetWidth / this.voxelPixelRatio,
+                    height:  cell.offsetHeight / this.voxelPixelRatio,
+
+
+                    offsetHorizontal: (offset.left) / this.voxelPixelRatio,
+                    offsetVertical: (offset.top) / this.voxelPixelRatio,
+
+
+                    posterHtml: cell.innerHTML,
+                    voxelPixelRatio: this.voxelPixelRatio,
+
+                    buttonBackgroundColor: '#0000ff',
+                    buttonTextColor: '#000000',
+
+                    //onClick: cell.onclick
+
+
+                });
+
+                buttonMesh.offsetHorizontal += buttonMesh.width/2;
+                buttonMesh.offsetVertical += buttonMesh.height/2;
+
+                buttonMesh.offsetHorizontal -= this.width / 2;
+                buttonMesh.offsetVertical -= this.height / 2;
+
+
+                virtualObjects.push(buttonMesh);
+
+            }
+
+
+            /*let tables = posterElement.getElementsByTagName('table');
             for(let table of tables) {
+
+                r('table',table.offsetTop,table.offsetLeft);
                 let rows = table.getElementsByTagName('tr');
                 for (let row of rows) {
+
+                    r('row',row.offsetTop,row.offsetLeft);
                     let cells = row.getElementsByTagName('td');
                     for (let cell of cells) {
 
 
+                        r('cell',cell.offsetTop,cell.offsetLeft);
 
                         let buttonMesh = new Objects.Button({
 
@@ -310,17 +393,19 @@ namespace GALLERY.Objects{
 
                             rotation: this.rotation,
 
-                            width: cell.offsetWidth / this.voxelPixelRatio,
-                            height:  cell.offsetHeight / this.voxelPixelRatio,
+                            //width: cell.offsetWidth / this.voxelPixelRatio,
+                            //height:  cell.offsetHeight / this.voxelPixelRatio,
+                            width: 0.1,
+                            height: 0.1,
 
-                            offsetHorizontal: (cell.offsetLeft-posterElement.offsetLeft-posterElement.offsetWidth/2) / this.voxelPixelRatio,
-                            offsetVertical: (cell.offsetTop-posterElement.offsetTop-posterElement.offsetHeight/2) / this.voxelPixelRatio,
+                            offsetHorizontal: (cell.offsetLeft) / this.voxelPixelRatio,
+                            offsetVertical: (cell.offsetTop) / this.voxelPixelRatio,
 
 
                             posterHtml: cell.innerHTML,
                             voxelPixelRatio: this.voxelPixelRatio,
 
-                            buttonBackgroundColor: '#ffffff',
+                            buttonBackgroundColor: '#0000ff',
                             buttonTextColor: '#000000',
 
                             //onClick: cell.onclick
@@ -331,8 +416,12 @@ namespace GALLERY.Objects{
 
                         });
 
-                        buttonMesh.offsetHorizontal += buttonMesh.width/2;
-                        buttonMesh.offsetVertical += buttonMesh.height/2;
+                        //buttonMesh.offsetHorizontal += buttonMesh.width/2;
+                        //buttonMesh.offsetVertical += buttonMesh.height/2;
+
+                        buttonMesh.offsetHorizontal -= this.width/2;
+                        buttonMesh.offsetVertical -= this.height/2;
+
 
                         virtualObjects.push(buttonMesh);
 
@@ -342,7 +431,7 @@ namespace GALLERY.Objects{
 
                     }
                 }
-            }
+            }*/
 
             //------------------------------------------------------------
 

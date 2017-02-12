@@ -327,9 +327,9 @@ namespace GALLERY.Objects{
                     ,0
                 );
                 this._vectorHorizontal = new BABYLON.Vector3(
-                     -this.offsetHorizontal * Math.cos(rotation_rad)
+                     -Math.cos(rotation_rad) * BLOCK_SIZE
                     ,0
-                    ,-this.offsetHorizontal * Math.sin(rotation_rad)
+                    ,-Math.sin(rotation_rad) * BLOCK_SIZE
                 );
                 this._vectorFrontal = new BABYLON.Vector3(
                      Math.sin(rotation_rad) * BLOCK_SIZE

@@ -2062,7 +2062,7 @@ var GALLERY;
                 }
                 else {
                     this._vectorVertical = new BABYLON.Vector3(0, -BLOCK_SIZE, 0);
-                    this._vectorHorizontal = new BABYLON.Vector3(-this.offsetHorizontal * Math.cos(rotation_rad), 0, -this.offsetHorizontal * Math.sin(rotation_rad));
+                    this._vectorHorizontal = new BABYLON.Vector3(-Math.cos(rotation_rad) * BLOCK_SIZE, 0, -Math.sin(rotation_rad) * BLOCK_SIZE);
                     this._vectorFrontal = new BABYLON.Vector3(Math.sin(rotation_rad) * BLOCK_SIZE, 0, Math.cos(rotation_rad) * BLOCK_SIZE);
                     position
                         .addInPlace(this._vectorVertical.scale(this.offsetVertical))
@@ -2268,10 +2268,7 @@ var GALLERY;
                 else {
                     material.diffuseTexture = this._posterTexture;
                 }
-                /*setTimeout(function () {
-                    object.redrawPosterTexture();
-                },100);*/
-                //this.redrawPosterTexture();
+                //set interval this.redrawPosterTexture();
                 var image00 = BABYLON.Mesh.CreatePlane(this.id, BLOCK_SIZE, scene);
                 image00.material = material;
                 return (image00);
@@ -2352,40 +2349,124 @@ var GALLERY;
                     virtualObjects.push(buttonMesh);
                 }
                 //----------------------------------------------------
-                var tables = posterElement.getElementsByTagName('table');
-                for (var _a = 0, tables_1 = tables; _a < tables_1.length; _a++) {
-                    var table = tables_1[_a];
-                    var rows = table.getElementsByTagName('tr');
-                    for (var _b = 0, rows_1 = rows; _b < rows_1.length; _b++) {
-                        var row = rows_1[_b];
-                        var cells = row.getElementsByTagName('td');
-                        for (var _c = 0, cells_1 = cells; _c < cells_1.length; _c++) {
-                            var cell = cells_1[_c];
-                            var buttonMesh = new Objects.Button({
+                var cumulativeOffset = function (element) {
+                    var top = 0, left = 0;
+                    do {
+                        top += element.offsetTop || 0;
+                        left += element.offsetLeft || 0;
+                        element = element.offsetParent;
+                    } while (element);
+                    return {
+                        top: top,
+                        left: left
+                    };
+                };
+                function offsetFromParent(element, parent) {
+                    var elementOffset = cumulativeOffset(element);
+                    var parentOffset = cumulativeOffset(parent);
+                    return {
+                        top: elementOffset.top - parentOffset.top,
+                        left: elementOffset.left - parentOffset.left
+                    };
+                }
+                var cells = posterElement.getElementsByTagName('td');
+                for (var _a = 0, cells_1 = cells; _a < cells_1.length; _a++) {
+                    var cell = cells_1[_a];
+                    var offset = offsetFromParent(cell, posterElement);
+                    r('row', offset);
+                    //r(posterElement.offsetWidth,this.width);
+                    var buttonMesh = new Objects.Button({
+                        id: createGuid(),
+                        type: 'button',
+                        world: this.world,
+                        storey: this.storey,
+                        position: {
+                            x: this.position.x,
+                            y: this.position.y,
+                        },
+                        rotation: this.rotation,
+                        width: cell.offsetWidth / this.voxelPixelRatio,
+                        height: cell.offsetHeight / this.voxelPixelRatio,
+                        offsetHorizontal: (offset.left) / this.voxelPixelRatio,
+                        offsetVertical: (offset.top) / this.voxelPixelRatio,
+                        posterHtml: cell.innerHTML,
+                        voxelPixelRatio: this.voxelPixelRatio,
+                        buttonBackgroundColor: '#0000ff',
+                        buttonTextColor: '#000000',
+                    });
+                    buttonMesh.offsetHorizontal += buttonMesh.width / 2;
+                    buttonMesh.offsetVertical += buttonMesh.height / 2;
+                    buttonMesh.offsetHorizontal -= this.width / 2;
+                    buttonMesh.offsetVertical -= this.height / 2;
+                    virtualObjects.push(buttonMesh);
+                }
+                /*let tables = posterElement.getElementsByTagName('table');
+                for(let table of tables) {
+    
+                    r('table',table.offsetTop,table.offsetLeft);
+                    let rows = table.getElementsByTagName('tr');
+                    for (let row of rows) {
+    
+                        r('row',row.offsetTop,row.offsetLeft);
+                        let cells = row.getElementsByTagName('td');
+                        for (let cell of cells) {
+    
+    
+                            r('cell',cell.offsetTop,cell.offsetLeft);
+    
+                            let buttonMesh = new Objects.Button({
+    
                                 id: createGuid(),
                                 type: 'button',
+    
                                 world: this.world,
                                 storey: this.storey,
                                 position: {
                                     x: this.position.x,
                                     y: this.position.y,
                                 },
+    
                                 rotation: this.rotation,
-                                width: cell.offsetWidth / this.voxelPixelRatio,
-                                height: cell.offsetHeight / this.voxelPixelRatio,
-                                offsetHorizontal: (cell.offsetLeft - posterElement.offsetLeft - posterElement.offsetWidth / 2) / this.voxelPixelRatio,
-                                offsetVertical: (cell.offsetTop - posterElement.offsetTop - posterElement.offsetHeight / 2) / this.voxelPixelRatio,
+    
+                                //width: cell.offsetWidth / this.voxelPixelRatio,
+                                //height:  cell.offsetHeight / this.voxelPixelRatio,
+                                width: 0.1,
+                                height: 0.1,
+    
+                                offsetHorizontal: (cell.offsetLeft) / this.voxelPixelRatio,
+                                offsetVertical: (cell.offsetTop) / this.voxelPixelRatio,
+    
+    
                                 posterHtml: cell.innerHTML,
                                 voxelPixelRatio: this.voxelPixelRatio,
-                                buttonBackgroundColor: '#ffffff',
+    
+                                buttonBackgroundColor: '#0000ff',
                                 buttonTextColor: '#000000',
+    
+                                //onClick: cell.onclick
+    
+    
+    
+    
+    
                             });
-                            buttonMesh.offsetHorizontal += buttonMesh.width / 2;
-                            buttonMesh.offsetVertical += buttonMesh.height / 2;
+    
+                            //buttonMesh.offsetHorizontal += buttonMesh.width/2;
+                            //buttonMesh.offsetVertical += buttonMesh.height/2;
+    
+                            buttonMesh.offsetHorizontal -= this.width/2;
+                            buttonMesh.offsetVertical -= this.height/2;
+    
+    
                             virtualObjects.push(buttonMesh);
+    
+    
+    
+    
+    
                         }
                     }
-                }
+                }*/
                 //------------------------------------------------------------
                 r(virtualObjects);
                 return (virtualObjects);
@@ -2593,11 +2674,22 @@ var GALLERY;
                 element.style.color = this.buttonTextColor;
                 return element;
             };
+            Button.prototype.createImageMesh = function (scene) {
+                var mesh = _super.prototype.createImageMesh.call(this, scene);
+                var posterTextureCtx = this._posterTexture.getContext();
+                posterTextureCtx.beginPath();
+                posterTextureCtx.rect(0, 0, posterTextureCtx.canvas.width, posterTextureCtx.canvas.height);
+                posterTextureCtx.fillStyle = this.buttonBackgroundColor;
+                posterTextureCtx.fill();
+                this._posterTexture.update();
+                return mesh;
+            };
             Button.prototype.createVirtualObjects = function () {
                 return (null);
             };
             Button.prototype.handlePointerPress = function (event, pickResult) {
                 //todo DI Viewer.scene to object
+                this.redrawPosterTexture();
                 var mesh = this.getBabylonMesh(Viewer.scene);
                 var vector = this._vectorFrontal.scale(this.offsetFrontalPressed - this.offsetFrontal);
                 mesh.position.addInPlace(vector);

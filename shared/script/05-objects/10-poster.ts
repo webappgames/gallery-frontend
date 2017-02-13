@@ -5,9 +5,17 @@ namespace GALLERY.Objects{
     import scene = GALLERY.Viewer.scene;
     export class Poster extends Image{
 
+
+
+
         public posterHtml:string;
         public posterDesign:string;
         public voxelPixelRatio:number;
+
+
+        public posterBackgroundColor: string;
+        public posterTextColor: string;
+
 
         //todo private _posterMesh
         public _posterElement:HTMLElement;
@@ -15,10 +23,13 @@ namespace GALLERY.Objects{
 
         constructor(object){
 
-            super(object);
 
             this.posterHtml = this.posterHtml || '';
             this.posterDesign = this.posterDesign || 'board';
+
+
+            this.posterBackgroundColor = this.posterBackgroundColor || '#ffffff';
+            this.posterTextColor = this.posterTextColor || '#000000';
 
 
             this.src = this.src || 'http://cdn.pavolhejny.com/?file=5888cb789f36f-M2Q5OGMxNTk1N2M1ZjVkZDIyN2U1M2RiYzdjYmI2MGQuanBn';//todo remove
@@ -26,6 +37,7 @@ namespace GALLERY.Objects{
             this.height = this.height || 1;
             this.voxelPixelRatio = this.voxelPixelRatio || 10;
 
+            super(object);
 
         }
 
@@ -36,6 +48,8 @@ namespace GALLERY.Objects{
                 case 'posterHtml': return('<textarea></textarea>');
                 case 'posterDesign': return('<input type="text" />');
                 case 'voxelPixelRatio': return('<input type="number" />');
+                case 'posterBackgroundColor': return('<input type="color" />');
+                case 'posterTextColor': return('<input type="color" />');
                 default:  return(super.getEditorInputHtml(key));
             }
 
@@ -105,6 +119,14 @@ namespace GALLERY.Objects{
             }, scene, false);
 
 
+            let posterTextureCtx = this._posterTexture.getContext();
+            posterTextureCtx.beginPath();
+            posterTextureCtx.rect(0, 0, posterTextureCtx.canvas.width, posterTextureCtx.canvas.height);
+            posterTextureCtx.fillStyle = this.posterBackgroundColor;
+            posterTextureCtx.fill();
+            this._posterTexture.update();
+
+
 
             let material = new BABYLON.StandardMaterial("texture4", scene);
 
@@ -132,6 +154,9 @@ namespace GALLERY.Objects{
 
 
 
+            /*setTimeout(function () {
+                this.redrawPosterTexture();
+            }.bind(this));*/
             //set interval this.redrawPosterTexture();
 
 
@@ -235,8 +260,7 @@ namespace GALLERY.Objects{
             let posterElement = this.getPosterElement(document.getElementById('posters'));
 
             //r(posterElement);
-            let buttons = posterElement.getElementsByTagName('button');
-
+            /*let buttons = posterElement.getElementsByTagName('button');
 
             for(let button of buttons){
 
@@ -278,7 +302,7 @@ namespace GALLERY.Objects{
 
                 virtualObjects.push(buttonMesh);
 
-            }
+            }*/
 
 
 
@@ -313,7 +337,10 @@ namespace GALLERY.Objects{
             }
 
 
-            let cells = posterElement.getElementsByTagName('td');
+            let cells = posterElement.querySelectorAll('td,th,button');
+            r(cells);
+
+
             for(let cell of cells) {
 
                 let offset = offsetFromParent(cell, posterElement);
@@ -345,10 +372,10 @@ namespace GALLERY.Objects{
                     posterHtml: cell.innerHTML,
                     voxelPixelRatio: this.voxelPixelRatio,
 
-                    buttonBackgroundColor: '#0000ff',
-                    buttonTextColor: '#000000',
+                    posterBackgroundColor: '#0000ff',
+                    posterTextColor: '#000000',
 
-                    //onClick: cell.onclick
+                    onClick: cell.onclick
 
 
                 });
@@ -405,8 +432,8 @@ namespace GALLERY.Objects{
                             posterHtml: cell.innerHTML,
                             voxelPixelRatio: this.voxelPixelRatio,
 
-                            buttonBackgroundColor: '#0000ff',
-                            buttonTextColor: '#000000',
+                            posterBackgroundColor: '#0000ff',
+                            posterTextColor: '#000000',
 
                             //onClick: cell.onclick
 

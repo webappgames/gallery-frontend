@@ -6,9 +6,6 @@ namespace GALLERY.Objects{
 
     export class Button extends Poster{
 
-        public buttonBackgroundColor: string;
-        public buttonTextColor: string;
-
         public offsetFrontalPressed: number;
         public onClick: string|Function;
 
@@ -16,8 +13,8 @@ namespace GALLERY.Objects{
         constructor(object){
 
 
-            this.buttonBackgroundColor = this.buttonBackgroundColor || '#0098ff';
-            this.buttonTextColor = this.buttonTextColor || '#ffffff';
+            this.posterBackgroundColor = this.posterBackgroundColor || '#0098ff';
+            this.posterTextColor = this.posterTextColor || '#ffffff';
 
             this.posterDesign = this.posterDesign || 'button';
             if(typeof this.offsetFrontal == 'undefined'){this.offsetFrontal=1/5;}
@@ -38,8 +35,6 @@ namespace GALLERY.Objects{
         getEditorInputHtml(key:string):string{
 
             switch(key) {
-                case 'buttonBackgroundColor': return('<input type="color" />');
-                case 'buttonTextColor': return('<input type="color" />');
                 case 'offsetFrontalPressed': return('<input type="number" />');
                 case 'onClick': return('<textarea></textarea>');
                 default:  return(super.getEditorInputHtml(key));
@@ -51,27 +46,12 @@ namespace GALLERY.Objects{
         createPosterElement(container){
             let element = super.createPosterElement(container);
 
-            element.style.backgroundColor = this.buttonBackgroundColor;
-            element.style.color = this.buttonTextColor;
+            element.style.backgroundColor = this.posterBackgroundColor;
+            element.style.color = this.posterTextColor;
 
             return element;
         }
 
-
-        createImageMesh(scene:BABYLON.Scene):BABYLON.Mesh{
-
-            let mesh = super.createImageMesh(scene);
-
-            let posterTextureCtx = this._posterTexture.getContext();
-            posterTextureCtx.beginPath();
-            posterTextureCtx.rect(0, 0, posterTextureCtx.canvas.width, posterTextureCtx.canvas.height);
-            posterTextureCtx.fillStyle = this.buttonBackgroundColor;
-            posterTextureCtx.fill();
-            this._posterTexture.update();
-
-            return mesh;
-
-        }
 
 
         createVirtualObjects():Objects.Array{

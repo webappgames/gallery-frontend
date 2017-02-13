@@ -42,8 +42,9 @@ namespace GALLERY.Viewer {
 
 
 
-        let endlessStructures = false;
-        let endlessStructuresFromStorey = false;
+        //let endlessStructures = false;
+        //let endlessStructuresFromStorey = false;
+        let environment: Objects.Environment;
         //var wasVideo = false;
 
 
@@ -69,8 +70,9 @@ namespace GALLERY.Viewer {
             if (object.type == 'environment') {
 
 
-                endlessStructures = object.endlessStructures;
-                endlessStructuresFromStorey = object.endlessStructuresFromStorey;
+                //endlessStructures = object.endlessStructures;
+                //endlessStructuresFromStorey = object.endlessStructuresFromStorey;
+                environment = object;
 
 
                 scene.clearColor = BABYLON.Color3.FromHexString(object.clearColor);
@@ -282,47 +284,9 @@ namespace GALLERY.Viewer {
             } else if (object.type == 'multiblock') {
 
 
-                //--------------------------------------Endless
-                if (endlessStructures) {
-                    let bottom = object.position.z - object.size.z / 2;
-                    if (bottom <= BLOCKS_STOREYS_LEVELS[endlessStructuresFromStorey]) {
-
-                        let top = object.position.z + object.size.z / 2;
-
-
-                        bottom -= 1000;
-
-
-                        object.position.z = (top + bottom ) / 2;
-                        object.size.z = top - bottom;
-                    }
-                }
-                //--------------------------------------
-
-
-                var position = new BABYLON.Vector3(
-                    object.position.x * -BLOCK_SIZE,
-                    (object.position.z + BLOCKS_1NP_LEVEL) * BLOCK_SIZE,//(0.5 - 0.9) * BLOCK_SIZE,
-                    object.position.y * BLOCK_SIZE
-                );
-
-
-                var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
-                box.material = getMaterial(object.material, object.opacity);
-
-
-                box.isPickable = true;
-                box.checkCollisions = true;
-
-                box.position = position;
-
-                box.scaling.x = object.size.x;
-                box.scaling.y = object.size.z;
-                box.scaling.z = object.size.y;
-
-
-                sunShadowGenerator.getShadowMap().renderList.push(box);
-                meshes.push(box);
+                /*
+                todo sunShadowGenerator.getShadowMap().renderList.push(box);
+                meshes.push(box);*/
 
 
             } else if (object.type == 'light') {
@@ -534,7 +498,7 @@ namespace GALLERY.Viewer {
 
 
 
-            let mesh = object.getBabylonMesh(scene);
+            let mesh = object.getBabylonMesh(scene,getMaterial,environment);
             if(mesh) {
                 meshes.push(mesh);
             }

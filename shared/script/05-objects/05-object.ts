@@ -73,12 +73,12 @@ namespace GALLERY.Objects{
 
         }
 
-        getBabylonMesh(scene:BABYLON.Scene):BABYLON.Mesh {
+        getBabylonMesh(scene:BABYLON.Scene,getMaterial:Function,environment:Environment):BABYLON.Mesh {
 
             if ("_babylonMesh" in this) {
             } else {
 
-                this._babylonMesh = this.createBabylonMesh(scene);
+                this._babylonMesh = this.createBabylonMesh(scene,getMaterial,environment);
             }
 
             return this._babylonMesh;
@@ -86,7 +86,7 @@ namespace GALLERY.Objects{
         }
 
 
-        createBabylonMesh(scene:BABYLON.Scene):BABYLON.Mesh{
+        createBabylonMesh(scene:BABYLON.Scene,getMaterial,environment):BABYLON.Mesh{
             return(null);
         }
 

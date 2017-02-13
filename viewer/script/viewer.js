@@ -1605,15 +1605,15 @@ var GALLERY;
                     default: return ('');
                 }
             };
-            Object.prototype.getBabylonMesh = function (scene) {
+            Object.prototype.getBabylonMesh = function (scene, getMaterial, environment) {
                 if ("_babylonMesh" in this) {
                 }
                 else {
-                    this._babylonMesh = this.createBabylonMesh(scene);
+                    this._babylonMesh = this.createBabylonMesh(scene, getMaterial, environment);
                 }
                 return this._babylonMesh;
             };
-            Object.prototype.createBabylonMesh = function (scene) {
+            Object.prototype.createBabylonMesh = function (scene, getMaterial, environment) {
                 return (null);
             };
             Object.prototype.createVirtualObjects = function () {
@@ -1910,6 +1910,67 @@ var GALLERY;
             function MultiBlock() {
                 _super.apply(this, arguments);
             }
+            MultiBlock.prototype.createBabylonMesh = function (scene, getMaterial, environment) {
+                /**/
+                //--------------------------------------Endless
+                if (environment.endlessStructures) {
+                    var bottom = this.position.z - this.size.z / 2;
+                    if (bottom <= BLOCKS_STOREYS_LEVELS[environment.endlessStructuresFromStorey]) {
+                        var top_1 = this.position.z + this.size.z / 2;
+                        bottom -= 1000;
+                        this.position.z = (top_1 + bottom) / 2;
+                        this.size.z = top_1 - bottom;
+                    }
+                }
+                //--------------------------------------
+                var position = new BABYLON.Vector3(this.position.x * -BLOCK_SIZE, (this.position.z + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
+                this.position.y * BLOCK_SIZE);
+                /*var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
+                 box.material = getMaterial(this.material, this.opacity, false, this.size.x, this.size.z);*/
+                var box = BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
+                /* var f = new BABYLON.StandardMaterial("material0", scene);
+                 f.diffuseColor = new BABYLON.Color3(0.75, 0, 0);
+                 var ba = new BABYLON.StandardMaterial("material1", scene);
+                 ba.diffuseColor = new BABYLON.Color3(0, 0, 0.75);
+                 var l = new BABYLON.StandardMaterial("material2", scene);
+                 l.diffuseColor = new BABYLON.Color3(0, 0.75, 0.75);
+                 var r = new BABYLON.StandardMaterial("material3", scene);
+                 r.diffuseColor = new BABYLON.Color3(0, 0, 0.75);
+                 var t = new BABYLON.StandardMaterial("material4", scene);
+                 t.diffuseColor = new BABYLON.Color3(0, 0.75, 0);
+                 var bo = new BABYLON.StandardMaterial("material5", scene);
+                 bo.diffuseColor = new BABYLON.Color3(1, 1, 0);*/
+                var f = getMaterial(this.material, 0.5, true, this.size.z, this.size.x);
+                var ba = f;
+                var l = getMaterial(this.material, this.opacity, true, this.size.z, this.size.y);
+                var r = l;
+                var t = getMaterial(this.material, this.opacity, true, this.size.x, this.size.y);
+                var bo = t;
+                var multi = new BABYLON.MultiMaterial("multimaterial", scene);
+                multi.subMaterials.push(f);
+                multi.subMaterials.push(ba);
+                multi.subMaterials.push(l);
+                multi.subMaterials.push(r);
+                multi.subMaterials.push(t);
+                multi.subMaterials.push(bo);
+                //apply material
+                box.subMeshes = [];
+                var verticesCount = box.getTotalVertices();
+                box.subMeshes.push(new BABYLON.SubMesh(0, 0, verticesCount, 0, 6, box));
+                box.subMeshes.push(new BABYLON.SubMesh(1, 1, verticesCount, 6, 6, box));
+                box.subMeshes.push(new BABYLON.SubMesh(2, 2, verticesCount, 12, 6, box));
+                box.subMeshes.push(new BABYLON.SubMesh(3, 3, verticesCount, 18, 6, box));
+                box.subMeshes.push(new BABYLON.SubMesh(4, 4, verticesCount, 24, 6, box));
+                box.subMeshes.push(new BABYLON.SubMesh(5, 5, verticesCount, 30, 6, box));
+                box.material = multi;
+                box.isPickable = true;
+                box.checkCollisions = true;
+                box.position = position;
+                box.scaling.x = this.size.x;
+                box.scaling.y = this.size.z;
+                box.scaling.z = this.size.y;
+                return box;
+            };
             return MultiBlock;
         }(Objects.Object));
         Objects.MultiBlock = MultiBlock;
@@ -2240,19 +2301,23 @@ var GALLERY;
         var Poster = (function (_super) {
             __extends(Poster, _super);
             function Poster(object) {
-                _super.call(this, object);
                 this.posterHtml = this.posterHtml || '';
                 this.posterDesign = this.posterDesign || 'board';
+                this.posterBackgroundColor = this.posterBackgroundColor || '#ffffff';
+                this.posterTextColor = this.posterTextColor || '#000000';
                 this.src = this.src || 'http://cdn.pavolhejny.com/?file=5888cb789f36f-M2Q5OGMxNTk1N2M1ZjVkZDIyN2U1M2RiYzdjYmI2MGQuanBn'; //todo remove
                 this.width = this.width || 1;
                 this.height = this.height || 1;
                 this.voxelPixelRatio = this.voxelPixelRatio || 10;
+                _super.call(this, object);
             }
             Poster.prototype.getEditorInputHtml = function (key) {
                 switch (key) {
                     case 'posterHtml': return ('<textarea></textarea>');
                     case 'posterDesign': return ('<input type="text" />');
                     case 'voxelPixelRatio': return ('<input type="number" />');
+                    case 'posterBackgroundColor': return ('<input type="color" />');
+                    case 'posterTextColor': return ('<input type="color" />');
                     default: return (_super.prototype.getEditorInputHtml.call(this, key));
                 }
             };
@@ -2295,6 +2360,12 @@ var GALLERY;
                     width: this.width * this.voxelPixelRatio,
                     height: this.height * this.voxelPixelRatio
                 }, scene, false);
+                var posterTextureCtx = this._posterTexture.getContext();
+                posterTextureCtx.beginPath();
+                posterTextureCtx.rect(0, 0, posterTextureCtx.canvas.width, posterTextureCtx.canvas.height);
+                posterTextureCtx.fillStyle = this.posterBackgroundColor;
+                posterTextureCtx.fill();
+                this._posterTexture.update();
                 var material = new BABYLON.StandardMaterial("texture4", scene);
                 if (this.isEmitting) {
                     material.emissiveTexture = this._posterTexture;
@@ -2309,6 +2380,9 @@ var GALLERY;
                 else {
                     material.diffuseTexture = this._posterTexture;
                 }
+                /*setTimeout(function () {
+                    this.redrawPosterTexture();
+                }.bind(this));*/
                 //set interval this.redrawPosterTexture();
                 var image00 = BABYLON.Mesh.CreatePlane(this.id, BLOCK_SIZE, scene);
                 image00.material = material;
@@ -2364,31 +2438,49 @@ var GALLERY;
                 var virtualObjects = new Objects.Array();
                 var posterElement = this.getPosterElement(document.getElementById('posters'));
                 //r(posterElement);
-                var buttons = posterElement.getElementsByTagName('button');
-                for (var _i = 0, buttons_2 = buttons; _i < buttons_2.length; _i++) {
-                    var button = buttons_2[_i];
-                    var buttonMesh = new Objects.Button({
+                /*let buttons = posterElement.getElementsByTagName('button');
+    
+                for(let button of buttons){
+    
+    
+                    let buttonMesh = new Objects.Button({
+    
                         id: createGuid(),
                         type: 'button',
+    
                         world: this.world,
                         storey: this.storey,
                         position: {
                             x: this.position.x,
                             y: this.position.y,
                         },
+    
                         rotation: this.rotation,
+    
                         width: button.offsetWidth / this.voxelPixelRatio,
-                        height: button.offsetHeight / this.voxelPixelRatio,
-                        offsetHorizontal: (button.offsetLeft - posterElement.offsetLeft - posterElement.offsetWidth / 2) / this.voxelPixelRatio,
-                        offsetVertical: (button.offsetTop - posterElement.offsetTop - posterElement.offsetHeight / 2) / this.voxelPixelRatio,
+                        height:  button.offsetHeight / this.voxelPixelRatio,
+    
+                        offsetHorizontal: (button.offsetLeft-posterElement.offsetLeft-posterElement.offsetWidth/2) / this.voxelPixelRatio,
+                        offsetVertical: (button.offsetTop-posterElement.offsetTop-posterElement.offsetHeight/2) / this.voxelPixelRatio,
+    
+    
                         posterHtml: button.innerHTML,
                         voxelPixelRatio: this.voxelPixelRatio,
+    
                         onClick: button.onclick
+    
+    
+    
+    
+    
                     });
-                    buttonMesh.offsetHorizontal += buttonMesh.width / 2;
-                    buttonMesh.offsetVertical += buttonMesh.height / 2;
+    
+                    buttonMesh.offsetHorizontal += buttonMesh.width/2;
+                    buttonMesh.offsetVertical += buttonMesh.height/2;
+    
                     virtualObjects.push(buttonMesh);
-                }
+    
+                }*/
                 //----------------------------------------------------
                 var cumulativeOffset = function (element) {
                     var top = 0, left = 0;
@@ -2410,9 +2502,10 @@ var GALLERY;
                         left: elementOffset.left - parentOffset.left
                     };
                 }
-                var cells = posterElement.getElementsByTagName('td');
-                for (var _a = 0, cells_1 = cells; _a < cells_1.length; _a++) {
-                    var cell = cells_1[_a];
+                var cells = posterElement.querySelectorAll('td,th,button');
+                r(cells);
+                for (var _i = 0, cells_1 = cells; _i < cells_1.length; _i++) {
+                    var cell = cells_1[_i];
                     var offset = offsetFromParent(cell, posterElement);
                     r('row', offset);
                     //r(posterElement.offsetWidth,this.width);
@@ -2432,8 +2525,9 @@ var GALLERY;
                         offsetVertical: (offset.top) / this.voxelPixelRatio,
                         posterHtml: cell.innerHTML,
                         voxelPixelRatio: this.voxelPixelRatio,
-                        buttonBackgroundColor: '#0000ff',
-                        buttonTextColor: '#000000',
+                        posterBackgroundColor: '#0000ff',
+                        posterTextColor: '#000000',
+                        onClick: cell.onclick
                     });
                     buttonMesh.offsetHorizontal += buttonMesh.width / 2;
                     buttonMesh.offsetVertical += buttonMesh.height / 2;
@@ -2481,8 +2575,8 @@ var GALLERY;
                                 posterHtml: cell.innerHTML,
                                 voxelPixelRatio: this.voxelPixelRatio,
     
-                                buttonBackgroundColor: '#0000ff',
-                                buttonTextColor: '#000000',
+                                posterBackgroundColor: '#0000ff',
+                                posterTextColor: '#000000',
     
                                 //onClick: cell.onclick
     
@@ -2685,8 +2779,8 @@ var GALLERY;
         var Button = (function (_super) {
             __extends(Button, _super);
             function Button(object) {
-                this.buttonBackgroundColor = this.buttonBackgroundColor || '#0098ff';
-                this.buttonTextColor = this.buttonTextColor || '#ffffff';
+                this.posterBackgroundColor = this.posterBackgroundColor || '#0098ff';
+                this.posterTextColor = this.posterTextColor || '#ffffff';
                 this.posterDesign = this.posterDesign || 'button';
                 if (typeof this.offsetFrontal == 'undefined') {
                     this.offsetFrontal = 1 / 5;
@@ -2702,8 +2796,6 @@ var GALLERY;
             }
             Button.prototype.getEditorInputHtml = function (key) {
                 switch (key) {
-                    case 'buttonBackgroundColor': return ('<input type="color" />');
-                    case 'buttonTextColor': return ('<input type="color" />');
                     case 'offsetFrontalPressed': return ('<input type="number" />');
                     case 'onClick': return ('<textarea></textarea>');
                     default: return (_super.prototype.getEditorInputHtml.call(this, key));
@@ -2711,19 +2803,9 @@ var GALLERY;
             };
             Button.prototype.createPosterElement = function (container) {
                 var element = _super.prototype.createPosterElement.call(this, container);
-                element.style.backgroundColor = this.buttonBackgroundColor;
-                element.style.color = this.buttonTextColor;
+                element.style.backgroundColor = this.posterBackgroundColor;
+                element.style.color = this.posterTextColor;
                 return element;
-            };
-            Button.prototype.createImageMesh = function (scene) {
-                var mesh = _super.prototype.createImageMesh.call(this, scene);
-                var posterTextureCtx = this._posterTexture.getContext();
-                posterTextureCtx.beginPath();
-                posterTextureCtx.rect(0, 0, posterTextureCtx.canvas.width, posterTextureCtx.canvas.height);
-                posterTextureCtx.fillStyle = this.buttonBackgroundColor;
-                posterTextureCtx.fill();
-                this._posterTexture.update();
-                return mesh;
             };
             Button.prototype.createVirtualObjects = function () {
                 return (null);
@@ -4422,7 +4504,7 @@ function createStairsMesh(name, stairs_count, isFull, scene) {
     for (var i = 0; i < stairs_count; i++) {
         i1 = (Math.floor((i - 1) / 2) * 2 + 2);
         i2 = (Math.floor(i / 2) * 2);
-        var top_1 = new BABYLON.Vector3(1 - (i1 / stairs_count) - 0.5, (i2) / stairs_count, 0);
+        var top_2 = new BABYLON.Vector3(1 - (i1 / stairs_count) - 0.5, (i2) / stairs_count, 0);
         if (isFull) {
             bottom_y = 0;
         }
@@ -4430,8 +4512,8 @@ function createStairsMesh(name, stairs_count, isFull, scene) {
             bottom_y = i / stairs_count - (2 / stairs_count);
         }
         var bottom = new BABYLON.Vector3(1 - (i / stairs_count) - 0.5, bottom_y, 0);
-        pathTopA.push(top_1.add(a));
-        pathTopB.push(top_1.add(b));
+        pathTopA.push(top_2.add(a));
+        pathTopB.push(top_2.add(b));
         pathBottomA.push(bottom.add(a));
         pathBottomB.push(bottom.add(b));
     }
@@ -4992,8 +5074,9 @@ var GALLERY;
             bark.freeze();
             Viewer.gates = [];
             links = [];
-            var endlessStructures = false;
-            var endlessStructuresFromStorey = false;
+            //let endlessStructures = false;
+            //let endlessStructuresFromStorey = false;
+            var environment;
             //var wasVideo = false;
             /*hooverLayer = new BABYLON.HighlightLayer("hooverLayer", scene, {camera: camera});
             hooverLayer.blurHorizontalSize = 0.5;
@@ -5003,8 +5086,9 @@ var GALLERY;
             function processObject(object) {
                 var position = object.getBabylonPosition();
                 if (object.type == 'environment') {
-                    endlessStructures = object.endlessStructures;
-                    endlessStructuresFromStorey = object.endlessStructuresFromStorey;
+                    //endlessStructures = object.endlessStructures;
+                    //endlessStructuresFromStorey = object.endlessStructuresFromStorey;
+                    environment = object;
                     Viewer.scene.clearColor = BABYLON.Color3.FromHexString(object.clearColor);
                     if (object.ground !== 'none') {
                         //todo position
@@ -5115,29 +5199,6 @@ var GALLERY;
                     throw new Error('Block should not be in compiled objects.');
                 }
                 else if (object.type == 'multiblock') {
-                    //--------------------------------------Endless
-                    if (endlessStructures) {
-                        var bottom = object.position.z - object.size.z / 2;
-                        if (bottom <= BLOCKS_STOREYS_LEVELS[endlessStructuresFromStorey]) {
-                            var top_2 = object.position.z + object.size.z / 2;
-                            bottom -= 1000;
-                            object.position.z = (top_2 + bottom) / 2;
-                            object.size.z = top_2 - bottom;
-                        }
-                    }
-                    //--------------------------------------
-                    var position = new BABYLON.Vector3(object.position.x * -BLOCK_SIZE, (object.position.z + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
-                    object.position.y * BLOCK_SIZE);
-                    var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, Viewer.scene);
-                    box.material = Viewer.getMaterial(object.material, object.opacity);
-                    box.isPickable = true;
-                    box.checkCollisions = true;
-                    box.position = position;
-                    box.scaling.x = object.size.x;
-                    box.scaling.y = object.size.z;
-                    box.scaling.z = object.size.y;
-                    sunShadowGenerator.getShadowMap().renderList.push(box);
-                    Viewer.meshes.push(box);
                 }
                 else if (object.type == 'light') {
                     //r('creating light');
@@ -5271,7 +5332,7 @@ var GALLERY;
                 else {
                     console.warn('Unknown object type "' + object.type + '", maybe version mismatch between editor and this viewer.');
                 }
-                var mesh = object.getBabylonMesh(Viewer.scene);
+                var mesh = object.getBabylonMesh(Viewer.scene, Viewer.getMaterial, environment);
                 if (mesh) {
                     Viewer.meshes.push(mesh);
                 }
@@ -7318,18 +7379,36 @@ var GALLERY;
             return (url);
         }
         Viewer.getTextureUrl = getTextureUrl;
-        var materials = {}; //todo maybe DI
-        function getMaterial(key, opacity, noCache) {
+        var textures = {}; //todo maybe DI
+        function getTexture(key, noCache) {
             if (noCache === void 0) { noCache = false; }
-            if (typeof materials[key] === 'undefined' || noCache) {
+            if (typeof textures[key] === 'undefined' || noCache) {
+                var texture = new BABYLON.Texture(getTextureUrl(key), Viewer.scene);
+                if (noCache) {
+                    return (texture);
+                }
+                else {
+                    textures[key] = texture;
+                }
+            }
+            return (textures[key]);
+        }
+        Viewer.getTexture = getTexture;
+        var materials = {}; //todo maybe DI
+        function getMaterial(key, opacity, noCache, uScale, vScale) {
+            if (noCache === void 0) { noCache = false; }
+            if (uScale === void 0) { uScale = 10; }
+            if (vScale === void 0) { vScale = 10; }
+            var cacheKey = [key, opacity, uScale, vScale].join('|');
+            if (typeof materials[cacheKey] === 'undefined' || noCache) {
                 var material = new BABYLON.StandardMaterial("Mat", Viewer.scene);
                 if (key.substr(0, 1) == '#') {
                     material.diffuseColor = BABYLON.Color3.FromHexString(key);
                 }
                 else {
-                    material.diffuseTexture = new BABYLON.Texture(getTextureUrl(key), Viewer.scene);
-                    material.diffuseTexture.uScale = 10; //Vertical offset of 10%
-                    material.diffuseTexture.vScale = 10; //Horizontal offset of 40%
+                    material.diffuseTexture = getTexture(key, noCache); //new BABYLON.Texture(getTextureUrl(key), scene);
+                    material.diffuseTexture.uScale = uScale;
+                    material.diffuseTexture.vScale = vScale;
                 }
                 material.alpha = opacity;
                 material.freeze();
@@ -7337,10 +7416,10 @@ var GALLERY;
                     return (material);
                 }
                 else {
-                    materials[key] = material;
+                    materials[cacheKey] = material;
                 }
             }
-            return (materials[key]);
+            return (materials[cacheKey]);
         }
         Viewer.getMaterial = getMaterial;
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));

@@ -1572,6 +1572,14 @@ var GALLERY;
                 }
                 return this._babylonMesh;
             };
+            Object.prototype.getCreatedBabylonMesh = function () {
+                if ("_babylonMesh" in this) {
+                    return this._babylonMesh;
+                }
+                else {
+                    return null;
+                }
+            };
             Object.prototype.createBabylonMesh = function (scene, getMaterial, environment) {
                 return (null);
             };
@@ -2603,7 +2611,7 @@ var GALLERY;
                     voxelPixelRatio: this.voxelPixelRatio,
                     name: this.name,
                     html: this.posterHtml,
-                }));
+                }, this));
                 //r(virtualObjects);
                 return (virtualObjects);
             };
@@ -2749,8 +2757,10 @@ var GALLERY;
     (function (Objects) {
         var Board = (function (_super) {
             __extends(Board, _super);
-            function Board(object) {
+            function Board(object, parent) {
+                if (parent === void 0) { parent = null; }
                 _super.call(this, object);
+                this.parent = parent;
                 this.isPerspective = this.isPerspective || false;
                 this.width = this.width || 2;
                 this.height = this.height || 4;
@@ -2780,6 +2790,14 @@ var GALLERY;
                 var element = _super.prototype.createBoard.call(this, container);
                 element.style.width = this.width * this.voxelPixelRatio;
                 element.style.height = this.height * this.voxelPixelRatio;
+                element.style.overflow = 'hidden';
+                var self = this.parent;
+                if (this.parent) {
+                    element.addEventListener('click', function (event) {
+                        alert(self);
+                        self.parent.getCreatedBabylonMesh().position.y += BLOCK_SIZE; //material.opacity = Math.random();
+                    });
+                }
                 return element;
             };
             return Board;

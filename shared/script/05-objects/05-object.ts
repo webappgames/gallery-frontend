@@ -85,6 +85,15 @@ namespace GALLERY.Objects{
 
         }
 
+        getCreatedBabylonMesh():BABYLON.Mesh {
+
+            if ("_babylonMesh" in this) {
+                return this._babylonMesh;
+            } else {
+                return null;
+            }
+
+        }
 
         createBabylonMesh(scene:BABYLON.Scene,getMaterial,environment):BABYLON.Mesh{
             return(null);

@@ -15,7 +15,7 @@ namespace GALLERY.Objects{
 
 
 
-        constructor(object){
+        constructor(object,public realObject=null){
 
             super(object);
             this.isPerspective = this.isPerspective || false;
@@ -72,10 +72,24 @@ namespace GALLERY.Objects{
 
             element.style.width = this.width * this.voxelPixelRatio;
             element.style.height = this.height * this.voxelPixelRatio;
+            element.style.overflow = 'hidden';
 
+
+            let self = this;
+            if(this.realObject) {
+
+                element.addEventListener('click', function (event) {
+
+                    r(self);
+                    self.realObject.getCreatedBabylonMesh().position.y += BLOCK_SIZE;//material.opacity = Math.random();
+
+                });
+            }
 
             return element;
         }
+
+
 
 
 

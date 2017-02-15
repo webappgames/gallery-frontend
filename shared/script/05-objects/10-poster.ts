@@ -492,7 +492,7 @@ namespace GALLERY.Objects{
                 //posterTextColor: '#000000',
 
 
-            }));
+            },this));
 
 
 

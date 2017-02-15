@@ -1613,6 +1613,14 @@ var GALLERY;
                 }
                 return this._babylonMesh;
             };
+            Object.prototype.getCreatedBabylonMesh = function () {
+                if ("_babylonMesh" in this) {
+                    return this._babylonMesh;
+                }
+                else {
+                    return null;
+                }
+            };
             Object.prototype.createBabylonMesh = function (scene, getMaterial, environment) {
                 return (null);
             };
@@ -2644,7 +2652,7 @@ var GALLERY;
                     voxelPixelRatio: this.voxelPixelRatio,
                     name: this.name,
                     html: this.posterHtml,
-                }));
+                }, this));
                 //r(virtualObjects);
                 return (virtualObjects);
             };
@@ -2790,8 +2798,10 @@ var GALLERY;
     (function (Objects) {
         var Board = (function (_super) {
             __extends(Board, _super);
-            function Board(object) {
+            function Board(object, realObject) {
+                if (realObject === void 0) { realObject = null; }
                 _super.call(this, object);
+                this.realObject = realObject;
                 this.isPerspective = this.isPerspective || false;
                 this.width = this.width || 2;
                 this.height = this.height || 4;
@@ -2821,6 +2831,14 @@ var GALLERY;
                 var element = _super.prototype.createBoard.call(this, container);
                 element.style.width = this.width * this.voxelPixelRatio;
                 element.style.height = this.height * this.voxelPixelRatio;
+                element.style.overflow = 'hidden';
+                var self = this;
+                if (this.realObject) {
+                    element.addEventListener('click', function (event) {
+                        r(self);
+                        self.realObject.getCreatedBabylonMesh().position.y += BLOCK_SIZE; //material.opacity = Math.random();
+                    });
+                }
                 return element;
             };
             return Board;
@@ -5115,16 +5133,15 @@ var GALLERY;
         Viewer.zones = [];
         Viewer.boards = [];
         //export var hooverLayer;
-        var meshes = [];
-        var zones = [];
-        var boards = [];
-        var building_blocks = [];
-        var lights = [];
-        var environment;
-        var objects_world;
+        Viewer.meshes = [];
+        Viewer.zones = [];
+        Viewer.boards = [];
+        Viewer.gates = [];
+        Viewer.building_blocks = [];
+        Viewer.lights = [];
         function runWorld(_objects_world, textures) {
-            objects_world = _objects_world;
-            r('Running gallery with ' + objects_world.getAll().length + ' objects.', objects_world);
+            Viewer.objects_world = _objects_world;
+            r('Running gallery with ' + Viewer.objects_world.getAll().length + ' objects.', Viewer.objects_world);
             Viewer.rendered = false;
             var sunShadowGenerator = new BABYLON.ShadowGenerator(1024, Viewer.sun);
             sunShadowGenerator.useVarianceShadowMap = true;
@@ -5134,7 +5151,7 @@ var GALLERY;
             bark.diffuseTexture.vScale = 1; //Horizontal offset of 40%
             bark.freeze();
             //==================================================================================================================
-            objects_world.forEach(addObject);
+            Viewer.objects_world.forEach(addObject);
             Viewer.rendered = true;
             //unlockGatesAndActivateKeys();
         }
@@ -5144,7 +5161,7 @@ var GALLERY;
             if (object.type == 'environment') {
                 //endlessStructures = object.endlessStructures;
                 //endlessStructuresFromStorey = object.endlessStructuresFromStorey;
-                environment = object;
+                Viewer.environment = object;
                 Viewer.scene.clearColor = BABYLON.Color3.FromHexString(object.clearColor);
                 if (object.ground !== 'none') {
                     //todo position
@@ -5167,7 +5184,7 @@ var GALLERY;
                     groundMesh_1.scaling.z = 10000 / BLOCK_SIZE;
                     groundMesh_1.material = Viewer.getMaterial(object.ground, 1, true);
                     //groundMesh.material.backFaceCulling = false;
-                    objects_world.filterTypes('groundhole').forEach(function (holeObject) {
+                    Viewer.objects_world.filterTypes('groundhole').forEach(function (holeObject) {
                         r('asshole', holeObject);
                         var holePosition = holeObject.getBabylonPosition();
                         var holeMesh = BABYLON.Mesh.CreateBox(holeObject.id, BLOCK_SIZE, Viewer.scene);
@@ -5238,7 +5255,7 @@ var GALLERY;
                 light.specular = light.diffuse;
                 light.intensity = object.intensity / 4;
                 light.position.y = LIGHT_VERTICAL * BLOCK_SIZE;
-                lights.push(light);
+                Viewer.lights.push(light);
                 Viewer.meshes.push(light);
             }
             else if (object.type == 'label') {
@@ -5363,7 +5380,7 @@ var GALLERY;
             else {
                 console.warn('Unknown object type "' + object.type + '", maybe version mismatch between editor and this viewer.');
             }
-            var mesh = object.getBabylonMesh(Viewer.scene, Viewer.getMaterial, environment);
+            var mesh = object.getBabylonMesh(Viewer.scene, Viewer.getMaterial, Viewer.environment);
             if (mesh) {
                 Viewer.meshes.push(mesh);
             }

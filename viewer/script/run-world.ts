@@ -13,16 +13,17 @@ namespace GALLERY.Viewer {
     //export var hooverLayer;
 
 
-    let meshes = [];
-    let zones = [];
-    let boards = [];
+    export let meshes = [];
+    export let zones = [];
+    export let boards = [];
+    export let gates = [];
 
-    let building_blocks = [];
-    let lights = [];
+    export let building_blocks = [];
+    export let lights = [];
 
-    let environment: Objects.Environment;
+    export let environment: Objects.Environment;
 
-    let objects_world;
+    export let objects_world;
 
 
     export function runWorld(_objects_world, textures) {

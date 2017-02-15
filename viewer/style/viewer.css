@@ -431,11 +431,10 @@ section#boards {
   z-index: 4000;
   display: block;
   position: fixed;
-  top: 0px;
+  /*top: 0px;
   bottom: 0px;
   right: 0px;
-  left: 0px;
-  pointer-events: none; }
+  left: 0px;*/ }
   section#boards > div {
     width: 10px;
     height: 10px;

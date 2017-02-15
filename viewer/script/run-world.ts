@@ -7,27 +7,35 @@ namespace GALLERY.Viewer {
 
     export let rendered = false;
 
-    export var meshes = [];
-    export var zones = [];
-    export var boards = [];
+    export let meshes = [];
+    export let zones = [];
+    export let boards = [];
     //export var hooverLayer;
 
 
-    export function runWorld(objects_world, textures) {
+    let meshes = [];
+    let zones = [];
+    let boards = [];
+
+    let building_blocks = [];
+    let lights = [];
+
+    let environment: Objects.Environment;
+
+    let objects_world;
+
+
+    export function runWorld(_objects_world, textures) {
+
+        objects_world = _objects_world;
 
         r('Running gallery with ' + objects_world.getAll().length + ' objects.', objects_world);
 
         rendered = false;
 
-        meshes = [];
-        zones = [];
-        boards = [];
-
 
         var sunShadowGenerator = new BABYLON.ShadowGenerator(1024, sun);
         sunShadowGenerator.useVarianceShadowMap = true;
-        var building_blocks = [];
-        var lights = [];
 
 
         var bark = new BABYLON.StandardMaterial("Mat", scene);
@@ -35,25 +43,6 @@ namespace GALLERY.Viewer {
         bark.diffuseTexture.uScale = 1;//Vertical offset of 10%
         bark.diffuseTexture.vScale = 1;//Horizontal offset of 40%
         bark.freeze();
-
-
-        gates = [];
-        links = [];
-
-
-
-        //let endlessStructures = false;
-        //let endlessStructuresFromStorey = false;
-        let environment: Objects.Environment;
-        //var wasVideo = false;
-
-
-
-
-
-        /*hooverLayer = new BABYLON.HighlightLayer("hooverLayer", scene, {camera: camera});
-        hooverLayer.blurHorizontalSize = 0.5;
-        hooverLayer.blurVerticalSize = 0.5;*/
 
 
         //==================================================================================================================

@@ -1757,6 +1757,28 @@ var GALLERY;
                 $element.html('<i class="fa fa-cube" aria-hidden="true"></i>');
                 return $element;
             };
+            Environment.prototype.createVirtualObjects = function () {
+                var virtualObjects = new Objects.Array([new Objects.Zone({
+                        id: createGuid(),
+                        type: 'zone',
+                        world: this.world,
+                        storey: this.storey,
+                        position: {
+                            x: 0,
+                            y: 0,
+                        },
+                        width: 500,
+                        height: 500,
+                        design: this.design,
+                        name: this.name,
+                        html: this.html,
+                        buttons: this.buttons,
+                        uri: 'none',
+                        uri_level: 1,
+                        isImportant: true
+                    })]);
+                return (virtualObjects);
+            };
             return Environment;
         }(Objects.Object));
         Objects.Environment = Environment;
@@ -2364,29 +2386,38 @@ var GALLERY;
             ;
             Poster.prototype.handlePointerPress = function (event, pickResult) {
                 this.redrawPosterTexture();
-                var object = this; //todo remove
-                var position = pickResult.pickedMesh.position.subtract(pickResult.pickedPoint);
-                var vec2 = {
-                    x: /*Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.z, 2))*/ (Math.abs(position.x) > Math.abs(position.z) ? position.x : position.z),
+                Viewer.addObject(objects);
+                /*
+                let object = this;//todo remove
+    
+                let position = pickResult.pickedMesh.position.subtract(pickResult.pickedPoint);
+    
+                let vec2 = {
+                    x: (Math.abs(position.x)>Math.abs(position.z)?position.x:position.z),
                     y: position.y
                 };
+    
+    
                 vec2.x /= pickResult.pickedMesh.scaling.x * BLOCK_SIZE;
                 vec2.y /= pickResult.pickedMesh.scaling.y * BLOCK_SIZE;
+    
                 vec2.x += 0.5;
                 vec2.y += 0.5;
+    
                 vec2.x *= object.width * object.voxelPixelRatio;
                 vec2.y *= object.height * object.voxelPixelRatio;
-                /*let posterElement = object.getPosterElement();
-                 r(posterElement);
-                 let subElement = posterElement.elementFromPoint( vec2.x, vec2.y);
     
-                 r(subElement);*/
-                var ctx = pickResult.pickedMesh.material.emissiveTexture.getContext();
+    
+    
+                let ctx = pickResult.pickedMesh.material.emissiveTexture.getContext();
+    
                 ctx.beginPath();
                 ctx.arc(vec2.x, vec2.y, 10, 0, 2 * Math.PI);
                 ctx.fill();
-                pickResult.pickedMesh.material.emissiveTexture.update(); //todo getBabylonMesh
-                //GALLERY.Viewer.renderTick();
+    
+    
+                pickResult.pickedMesh.material.emissiveTexture.update();//todo getBabylonMesh
+                */
             };
             Poster.prototype.createVirtualObjects = function () {
                 var virtualObjects = new Objects.Array();
@@ -2557,7 +2588,23 @@ var GALLERY;
                     }
                 }*/
                 //------------------------------------------------------------
-                r(virtualObjects);
+                virtualObjects.push(new Objects.Board({
+                    id: createGuid(),
+                    type: 'board',
+                    world: this.world,
+                    storey: this.storey,
+                    position: {
+                        x: this.position.x,
+                        y: this.position.y,
+                    },
+                    rotation: this.rotation,
+                    width: this.width,
+                    height: this.height,
+                    voxelPixelRatio: this.voxelPixelRatio,
+                    name: this.name,
+                    html: this.posterHtml,
+                }));
+                //r(virtualObjects);
                 return (virtualObjects);
             };
             return Poster;

@@ -172,6 +172,7 @@ namespace GALLERY.Objects{
 
 
         redrawPosterTexture(){
+
             let object = this;//todo
 
 
@@ -211,12 +212,16 @@ namespace GALLERY.Objects{
             this.redrawPosterTexture();
 
 
+            Viewer.addObject(objects);
+
+
+            /*
             let object = this;//todo remove
 
             let position = pickResult.pickedMesh.position.subtract(pickResult.pickedPoint);
 
             let vec2 = {
-                x: /*Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.z, 2))*/(Math.abs(position.x)>Math.abs(position.z)?position.x:position.z),
+                x: (Math.abs(position.x)>Math.abs(position.z)?position.x:position.z),
                 y: position.y
             };
 
@@ -231,11 +236,6 @@ namespace GALLERY.Objects{
             vec2.y *= object.height * object.voxelPixelRatio;
 
 
-            /*let posterElement = object.getPosterElement();
-             r(posterElement);
-             let subElement = posterElement.elementFromPoint( vec2.x, vec2.y);
-
-             r(subElement);*/
 
             let ctx = pickResult.pickedMesh.material.emissiveTexture.getContext();
 
@@ -245,7 +245,7 @@ namespace GALLERY.Objects{
 
 
             pickResult.pickedMesh.material.emissiveTexture.update();//todo getBabylonMesh
-            //GALLERY.Viewer.renderTick();
+            */
 
 
         }
@@ -462,7 +462,43 @@ namespace GALLERY.Objects{
 
             //------------------------------------------------------------
 
-            r(virtualObjects);
+
+
+            virtualObjects.push(new Objects.Board({
+
+                id: createGuid(),
+                type: 'board',
+
+                world: this.world,
+                storey: this.storey,
+                position: {
+                    x: this.position.x,
+                    y: this.position.y,
+                },
+
+                rotation: this.rotation,
+
+                width:  this.width,
+                height: this.height,
+                voxelPixelRatio: this.voxelPixelRatio,
+
+
+
+                name: this.name,
+                html: this.posterHtml,
+
+
+                //posterBackgroundColor: '#0000ff',
+                //posterTextColor: '#000000',
+
+
+            }));
+
+
+
+
+
+            //r(virtualObjects);
             return(virtualObjects);
 
         }

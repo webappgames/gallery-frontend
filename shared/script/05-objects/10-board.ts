@@ -15,7 +15,7 @@ namespace GALLERY.Objects{
 
 
 
-        constructor(object,public realObject=null){
+        constructor(object,private realObject=null){
 
             super(object);
             this.isPerspective = this.isPerspective || false;

@@ -212,8 +212,12 @@ namespace GALLERY.Objects{
             this.redrawPosterTexture();
 
 
-            Viewer.addObject(objects);
 
+            this.virtualObjects.getObjectByIndex(0).getCreatedBoard().style.display = 'none';
+
+
+            r(this.virtualObjects.getObjectByIndex(0));
+            r(this.virtualObjects.getObjectByIndex(0).getCreatedBoard());
 
             /*
             let object = this;//todo remove
@@ -253,9 +257,49 @@ namespace GALLERY.Objects{
 
 
 
-
+        private virtualObjects=null;
         createVirtualObjects():Objects.Array{
-            let virtualObjects = new Objects.Array();
+            this.virtualObjects = new Objects.Array();
+
+
+
+
+            //------------------------------------------------------------
+            this.virtualObjects.push(new Objects.Board({
+
+                id: createGuid(),
+                type: 'board',
+
+                world: this.world,
+                storey: this.storey,
+                position: {
+                    x: this.position.x,
+                    y: this.position.y,
+                },
+
+                rotation: this.rotation,
+
+                width:  this.width,
+                height: this.height,
+                voxelPixelRatio: this.voxelPixelRatio,
+
+
+
+                name: this.name,
+                html: this.posterHtml,
+
+
+                //posterBackgroundColor: '#0000ff',
+                //posterTextColor: '#000000',
+
+
+            },this));
+            //------------------------------------------------------------
+
+
+
+
+
 
             let posterElement = this.getPosterElement(document.getElementById('posters'));
 
@@ -387,7 +431,7 @@ namespace GALLERY.Objects{
                 buttonMesh.offsetVertical -= this.height / 2;
 
 
-                virtualObjects.push(buttonMesh);
+                this.virtualObjects.push(buttonMesh);
 
             }
 
@@ -460,46 +504,11 @@ namespace GALLERY.Objects{
                 }
             }*/
 
-            //------------------------------------------------------------
-
-
-
-            virtualObjects.push(new Objects.Board({
-
-                id: createGuid(),
-                type: 'board',
-
-                world: this.world,
-                storey: this.storey,
-                position: {
-                    x: this.position.x,
-                    y: this.position.y,
-                },
-
-                rotation: this.rotation,
-
-                width:  this.width,
-                height: this.height,
-                voxelPixelRatio: this.voxelPixelRatio,
-
-
-
-                name: this.name,
-                html: this.posterHtml,
-
-
-                //posterBackgroundColor: '#0000ff',
-                //posterTextColor: '#000000',
-
-
-            },this));
-
-
 
 
 
             //r(virtualObjects);
-            return(virtualObjects);
+            return(this.virtualObjects);
 
         }
 

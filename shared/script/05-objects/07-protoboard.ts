@@ -189,6 +189,20 @@ namespace GALLERY.Objects{
 
 
 
+        getCreatedBoard():HTMLElement{
+
+            if("_board" in this){
+                return this._board;
+            }else{
+                return null;
+            }
+
+
+
+        }
+
+
+
 
         showBoard(){
             //this.getBoard().style.display = 'block';

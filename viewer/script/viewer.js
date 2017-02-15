@@ -2326,6 +2326,7 @@ var GALLERY;
         var Poster = (function (_super) {
             __extends(Poster, _super);
             function Poster(object) {
+                this.virtualObjects = null;
                 this.posterHtml = this.posterHtml || '';
                 this.posterDesign = this.posterDesign || 'board';
                 this.posterBackgroundColor = this.posterBackgroundColor || '#ffffff';
@@ -2435,7 +2436,9 @@ var GALLERY;
             ;
             Poster.prototype.handlePointerPress = function (event, pickResult) {
                 this.redrawPosterTexture();
-                GALLERY.Viewer.addObject(objects);
+                this.virtualObjects.getObjectByIndex(0).getCreatedBoard().style.display = 'none';
+                r(this.virtualObjects.getObjectByIndex(0));
+                r(this.virtualObjects.getObjectByIndex(0).getCreatedBoard());
                 /*
                 let object = this;//todo remove
     
@@ -2469,7 +2472,25 @@ var GALLERY;
                 */
             };
             Poster.prototype.createVirtualObjects = function () {
-                var virtualObjects = new Objects.Array();
+                this.virtualObjects = new Objects.Array();
+                //------------------------------------------------------------
+                this.virtualObjects.push(new Objects.Board({
+                    id: createGuid(),
+                    type: 'board',
+                    world: this.world,
+                    storey: this.storey,
+                    position: {
+                        x: this.position.x,
+                        y: this.position.y,
+                    },
+                    rotation: this.rotation,
+                    width: this.width,
+                    height: this.height,
+                    voxelPixelRatio: this.voxelPixelRatio,
+                    name: this.name,
+                    html: this.posterHtml,
+                }, this));
+                //------------------------------------------------------------
                 var posterElement = this.getPosterElement(document.getElementById('posters'));
                 //r(posterElement);
                 /*let buttons = posterElement.getElementsByTagName('button');
@@ -2567,7 +2588,7 @@ var GALLERY;
                     buttonMesh.offsetVertical += buttonMesh.height / 2;
                     buttonMesh.offsetHorizontal -= this.width / 2;
                     buttonMesh.offsetVertical -= this.height / 2;
-                    virtualObjects.push(buttonMesh);
+                    this.virtualObjects.push(buttonMesh);
                 }
                 /*let tables = posterElement.getElementsByTagName('table');
                 for(let table of tables) {
@@ -2636,25 +2657,8 @@ var GALLERY;
                         }
                     }
                 }*/
-                //------------------------------------------------------------
-                virtualObjects.push(new Objects.Board({
-                    id: createGuid(),
-                    type: 'board',
-                    world: this.world,
-                    storey: this.storey,
-                    position: {
-                        x: this.position.x,
-                        y: this.position.y,
-                    },
-                    rotation: this.rotation,
-                    width: this.width,
-                    height: this.height,
-                    voxelPixelRatio: this.voxelPixelRatio,
-                    name: this.name,
-                    html: this.posterHtml,
-                }, this));
                 //r(virtualObjects);
-                return (virtualObjects);
+                return (this.virtualObjects);
             };
             return Poster;
         }(Objects.Image));
@@ -2777,6 +2781,14 @@ var GALLERY;
                     this._board = this.createBoard(container);
                 }
                 return this._board;
+            };
+            ProtoBoard.prototype.getCreatedBoard = function () {
+                if ("_board" in this) {
+                    return this._board;
+                }
+                else {
+                    return null;
+                }
             };
             ProtoBoard.prototype.showBoard = function () {
                 //this.getBoard().style.display = 'block';

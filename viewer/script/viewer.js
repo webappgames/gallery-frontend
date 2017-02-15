@@ -4786,9 +4786,10 @@ var GALLERY;
                         return;
                     }
                     //r(pickInfo.pickedMesh.name);
+                    var POSTER_WTF_RATIO = 1900;
                     var distance = BABYLON.Vector3.Distance(camera.position, board.mesh.position);
                     var zoom = 1 / distance;
-                    //zoom = 1;
+                    zoom *= canvas.height / POSTER_WTF_RATIO;
                     board.element.style.zIndex = 1000000000 - distance; //todo better
                     //board.element.style.zoom = zoom*100;
                     //board.element.style.transform = 'rotateY('+Math.round(camera.rotation.y /Math.PI * 180 -45)+'deg)';

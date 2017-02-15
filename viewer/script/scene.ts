@@ -335,10 +335,14 @@ namespace GALLERY.Viewer {
 
                 //r(pickInfo.pickedMesh.name);
 
+                const POSTER_WTF_RATIO = 1900;
 
                 let distance = BABYLON.Vector3.Distance(camera.position, board.mesh.position);
                 let zoom = 1 / distance;
-                //zoom = 1;
+                zoom *= canvas.height/POSTER_WTF_RATIO;
+
+
+
 
 
                 board.element.style.zIndex = 1000000000 - distance;//todo better

@@ -1798,6 +1798,28 @@ var GALLERY;
                 $element.html('<i class="fa fa-cube" aria-hidden="true"></i>');
                 return $element;
             };
+            Environment.prototype.createVirtualObjects = function () {
+                var virtualObjects = new Objects.Array([new Objects.Zone({
+                        id: createGuid(),
+                        type: 'zone',
+                        world: this.world,
+                        storey: this.storey,
+                        position: {
+                            x: 0,
+                            y: 0,
+                        },
+                        width: 500,
+                        height: 500,
+                        design: this.design,
+                        name: this.name,
+                        html: this.html,
+                        buttons: this.buttons,
+                        uri: 'none',
+                        uri_level: 1,
+                        isImportant: true
+                    })]);
+                return (virtualObjects);
+            };
             return Environment;
         }(Objects.Object));
         Objects.Environment = Environment;
@@ -2405,29 +2427,38 @@ var GALLERY;
             ;
             Poster.prototype.handlePointerPress = function (event, pickResult) {
                 this.redrawPosterTexture();
-                var object = this; //todo remove
-                var position = pickResult.pickedMesh.position.subtract(pickResult.pickedPoint);
-                var vec2 = {
-                    x: /*Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.z, 2))*/ (Math.abs(position.x) > Math.abs(position.z) ? position.x : position.z),
+                //objects.push();
+                /*
+                let object = this;//todo remove
+    
+                let position = pickResult.pickedMesh.position.subtract(pickResult.pickedPoint);
+    
+                let vec2 = {
+                    x: (Math.abs(position.x)>Math.abs(position.z)?position.x:position.z),
                     y: position.y
                 };
+    
+    
                 vec2.x /= pickResult.pickedMesh.scaling.x * BLOCK_SIZE;
                 vec2.y /= pickResult.pickedMesh.scaling.y * BLOCK_SIZE;
+    
                 vec2.x += 0.5;
                 vec2.y += 0.5;
+    
                 vec2.x *= object.width * object.voxelPixelRatio;
                 vec2.y *= object.height * object.voxelPixelRatio;
-                /*let posterElement = object.getPosterElement();
-                 r(posterElement);
-                 let subElement = posterElement.elementFromPoint( vec2.x, vec2.y);
     
-                 r(subElement);*/
-                var ctx = pickResult.pickedMesh.material.emissiveTexture.getContext();
+    
+    
+                let ctx = pickResult.pickedMesh.material.emissiveTexture.getContext();
+    
                 ctx.beginPath();
                 ctx.arc(vec2.x, vec2.y, 10, 0, 2 * Math.PI);
                 ctx.fill();
-                pickResult.pickedMesh.material.emissiveTexture.update(); //todo getBabylonMesh
-                //GALLERY.Viewer.renderTick();
+    
+    
+                pickResult.pickedMesh.material.emissiveTexture.update();//todo getBabylonMesh
+                */
             };
             Poster.prototype.createVirtualObjects = function () {
                 var virtualObjects = new Objects.Array();
@@ -5093,7 +5124,6 @@ var GALLERY;
             hooverLayer.blurHorizontalSize = 0.5;
             hooverLayer.blurVerticalSize = 0.5;*/
             //==================================================================================================================
-            var zoneIdsCreatedForImages = [];
             function processObject(object) {
                 var position = object.getBabylonPosition();
                 if (object.type == 'environment') {
@@ -5176,31 +5206,6 @@ var GALLERY;
                     }
                     else {
                         Viewer.scene.fogMode = BABYLON.Scene.FOGMODE_NONE;
-                    }
-                    if ((zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
-                        r('Creating zone for ' + object.name);
-                        zoneIdsCreatedForImages.push(object.id); //todo rename zoneIdsCreatedForImages
-                        var zone = new GALLERY.Objects.Zone({
-                            id: createGuid(),
-                            type: 'zone',
-                            world: object.world,
-                            storey: object.storey,
-                            position: {
-                                x: 0,
-                                y: 0,
-                            },
-                            width: 500,
-                            height: 500,
-                            design: object.design,
-                            name: object.name,
-                            html: object.html,
-                            buttons: object.buttons,
-                            uri: 'none',
-                            uri_level: 1,
-                            isImportant: true
-                        });
-                        processObject(zone); //todo better
-                        objects.push(zone);
                     }
                 }
                 else if (object.type == 'zone') {

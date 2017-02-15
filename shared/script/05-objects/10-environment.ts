@@ -103,6 +103,38 @@ namespace GALLERY.Objects{
 
 
 
-    }
+        createVirtualObjects():Objects.Array {
+
+            let virtualObjects = new Objects.Array([new Objects.Zone({
+
+                id: createGuid(),
+                type: 'zone',
+                world: this.world,
+                storey: this.storey,
+                position: {
+                    x: 0,
+                    y: 0,
+                },
+                width: 500,
+                height: 500,
+
+                design: this.design,
+                name: this.name,
+                html: this.html,
+                buttons: this.buttons,
+                uri: 'none',
+                uri_level: 1,//todo better low priority
+
+                isImportant: true
+
+            })]);
+
+
+            return (virtualObjects);
+
+        }
+
+
+
 
 }

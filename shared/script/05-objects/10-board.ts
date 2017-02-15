@@ -9,11 +9,19 @@ namespace GALLERY.Objects{
         public isPerspective: boolean;
 
 
+        public width:number;
+        public height:number;
+        public voxelPixelRatio:number;
+
+
 
         constructor(object){
 
             super(object);
             this.isPerspective = this.isPerspective || false;
+            this.width = this.width || 2;
+            this.height = this.height || 4;
+            this.voxelPixelRatio = this.voxelPixelRatio || 100;
 
         }
 
@@ -24,6 +32,12 @@ namespace GALLERY.Objects{
             switch(key) {
                 case 'isPerspective':
                     return('<input type="checkbox">');
+                case 'width':
+                    return('<input type="number">');
+                case 'height':
+                    return('<input type="number">');
+                case 'voxelPixelRatio':
+                    return('<input type="number">');
                 default:
                     return(super.getEditorInputHtml(key));
             }
@@ -49,6 +63,19 @@ namespace GALLERY.Objects{
 
 
 
+
+
+        createBoard(container:HTMLElement):HTMLElement{
+
+
+            let element = super.createBoard(container);
+
+            element.style.width = this.width * this.voxelPixelRatio;
+            element.style.height = this.height * this.voxelPixelRatio;
+
+
+            return element;
+        }
 
 
 

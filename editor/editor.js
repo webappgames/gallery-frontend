@@ -1884,27 +1884,21 @@ var GALLERY;
                 //--------------------------------------
                 var position = new BABYLON.Vector3(this.position.x * -BLOCK_SIZE, (this.position.z + BLOCKS_1NP_LEVEL) * BLOCK_SIZE, //(0.5 - 0.9) * BLOCK_SIZE,
                 this.position.y * BLOCK_SIZE);
-                /*var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
-                 box.material = getMaterial(this.material, this.opacity, false, this.size.x, this.size.z);*/
-                var box = BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
-                /* var f = new BABYLON.StandardMaterial("material0", scene);
-                 f.diffuseColor = new BABYLON.Color3(0.75, 0, 0);
-                 var ba = new BABYLON.StandardMaterial("material1", scene);
-                 ba.diffuseColor = new BABYLON.Color3(0, 0, 0.75);
-                 var l = new BABYLON.StandardMaterial("material2", scene);
-                 l.diffuseColor = new BABYLON.Color3(0, 0.75, 0.75);
-                 var r = new BABYLON.StandardMaterial("material3", scene);
-                 r.diffuseColor = new BABYLON.Color3(0, 0, 0.75);
-                 var t = new BABYLON.StandardMaterial("material4", scene);
-                 t.diffuseColor = new BABYLON.Color3(0, 0.75, 0);
-                 var bo = new BABYLON.StandardMaterial("material5", scene);
-                 bo.diffuseColor = new BABYLON.Color3(1, 1, 0);*/
-                var f = getMaterial(this.material, 0.5, true, this.size.z, this.size.x);
-                var ba = f;
-                var l = getMaterial(this.material, this.opacity, true, this.size.z, this.size.y);
-                var r = l;
-                var t = getMaterial(this.material, this.opacity, true, this.size.x, this.size.y);
-                var bo = t;
+                var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
+                box.material = getMaterial(this.material, this.opacity, false, this.size.x, this.size.z);
+                /**/
+                /*var box = BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
+    
+    
+    
+                let f  = getMaterial(this.material, 0.5, true, this.size.z, this.size.x);
+                let ba = f;
+                let l  = getMaterial(this.material, this.opacity, true, this.size.z, this.size.y);
+                let r  = l;
+                let t  = getMaterial(this.material, this.opacity, true, this.size.x, this.size.y);
+                let bo = t;
+    
+    
                 var multi = new BABYLON.MultiMaterial("multimaterial", scene);
                 multi.subMaterials.push(f);
                 multi.subMaterials.push(ba);
@@ -1912,6 +1906,7 @@ var GALLERY;
                 multi.subMaterials.push(r);
                 multi.subMaterials.push(t);
                 multi.subMaterials.push(bo);
+    
                 //apply material
                 box.subMeshes = [];
                 var verticesCount = box.getTotalVertices();
@@ -1921,7 +1916,7 @@ var GALLERY;
                 box.subMeshes.push(new BABYLON.SubMesh(3, 3, verticesCount, 18, 6, box));
                 box.subMeshes.push(new BABYLON.SubMesh(4, 4, verticesCount, 24, 6, box));
                 box.subMeshes.push(new BABYLON.SubMesh(5, 5, verticesCount, 30, 6, box));
-                box.material = multi;
+                box.material = multi;*/
                 box.isPickable = true;
                 box.checkCollisions = true;
                 box.position = position;
@@ -2600,7 +2595,7 @@ var GALLERY;
                         return (_super.prototype.getEditorInputHtml.call(this, key));
                 }
             };
-            ProtoBoard.prototype._createBoard = function (container) {
+            ProtoBoard.prototype.createBoard = function (container) {
                 //if (object.name || object.html) {
                 var isNext = false;
                 var label = objects.filterTypes('label').findBy('uri', this.uri);
@@ -2683,7 +2678,7 @@ var GALLERY;
                     if (!container) {
                         container = document.getElementById('zones');
                     }
-                    this._board = this._createBoard(container);
+                    this._board = this.createBoard(container);
                 }
                 return this._board;
             };
@@ -2710,11 +2705,20 @@ var GALLERY;
             function Board(object) {
                 _super.call(this, object);
                 this.isPerspective = this.isPerspective || false;
+                this.width = this.width || 2;
+                this.height = this.height || 4;
+                this.voxelPixelRatio = this.voxelPixelRatio || 100;
             }
             Board.prototype.getEditorInputHtml = function (key) {
                 switch (key) {
                     case 'isPerspective':
                         return ('<input type="checkbox">');
+                    case 'width':
+                        return ('<input type="number">');
+                    case 'height':
+                        return ('<input type="number">');
+                    case 'voxelPixelRatio':
+                        return ('<input type="number">');
                     default:
                         return (_super.prototype.getEditorInputHtml.call(this, key));
                 }
@@ -2724,6 +2728,12 @@ var GALLERY;
                 var object = this;
                 $element.html('<i class="fa fa-file-text-o" aria-hidden="true"></i>');
                 return $element;
+            };
+            Board.prototype.createBoard = function (container) {
+                var element = _super.prototype.createBoard.call(this, container);
+                element.style.width = this.width * this.voxelPixelRatio;
+                element.style.height = this.height * this.voxelPixelRatio;
+                return element;
             };
             return Board;
         }(Objects.ProtoBoard));

@@ -50,7 +50,7 @@ namespace GALLERY.Objects{
         }
 
 
-        private _createBoard(container:HTMLElement):HTMLElement{
+        createBoard(container:HTMLElement):HTMLElement{
             //if (object.name || object.html) {
 
             let isNext = false;
@@ -180,7 +180,7 @@ namespace GALLERY.Objects{
                 if(!container){
                     container = document.getElementById('zones');
                 }
-                this._board = this._createBoard(container);
+                this._board = this.createBoard(container);
             }
 
             return this._board;

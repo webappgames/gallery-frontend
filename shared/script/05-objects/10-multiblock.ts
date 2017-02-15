@@ -57,25 +57,13 @@ namespace GALLERY.Objects{
 
 
 
-            /*var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
-             box.material = getMaterial(this.material, this.opacity, false, this.size.x, this.size.z);*/
+            var box = new BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
+             box.material = getMaterial(this.material, this.opacity, false, this.size.x, this.size.z);
+            /**/
 
 
-            var box = BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
+            /*var box = BABYLON.Mesh.CreateBox("room", BLOCK_SIZE, scene);
 
-
-           /* var f = new BABYLON.StandardMaterial("material0", scene);
-            f.diffuseColor = new BABYLON.Color3(0.75, 0, 0);
-            var ba = new BABYLON.StandardMaterial("material1", scene);
-            ba.diffuseColor = new BABYLON.Color3(0, 0, 0.75);
-            var l = new BABYLON.StandardMaterial("material2", scene);
-            l.diffuseColor = new BABYLON.Color3(0, 0.75, 0.75);
-            var r = new BABYLON.StandardMaterial("material3", scene);
-            r.diffuseColor = new BABYLON.Color3(0, 0, 0.75);
-            var t = new BABYLON.StandardMaterial("material4", scene);
-            t.diffuseColor = new BABYLON.Color3(0, 0.75, 0);
-            var bo = new BABYLON.StandardMaterial("material5", scene);
-            bo.diffuseColor = new BABYLON.Color3(1, 1, 0);*/
 
 
             let f  = getMaterial(this.material, 0.5, true, this.size.z, this.size.x);
@@ -103,7 +91,7 @@ namespace GALLERY.Objects{
             box.subMeshes.push(new BABYLON.SubMesh(3, 3, verticesCount, 18, 6, box));
             box.subMeshes.push(new BABYLON.SubMesh(4, 4, verticesCount, 24, 6, box));
             box.subMeshes.push(new BABYLON.SubMesh(5, 5, verticesCount, 30, 6, box));
-            box.material = multi;
+            box.material = multi;*/
 
 
 

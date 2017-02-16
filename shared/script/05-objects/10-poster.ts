@@ -307,7 +307,8 @@ namespace GALLERY.Objects{
             if(this.opened){
                 this.hide();
             }else{
-                this.virtualObjects.getObjectByIndex(0).hide();
+                //this.virtualObjects.getObjectByIndex(0).hide();
+                this.virtualObjects.getObjectByIndex(0).hidden=true;
             }
             //------------------------------------------------------------
 

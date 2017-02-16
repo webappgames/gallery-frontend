@@ -1583,7 +1583,7 @@ var GALLERY;
                 }
                 object.world = object.world || 'main';
                 object.storey = object.storey || '1NP';
-                //object.hidden = object.hidden || false;
+                object.hidden = object.hidden || false;
                 for (var key in object) {
                     var this_key = key;
                     if (this_key == '_id')
@@ -1603,7 +1603,7 @@ var GALLERY;
             Object.prototype.getEditorInputHtml = function (key) {
                 switch (key) {
                     case 'world': return ('<input type="text">');
-                    //case 'hidden': return('<input type="checkbox">');
+                    case 'hidden': return ('<input type="checkbox">');
                     default: return ('');
                 }
             };
@@ -1612,6 +1612,8 @@ var GALLERY;
                 }
                 else {
                     this._babylonMesh = this.createBabylonMesh(scene, getMaterial, environment);
+                    if (this.hidden)
+                        this.hide();
                 }
                 return this._babylonMesh;
             };
@@ -2515,7 +2517,8 @@ var GALLERY;
                     this.hide();
                 }
                 else {
-                    this.virtualObjects.getObjectByIndex(0).hide();
+                    //this.virtualObjects.getObjectByIndex(0).hide();
+                    this.virtualObjects.getObjectByIndex(0).hidden = true;
                 }
                 //------------------------------------------------------------
                 var posterElement = this.getPosterElement(document.getElementById('posters'));
@@ -2806,6 +2809,8 @@ var GALLERY;
                         container = document.getElementById('zones');
                     }
                     this._board = this.createBoard(container);
+                    if (this.hidden)
+                        this.hide();
                 }
                 return this._board;
             };

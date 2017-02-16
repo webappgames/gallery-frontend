@@ -181,6 +181,8 @@ namespace GALLERY.Objects{
                     container = document.getElementById('zones');
                 }
                 this._board = this.createBoard(container);
+                if(this.hidden)this.hide();
+
             }
 
             return this._board;

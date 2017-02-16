@@ -17,6 +17,10 @@ namespace GALLERY.Objects{
         public posterTextColor: string;
 
 
+        public opened: boolean;
+
+
+
         //todo private _posterMesh
         public _posterElement:HTMLElement;
         private _posterTexture:BABYLON.DynamicTexture;
@@ -30,6 +34,8 @@ namespace GALLERY.Objects{
 
             this.posterBackgroundColor = this.posterBackgroundColor || '#ffffff';
             this.posterTextColor = this.posterTextColor || '#000000';
+
+            this.opened = this.opened || false;
 
 
             this.src = this.src || 'http://cdn.pavolhejny.com/?file=5888cb789f36f-M2Q5OGMxNTk1N2M1ZjVkZDIyN2U1M2RiYzdjYmI2MGQuanBn';//todo remove
@@ -50,6 +56,7 @@ namespace GALLERY.Objects{
                 case 'voxelPixelRatio': return('<input type="number" />');
                 case 'posterBackgroundColor': return('<input type="color" />');
                 case 'posterTextColor': return('<input type="color" />');
+                case 'opened': return('<input type="checkbox" />');
                 default:  return(super.getEditorInputHtml(key));
             }
 
@@ -207,17 +214,19 @@ namespace GALLERY.Objects{
         };
 
 
+        handlePointerRelease(pressed:boolean, event, pickResult){
+
+            if(pressed) {
+                this.virtualObjects.getObjectByIndex(0).show();
+                this.hide();
+            }
+
+        }
+
 
         handlePointerPress(event, pickResult){
             this.redrawPosterTexture();
 
-
-
-            this.virtualObjects.getObjectByIndex(0).getCreatedBoard().style.display = 'none';
-
-
-            r(this.virtualObjects.getObjectByIndex(0));
-            r(this.virtualObjects.getObjectByIndex(0).getCreatedBoard());
 
             /*
             let object = this;//todo remove
@@ -294,6 +303,12 @@ namespace GALLERY.Objects{
 
 
             },this));
+
+            if(this.opened){
+                this.hide();
+            }else{
+                this.virtualObjects.getObjectByIndex(0).hide();
+            }
             //------------------------------------------------------------
 
 

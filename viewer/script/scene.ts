@@ -459,6 +459,30 @@ namespace GALLERY.Viewer {
 
                 if (pickResult.hit) {
                     let object = objects.getObjectById(pickResult.pickedMesh.name);
+
+
+
+                    if(object)
+                    if(object.type == 'board'){
+
+                        r('Board was picked,... making next pick to pick object hidden behind that board.',evt,pickResult);
+
+                        let newPickResult = scene.pick(evt.clientX, evt.clientY, function(mesh){
+                            return mesh !== pickResult.pickedMesh
+                        });
+
+                        if(newPickResult.pickedMesh==pickResult.pickedMesh){
+                            throw new Error('Same board was picked twice ?!');
+                        }
+
+                        scene.onPointerDown(evt, newPickResult);
+                        return;
+                    }
+
+
+
+
+
                     if(object)object.handlePointerPress(evt, pickResult);
                     eventObject = object;
                 }
@@ -483,7 +507,7 @@ namespace GALLERY.Viewer {
 
             pointerDown = false;
 
-            let pressed = false;
+            let pressed:boolean;
 
             if(MODE=='WEB') {
 
@@ -494,18 +518,41 @@ namespace GALLERY.Viewer {
 
                 if (distance > 0.1 || distanceTime > 1) {
 
+                    pressed = false;
 
                 } else {
 
-                    onPointerClick.apply(this, arguments);
                     pressed = true;
+                    onPointerClick.call(this, evt, pickResult);
 
                 }
+
+
 
 
                 if (pickResult.hit) {
 
                     let object = objects.getObjectById(pickResult.pickedMesh.name);
+
+
+                    if(object)
+                    if(object.type == 'board'){
+
+                        r('Board was picked,... making next pick to pick object hidden behind that board.',evt,pickResult);
+
+                        let newPickResult = scene.pick(evt.clientX, evt.clientY, function(mesh){
+                            return mesh !== pickResult.pickedMesh
+                        });
+
+                        if(newPickResult.pickedMesh==pickResult.pickedMesh){
+                            throw new Error('Same board was picked twice ?!');
+                        }
+
+                        scene.onPointerUp(evt, newPickResult);
+                        return;
+                    }
+
+
 
 
                     if(object !== eventObject){

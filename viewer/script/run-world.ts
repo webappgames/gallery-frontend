@@ -378,7 +378,7 @@ namespace GALLERY.Viewer {
 
             board.material = new BABYLON.StandardMaterial("texture2", scene);
             board.material.diffuseColor = BABYLON.Color3.FromHexString('#000000');
-            board.material.alpha = 0;
+            board.material.alpha = 0.2;
 
             board.checkCollisions = false;
 

@@ -25,7 +25,7 @@ namespace GALLERY.Viewer {
     export function onPointerClick(evt, pickResult) {//todo move to objects
 
         let current = GALLERY.Viewer.getAppStateLabel();
-        r('current', current);
+        //r('current', current);
 
 
 
@@ -42,36 +42,38 @@ namespace GALLERY.Viewer {
                 r(pickResult.pickedMesh.name+' picked');
                 goToParent();
 
-                /*var rad = Math.atan2(
-                 (pickResult.pickedPoint.x-camera.position.x),
-                 (pickResult.pickedPoint.z-camera.position.z)
 
-                 );
-
-
-                 r(rad/Math.PI*180);
-
-
-
-                 var babylon_rotation = new BABYLON.Vector3(
-                 0,
-                 rad,
-                 0
-                 );
-
-
-
-                 var babylon_position = new BABYLON.Vector3(
-                 pickResult.pickedPoint.x,
-                 camera.position.y,
-                 pickResult.pickedPoint.z
-                 );
-
-                 moveToBabylon(babylon_position,babylon_rotation,false);*/
-
-            } else {
+            }/* else {
 
                 var object = objects.getObjectById(pickResult.pickedMesh.name);
+
+
+
+                if(object.type == 'board'){
+
+
+                    r('Board was picked,... making next pick to pick object hidden behind that board.',evt,pickResult);
+
+                    let newPickResult = scene.pick(evt.clientX, evt.clientY, function(mesh){
+
+                        return mesh !== pickResult.pickedMesh
+
+                    });
+
+                    if(newPickResult.pickedMesh==pickResult.pickedMesh){
+                        throw new Error('Same board was picked twice ?!');
+                    }
+
+                    onPointerClick(evt, newPickResult);
+                    return;
+
+                }
+
+
+
+                r('Pointer clicked on '+object.getConsoleName());
+
+
 
 
                 if('handlePointerPress' in object){//in all objects
@@ -82,7 +84,8 @@ namespace GALLERY.Viewer {
 
 
 
-                r('pick', object, current);
+                //r('pick', object, current);
+
 
                 if(object)
                 if (current.getUri() == object.getUri()) {
@@ -94,21 +97,7 @@ namespace GALLERY.Viewer {
                 }
 
 
-                /*var src = object.src;
-                 var src_uri = URI(src)
-                 .removeSearch("width");
-                 var src_normal = src_uri.addSearch({ width: 1024 }).toString();
-
-
-                 setTimeout(
-                 function () {
-                 Window.open(object.name, '<img src="'+src_normal+'">', function(){}, 'NORMAL');
-                 }, IMMEDIATELY_MS
-                 );*/
-
-
-            }
-            //r(object);
+            }/**/
 
         } else {
 

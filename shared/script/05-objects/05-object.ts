@@ -8,6 +8,7 @@ namespace GALLERY.Objects{
         public id: string;
         public type: string;
         public world: string;
+        //public hidden: boolean;
         public position: {
           x: number,
           y: number
@@ -32,6 +33,7 @@ namespace GALLERY.Objects{
 
             object.world = object.world || 'main';
             object.storey = object.storey || '1NP';
+            //object.hidden = object.hidden || false;
 
 
 
@@ -68,6 +70,7 @@ namespace GALLERY.Objects{
 
             switch(key) {
                 case 'world': return('<input type="text">');
+                //case 'hidden': return('<input type="checkbox">');
                 default:  return('');
             }
 
@@ -200,6 +203,29 @@ namespace GALLERY.Objects{
             return (object);
 
         }
+
+
+
+        show(){
+            this.getCreatedBabylonMesh().visibility = 1;
+        }
+
+        hide(){
+            this.getCreatedBabylonMesh().visibility = 0;
+        }
+
+
+        getConsoleName(){
+
+            if(this.name || false){
+                return(this.name+' ('+this.type+')')
+            }else{
+                return(this.id);
+            }
+
+
+        }
+
 
 
 

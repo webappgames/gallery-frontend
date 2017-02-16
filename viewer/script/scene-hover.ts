@@ -12,7 +12,7 @@ namespace GALLERY.Viewer {
         if (pickResult.hit) {
 
 
-            r(pickResult.pickedMesh.name);
+            r('Hoover '+pickResult.pickedMesh.name);
 
 
             if(pickResult.pickedMesh.name.split('-',2)[0]!=='image'){

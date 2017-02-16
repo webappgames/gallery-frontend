@@ -1583,6 +1583,7 @@ var GALLERY;
                 }
                 object.world = object.world || 'main';
                 object.storey = object.storey || '1NP';
+                //object.hidden = object.hidden || false;
                 for (var key in object) {
                     var this_key = key;
                     if (this_key == '_id')
@@ -1602,6 +1603,7 @@ var GALLERY;
             Object.prototype.getEditorInputHtml = function (key) {
                 switch (key) {
                     case 'world': return ('<input type="text">');
+                    //case 'hidden': return('<input type="checkbox">');
                     default: return ('');
                 }
             };
@@ -1693,6 +1695,20 @@ var GALLERY;
                 }
                 //----------------------------------
                 return (object);
+            };
+            Object.prototype.show = function () {
+                this.getCreatedBabylonMesh().visibility = 1;
+            };
+            Object.prototype.hide = function () {
+                this.getCreatedBabylonMesh().visibility = 0;
+            };
+            Object.prototype.getConsoleName = function () {
+                if (this.name || false) {
+                    return (this.name + ' (' + this.type + ')');
+                }
+                else {
+                    return (this.id);
+                }
             };
             Object.prototype.clone = function () {
                 return (Object.init(JSON.parse(JSON.stringify(this))));
@@ -2331,6 +2347,7 @@ var GALLERY;
                 this.posterDesign = this.posterDesign || 'board';
                 this.posterBackgroundColor = this.posterBackgroundColor || '#ffffff';
                 this.posterTextColor = this.posterTextColor || '#000000';
+                this.opened = this.opened || false;
                 this.src = this.src || 'http://cdn.pavolhejny.com/?file=5888cb789f36f-M2Q5OGMxNTk1N2M1ZjVkZDIyN2U1M2RiYzdjYmI2MGQuanBn'; //todo remove
                 this.width = this.width || 1;
                 this.height = this.height || 1;
@@ -2344,6 +2361,7 @@ var GALLERY;
                     case 'voxelPixelRatio': return ('<input type="number" />');
                     case 'posterBackgroundColor': return ('<input type="color" />');
                     case 'posterTextColor': return ('<input type="color" />');
+                    case 'opened': return ('<input type="checkbox" />');
                     default: return (_super.prototype.getEditorInputHtml.call(this, key));
                 }
             };
@@ -2434,11 +2452,14 @@ var GALLERY;
                 });
             };
             ;
+            Poster.prototype.handlePointerRelease = function (pressed, event, pickResult) {
+                if (pressed) {
+                    this.virtualObjects.getObjectByIndex(0).show();
+                    this.hide();
+                }
+            };
             Poster.prototype.handlePointerPress = function (event, pickResult) {
                 this.redrawPosterTexture();
-                this.virtualObjects.getObjectByIndex(0).getCreatedBoard().style.display = 'none';
-                r(this.virtualObjects.getObjectByIndex(0));
-                r(this.virtualObjects.getObjectByIndex(0).getCreatedBoard());
                 /*
                 let object = this;//todo remove
     
@@ -2490,6 +2511,12 @@ var GALLERY;
                     name: this.name,
                     html: this.posterHtml,
                 }, this));
+                if (this.opened) {
+                    this.hide();
+                }
+                else {
+                    this.virtualObjects.getObjectByIndex(0).hide();
+                }
                 //------------------------------------------------------------
                 var posterElement = this.getPosterElement(document.getElementById('posters'));
                 //r(posterElement);
@@ -2848,10 +2875,19 @@ var GALLERY;
                 if (this.realObject) {
                     element.addEventListener('click', function (event) {
                         r(self);
-                        self.realObject.getCreatedBabylonMesh().position.y += BLOCK_SIZE; //material.opacity = Math.random();
+                        self.realObject.show();
+                        self.hide();
                     });
                 }
                 return element;
+            };
+            Board.prototype.show = function () {
+                //super.show();
+                this.getCreatedBoard().style.display = 'block';
+            };
+            Board.prototype.hide = function () {
+                //super.hide();
+                this.getCreatedBoard().style.display = 'none';
             };
             return Board;
         }(Objects.ProtoBoard));
@@ -4944,6 +4980,18 @@ var GALLERY;
                     if (pickResult.hit) {
                         var object = objects.getObjectById(pickResult.pickedMesh.name);
                         if (object)
+                            if (object.type == 'board') {
+                                r('Board was picked,... making next pick to pick object hidden behind that board.', evt, pickResult);
+                                var newPickResult = Viewer.scene.pick(evt.clientX, evt.clientY, function (mesh) {
+                                    return mesh !== pickResult.pickedMesh;
+                                });
+                                if (newPickResult.pickedMesh == pickResult.pickedMesh) {
+                                    throw new Error('Same board was picked twice ?!');
+                                }
+                                Viewer.scene.onPointerDown(evt, newPickResult);
+                                return;
+                            }
+                        if (object)
                             object.handlePointerPress(evt, pickResult);
                         eventObject = object;
                     }
@@ -4958,19 +5006,32 @@ var GALLERY;
              };*/
             Viewer.scene.onPointerUp = function (evt, pickResult) {
                 pointerDown = false;
-                var pressed = false;
+                var pressed;
                 if (Viewer.MODE == 'WEB') {
                     var distance = BABYLON.Vector3.Distance(camera.rotation, onDownCamera);
                     var distanceTime = (new Date() / 1000) - onDownTimestamp;
                     r(distance, distanceTime);
                     if (distance > 0.1 || distanceTime > 1) {
+                        pressed = false;
                     }
                     else {
-                        Viewer.onPointerClick.apply(this, arguments);
                         pressed = true;
+                        Viewer.onPointerClick.call(this, evt, pickResult);
                     }
                     if (pickResult.hit) {
                         var object = objects.getObjectById(pickResult.pickedMesh.name);
+                        if (object)
+                            if (object.type == 'board') {
+                                r('Board was picked,... making next pick to pick object hidden behind that board.', evt, pickResult);
+                                var newPickResult = Viewer.scene.pick(evt.clientX, evt.clientY, function (mesh) {
+                                    return mesh !== pickResult.pickedMesh;
+                                });
+                                if (newPickResult.pickedMesh == pickResult.pickedMesh) {
+                                    throw new Error('Same board was picked twice ?!');
+                                }
+                                Viewer.scene.onPointerUp(evt, newPickResult);
+                                return;
+                            }
                         if (object !== eventObject) {
                             pressed = false;
                             object = eventObject;
@@ -5346,7 +5407,7 @@ var GALLERY;
                 board.position.y += EYE_VERTICAL * BLOCK_SIZE;
                 board.material = new BABYLON.StandardMaterial("texture2", Viewer.scene);
                 board.material.diffuseColor = BABYLON.Color3.FromHexString('#000000');
-                board.material.alpha = 0;
+                board.material.alpha = 0.2;
                 board.checkCollisions = false;
                 /*let element = document.createElement('div');
                  element.style.position = 'fixed';
@@ -5685,7 +5746,7 @@ var GALLERY;
         Viewer.goToParent = goToParent;
         function onPointerClick(evt, pickResult) {
             var current = GALLERY.Viewer.getAppStateLabel();
-            r('current', current);
+            //r('current', current);
             //canvas.requestPointerLock();
             // if the click hits the ground object, we change the impact position
             if (pickResult.hit) {
@@ -5693,22 +5754,61 @@ var GALLERY;
                 if (['ground', 'ground_merged', 'room', 'room_merged'].indexOf(pickResult.pickedMesh.name) != -1) {
                     r(pickResult.pickedMesh.name + ' picked');
                     goToParent();
-                }
-                else {
+                } /* else {
+    
                     var object = objects.getObjectById(pickResult.pickedMesh.name);
-                    if ('handlePointerPress' in object) {
+    
+    
+    
+                    if(object.type == 'board'){
+    
+    
+                        r('Board was picked,... making next pick to pick object hidden behind that board.',evt,pickResult);
+    
+                        let newPickResult = scene.pick(evt.clientX, evt.clientY, function(mesh){
+    
+                            return mesh !== pickResult.pickedMesh
+    
+                        });
+    
+                        if(newPickResult.pickedMesh==pickResult.pickedMesh){
+                            throw new Error('Same board was picked twice ?!');
+                        }
+    
+                        onPointerClick(evt, newPickResult);
+                        return;
+    
+                    }
+    
+    
+    
+                    r('Pointer clicked on '+object.getConsoleName());
+    
+    
+    
+    
+                    if('handlePointerPress' in object){//in all objects
                         //object.handlePointerPress();
                         return;
                     }
-                    r('pick', object, current);
-                    if (object)
-                        if (current.getUri() == object.getUri()) {
-                            goToParent();
-                        }
-                        else {
-                            GALLERY.Viewer.appState(object.getUri(), false, false);
-                        }
-                }
+    
+    
+    
+    
+                    //r('pick', object, current);
+    
+    
+                    if(object)
+                    if (current.getUri() == object.getUri()) {
+                        goToParent();
+    
+                    } else {
+    
+                        GALLERY.Viewer.appState(object.getUri(), false, false);
+                    }
+    
+    
+                }/**/
             }
             else {
                 goToParent();
@@ -7516,7 +7616,7 @@ var GALLERY;
         function onPointerHover(evt, pickResult) {
             var hoovered_mesh;
             if (pickResult.hit) {
-                r(pickResult.pickedMesh.name);
+                r('Hoover ' + pickResult.pickedMesh.name);
                 if (pickResult.pickedMesh.name.split('-', 2)[0] !== 'image') {
                     hoovered_mesh = null;
                 }

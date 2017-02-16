@@ -75,16 +75,22 @@ namespace GALLERY.Objects{
             element.style.overflow = 'hidden';
 
 
+
+
             let self = this;
             if(this.realObject) {
 
                 element.addEventListener('click', function (event) {
 
                     r(self);
-                    self.realObject.getCreatedBabylonMesh().position.y += BLOCK_SIZE;//material.opacity = Math.random();
+                    self.realObject.show();
+                    self.hide();
 
                 });
             }
+
+
+
 
             return element;
         }
@@ -92,9 +98,16 @@ namespace GALLERY.Objects{
 
 
 
+        show(){
+            //super.show();
+            this.getCreatedBoard().style.display='block';
+        }
 
 
-
+        hide(){
+            //super.hide();
+            this.getCreatedBoard().style.display='none';
+        }
 
     }
 

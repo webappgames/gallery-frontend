@@ -2076,6 +2076,8 @@ var GALLERY;
                         return ('<input type="checkbox">');
                     case 'backFace':
                         return ('<input type="checkbox">');
+                    case 'isSolid':
+                        return ('<input type="checkbox">');
                     case 'design':
                         return ('<input type="text">');
                     case 'name':
@@ -2259,6 +2261,7 @@ var GALLERY;
                 }
                 //image.scaling.z = 0.1;
                 image.checkCollisions = object.checkCollisions;
+                r('Created image mesh', image);
                 return (image);
                 //r(object);
                 //r(image);
@@ -3336,6 +3339,22 @@ var GALLERY;
                         return ('<textarea></textarea>');
                     case 'buttons':
                         return ('<textarea></textarea>');
+                    case 'width':
+                        return ('<input type="number">');
+                    case 'height':
+                        return ('<input type="number">');
+                    case 'uri_level':
+                        return ('<input type="number">');
+                    case 'isPickable':
+                        return ('<input type="checkbox">');
+                    case 'isImportant':
+                        return ('<input type="checkbox">');
+                    case 'limit':
+                        return ('<input type="checkbox">');
+                    case 'limitRotation':
+                        return ('<input type="number">');
+                    case 'limitRotationTolerance':
+                        return ('<input type="number">');
                     default:
                         return (_super.prototype.getEditorInputHtml.call(this, key));
                 }
@@ -3357,7 +3376,7 @@ var GALLERY;
                 //$element.css('transform','rotate('+object.rotation+'deg)');
                 return $element;
             };
-            Zone.prototype._createMesh = function (scene) {
+            Zone.prototype.createBabylonMesh = function (scene) {
                 var mesh = BABYLON.Mesh.CreateBox(this.id, BLOCK_SIZE, scene);
                 mesh.material = new BABYLON.StandardMaterial("texture1", scene);
                 mesh.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
@@ -3371,14 +3390,6 @@ var GALLERY;
                 mesh.isPickable = false;
                 //meshes.push(mesh);
                 return (mesh);
-            };
-            Zone.prototype.getMesh = function (scene) {
-                if ("_mesh" in this) {
-                }
-                else {
-                    this._mesh = this._createMesh(scene);
-                }
-                return this._mesh;
             };
             Zone.prototype.isIn = function (position, rotation) {
                 var center = this.getBabylonPosition();
@@ -4914,7 +4925,7 @@ var GALLERY;
                     //board.element.style.transform = 'translateZ('+(distance*-10)+'px)';
                     //board.element.childNodes[0].style.transform = 'scale('+(zoom*100)+')';
                     board.element.childNodes[0].style.zoom = zoom * 100;
-                    board.element.style.position = 'absolute';
+                    board.element.style.position = 'fixed';
                     board.element.style.left = (position.x) - (board.element.clientWidth / 2) + 'px';
                     board.element.style.top = (position.y - board.top) + 'px';
                     board.element.style.display = 'block';
@@ -5215,13 +5226,15 @@ var GALLERY;
         Viewer.zones = [];
         Viewer.boards = [];
         Viewer.gates = [];
+        Viewer.links = [];
         Viewer.building_blocks = [];
         Viewer.lights = [];
+        var sunShadowGenerator;
         function runWorld(_objects_world, textures) {
             Viewer.objects_world = _objects_world;
             r('Running gallery with ' + Viewer.objects_world.getAll().length + ' objects.', Viewer.objects_world);
             Viewer.rendered = false;
-            var sunShadowGenerator = new BABYLON.ShadowGenerator(1024, Viewer.sun);
+            sunShadowGenerator = new BABYLON.ShadowGenerator(1024, Viewer.sun);
             sunShadowGenerator.useVarianceShadowMap = true;
             var bark = new BABYLON.StandardMaterial("Mat", Viewer.scene);
             bark.diffuseTexture = new BABYLON.Texture("../media/images/textures/bark.jpg", Viewer.scene);
@@ -5400,7 +5413,7 @@ var GALLERY;
                 }
                 link.checkCollisions = true;
                 //light.position.y = LIGHT_VERTICAL * BLOCK_SIZE;
-                links.push({
+                Viewer.links.push({
                     object: object,
                     mesh: link
                 });
@@ -5464,6 +5477,9 @@ var GALLERY;
             }
             var virtualObjects = object.createVirtualObjects();
             if (virtualObjects) {
+                if (virtualObjects.getAll().length) {
+                    r('Created virtual objects for ' + object.getConsoleName() + '.', virtualObjects);
+                }
                 virtualObjects.forEach(function (object) {
                     addObject(object);
                     objects.push(object);
@@ -6091,7 +6107,7 @@ var GALLERY;
                 }
             });
             var activating = 0, inactivating = 0;
-            links.forEach(function (link) {
+            Viewer.links.forEach(function (link) {
                 //r(link.object.href.substr(0,1));
                 if (link.object.href.substr(0, 1) === '#') {
                     if (link.object.href == key) {

@@ -1542,6 +1542,7 @@ var GALLERY;
                 }
                 object.world = object.world || 'main';
                 object.storey = object.storey || '1NP';
+                object.hidden = object.hidden || false;
                 for (var key in object) {
                     var this_key = key;
                     if (this_key == '_id')
@@ -1561,6 +1562,7 @@ var GALLERY;
             Object.prototype.getEditorInputHtml = function (key) {
                 switch (key) {
                     case 'world': return ('<input type="text">');
+                    case 'hidden': return ('<input type="checkbox">');
                     default: return ('');
                 }
             };
@@ -1569,6 +1571,8 @@ var GALLERY;
                 }
                 else {
                     this._babylonMesh = this.createBabylonMesh(scene, getMaterial, environment);
+                    if (this.hidden)
+                        this.hide();
                 }
                 return this._babylonMesh;
             };
@@ -1652,6 +1656,20 @@ var GALLERY;
                 }
                 //----------------------------------
                 return (object);
+            };
+            Object.prototype.show = function () {
+                this.getCreatedBabylonMesh().visibility = 1;
+            };
+            Object.prototype.hide = function () {
+                this.getCreatedBabylonMesh().visibility = 0;
+            };
+            Object.prototype.getConsoleName = function () {
+                if (this.name || false) {
+                    return (this.name + ' (' + this.type + ')');
+                }
+                else {
+                    return (this.id);
+                }
             };
             Object.prototype.clone = function () {
                 return (Object.init(JSON.parse(JSON.stringify(this))));
@@ -2017,6 +2035,8 @@ var GALLERY;
                         return ('<input type="checkbox">');
                     case 'backFace':
                         return ('<input type="checkbox">');
+                    case 'isSolid':
+                        return ('<input type="checkbox">');
                     case 'design':
                         return ('<input type="text">');
                     case 'name':
@@ -2200,6 +2220,7 @@ var GALLERY;
                 }
                 //image.scaling.z = 0.1;
                 image.checkCollisions = object.checkCollisions;
+                r('Created image mesh', image);
                 return (image);
                 //r(object);
                 //r(image);
@@ -2285,10 +2306,12 @@ var GALLERY;
         var Poster = (function (_super) {
             __extends(Poster, _super);
             function Poster(object) {
+                this.virtualObjects = null;
                 this.posterHtml = this.posterHtml || '';
                 this.posterDesign = this.posterDesign || 'board';
                 this.posterBackgroundColor = this.posterBackgroundColor || '#ffffff';
                 this.posterTextColor = this.posterTextColor || '#000000';
+                this.opened = this.opened || false;
                 this.src = this.src || 'http://cdn.pavolhejny.com/?file=5888cb789f36f-M2Q5OGMxNTk1N2M1ZjVkZDIyN2U1M2RiYzdjYmI2MGQuanBn'; //todo remove
                 this.width = this.width || 1;
                 this.height = this.height || 1;
@@ -2302,6 +2325,7 @@ var GALLERY;
                     case 'voxelPixelRatio': return ('<input type="number" />');
                     case 'posterBackgroundColor': return ('<input type="color" />');
                     case 'posterTextColor': return ('<input type="color" />');
+                    case 'opened': return ('<input type="checkbox" />');
                     default: return (_super.prototype.getEditorInputHtml.call(this, key));
                 }
             };
@@ -2392,9 +2416,14 @@ var GALLERY;
                 });
             };
             ;
+            Poster.prototype.handlePointerRelease = function (pressed, event, pickResult) {
+                if (pressed) {
+                    this.virtualObjects.getObjectByIndex(0).show();
+                    this.hide();
+                }
+            };
             Poster.prototype.handlePointerPress = function (event, pickResult) {
                 this.redrawPosterTexture();
-                Viewer.addObject(objects);
                 /*
                 let object = this;//todo remove
     
@@ -2428,7 +2457,32 @@ var GALLERY;
                 */
             };
             Poster.prototype.createVirtualObjects = function () {
-                var virtualObjects = new Objects.Array();
+                this.virtualObjects = new Objects.Array();
+                //------------------------------------------------------------
+                this.virtualObjects.push(new Objects.Board({
+                    id: createGuid(),
+                    type: 'board',
+                    world: this.world,
+                    storey: this.storey,
+                    position: {
+                        x: this.position.x,
+                        y: this.position.y,
+                    },
+                    rotation: this.rotation,
+                    width: this.width,
+                    height: this.height,
+                    voxelPixelRatio: this.voxelPixelRatio,
+                    name: this.name,
+                    html: this.posterHtml,
+                }, this));
+                if (this.opened) {
+                    this.hide();
+                }
+                else {
+                    //this.virtualObjects.getObjectByIndex(0).hide();
+                    this.virtualObjects.getObjectByIndex(0).hidden = true;
+                }
+                //------------------------------------------------------------
                 var posterElement = this.getPosterElement(document.getElementById('posters'));
                 //r(posterElement);
                 /*let buttons = posterElement.getElementsByTagName('button');
@@ -2526,7 +2580,7 @@ var GALLERY;
                     buttonMesh.offsetVertical += buttonMesh.height / 2;
                     buttonMesh.offsetHorizontal -= this.width / 2;
                     buttonMesh.offsetVertical -= this.height / 2;
-                    virtualObjects.push(buttonMesh);
+                    this.virtualObjects.push(buttonMesh);
                 }
                 /*let tables = posterElement.getElementsByTagName('table');
                 for(let table of tables) {
@@ -2595,25 +2649,8 @@ var GALLERY;
                         }
                     }
                 }*/
-                //------------------------------------------------------------
-                virtualObjects.push(new Objects.Board({
-                    id: createGuid(),
-                    type: 'board',
-                    world: this.world,
-                    storey: this.storey,
-                    position: {
-                        x: this.position.x,
-                        y: this.position.y,
-                    },
-                    rotation: this.rotation,
-                    width: this.width,
-                    height: this.height,
-                    voxelPixelRatio: this.voxelPixelRatio,
-                    name: this.name,
-                    html: this.posterHtml,
-                }, this));
                 //r(virtualObjects);
-                return (virtualObjects);
+                return (this.virtualObjects);
             };
             return Poster;
         }(Objects.Image));
@@ -2734,8 +2771,18 @@ var GALLERY;
                         container = document.getElementById('zones');
                     }
                     this._board = this.createBoard(container);
+                    if (this.hidden)
+                        this.hide();
                 }
                 return this._board;
+            };
+            ProtoBoard.prototype.getCreatedBoard = function () {
+                if ("_board" in this) {
+                    return this._board;
+                }
+                else {
+                    return null;
+                }
             };
             ProtoBoard.prototype.showBoard = function () {
                 //this.getBoard().style.display = 'block';
@@ -2757,10 +2804,10 @@ var GALLERY;
     (function (Objects) {
         var Board = (function (_super) {
             __extends(Board, _super);
-            function Board(object, parent) {
-                if (parent === void 0) { parent = null; }
+            function Board(object, realObject) {
+                if (realObject === void 0) { realObject = null; }
                 _super.call(this, object);
-                this.parent = parent;
+                this.realObject = realObject;
                 this.isPerspective = this.isPerspective || false;
                 this.width = this.width || 2;
                 this.height = this.height || 4;
@@ -2791,14 +2838,23 @@ var GALLERY;
                 element.style.width = this.width * this.voxelPixelRatio;
                 element.style.height = this.height * this.voxelPixelRatio;
                 element.style.overflow = 'hidden';
-                var self = this.parent;
-                if (this.parent) {
+                var self = this;
+                if (this.realObject) {
                     element.addEventListener('click', function (event) {
-                        alert(self);
-                        self.parent.getCreatedBabylonMesh().position.y += BLOCK_SIZE; //material.opacity = Math.random();
+                        r(self);
+                        self.realObject.show();
+                        self.hide();
                     });
                 }
                 return element;
+            };
+            Board.prototype.show = function () {
+                //super.show();
+                this.getCreatedBoard().style.display = 'block';
+            };
+            Board.prototype.hide = function () {
+                //super.hide();
+                this.getCreatedBoard().style.display = 'none';
             };
             return Board;
         }(Objects.ProtoBoard));
@@ -3242,6 +3298,22 @@ var GALLERY;
                         return ('<textarea></textarea>');
                     case 'buttons':
                         return ('<textarea></textarea>');
+                    case 'width':
+                        return ('<input type="number">');
+                    case 'height':
+                        return ('<input type="number">');
+                    case 'uri_level':
+                        return ('<input type="number">');
+                    case 'isPickable':
+                        return ('<input type="checkbox">');
+                    case 'isImportant':
+                        return ('<input type="checkbox">');
+                    case 'limit':
+                        return ('<input type="checkbox">');
+                    case 'limitRotation':
+                        return ('<input type="number">');
+                    case 'limitRotationTolerance':
+                        return ('<input type="number">');
                     default:
                         return (_super.prototype.getEditorInputHtml.call(this, key));
                 }
@@ -3263,7 +3335,7 @@ var GALLERY;
                 //$element.css('transform','rotate('+object.rotation+'deg)');
                 return $element;
             };
-            Zone.prototype._createMesh = function (scene) {
+            Zone.prototype.createBabylonMesh = function (scene) {
                 var mesh = BABYLON.Mesh.CreateBox(this.id, BLOCK_SIZE, scene);
                 mesh.material = new BABYLON.StandardMaterial("texture1", scene);
                 mesh.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
@@ -3277,14 +3349,6 @@ var GALLERY;
                 mesh.isPickable = false;
                 //meshes.push(mesh);
                 return (mesh);
-            };
-            Zone.prototype.getMesh = function (scene) {
-                if ("_mesh" in this) {
-                }
-                else {
-                    this._mesh = this._createMesh(scene);
-                }
-                return this._mesh;
             };
             Zone.prototype.isIn = function (position, rotation) {
                 var center = this.getBabylonPosition();
@@ -4097,11 +4161,14 @@ document.addEventListener("dragover", function (e) {
 document.addEventListener("dragleave", function (e) {
     e.preventDefault();
 }, false);
-function setImageWidth(src, id, height, onDone) {
+function setImageWidth(src, object, height, onDone) {
     var image = new Image();
     image.src = src;
     image.onload = function () {
-        var object = objects.getObjectById(id);
+        /*let object = objects.getObjectById(id);
+        if(!object){
+            throw new Error('There is no object with id '+id);
+        }*/
         var width = (this.width * height) / this.height;
         object.width = width;
         r('setting image width', object);
@@ -4144,9 +4211,9 @@ document.addEventListener("drop", function (e) {
         TOWNS.CDN.uploadFiles([file], function (progress) {
             message.text(filename + ': ' + progress + '%');
         }, function (response) {
-            var object;
             var url = response[0];
-            objects.push(object = {
+            var object;
+            objects.push(object = new GALLERY.Objects.Image({
                 id: createGuid(),
                 type: 'image',
                 position: position,
@@ -4161,9 +4228,9 @@ document.addEventListener("drop", function (e) {
                 isEmitting: true,
                 name: '',
                 uri: ''
-            });
+            }));
             message.text(filename + ': Nastavování velikosti obrázku');
-            setImageWidth(url, object.id, 2, function () {
+            setImageWidth(url, object, 2, function () {
                 message.text(filename + ': Hotovo', 'success').close();
             });
             //position={x:position.x,y:position.y+2};

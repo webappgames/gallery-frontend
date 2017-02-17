@@ -61,6 +61,27 @@ namespace GALLERY.Objects{
                     return('<textarea></textarea>');
                 case 'buttons':
                     return('<textarea></textarea>');
+
+
+                case 'width':
+                    return('<input type="number">');
+                case 'height':
+                    return('<input type="number">');
+                case 'uri_level':
+                    return('<input type="number">');
+                case 'isPickable':
+                    return('<input type="checkbox">');
+                case 'isImportant':
+                    return('<input type="checkbox">');
+
+                case 'limit':
+                    return('<input type="checkbox">');
+                case 'limitRotation':
+                    return('<input type="number">');
+                case 'limitRotationTolerance':
+                    return('<input type="number">');
+
+
                 default:
                     return(super.getEditorInputHtml(key));
             }
@@ -103,7 +124,7 @@ namespace GALLERY.Objects{
         }
 
 
-        private _createMesh(scene) {
+        private createBabylonMesh(scene) {
 
 
             let mesh = BABYLON.Mesh.CreateBox(this.id, BLOCK_SIZE, scene);
@@ -127,16 +148,6 @@ namespace GALLERY.Objects{
             return(mesh);
         }
 
-        getMesh(scene){
-
-            if("_mesh" in this){
-            }else{
-                this._mesh = this._createMesh(scene);
-            }
-
-            return this._mesh;
-
-        }
 
 
         isIn(position:BABYLON.Vector3,rotation:BABYLON.Vector3){

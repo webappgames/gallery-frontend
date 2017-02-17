@@ -17,6 +17,7 @@ namespace GALLERY.Viewer {
     export let zones = [];
     export let boards = [];
     export let gates = [];
+    export let links = [];
 
     export let building_blocks = [];
     export let lights = [];
@@ -24,6 +25,9 @@ namespace GALLERY.Viewer {
     export let environment: Objects.Environment;
 
     export let objects_world;
+
+
+    var sunShadowGenerator;
 
 
     export function runWorld(_objects_world, textures) {
@@ -35,7 +39,7 @@ namespace GALLERY.Viewer {
         rendered = false;
 
 
-        var sunShadowGenerator = new BABYLON.ShadowGenerator(1024, sun);
+        sunShadowGenerator = new BABYLON.ShadowGenerator(1024, sun);
         sunShadowGenerator.useVarianceShadowMap = true;
 
 
@@ -469,6 +473,11 @@ namespace GALLERY.Viewer {
 
         let virtualObjects = object.createVirtualObjects();
         if(virtualObjects) {
+
+            if(virtualObjects.getAll().length){
+                r('Created virtual objects for '+object.getConsoleName()+'.',virtualObjects);
+            }
+
             virtualObjects.forEach(function (object) {
                 addObject(object);
                 objects.push(object);

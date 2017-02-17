@@ -103,6 +103,8 @@ namespace GALLERY.Objects{
                     return('<input type="checkbox">');
                 case 'backFace':
                     return('<input type="checkbox">');
+                case 'isSolid':
+                    return('<input type="checkbox">');
 
 
 
@@ -423,13 +425,6 @@ namespace GALLERY.Objects{
 
                 }
 
-
-
-
-
-
-
-
             }
 
 
@@ -439,12 +434,11 @@ namespace GALLERY.Objects{
 
             image.checkCollisions = object.checkCollisions;
 
-
+            r('Created image mesh',image);
             return(image);
 
             //r(object);
             //r(image);
-
 
 
         }

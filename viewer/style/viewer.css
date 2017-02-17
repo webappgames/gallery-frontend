@@ -54,7 +54,8 @@ body {
   padding: 0px;
   background: #fff;
   /* url("../data/backgrounds/page.png");/**/
-  /*background: url("data/backgrounds/BrickOldMixedSize0040_1_S.jpg");/**/ }
+  /*background: url("data/backgrounds/BrickOldMixedSize0040_1_S.jpg");/**/
+  overflow: hidden; }
 
 a {
   text-decoration: none;
@@ -431,6 +432,11 @@ section#boards {
   z-index: 4000;
   display: block;
   position: fixed;
+  top: 0px;
+  bottom: 0px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid red;
   /*top: 0px;
   bottom: 0px;
   right: 0px;

@@ -25,7 +25,7 @@ document.addEventListener("dragleave", function(e){
 
 
 
-function setImageWidth(src,id,height,onDone) {
+function setImageWidth(src:string,object:GALLERY.Objects.Object,height:number,onDone) {//todo promise
 
     var image = new Image();
     image.src = src;
@@ -33,7 +33,10 @@ function setImageWidth(src,id,height,onDone) {
 
     image.onload = function(){
 
-        let object = objects.getObjectById(id);
+        /*let object = objects.getObjectById(id);
+        if(!object){
+            throw new Error('There is no object with id '+id);
+        }*/
 
         let width = (this.width * height) / this.height;
         object.width = width;
@@ -121,14 +124,14 @@ document.addEventListener("drop", function(e){
 
 
 
-                let object;
+
 
                 let url = response[0];
 
 
 
-
-                objects.push(object = {
+                let object;
+                objects.push(object = new GALLERY.Objects.Image({
                     id: createGuid(),
                     type: 'image',
                     position:position,
@@ -144,13 +147,13 @@ document.addEventListener("drop", function(e){
                     name: '',
                     uri: ''
 
-                });
+                }));
 
 
                 message.text(filename+': Nastavování velikosti obrázku');
 
 
-                setImageWidth(url,object.id,2,function () {
+                setImageWidth(url,object,2,function () {
 
                     message.text(filename+': Hotovo','success').close();
 

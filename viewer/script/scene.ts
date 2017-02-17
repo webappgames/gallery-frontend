@@ -358,7 +358,7 @@ namespace GALLERY.Viewer {
 
 
 
-                board.element.style.position = 'absolute';
+                board.element.style.position = 'fixed';
                 board.element.style.left = (position.x ) - (board.element.clientWidth / 2) + 'px';
                 board.element.style.top = (position.y  - board.top) + 'px';
                 board.element.style.display = 'block';

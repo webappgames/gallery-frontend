@@ -233,7 +233,7 @@ namespace GALLERY.Viewer {
 
 
 
-
+            zones.push(object);//environment
 
 
         } else if (object.type == 'zone') {

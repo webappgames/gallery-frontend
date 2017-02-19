@@ -13,7 +13,6 @@
 /// <reference path="script/05-objects/00-array.ts" />
 /// <reference path="script/05-objects/05-compiled-array.ts" />
 /// <reference path="script/05-objects/05-object.ts" />
-/// <reference path="script/05-objects/10-environment.ts" />
 /// <reference path="script/05-objects/10-block.ts" />
 /// <reference path="script/05-objects/10-multiblock.ts" />
 /// <reference path="script/05-objects/10-image.ts" />
@@ -30,6 +29,7 @@
 /// <reference path="script/05-objects/10-zone.ts" />
 /// <reference path="script/05-objects/10-groundhole.ts" />
 /// <reference path="script/05-objects/10-board.ts" />
+/// <reference path="script/05-objects/20-environment.ts" />
 
 
 /// <reference path="script/scene-config.ts" />

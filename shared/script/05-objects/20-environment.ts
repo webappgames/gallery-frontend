@@ -1,8 +1,9 @@
 /// <reference path="../../reference.ts" />
+//import {Zone} from '10-zone';
 
 namespace GALLERY.Objects{
 
-    export class Environment extends Object{
+    export class Environment extends Zone{
 
 
         public ground: string;
@@ -16,10 +17,6 @@ namespace GALLERY.Objects{
         public endlessStructuresFromStorey: string;
         public shadows: boolean;
 
-        public design: string;
-        public name: string;
-        public html: string;
-        public buttons: string;
 
 
         getEditorInputHtml(key:string):string{
@@ -46,15 +43,6 @@ namespace GALLERY.Objects{
                 case 'shadows':
                     return('<input type="checkbox">');
 
-
-                case 'design':
-                    return('<input type="text">');
-                case 'name':
-                    return('<input type="text">');
-                case 'html':
-                    return('<textarea></textarea>');
-                case 'buttons':
-                    return('<textarea></textarea>');
                 default:
                     return(super.getEditorInputHtml(key));
             }
@@ -77,11 +65,6 @@ namespace GALLERY.Objects{
             this.endlessStructuresFromStorey = this.endlessStructuresFromStorey || '1NP';
             this.shadows = this.shadows || false;
 
-            this.design = this.design || 'board';
-            this.name = this.name || '';
-            this.html = this.html || '';
-            this.buttons = this.buttons || '';
-
 
         }
 
@@ -99,11 +82,18 @@ namespace GALLERY.Objects{
 
         }
 
+        createBabylonMesh(scene) {
+            return null;
+        }
+
+
+        isIn(){
+            return true;
+        }
 
 
 
-
-        createVirtualObjects():Objects.Array {
+        /*createVirtualObjects():Objects.Array {
 
             let virtualObjects = new Objects.Array([new Objects.Zone({
 
@@ -132,7 +122,7 @@ namespace GALLERY.Objects{
 
             return (virtualObjects);
 
-        }
+        }*/
 
 
 

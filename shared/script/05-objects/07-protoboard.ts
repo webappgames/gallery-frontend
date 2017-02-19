@@ -5,6 +5,16 @@ namespace GALLERY.Objects{
     //import analyticsObject = GALLERY.Viewer.analyticsObject;
     //import appState = GALLERY.Viewer.appState;
 
+    export const BOARD_STRUCTURE = `
+{{#name}}
+<h1>{{name}}</h1>
+{{/name}}
+<div class="text">{{{html}}}</div>
+{{#buttons}}
+'<div class="buttons">{{{buttons}}}</div>
+{{/buttons}}
+`;
+
 
     export class ProtoBoard extends Object{
 
@@ -14,6 +24,7 @@ namespace GALLERY.Objects{
         public design: string;
         public name: string;
         public html: string;
+        public structure: string;
         public buttons: string;
 
         private _board:HTMLDivElement;
@@ -26,8 +37,9 @@ namespace GALLERY.Objects{
 
             this.design = this.design || 'board';
             this.name = this.name || '';
-            this.html = this.html || '';
-            this.buttons = this.buttons || '';
+            this.html = this.html || '';//todo deprecated
+            this.structure = this.structure || BOARD_STRUCTURE;
+            this.buttons = this.buttons || '';//todo deprecated
 
         }
 
@@ -43,11 +55,24 @@ namespace GALLERY.Objects{
                     return('<textarea></textarea>');
                 case 'buttons':
                     return('<textarea></textarea>');
+                case 'structure':
+                    return('<textarea></textarea>');
                 default:
                     return(super.getEditorInputHtml(key));
             }
 
         }
+
+        //todo use React
+        /*createBoard(container:HTMLElement):HTMLElement{
+            export class Hello extends React.Component<HelloProps, undefined> {
+                render() {
+                    return <h1>Hello from {this.props.compiler} and {this.props.framework}!</h1>;
+                }
+            }
+
+        }*/
+
 
 
         createBoard(container:HTMLElement):HTMLElement{
@@ -92,13 +117,19 @@ namespace GALLERY.Objects{
 
 
 
-            element.innerHTML = ''
 
+            element.innerHTML = Mustache.render(this.structure, this);
+
+
+
+
+            element.innerHTML += ''
                 //+'<div class="previous"><i class="fa fa-chevron-up" aria-hidden="true"></i></div>'
-                + (this.name ? '<h1>' + this.name + '</h1>' : '')
-                + '<div class="text">' + html + '</div>'
-                + (this.buttons?'<div class="buttons">' + this.buttons + '</div>':'')
+                //+ (this.name ? '<h1>' + this.name + '</h1>' : '')
+                //+ '<div class="text">' + html + '</div>'
+                //+ (this.buttons?'<div class="buttons">' + this.buttons + '</div>':'')
                 + (isNext ? '<div class="next" onclick="GALLERY.Viewer.appStateNext();"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
+
 
 
 
@@ -109,7 +140,7 @@ namespace GALLERY.Objects{
 
 
 
-            if(/*this.design=='panel'*/this.design=='board' && !isNext) {
+            if(this.design=='board' && !isNext) {
 
                 //element.innerHTML += `<button class="fb-share-button" data-href="http://www.your-domain.com/your-page.html"></button>`;
 
@@ -167,10 +198,90 @@ namespace GALLERY.Objects{
             });
 
 
+
+
+            let newsletter_window = $('#newsletter-window');
+            $(element).find('*[popup-content]').mouseenter(function (e) {
+
+                e.preventDefault();
+
+                //alert('a');
+
+
+
+
+                /*newsletter_window.find('.sendpress-list').parent().removeClass('error').removeClass('success').removeClass('loading');
+                newsletter_window.find('.sendpress-list').each(function(){
+
+                    var $this = $(this);
+                    var list = $this.attr('data-list');
+                    r(list);
+                    $this.prop('checked', lists.indexOf(list)!==-1);
+
+                });
+
+
+
+                setTimeout(function(){
+                    newsletter_window.show();//.stop().slideDown();
+                },50);*/
+
+
+
+
+                var width = newsletter_window.outerWidth();
+
+
+                var $this = $(this);
+                var offset = $this.offset();
+
+                newsletter_window.css('position', 'absolute');
+                newsletter_window.css('top', offset.top-(-$this.outerHeight())+20);
+
+                let left = offset.left+$this.outerWidth()/2-(60);
+                let leftNoOffset = left;
+
+                if(left<0)left=0;
+
+                let window_width = $( window ).width();
+                if(left>window_width-width)left=window_width-width;
+
+
+                let leftOffset = leftNoOffset-left;
+                newsletter_window.css('left',left);
+
+
+                newsletter_window.show();
+
+
+
+                return false;
+
+            })
+            .mouseleave(function (e) {
+                e.preventDefault();
+                newsletter_window.hide();
+                return false;
+            });
+
+
+
+            /*newsletter_window.find('.close').click(function(){
+                newsletter_window.hide();
+            });*/
+
+
+
+
+
+
             return(element);
 
             //}
         }
+
+
+
 
 
         getBoard(container=null):HTMLElement{

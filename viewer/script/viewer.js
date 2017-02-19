@@ -1761,97 +1761,6 @@ var GALLERY;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
 /// <reference path="../../reference.ts" />
-var GALLERY;
-(function (GALLERY) {
-    var Objects;
-    (function (Objects) {
-        var Environment = (function (_super) {
-            __extends(Environment, _super);
-            function Environment(object) {
-                _super.call(this, object);
-                this.ground = this.ground || 'grass';
-                this.skybox = this.skybox || 'TropicalSunnyDay';
-                this.skyboxSize = this.skyboxSize || 10000;
-                this.skybox_reverse = this.skybox_reverse || false;
-                this.fogDensity = this.fogDensity || 0;
-                this.fogColor = this.fogColor || '#ffffff';
-                this.clearColor = this.clearColor || '#ffffff';
-                this.endlessStructures = this.endlessStructures || false;
-                this.endlessStructuresFromStorey = this.endlessStructuresFromStorey || '1NP';
-                this.shadows = this.shadows || false;
-                this.design = this.design || 'board';
-                this.name = this.name || '';
-                this.html = this.html || '';
-                this.buttons = this.buttons || '';
-            }
-            Environment.prototype.getEditorInputHtml = function (key) {
-                switch (key) {
-                    case 'ground':
-                        return ('<input type="text">');
-                    case 'skybox':
-                        return ('<input type="text">');
-                    case 'skyboxSize':
-                        return ('<input type="number">');
-                    case 'skybox_reverse':
-                        return ('<input type="checkbox">');
-                    case 'fogDensity':
-                        return ('<input type="range" min="0" max="0.05" step="0.0001">');
-                    case 'fogColor':
-                        return ('<input type="color">');
-                    case 'clearColor':
-                        return ('<input type="color">');
-                    case 'endlessStructures':
-                        return ('<input type="checkbox">');
-                    case 'endlessStructuresFromStorey':
-                        return ('<input type="text">');
-                    case 'shadows':
-                        return ('<input type="checkbox">');
-                    case 'design':
-                        return ('<input type="text">');
-                    case 'name':
-                        return ('<input type="text">');
-                    case 'html':
-                        return ('<textarea></textarea>');
-                    case 'buttons':
-                        return ('<textarea></textarea>');
-                    default:
-                        return (_super.prototype.getEditorInputHtml.call(this, key));
-                }
-            };
-            Environment.prototype.create$Element = function () {
-                var $element = this._create$Element();
-                var object = this;
-                $element.html('<i class="fa fa-cube" aria-hidden="true"></i>');
-                return $element;
-            };
-            Environment.prototype.createVirtualObjects = function () {
-                var virtualObjects = new Objects.Array([new Objects.Zone({
-                        id: createGuid(),
-                        type: 'zone',
-                        world: this.world,
-                        storey: this.storey,
-                        position: {
-                            x: 0,
-                            y: 0,
-                        },
-                        width: 500,
-                        height: 500,
-                        design: this.design,
-                        name: this.name,
-                        html: this.html,
-                        buttons: this.buttons,
-                        uri: 'none',
-                        uri_level: 1,
-                        isImportant: true
-                    })]);
-                return (virtualObjects);
-            };
-            return Environment;
-        }(Objects.Object));
-        Objects.Environment = Environment;
-    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
-})(GALLERY || (GALLERY = {}));
-/// <reference path="../../reference.ts" />
 //r('created block');
 //r(GALLERY.Objects.Object);
 var GALLERY;
@@ -2705,14 +2614,16 @@ var GALLERY;
     (function (Objects) {
         //import analyticsObject = GALLERY.Viewer.analyticsObject;
         //import appState = GALLERY.Viewer.appState;
+        Objects.BOARD_STRUCTURE = "\n{{#name}}\n<h1>{{name}}</h1>\n{{/name}}\n<div class=\"text\">{{{html}}}</div>\n{{#buttons}}\n'<div class=\"buttons\">{{{buttons}}}</div>\n{{/buttons}}\n";
         var ProtoBoard = (function (_super) {
             __extends(ProtoBoard, _super);
             function ProtoBoard(object) {
                 _super.call(this, object);
                 this.design = this.design || 'board';
                 this.name = this.name || '';
-                this.html = this.html || '';
-                this.buttons = this.buttons || '';
+                this.html = this.html || ''; //todo deprecated
+                this.structure = this.structure || Objects.BOARD_STRUCTURE;
+                this.buttons = this.buttons || ''; //todo deprecated
             }
             ProtoBoard.prototype.getEditorInputHtml = function (key) {
                 switch (key) {
@@ -2724,10 +2635,21 @@ var GALLERY;
                         return ('<textarea></textarea>');
                     case 'buttons':
                         return ('<textarea></textarea>');
+                    case 'structure':
+                        return ('<textarea></textarea>');
                     default:
                         return (_super.prototype.getEditorInputHtml.call(this, key));
                 }
             };
+            //todo use React
+            /*createBoard(container:HTMLElement):HTMLElement{
+                export class Hello extends React.Component<HelloProps, undefined> {
+                    render() {
+                        return <h1>Hello from {this.props.compiler} and {this.props.framework}!</h1>;
+                    }
+                }
+    
+            }*/
             ProtoBoard.prototype.createBoard = function (container) {
                 //if (object.name || object.html) {
                 var isNext = false;
@@ -2757,10 +2679,8 @@ var GALLERY;
                             return html;
                         };
                     } });
-                element.innerHTML = ''
-                    + (this.name ? '<h1>' + this.name + '</h1>' : '')
-                    + '<div class="text">' + html + '</div>'
-                    + (this.buttons ? '<div class="buttons">' + this.buttons + '</div>' : '')
+                element.innerHTML = Mustache.render(this.structure, this);
+                element.innerHTML += ''
                     + (isNext ? '<div class="next" onclick="GALLERY.Viewer.appStateNext();"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
                 var fullUrl = 'http://' + window.location.hostname + '/' + this.getUri(); //+analyticsObject.domain;
                 //let fullUrl = 'http://'+analyticsObject.domain+this.getUri();
@@ -2800,6 +2720,50 @@ var GALLERY;
                     e.preventDefault();
                     GALLERY.Viewer.appState($(this).attr('href'), false, false);
                 });
+                var newsletter_window = $('#newsletter-window');
+                $(element).find('*[popup-content]').mouseenter(function (e) {
+                    e.preventDefault();
+                    //alert('a');
+                    /*newsletter_window.find('.sendpress-list').parent().removeClass('error').removeClass('success').removeClass('loading');
+                    newsletter_window.find('.sendpress-list').each(function(){
+    
+                        var $this = $(this);
+                        var list = $this.attr('data-list');
+                        r(list);
+                        $this.prop('checked', lists.indexOf(list)!==-1);
+    
+                    });
+    
+    
+    
+                    setTimeout(function(){
+                        newsletter_window.show();//.stop().slideDown();
+                    },50);*/
+                    var width = newsletter_window.outerWidth();
+                    var $this = $(this);
+                    var offset = $this.offset();
+                    newsletter_window.css('position', 'absolute');
+                    newsletter_window.css('top', offset.top - (-$this.outerHeight()) + 20);
+                    var left = offset.left + $this.outerWidth() / 2 - (60);
+                    var leftNoOffset = left;
+                    if (left < 0)
+                        left = 0;
+                    var window_width = $(window).width();
+                    if (left > window_width - width)
+                        left = window_width - width;
+                    var leftOffset = leftNoOffset - left;
+                    newsletter_window.css('left', left);
+                    newsletter_window.show();
+                    return false;
+                })
+                    .mouseleave(function (e) {
+                    e.preventDefault();
+                    newsletter_window.hide();
+                    return false;
+                });
+                /*newsletter_window.find('.close').click(function(){
+                    newsletter_window.hide();
+                });*/
                 return (element);
                 //}
             };
@@ -3473,6 +3437,70 @@ var GALLERY;
         Objects.GroundHole = GroundHole;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
+/// <reference path="../../reference.ts" />
+//import {Zone} from '10-zone';
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        var Environment = (function (_super) {
+            __extends(Environment, _super);
+            function Environment(object) {
+                _super.call(this, object);
+                this.ground = this.ground || 'grass';
+                this.skybox = this.skybox || 'TropicalSunnyDay';
+                this.skyboxSize = this.skyboxSize || 10000;
+                this.skybox_reverse = this.skybox_reverse || false;
+                this.fogDensity = this.fogDensity || 0;
+                this.fogColor = this.fogColor || '#ffffff';
+                this.clearColor = this.clearColor || '#ffffff';
+                this.endlessStructures = this.endlessStructures || false;
+                this.endlessStructuresFromStorey = this.endlessStructuresFromStorey || '1NP';
+                this.shadows = this.shadows || false;
+            }
+            Environment.prototype.getEditorInputHtml = function (key) {
+                switch (key) {
+                    case 'ground':
+                        return ('<input type="text">');
+                    case 'skybox':
+                        return ('<input type="text">');
+                    case 'skyboxSize':
+                        return ('<input type="number">');
+                    case 'skybox_reverse':
+                        return ('<input type="checkbox">');
+                    case 'fogDensity':
+                        return ('<input type="range" min="0" max="0.05" step="0.0001">');
+                    case 'fogColor':
+                        return ('<input type="color">');
+                    case 'clearColor':
+                        return ('<input type="color">');
+                    case 'endlessStructures':
+                        return ('<input type="checkbox">');
+                    case 'endlessStructuresFromStorey':
+                        return ('<input type="text">');
+                    case 'shadows':
+                        return ('<input type="checkbox">');
+                    default:
+                        return (_super.prototype.getEditorInputHtml.call(this, key));
+                }
+            };
+            Environment.prototype.create$Element = function () {
+                var $element = this._create$Element();
+                var object = this;
+                $element.html('<i class="fa fa-cube" aria-hidden="true"></i>');
+                return $element;
+            };
+            Environment.prototype.createBabylonMesh = function (scene) {
+                return null;
+            };
+            Environment.prototype.isIn = function () {
+                return true;
+            };
+            return Environment;
+        }(Objects.Zone));
+        Objects.Environment = Environment;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
 var STATSERVER_URL = 'http://webappgames.com:48567';
 var OBJECT_TYPES = ['zone', 'groundhole', 'stairs', 'poster', 'button', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'analytics', 'board'];
 var DOT_OBJECTS = ['zone', 'groundhole', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'analytics', 'board'];
@@ -3606,7 +3634,6 @@ var PH;
 /// <reference path="script/05-objects/00-array.ts" />
 /// <reference path="script/05-objects/05-compiled-array.ts" />
 /// <reference path="script/05-objects/05-object.ts" />
-/// <reference path="script/05-objects/10-environment.ts" />
 /// <reference path="script/05-objects/10-block.ts" />
 /// <reference path="script/05-objects/10-multiblock.ts" />
 /// <reference path="script/05-objects/10-image.ts" />
@@ -3623,6 +3650,7 @@ var PH;
 /// <reference path="script/05-objects/10-zone.ts" />
 /// <reference path="script/05-objects/10-groundhole.ts" />
 /// <reference path="script/05-objects/10-board.ts" />
+/// <reference path="script/05-objects/20-environment.ts" />
 /// <reference path="script/scene-config.ts" />
 /// <reference path="script/00-common.ts" />
 /// <reference path="script/guid.ts" />
@@ -5330,6 +5358,16 @@ var GALLERY;
                 else {
                     Viewer.scene.fogMode = BABYLON.Scene.FOGMODE_NONE;
                 }
+                /*
+                 if ( (zoneIdsCreatedForImages.indexOf(object.id) == -1)) {
+                 r('Creating zone for ' + object.name);
+    
+                 addObject(zone);//todo better
+                 objects.push(zone);
+    
+                 }
+                 /**/
+                Viewer.zones.push(object); //environment
             }
             else if (object.type == 'zone') {
                 Viewer.zones.push(object);

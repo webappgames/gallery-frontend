@@ -18,9 +18,13 @@ namespace GALLERY.Objects{
 
 
 
+
+
         public limit: number;
         public limitRotation: number;
         public limitRotationTolerance: number;
+
+
 
 
 
@@ -124,13 +128,13 @@ namespace GALLERY.Objects{
         }
 
 
-        private createBabylonMesh(scene) {
+        createBabylonMesh(scene) {
 
 
             let mesh = BABYLON.Mesh.CreateBox(this.id, BLOCK_SIZE, scene);
             mesh.material =  new BABYLON.StandardMaterial("texture1", scene);
             mesh.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
-            mesh.material.alpha = 0.2
+            mesh.material.alpha = 0.2;
 
             mesh.position = this.getBabylonPosition();
 

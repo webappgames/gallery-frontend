@@ -342,7 +342,6 @@ button:hover, .button:hover, input[type="submit"]:hover {
   }*/ }
   #newsletter-window .arrow {
     display: block;
-    position: relative;
     bottom: 100%;
     left: 60px;
     height: 0px;
@@ -352,6 +351,16 @@ button:hover, .button:hover, input[type="submit"]:hover {
     border: 20px solid transparent;
     border-bottom: 20px solid #fff;
     margin-left: -15px; }
+  #newsletter-window .close {
+    float: right;
+    color: #111;
+    cursor: pointer;
+    margin-right: -10px;
+    margin-top: -10px;
+    padding: 10px; }
+
+*[popup-content] {
+  cursor: pointer; }
 
 /*html, body {
   overflow: hidden;

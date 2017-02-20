@@ -11,7 +11,7 @@ namespace GALLERY.Objects{
 {{/name}}
 <div class="text">{{{html}}}</div>
 {{#buttons}}
-'<div class="buttons">{{{buttons}}}</div>
+<div class="buttons">{{{buttons}}}</div>
 {{/buttons}}
 `;
 
@@ -192,87 +192,15 @@ namespace GALLERY.Objects{
             container.appendChild(element);
 
 
+
+
             $(element).find('a').click(function (e) {
                 e.preventDefault();
                 Viewer.appState($(this).attr('href'),false,false);
             });
 
 
-
-
-            let newsletter_window = $('#newsletter-window');
-            $(element).find('*[popup-content]').mouseenter(function (e) {
-
-                e.preventDefault();
-
-                //alert('a');
-
-
-
-
-                /*newsletter_window.find('.sendpress-list').parent().removeClass('error').removeClass('success').removeClass('loading');
-                newsletter_window.find('.sendpress-list').each(function(){
-
-                    var $this = $(this);
-                    var list = $this.attr('data-list');
-                    r(list);
-                    $this.prop('checked', lists.indexOf(list)!==-1);
-
-                });
-
-
-
-                setTimeout(function(){
-                    newsletter_window.show();//.stop().slideDown();
-                },50);*/
-
-
-
-
-                var width = newsletter_window.outerWidth();
-
-
-                var $this = $(this);
-                var offset = $this.offset();
-
-                newsletter_window.css('position', 'absolute');
-                newsletter_window.css('top', offset.top-(-$this.outerHeight())+20);
-
-                let left = offset.left+$this.outerWidth()/2-(60);
-                let leftNoOffset = left;
-
-                if(left<0)left=0;
-
-                let window_width = $( window ).width();
-                if(left>window_width-width)left=window_width-width;
-
-
-                let leftOffset = leftNoOffset-left;
-                newsletter_window.css('left',left);
-
-
-                newsletter_window.show();
-
-
-
-                return false;
-
-            })
-            .mouseleave(function (e) {
-                e.preventDefault();
-                newsletter_window.hide();
-                return false;
-            });
-
-
-
-            /*newsletter_window.find('.close').click(function(){
-                newsletter_window.hide();
-            });*/
-
-
-
-
+            Viewer.processPopups(element);
 
 
             return(element);

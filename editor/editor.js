@@ -2573,7 +2573,7 @@ var GALLERY;
     (function (Objects) {
         //import analyticsObject = GALLERY.Viewer.analyticsObject;
         //import appState = GALLERY.Viewer.appState;
-        Objects.BOARD_STRUCTURE = "\n{{#name}}\n<h1>{{name}}</h1>\n{{/name}}\n<div class=\"text\">{{{html}}}</div>\n{{#buttons}}\n'<div class=\"buttons\">{{{buttons}}}</div>\n{{/buttons}}\n";
+        Objects.BOARD_STRUCTURE = "\n{{#name}}\n<h1>{{name}}</h1>\n{{/name}}\n<div class=\"text\">{{{html}}}</div>\n{{#buttons}}\n<div class=\"buttons\">{{{buttons}}}</div>\n{{/buttons}}\n";
         var ProtoBoard = (function (_super) {
             __extends(ProtoBoard, _super);
             function ProtoBoard(object) {
@@ -4889,6 +4889,10 @@ function createMap() {
         $this.removeClass('not-selected-object');
         $selected_properties.html('');
         $selected_properties.append('<legend>Objekt</legend>');
+        $selected_properties.append('<div class="field">' +
+            '<label>id</label>' +
+            object.id +
+            '</div>');
         var input_element, $input_element;
         var check_element, $check_element;
         for (var key in object) {

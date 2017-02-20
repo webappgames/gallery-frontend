@@ -259,6 +259,14 @@ function createMap() {
 
         $selected_properties.html('');
         $selected_properties.append('<legend>Objekt</legend>');
+        $selected_properties.append(
+            '<div class="field">' +
+            '<label>id</label>' +
+            object.id +
+            '</div>'
+        );
+
+
 
         let input_element,$input_element;
         let check_element,$check_element;

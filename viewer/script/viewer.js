@@ -2614,7 +2614,7 @@ var GALLERY;
     (function (Objects) {
         //import analyticsObject = GALLERY.Viewer.analyticsObject;
         //import appState = GALLERY.Viewer.appState;
-        Objects.BOARD_STRUCTURE = "\n{{#name}}\n<h1>{{name}}</h1>\n{{/name}}\n<div class=\"text\">{{{html}}}</div>\n{{#buttons}}\n'<div class=\"buttons\">{{{buttons}}}</div>\n{{/buttons}}\n";
+        Objects.BOARD_STRUCTURE = "\n{{#name}}\n<h1>{{name}}</h1>\n{{/name}}\n<div class=\"text\">{{{html}}}</div>\n{{#buttons}}\n<div class=\"buttons\">{{{buttons}}}</div>\n{{/buttons}}\n";
         var ProtoBoard = (function (_super) {
             __extends(ProtoBoard, _super);
             function ProtoBoard(object) {

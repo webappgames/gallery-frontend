@@ -1650,9 +1650,12 @@ var GALLERY;
                 else if (object.type == 'board') {
                     object = new Objects.Board(object);
                 }
+                else if (object.type == 'boardamorph') {
+                    object = new Objects.BoardAmorph(object);
+                }
                 else {
-                    console.log(object);
-                    throw new Error('Cant put item into Gallery Objects Array because of unrecognized object type ' + object.type);
+                    console.warn("Unknown object type \"" + object.type + "\" - creating universal object.");
+                    object = new Object(object);
                 }
                 //----------------------------------
                 return (object);
@@ -2621,7 +2624,6 @@ var GALLERY;
                 var element = document.createElement('div');
                 element.id = 'zone-' + this.id;
                 element.classList.add('zone-' + this.design);
-                element.style.display = 'none';
                 var html = this.html;
                 html = Mustache.render(html, { gallery: function () {
                         return function (val, render) {
@@ -2692,6 +2694,7 @@ var GALLERY;
                         container = document.getElementById('zones');
                     }
                     this._board = this.createBoard(container);
+                    this._board.style.display = 'none';
                     if (this.hidden)
                         this.hide();
                 }
@@ -2718,7 +2721,60 @@ var GALLERY;
         Objects.ProtoBoard = ProtoBoard;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
+//import {ProtoBoard} from './07-protoboard.ts';
 /// <reference path="07-protoboard" />
+var GALLERY;
+(function (GALLERY) {
+    var Objects;
+    (function (Objects) {
+        var BoardAmorph = (function (_super) {
+            __extends(BoardAmorph, _super);
+            function BoardAmorph(object, realObject) {
+                if (realObject === void 0) { realObject = null; }
+                _super.call(this, object);
+                this.realObject = realObject;
+                this.isPerspective = this.isPerspective || false;
+            }
+            BoardAmorph.prototype.getEditorInputHtml = function (key) {
+                switch (key) {
+                    case 'isPerspective':
+                        return ('<input type="checkbox">');
+                    default:
+                        return (_super.prototype.getEditorInputHtml.call(this, key));
+                }
+            };
+            BoardAmorph.prototype.create$Element = function () {
+                var $element = this._create$Element();
+                var object = this;
+                $element.html('<i class="fa fa-file-text-o" aria-hidden="true"></i>');
+                return $element;
+            };
+            BoardAmorph.prototype.createBoard = function (container) {
+                var element = _super.prototype.createBoard.call(this, container);
+                var self = this;
+                if (this.realObject) {
+                    element.addEventListener('click', function (event) {
+                        r(self);
+                        self.realObject.show();
+                        self.hide();
+                    });
+                }
+                return element;
+            };
+            BoardAmorph.prototype.show = function () {
+                //super.show();
+                this.getCreatedBoard().style.display = 'block';
+            };
+            BoardAmorph.prototype.hide = function () {
+                //super.hide();
+                this.getCreatedBoard().style.display = 'none';
+            };
+            return BoardAmorph;
+        }(Objects.ProtoBoard));
+        Objects.BoardAmorph = BoardAmorph;
+    })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="10-boardamorph" />
 var GALLERY;
 (function (GALLERY) {
     var Objects;
@@ -2729,15 +2785,12 @@ var GALLERY;
                 if (realObject === void 0) { realObject = null; }
                 _super.call(this, object);
                 this.realObject = realObject;
-                this.isPerspective = this.isPerspective || false;
                 this.width = this.width || 2;
                 this.height = this.height || 4;
                 this.voxelPixelRatio = this.voxelPixelRatio || 100;
             }
             Board.prototype.getEditorInputHtml = function (key) {
                 switch (key) {
-                    case 'isPerspective':
-                        return ('<input type="checkbox">');
                     case 'width':
                         return ('<input type="number">');
                     case 'height':
@@ -2751,7 +2804,7 @@ var GALLERY;
             Board.prototype.create$Element = function () {
                 var $element = this._create$Element();
                 var object = this;
-                $element.html('<i class="fa fa-file-text-o" aria-hidden="true"></i>');
+                $element.html('<i class="fa fa-square-o" aria-hidden="true"></i>');
                 return $element;
             };
             Board.prototype.createBoard = function (container) {
@@ -2759,26 +2812,10 @@ var GALLERY;
                 element.style.width = this.width * this.voxelPixelRatio;
                 element.style.height = this.height * this.voxelPixelRatio;
                 element.style.overflow = 'hidden';
-                var self = this;
-                if (this.realObject) {
-                    element.addEventListener('click', function (event) {
-                        r(self);
-                        self.realObject.show();
-                        self.hide();
-                    });
-                }
                 return element;
             };
-            Board.prototype.show = function () {
-                //super.show();
-                this.getCreatedBoard().style.display = 'block';
-            };
-            Board.prototype.hide = function () {
-                //super.hide();
-                this.getCreatedBoard().style.display = 'none';
-            };
             return Board;
-        }(Objects.ProtoBoard));
+        }(Objects.BoardAmorph));
         Objects.Board = Board;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
@@ -3418,8 +3455,8 @@ var GALLERY;
     })(Objects = GALLERY.Objects || (GALLERY.Objects = {}));
 })(GALLERY || (GALLERY = {}));
 var STATSERVER_URL = 'http://webappgames.com:48567';
-var OBJECT_TYPES = ['zone', 'groundhole', 'stairs', 'poster', 'button', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'analytics', 'board'];
-var DOT_OBJECTS = ['zone', 'groundhole', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'analytics', 'board'];
+var OBJECT_TYPES = ['zone', 'groundhole', 'stairs', 'poster', 'button', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'analytics', 'board', 'boardamorph'];
+var DOT_OBJECTS = ['zone', 'groundhole', 'environment', 'light', 'label', 'tree', 'link', 'gate', 'deploy', 'analytics', 'board', 'boardamorph'];
 var BLOCK_SIZE = 5;
 //var BLOCK_SIZE_VERTICAL=10;
 //var BLOCK_SIZE_DOOR=2;

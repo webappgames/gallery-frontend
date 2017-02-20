@@ -193,12 +193,16 @@ namespace GALLERY.Objects{
             }else if (object.type == 'board') {
 
                 object = new Board(object);
+            }else if (object.type == 'boardamorph') {
+
+                object = new BoardAmorph(object);
 
             }
             else {
 
-                console.log(object);
-                throw new Error('Cant put item into Gallery Objects Array because of unrecognized object type ' + object.type);
+                console.warn(`Unknown object type "${object.type}" - creating universal object.`);
+                object = new Object(object);
+
             }
             //----------------------------------
 

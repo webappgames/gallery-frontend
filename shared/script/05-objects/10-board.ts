@@ -1,12 +1,10 @@
-/// <reference path="07-protoboard" />
+/// <reference path="10-boardamorph" />
 
 
 
 namespace GALLERY.Objects{
 
-    export class Board extends ProtoBoard{
-
-        public isPerspective: boolean;
+    export class Board extends BoardAmorph{
 
 
         public width:number;
@@ -18,7 +16,6 @@ namespace GALLERY.Objects{
         constructor(object,private realObject=null){
 
             super(object);
-            this.isPerspective = this.isPerspective || false;
             this.width = this.width || 2;
             this.height = this.height || 4;
             this.voxelPixelRatio = this.voxelPixelRatio || 100;
@@ -30,8 +27,6 @@ namespace GALLERY.Objects{
         getEditorInputHtml(key:string):string{
 
             switch(key) {
-                case 'isPerspective':
-                    return('<input type="checkbox">');
                 case 'width':
                     return('<input type="number">');
                 case 'height':
@@ -45,6 +40,7 @@ namespace GALLERY.Objects{
         }
 
 
+
         create$Element(){
 
 
@@ -53,14 +49,13 @@ namespace GALLERY.Objects{
             let object = this;
 
 
-            $element.html('<i class="fa fa-file-text-o" aria-hidden="true"></i>');
+            $element.html('<i class="fa fa-square-o" aria-hidden="true"></i>');
 
 
 
             return $element;
 
         }
-
 
 
 
@@ -76,38 +71,9 @@ namespace GALLERY.Objects{
 
 
 
-
-            let self = this;
-            if(this.realObject) {
-
-                element.addEventListener('click', function (event) {
-
-                    r(self);
-                    self.realObject.show();
-                    self.hide();
-
-                });
-            }
-
-
-
-
             return element;
         }
 
-
-
-
-        show(){
-            //super.show();
-            this.getCreatedBoard().style.display='block';
-        }
-
-
-        hide(){
-            //super.hide();
-            this.getCreatedBoard().style.display='none';
-        }
 
     }
 

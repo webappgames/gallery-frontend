@@ -27,7 +27,7 @@ namespace GALLERY.Objects{
         public structure: string;
         public buttons: string;
 
-        private _board:HTMLDivElement;
+        private _board:HTMLElement;
 
 
 
@@ -91,7 +91,6 @@ namespace GALLERY.Objects{
             let element = document.createElement('div');
             element.id = 'zone-' + this.id;
             element.classList.add('zone-'+this.design);
-            element.style.display = 'none';
 
 
 
@@ -220,6 +219,8 @@ namespace GALLERY.Objects{
                     container = document.getElementById('zones');
                 }
                 this._board = this.createBoard(container);
+                this._board.style.display = 'none';
+
                 if(this.hidden)this.hide();
 
             }

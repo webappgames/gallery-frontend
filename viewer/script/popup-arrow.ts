@@ -43,7 +43,18 @@ namespace GALLERY.Viewer {
 
         $newsletter_window_arrow.css('left', ARROW_LEFT + leftNoBorders - left);
 
-        $newsletter_window.find('.content').text($this.attr('popup-content') as string);
+
+
+        const popup_object = objects.findBy('id',$this.attr('popup-content'));
+        if(!(popup_object instanceof Objects.ProtoBoard){
+            r(popup_object);
+            throw new Error('popup-content attribute should refer to ProtoBoard object.');
+        }
+
+        (popup_object as Objects.ProtoBoard).createBoard($newsletter_window.find('.content').text('')[0]);
+
+
+
 
         let event = $this.attr('popup-event') || 'hover';
         if (event == 'hover') {

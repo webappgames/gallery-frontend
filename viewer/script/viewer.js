@@ -7802,18 +7802,27 @@ var GALLERY;
                 var event = $this.attr('popup-event') || 'hover';
                 var container = document.createElement("div");
                 document.getElementById('popups').appendChild(container);
+                var popup_object = objects.findBy('id', $this.attr('popup-content'));
+                if (!(popup_object instanceof GALLERY.Objects.ProtoBoard)) {
+                    r(popup_object);
+                    throw new Error('popup-content attribute should refer to ProtoBoard object.');
+                }
+                //(popup_object as Objects.ProtoBoard).createBoard();
                 var anchor = this;
                 function render(opened) {
-                    r('rendering', opened);
+                    //r('rendering',opened);
                     ReactDOM.render(React.createElement(Viewer.PopupArrow, {html: "ahoj", anchor: anchor, close: render.bind(anchor, false), hasClose: event == 'click', opened: opened}), container);
                 }
-                render(true);
+                //r('popup-opened',$this,$this.is('[popup-opened]'));
+                render($this.is('[popup-opened]'));
                 if (event === 'hover') {
                     $this.mouseenter(render.bind(this, true));
                     $this.mouseleave(render.bind(this, false));
                 }
                 else if (event === 'click') {
-                    $this.click(render.bind(this, true));
+                    $this.click(function () {
+                        render.call(this, true); //todo toggle
+                    });
                 }
                 else {
                     throw new Error("Unknown event type " + event + " in popup-event attribute!");

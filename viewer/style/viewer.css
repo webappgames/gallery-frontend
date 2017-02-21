@@ -774,8 +774,8 @@ section.feed {
   z-index: 1000000;
   display: block;
   position: fixed;
-  top: 70px;
-  left: 20px;
+  bottom: 10px;
+  left: 50vh;
   background-color: #cccccc;
   padding: 4px;
   border-radius: 3px; }

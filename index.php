@@ -93,7 +93,9 @@ if(isset($_GET['comments'])){
     <title><?=htmlspecialchars($title)?></title>
 
 
-
+    <!-- Dependencies -->
+    <script src="/node_modules/react/dist/react.js"></script>
+    <script src="/node_modules/react-dom/dist/react-dom.js"></script>
     <script
             src="https://code.jquery.com/jquery-2.2.4.min.js"
             integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
@@ -229,6 +231,7 @@ if(isset($_GET['comments'])){
 <section id="zones"></section>
 <section id="boards"></section>
 <section id="posters"></section>
+<section id="popups"></section>
 
 
 <!--<nav>

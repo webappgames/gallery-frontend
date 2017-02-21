@@ -6422,6 +6422,8 @@ var GALLERY;
                     'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_dn.jpg',
                     'media/images/skyboxes/TropicalSunnyDay/TropicalSunnyDay_lf.jpg',*/
                     '/media/images/other/eye.jpg',
+                    '/node_modules/react/dist/react.js',
+                    '/node_modules/react-dom/dist/react-dom.js',
                     'https://code.jquery.com/jquery-2.2.4.min.js',
                     'https://code.jquery.com/ui/1.12.0/jquery-ui.min.js',
                     'https://cdn.ravenjs.com/3.9.1/raven.min.js',
@@ -7660,81 +7662,6 @@ var GALLERY;
         Viewer.makeScreenshots = makeScreenshots;
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
 })(GALLERY || (GALLERY = {}));
-var GALLERY;
-(function (GALLERY) {
-    var Viewer;
-    (function (Viewer) {
-        var $newsletter_window = $('#newsletter-window');
-        var $newsletter_window_arrow = $newsletter_window.find('.arrow');
-        var $newsletter_window_close = $newsletter_window.find('.close');
-        $newsletter_window_close.click(function () {
-            popupArrowHide();
-        });
-        var popupArrowShow = function (event) {
-            event.preventDefault();
-            var POPUP_WIDTH = $newsletter_window.outerWidth();
-            var WINDOW_WIDTH = $(window).width();
-            var POPUP_TOP = 20;
-            var POPUP_MARGIN = 10;
-            var ARROW_LEFT = 60;
-            var $this = $(this);
-            var offset = $this.offset();
-            $newsletter_window.css('position', 'absolute');
-            $newsletter_window.css('top', offset.top - (-$this.outerHeight()) + POPUP_TOP);
-            var left = offset.left + $this.outerWidth() / 2 - (ARROW_LEFT);
-            var leftNoBorders = left;
-            if (left < POPUP_MARGIN)
-                left = POPUP_MARGIN;
-            if (left > WINDOW_WIDTH - POPUP_WIDTH - POPUP_MARGIN)
-                left = WINDOW_WIDTH - POPUP_WIDTH - POPUP_MARGIN;
-            $newsletter_window.css('left', left);
-            $newsletter_window_arrow.css('left', ARROW_LEFT + leftNoBorders - left);
-            var popup_object = objects.findBy('id', $this.attr('popup-content'));
-            if (!(popup_object instanceof GALLERY.Objects.ProtoBoard)) {
-                r(popup_object);
-                throw new Error('popup-content attribute should refer to ProtoBoard object.');
-            }
-            popup_object.createBoard($newsletter_window.find('.content').text('')[0]);
-            var event = $this.attr('popup-event') || 'hover';
-            if (event == 'hover') {
-                $newsletter_window_close.hide();
-            }
-            else {
-                $newsletter_window_close.show();
-            }
-            $newsletter_window.show();
-            return false;
-        };
-        var popupArrowHide = function () {
-            $newsletter_window.hide();
-        };
-        var popupArrowToggle = function (event) {
-            if ($newsletter_window.css('display') == 'none') {
-                popupArrowShow.call(this, event);
-            }
-            else {
-                popupArrowHide.call(this);
-            }
-        };
-        function processPopups(element) {
-            $(element).find('*[popup-content]').each(function () {
-                var $this = $(this);
-                var event = $this.attr('popup-event') || 'hover';
-                if (event === 'hover') {
-                    $this.mouseenter(popupArrowShow);
-                    $this.mouseleave(popupArrowHide);
-                }
-                else if (event === 'click') {
-                    $this.click(popupArrowToggle);
-                }
-                else {
-                    throw new Error("Unknown event type " + event + " in popup-event attribute!");
-                }
-            });
-        }
-        Viewer.processPopups = processPopups;
-    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
-})(GALLERY || (GALLERY = {}));
 /// <reference path="reference.ts" />
 var GALLERY;
 (function (GALLERY) {
@@ -7819,5 +7746,183 @@ var GALLERY;
             else {
             }
         };
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
+//import * as React from "react";
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        function PopupArrow(props) {
+            //r(props);
+            var POPUP_WIDTH = 200;
+            var WINDOW_WIDTH = $(window).width(); //todo no pure
+            var POPUP_TOP = 20;
+            var POPUP_MARGIN = 10;
+            var ARROW_LEFT = 60;
+            var offset = $(props.anchor).offset();
+            var left = offset.left + $(props.anchor).outerWidth() / 2 - (ARROW_LEFT);
+            var leftNoBorders = left;
+            if (left < POPUP_MARGIN)
+                left = POPUP_MARGIN;
+            if (left > WINDOW_WIDTH - POPUP_WIDTH - POPUP_MARGIN)
+                left = WINDOW_WIDTH - POPUP_WIDTH - POPUP_MARGIN;
+            var style = {
+                display: props.opened ? 'block' : 'none',
+                position: 'absolute',
+                width: POPUP_WIDTH,
+                top: offset.top - (-$(props.anchor).outerHeight()) + POPUP_TOP,
+                left: left,
+            };
+            return (React.createElement("section", {id: "newsletter-window", style: style}, React.createElement("div", {className: "arrow", style: { left: ARROW_LEFT + leftNoBorders - left }}), props.hasClose ? React.createElement("i", {className: "close fa fa-times", "aria-hidden": "true", onClick: props.close}) : null, React.createElement("div", {className: "content"}, props.html)));
+        }
+        Viewer.PopupArrow = PopupArrow;
+    })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
+})(GALLERY || (GALLERY = {}));
+/// <reference path="./components/popup-arrow" />
+var GALLERY;
+(function (GALLERY) {
+    var Viewer;
+    (function (Viewer) {
+        //import * as React from "react";
+        //import * as ReactDOM from "react-dom";
+        //import * as ReactDOMServer from "react-dom/server";
+        //import {PopupArrow} from './components/popup-arrow'
+        r('PopupArrow', Viewer.PopupArrow);
+        function processPopups(element) {
+            $(element).find('*[popup-content]').each(function () {
+                //this.appendChild(document.createElement("div").innerHTML='xxxx');
+                /*r(
+                 ReactDOMServer.renderToStaticMarkup(
+                 <PopupArrow html="ahoj" offset={$(this).offset()}/>
+                 ),
+                 this
+                 );*/
+                var $this = $(this);
+                var event = $this.attr('popup-event') || 'hover';
+                var container = document.createElement("div");
+                document.getElementById('popups').appendChild(container);
+                var anchor = this;
+                function render(opened) {
+                    r('rendering', opened);
+                    ReactDOM.render(React.createElement(Viewer.PopupArrow, {html: "ahoj", anchor: anchor, close: render.bind(anchor, false), hasClose: event == 'click', opened: opened}), container);
+                }
+                render(true);
+                if (event === 'hover') {
+                    $this.mouseenter(render.bind(this, true));
+                    $this.mouseleave(render.bind(this, false));
+                }
+                else if (event === 'click') {
+                    $this.click(render.bind(this, true));
+                }
+                else {
+                    throw new Error("Unknown event type " + event + " in popup-event attribute!");
+                }
+            });
+            /*
+             const $newsletter_window = $('#newsletter-window');
+             const $newsletter_window_arrow = $newsletter_window.find('.arrow');
+             const $newsletter_window_close = $newsletter_window.find('.close');
+        
+        
+             $newsletter_window_close.click(function () {
+             popupArrowHide();
+             });
+        
+        
+             let popupArrowShow = function (event) {
+        
+             event.preventDefault();
+        
+             const POPUP_WIDTH = $newsletter_window.outerWidth();
+             const WINDOW_WIDTH = $(window).width();
+             const POPUP_TOP = 20;
+             const POPUP_MARGIN = 10;
+             const ARROW_LEFT = 60;
+        
+        
+             const $this = $(this);
+             const offset = $this.offset();
+        
+             $newsletter_window.css('position', 'absolute');
+             $newsletter_window.css('top', offset.top - (-$this.outerHeight()) + POPUP_TOP);
+        
+             let left = offset.left + $this.outerWidth() / 2 - (ARROW_LEFT);
+             const leftNoBorders = left;
+        
+        
+             if (left < POPUP_MARGIN)left = POPUP_MARGIN;
+             if (left > WINDOW_WIDTH - POPUP_WIDTH - POPUP_MARGIN)left = WINDOW_WIDTH - POPUP_WIDTH - POPUP_MARGIN;
+        
+        
+             $newsletter_window.css('left', left);
+        
+        
+             $newsletter_window_arrow.css('left', ARROW_LEFT + leftNoBorders - left);
+        
+        
+        
+             const popup_object = objects.findBy('id',$this.attr('popup-content'));
+             if(!(popup_object instanceof Objects.ProtoBoard){
+             r(popup_object);
+             throw new Error('popup-content attribute should refer to ProtoBoard object.');
+             }
+        
+             (popup_object as Objects.ProtoBoard).createBoard($newsletter_window.find('.content').text('')[0]);
+        
+        
+        
+        
+             let event = $this.attr('popup-event') || 'hover';
+             if (event == 'hover') {
+             $newsletter_window_close.hide();
+             } else {
+             $newsletter_window_close.show();
+             }
+        
+        
+             $newsletter_window.show();
+        
+        
+             return false;
+        
+             };
+        
+        
+             let popupArrowHide = function () {
+             $newsletter_window.hide();
+             };
+             let popupArrowToggle = function (event) {
+             if ($newsletter_window.css('display') == 'none') {
+             popupArrowShow.call(this, event);
+             } else {
+             popupArrowHide.call(this);
+             }
+             };
+        
+        
+        
+             export function processPopups(element: HTMLElement) {
+        
+             $(element).find('*[popup-content]').each(function () {
+        
+             let $this = $(this);
+        
+             let event = $this.attr('popup-event') || 'hover';
+        
+             if (event === 'hover') {
+             $this.mouseenter(popupArrowShow);
+             $this.mouseleave(popupArrowHide);
+             } else if (event === 'click') {
+             $this.click(popupArrowToggle);
+             } else {
+             throw new Error(`Unknown event type ${event} in popup-event attribute!`);
+             }
+        
+        
+             });
+             }*/
+        }
+        Viewer.processPopups = processPopups;
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
 })(GALLERY || (GALLERY = {}));

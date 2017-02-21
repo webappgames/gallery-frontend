@@ -47,6 +47,7 @@ gulp.task('compile-editor', function () {
 
 
 
+var webpack = require('gulp-webpack');
 
 
 gulp.task('compile-viewer', function () {
@@ -62,6 +63,9 @@ gulp.task('compile-viewer', function () {
 
 
 
+    /*return gulp.src('./viewer/src/')
+        .pipe(webpack( require('./viewer/webpack.config') ))
+        .pipe(gulp.dest('dist/'));*/
 
 
 });

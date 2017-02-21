@@ -6,8 +6,9 @@
     "sourceMap": true,
     "inlineSourceMap": true,
     "inlineSources": true,
-    "outFile": "viewer.js"
+    "outFile": "viewer.js",
 
+    "jsx": "react"
 
 
 

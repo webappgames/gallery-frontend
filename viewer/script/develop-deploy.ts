@@ -141,6 +141,9 @@ namespace GALLERY.Viewer {
 
 
 
+                '/node_modules/react/dist/react.js',
+                '/node_modules/react-dom/dist/react-dom.js',
+
                 'https://code.jquery.com/jquery-2.2.4.min.js',
                 'https://code.jquery.com/ui/1.12.0/jquery-ui.min.js',
                 'https://cdn.ravenjs.com/3.9.1/raven.min.js',

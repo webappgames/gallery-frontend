@@ -2681,7 +2681,8 @@ var GALLERY;
                     e.preventDefault();
                     Viewer.appState($(this).attr('href'), false, false);
                 });
-                Viewer.processPopups(element);
+                alert(1);
+                popup_arrow_1.processPopups(element);
                 return (element);
                 //}
             };

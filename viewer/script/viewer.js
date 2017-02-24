@@ -2653,6 +2653,70 @@ var GALLERY;
                 }
     
             }*/
+            ProtoBoard.prototype.createReactComponent = function (props) {
+                var isNext = false;
+                var label = objects.filterTypes('label').findBy('uri', this.uri);
+                if (label) {
+                    if (label.next !== 'none') {
+                        isNext = true;
+                    }
+                }
+                var html = this.html;
+                html = Mustache.render(html, { gallery: function () {
+                        return function (val, render) {
+                            var images = objects.filterTypes('image');
+                            var conds = JSON.parse(val);
+                            for (var key in conds) {
+                                images = images.filterBy(key, conds[key]);
+                            }
+                            var html = '';
+                            images.forEach(function (image) {
+                                html += '<img src="' + image.getSrc(90, 1) + '" onclick="GALLERY.Viewer.appState(\'/:' + image.id + '\', false, false);" />';
+                            });
+                            html = '<div class="gallery">' + html + '</div>';
+                            return html;
+                        };
+                    } });
+                var innerHTML = Mustache.render(this.structure, this);
+                innerHTML += (isNext ? '<div class="next" onclick="GALLERY.Viewer.appStateNext();"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
+                var fullUrl = 'http://' + window.location.hostname + '/' + this.getUri(); //+analyticsObject.domain;
+                //todo react component
+                if (this.design == 'board' && !isNext) {
+                    innerHTML += "<button onclick=\"GALLERY.Viewer.goToParent();\"><i class=\"fa fa-arrow-left\" aria-hidden=\"true\"></i> Zp\u011Bt</button>";
+                    innerHTML += "<button onclick=\"GALLERY.Viewer.appStateTurnBack();\"><i class=\"fa fa-repeat\" aria-hidden=\"true\"></i> Oto\u010Dit se</button>";
+                    innerHTML += "<button class=\"discuss\" onclick=\"fbDiscuss('" + fullUrl + "');\"><i class=\"fa fa-pencil\" aria-hidden=\"true\"></i> P\u0159idat koment\u00E1\u0159</button>";
+                    $.ajax({
+                        url: 'http://graph.facebook.com/v2.1/' + encodeURIComponent(fullUrl),
+                        dataType: 'jsonp',
+                        success: function (data) {
+                            data.share = data.share || {};
+                            var count = data.share.comment_count || 0;
+                            r(data, count);
+                            var text = '<i class="fa fa-pencil" aria-hidden="true"></i> ';
+                            if (count == 0) {
+                                text += 'Přidat komentář';
+                            }
+                            else if (count == 1) {
+                                text += '1 komentář';
+                            }
+                            else if (count < 5) {
+                                text += count + ' komentáře';
+                            }
+                            else if (count >= 5) {
+                                text += count + ' komentářů';
+                            }
+                            //todo element.getElementsByClassName('discuss')[0].innerHTML = text;
+                        }
+                    });
+                }
+                /*todo links
+                $(element).find('a').click(function (e) {
+                    e.preventDefault();
+                    Viewer.appState($(this).attr('href'),false,false);
+                });*/
+                //todo popups Viewer.processPopups(element);
+                return (React.createElement("div", {id: 'zone-' + this.id /*todo remore zone*/, className: 'zone-' + this.design /*todo remore zone add different name*/, dangerouslySetInnerHTML: { __html: innerHTML }}));
+            };
             ProtoBoard.prototype.createBoard = function (container) {
                 //if (object.name || object.html) {
                 var isNext = false;
@@ -2804,11 +2868,13 @@ var GALLERY;
             };
             BoardAmorph.prototype.show = function () {
                 //super.show();
-                this.getCreatedBoard().style.display = 'block';
+                if (this.getCreatedBoard())
+                    this.getCreatedBoard().style.display = 'block';
             };
             BoardAmorph.prototype.hide = function () {
                 //super.hide();
-                this.getCreatedBoard().style.display = 'none';
+                if (this.getCreatedBoard())
+                    this.getCreatedBoard().style.display = 'none';
             };
             return BoardAmorph;
         }(Objects.ProtoBoard));
@@ -3623,7 +3689,7 @@ var PH;
     PH.Notification = Notification;
 })(PH || (PH = {}));
 /// <reference path="lib/jquery.d.ts" />
-/// <reference path="lib/babylon.d.ts" />
+//--/ <reference path="lib/babylon.d.ts" />
 /// <reference path="script/uri-plugin.ts" />
 /// <reference path="script/05-objects/00-array.ts" />
 /// <reference path="script/05-objects/05-compiled-array.ts" />
@@ -7748,7 +7814,6 @@ var GALLERY;
         };
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
 })(GALLERY || (GALLERY = {}));
-//import * as React from "react";
 var GALLERY;
 (function (GALLERY) {
     var Viewer;
@@ -7770,11 +7835,11 @@ var GALLERY;
             var style = {
                 display: props.opened ? 'block' : 'none',
                 position: 'absolute',
-                width: POPUP_WIDTH,
+                //todo Measure width: POPUP_WIDTH,
                 top: offset.top - (-$(props.anchor).outerHeight()) + POPUP_TOP,
                 left: left,
             };
-            return (React.createElement("section", {id: "newsletter-window", style: style}, React.createElement("div", {className: "arrow", style: { left: ARROW_LEFT + leftNoBorders - left }}), props.hasClose ? React.createElement("i", {className: "close fa fa-times", "aria-hidden": "true", onClick: props.close}) : null, React.createElement("div", {className: "content"}, props.html)));
+            return (React.createElement("section", {id: "newsletter-window", style: style}, React.createElement("div", {className: "arrow", style: { left: ARROW_LEFT + leftNoBorders - left }}), props.hasClose ? React.createElement("i", {className: "close fa fa-times", "aria-hidden": "true", onClick: props.close}) : null, React.createElement("div", {className: "content"}, props.children)));
         }
         Viewer.PopupArrow = PopupArrow;
     })(Viewer = GALLERY.Viewer || (GALLERY.Viewer = {}));
@@ -7808,10 +7873,11 @@ var GALLERY;
                     throw new Error('popup-content attribute should refer to ProtoBoard object.');
                 }
                 //(popup_object as Objects.ProtoBoard).createBoard();
+                var reactBoard = popup_object.createReactComponent({});
                 var anchor = this;
                 function render(opened) {
                     //r('rendering',opened);
-                    ReactDOM.render(React.createElement(Viewer.PopupArrow, {html: "ahoj", anchor: anchor, close: render.bind(anchor, false), hasClose: event == 'click', opened: opened}), container);
+                    ReactDOM.render(React.createElement(Viewer.PopupArrow, {anchor: anchor, close: render.bind(anchor, false), hasClose: event == 'click', opened: opened}, reactBoard), container);
                 }
                 //r('popup-opened',$this,$this.is('[popup-opened]'));
                 render($this.is('[popup-opened]'));

@@ -1,13 +1,11 @@
 
-//import * as React from "react";
-
-
 
 namespace GALLERY.Viewer {
 
     export function PopupArrow(props) {
 
         //r(props);
+
 
         const POPUP_WIDTH = 200;
         const WINDOW_WIDTH = $(window).width();//todo no pure
@@ -30,7 +28,7 @@ namespace GALLERY.Viewer {
         const style = {
             display: props.opened?'block':'none',
             position: 'absolute',
-            width: POPUP_WIDTH,
+            //todo Measure width: POPUP_WIDTH,
             top: offset.top - (-$(props.anchor).outerHeight()) + POPUP_TOP,
             left: left,
         };
@@ -44,7 +42,7 @@ namespace GALLERY.Viewer {
                 {props.hasClose?<i className="close fa fa-times" aria-hidden="true" onClick={props.close}></i>:null}
 
                 <div className="content">
-                    {props.html}
+                    {props.children}
                 </div>
 
             </section>

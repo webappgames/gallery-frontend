@@ -1,6 +1,9 @@
 /// <reference path="./components/popup-arrow" />
 
+
+
 namespace GALLERY.Viewer {
+
 
     //import * as React from "react";
     //import * as ReactDOM from "react-dom";
@@ -42,7 +45,7 @@ namespace GALLERY.Viewer {
             }
 
             //(popup_object as Objects.ProtoBoard).createBoard();
-
+            const reactBoard = (popup_object as Objects.ProtoBoard).createReactComponent({});
 
 
 
@@ -51,7 +54,7 @@ namespace GALLERY.Viewer {
             function render(opened){
                 //r('rendering',opened);
                 ReactDOM.render(
-                    <PopupArrow html="ahoj" anchor={anchor} close={render.bind(anchor,false)} hasClose={event=='click'} opened={opened}/>
+                    <PopupArrow anchor={anchor} close={render.bind(anchor,false)} hasClose={event=='click'} opened={opened}>{reactBoard}</PopupArrow>
                     ,container
                 );
             }

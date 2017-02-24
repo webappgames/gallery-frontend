@@ -311,8 +311,6 @@ button:hover, .button:hover, input[type="submit"]:hover {
 
   /*box-shadow: #000000 0 0 15px 0;*/
   background-color: #fff;
-  width: 20vw;
-  min-width: 200px;
   margin: 0px;
   padding: 10px;
   /*&:after, &:before {
@@ -792,7 +790,8 @@ section.feed {
 
 .profile {
   display: block;
-  text-align: center; }
+  text-align: center;
+  max-width: 250px; }
   .profile .avatar {
     display: inline-block;
     width: 150px;

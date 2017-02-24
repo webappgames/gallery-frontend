@@ -75,6 +75,106 @@ namespace GALLERY.Objects{
 
 
 
+
+        createReactComponent(props){
+
+
+            let isNext = false;
+            let label = objects.filterTypes('label').findBy('uri', this.uri);
+            if (label) {
+                if (label.next !== 'none') {
+                    isNext = true;
+                }
+
+            }
+
+
+
+            let html = this.html;
+
+            html = Mustache.render(html, {gallery: function () {return function (val, render) {
+
+                let images = objects.filterTypes('image');
+                let conds = JSON.parse(val);
+                for(let key in conds){
+                    images = images.filterBy(key,conds[key]);
+                }
+
+                let html = '';
+                images.forEach(function (image) {
+                    html += '<img src="'+image.getSrc(90,1)+'" onclick="GALLERY.Viewer.appState(\'/:'+image.id+'\', false, false);" />'
+                });
+                html = '<div class="gallery">'+html+'</div>';
+
+
+                return html;
+            }}});
+
+
+            let innerHTML = Mustache.render(this.structure, this);
+
+            innerHTML += (isNext ? '<div class="next" onclick="GALLERY.Viewer.appStateNext();"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
+
+
+            const fullUrl = 'http://'+window.location.hostname+'/'+this.getUri();//+analyticsObject.domain;
+
+            //todo react component
+            if(this.design=='board' && !isNext) {
+
+                innerHTML += `<button onclick="GALLERY.Viewer.goToParent();"><i class="fa fa-arrow-left" aria-hidden="true"></i> Zpět</button>`;
+                innerHTML += `<button onclick="GALLERY.Viewer.appStateTurnBack();"><i class="fa fa-repeat" aria-hidden="true"></i> Otočit se</button>`;
+                innerHTML += `<button class="discuss" onclick="fbDiscuss('`+fullUrl+`');"><i class="fa fa-pencil" aria-hidden="true"></i> Přidat komentář</button>`;
+
+                $.ajax({
+                    url: 'http://graph.facebook.com/v2.1/'+encodeURIComponent(fullUrl),
+                    dataType: 'jsonp',
+                    success: function(data) {
+
+                        data.share = data.share || {};
+                        let count = data.share.comment_count || 0;
+                        r(data,count);
+                        let text = '<i class="fa fa-pencil" aria-hidden="true"></i> ';
+
+                        if(count==0){
+                            text += 'Přidat komentář';
+                        }else
+                        if(count==1){
+                            text += '1 komentář';
+                        }else
+                        if(count<5){
+                            text += count+' komentáře';
+                        }else
+                        if(count>=5){
+                            text += count+' komentářů';
+                        }
+
+                        //todo element.getElementsByClassName('discuss')[0].innerHTML = text;
+                    }
+                });
+
+            }
+
+
+
+            /*todo links
+            $(element).find('a').click(function (e) {
+                e.preventDefault();
+                Viewer.appState($(this).attr('href'),false,false);
+            });*/
+
+
+            //todo popups Viewer.processPopups(element);
+
+
+            return(
+                <div id={'zone-'+this.id/*todo remore zone*/} className={'zone-'+this.design/*todo remore zone add different name*/} dangerouslySetInnerHTML={{__html: innerHTML}}>
+                </div>
+            );
+        }
+
+
+
+
         createBoard(container:HTMLElement):HTMLElement{
             //if (object.name || object.html) {
 

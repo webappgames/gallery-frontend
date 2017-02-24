@@ -82,12 +82,14 @@ namespace GALLERY.Objects{
 
         show(){
             //super.show();
+            if(this.getCreatedBoard())
             this.getCreatedBoard().style.display='block';
         }
 
 
         hide(){
             //super.hide();
+            if(this.getCreatedBoard())
             this.getCreatedBoard().style.display='none';
         }
 

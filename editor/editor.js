@@ -3790,7 +3790,7 @@ $.get('../../config.json').done(function (response) {
     $.get(config.GALLERY_API_URL + 'galleries').done(function (response) {
         var $ul = $('#select-gallery').find('ul');
         $ul.html('');
-        response.forEach(function (item) {
+        response.reverse().forEach(function (item) {
             $ul.append('<li>' + item + '</li>');
         });
         $ul.find('li').click(function () {

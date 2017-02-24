@@ -18,7 +18,7 @@ $.get('../../config.json').done(function (response) {
         $ul.html('');
 
 
-        response.forEach(function (item) {
+        response.reverse().forEach(function (item) {
             $ul.append('<li>'+item+'</li>');
         });
 

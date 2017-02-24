@@ -16,6 +16,7 @@ namespace GALLERY.Objects{
         public endlessStructures: boolean;
         public endlessStructuresFromStorey: string;
         public shadows: boolean;
+        public fov: number;
 
 
 
@@ -42,7 +43,8 @@ namespace GALLERY.Objects{
                     return('<input type="text">');
                 case 'shadows':
                     return('<input type="checkbox">');
-
+                case 'fov':
+                    return('<input type="number">');
                 default:
                     return(super.getEditorInputHtml(key));
             }
@@ -64,7 +66,7 @@ namespace GALLERY.Objects{
             this.endlessStructures = this.endlessStructures || false;
             this.endlessStructuresFromStorey = this.endlessStructuresFromStorey || '1NP';
             this.shadows = this.shadows || false;
-
+            this.fov = this.fov || 1.3;
 
         }
 

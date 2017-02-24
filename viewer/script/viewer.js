@@ -3519,6 +3519,7 @@ var GALLERY;
                 this.endlessStructures = this.endlessStructures || false;
                 this.endlessStructuresFromStorey = this.endlessStructuresFromStorey || '1NP';
                 this.shadows = this.shadows || false;
+                this.fov = this.fov || 1.3;
             }
             Environment.prototype.getEditorInputHtml = function (key) {
                 switch (key) {
@@ -3542,6 +3543,8 @@ var GALLERY;
                         return ('<input type="text">');
                     case 'shadows':
                         return ('<input type="checkbox">');
+                    case 'fov':
+                        return ('<input type="number">');
                     default:
                         return (_super.prototype.getEditorInputHtml.call(this, key));
                 }
@@ -4820,7 +4823,7 @@ var GALLERY;
             camera.keysRight = [39, 68]; //arrow ->
             camera.speed = SPEED;
             camera.inertia = SPEED_INERTIA;
-            camera.fov = 1.3;
+            camera.fov = 1;
             camera.onCollide = function () {
                 Viewer.onCollide.apply(this, arguments); //todo why?
                 //r('collide',onCollide);
@@ -5355,6 +5358,7 @@ var GALLERY;
                 //endlessStructures = object.endlessStructures;
                 //endlessStructuresFromStorey = object.endlessStructuresFromStorey;
                 Viewer.environment = object;
+                Viewer.camera.fov = Viewer.environment.fov;
                 Viewer.scene.clearColor = BABYLON.Color3.FromHexString(object.clearColor);
                 if (object.ground !== 'none') {
                     //todo position

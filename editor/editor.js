@@ -3478,6 +3478,7 @@ var GALLERY;
                 this.endlessStructures = this.endlessStructures || false;
                 this.endlessStructuresFromStorey = this.endlessStructuresFromStorey || '1NP';
                 this.shadows = this.shadows || false;
+                this.fov = this.fov || 1.3;
             }
             Environment.prototype.getEditorInputHtml = function (key) {
                 switch (key) {
@@ -3501,6 +3502,8 @@ var GALLERY;
                         return ('<input type="text">');
                     case 'shadows':
                         return ('<input type="checkbox">');
+                    case 'fov':
+                        return ('<input type="number">');
                     default:
                         return (_super.prototype.getEditorInputHtml.call(this, key));
                 }

@@ -46,7 +46,7 @@ namespace GALLERY.Viewer {
 
         camera.speed = SPEED;
         camera.inertia = SPEED_INERTIA;
-        camera.fov = 1.3;
+        camera.fov = 1;
 
 
         camera.onCollide = function () {

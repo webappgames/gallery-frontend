@@ -78,6 +78,9 @@ namespace GALLERY.Viewer {
             environment = object;
 
 
+            camera.fov = environment.fov;
+
+
             scene.clearColor = BABYLON.Color3.FromHexString(object.clearColor);
 
 

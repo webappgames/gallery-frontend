@@ -22,6 +22,17 @@ namespace GALLERY.Viewer{
         objects = compiled_objects;
         r('Running gallery with '+objects.getAll().length+' objects in '+(develop?'develop':'production')+' mode.');
 
+        if(deployObject){
+            r(deployObject);
+        }else{
+            console.warn('Deploy object is missing!');
+        }
+        if(analyticsObject){
+            r(analyticsObject);
+        }else{
+            console.warn('Analytics object is missing!');
+        }
+
 
 
         if(develop){

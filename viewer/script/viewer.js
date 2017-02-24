@@ -1584,6 +1584,7 @@ var GALLERY;
                 object.world = object.world || 'main';
                 object.storey = object.storey || '1NP';
                 object.hidden = object.hidden || false;
+                object.virtual = object.virtual || false;
                 for (var key in object) {
                     var this_key = key;
                     if (this_key == '_id')
@@ -2209,6 +2210,7 @@ var GALLERY;
                         var zone = new Objects.Zone({
                             id: createGuid(),
                             type: 'zone',
+                            //virtual: true,
                             world: object.world,
                             storey: object.storey,
                             position: {
@@ -5253,6 +5255,18 @@ var GALLERY;
             Viewer.analyticsObject = analyticsObject_;
             objects = compiled_objects;
             r('Running gallery with ' + objects.getAll().length + ' objects in ' + (Viewer.develop ? 'develop' : 'production') + ' mode.');
+            if (Viewer.deployObject) {
+                r(Viewer.deployObject);
+            }
+            else {
+                console.warn('Deploy object is missing!');
+            }
+            if (Viewer.analyticsObject) {
+                r(Viewer.analyticsObject);
+            }
+            else {
+                console.warn('Analytics object is missing!');
+            }
             if (Viewer.develop) {
                 //showStats();
                 Viewer.developMenu();
@@ -5580,7 +5594,7 @@ var GALLERY;
                 }
                 virtualObjects.forEach(function (object) {
                     addObject(object);
-                    objects.push(object);
+                    //objects.push(object);
                 });
             }
         }
@@ -6497,6 +6511,7 @@ var GALLERY;
                     '/node_modules/file-saver/FileSaver.min.js',
                     '/node_modules/mustache/mustache.min.js',
                     '/viewer/script/lib/babylon.js',
+                    '/viewer/script/lib/lodash.min.js',
                     '/node_modules/handjs/hand.min.js',
                     //'http://www.babylonjs.com/hand.minified-1.2.js',
                     //'http://www.babylonjs.com/babylon.js',
@@ -6599,15 +6614,24 @@ var GALLERY;
                 var zip = new JSZip();
                 //let zipRoot = zip.folder(gallery_folder);
                 zip.file('script-bundle.js', script);
-                zip.file('objects.compiled.json', JSON.stringify(objects.getAll().map(function (object) {
+                var pureObjects = objects.getAll().map(function (object) {
                     var pureObject = {};
                     for (var key in object) {
-                        if (key.substr(0, 1) !== '_') {
-                            pureObject[key] = object[key];
+                        if (!_.isFunction(object[key])) {
+                            if (!_.isObject(object[key]) || ['position', 'size'].indexOf(key) !== -1) {
+                                if (key.substr(0, 1) !== '_') {
+                                    pureObject[key] = object[key];
+                                }
+                            }
                         }
                     }
                     return (pureObject);
-                }), null, true));
+                });
+                /*pureObjects.forEach(function (pureObject) {
+                    r(pureObject);
+                    r(JSON.stringify(pureObject,null,true));
+                });*/
+                zip.file('objects.compiled.json', JSON.stringify(pureObjects, null, true));
                 zip.file('.htaccess', "\nRewriteEngine On\n\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule . / [L,QSA]\n");
                 //r(deployFiles);
                 deployFiles.forEach(function (deployFile) {
@@ -6645,7 +6669,15 @@ var GALLERY;
                 formData.append("password", Viewer.deployObject.password);
                 formData.append("directory", Viewer.deployObject.directory);
                 var xhr = new XMLHttpRequest();
-                xhr.open('POST', 'tools/ftp-deploy.php', true);
+                if (Viewer.deployObject.deployType == 'ftp') {
+                    xhr.open('POST', 'tools/ftp-deploy.php', true);
+                }
+                else if (Viewer.deployObject.deployType == 'ssh') {
+                    xhr.open('POST', 'tools/ssh-deploy.php', true);
+                }
+                else {
+                    throw new Error("Unknown deploy type \"" + Viewer.deployObject.deployType + "\".");
+                }
                 xhr.upload.onprogress = function (e) {
                     if (e.lengthComputable) {
                         var percentComplete = (e.loaded / e.total) * 100;

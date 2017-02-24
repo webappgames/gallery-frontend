@@ -129,7 +129,7 @@ namespace GALLERY.Editor{
 
 
         let analyticsObject = objects.filterTypes('analytics').findBy('analyticsType','gallery');
-        let deployObject = objects.filterTypes('deploy').findBy('deployType','ftp');
+        let deployObject = objects.filterTypes('deploy').getObjectByIndex(0);//.findBy('deployType','ftp');
 
 
 

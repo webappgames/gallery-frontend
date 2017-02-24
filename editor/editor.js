@@ -1543,6 +1543,7 @@ var GALLERY;
                 object.world = object.world || 'main';
                 object.storey = object.storey || '1NP';
                 object.hidden = object.hidden || false;
+                object.virtual = object.virtual || false;
                 for (var key in object) {
                     var this_key = key;
                     if (this_key == '_id')
@@ -2168,6 +2169,7 @@ var GALLERY;
                         var zone = new Objects.Zone({
                             id: createGuid(),
                             type: 'zone',
+                            //virtual: true,
                             world: object.world,
                             storey: object.storey,
                             position: {
@@ -2612,6 +2614,70 @@ var GALLERY;
                 }
     
             }*/
+            ProtoBoard.prototype.createReactComponent = function (props) {
+                var isNext = false;
+                var label = objects.filterTypes('label').findBy('uri', this.uri);
+                if (label) {
+                    if (label.next !== 'none') {
+                        isNext = true;
+                    }
+                }
+                var html = this.html;
+                html = Mustache.render(html, { gallery: function () {
+                        return function (val, render) {
+                            var images = objects.filterTypes('image');
+                            var conds = JSON.parse(val);
+                            for (var key in conds) {
+                                images = images.filterBy(key, conds[key]);
+                            }
+                            var html = '';
+                            images.forEach(function (image) {
+                                html += '<img src="' + image.getSrc(90, 1) + '" onclick="GALLERY.Viewer.appState(\'/:' + image.id + '\', false, false);" />';
+                            });
+                            html = '<div class="gallery">' + html + '</div>';
+                            return html;
+                        };
+                    } });
+                var innerHTML = Mustache.render(this.structure, this);
+                innerHTML += (isNext ? '<div class="next" onclick="GALLERY.Viewer.appStateNext();"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
+                var fullUrl = 'http://' + window.location.hostname + '/' + this.getUri(); //+analyticsObject.domain;
+                //todo react component
+                if (this.design == 'board' && !isNext) {
+                    innerHTML += "<button onclick=\"GALLERY.Viewer.goToParent();\"><i class=\"fa fa-arrow-left\" aria-hidden=\"true\"></i> Zp\u011Bt</button>";
+                    innerHTML += "<button onclick=\"GALLERY.Viewer.appStateTurnBack();\"><i class=\"fa fa-repeat\" aria-hidden=\"true\"></i> Oto\u010Dit se</button>";
+                    innerHTML += "<button class=\"discuss\" onclick=\"fbDiscuss('" + fullUrl + "');\"><i class=\"fa fa-pencil\" aria-hidden=\"true\"></i> P\u0159idat koment\u00E1\u0159</button>";
+                    $.ajax({
+                        url: 'http://graph.facebook.com/v2.1/' + encodeURIComponent(fullUrl),
+                        dataType: 'jsonp',
+                        success: function (data) {
+                            data.share = data.share || {};
+                            var count = data.share.comment_count || 0;
+                            r(data, count);
+                            var text = '<i class="fa fa-pencil" aria-hidden="true"></i> ';
+                            if (count == 0) {
+                                text += 'Přidat komentář';
+                            }
+                            else if (count == 1) {
+                                text += '1 komentář';
+                            }
+                            else if (count < 5) {
+                                text += count + ' komentáře';
+                            }
+                            else if (count >= 5) {
+                                text += count + ' komentářů';
+                            }
+                            //todo element.getElementsByClassName('discuss')[0].innerHTML = text;
+                        }
+                    });
+                }
+                /*todo links
+                $(element).find('a').click(function (e) {
+                    e.preventDefault();
+                    Viewer.appState($(this).attr('href'),false,false);
+                });*/
+                //todo popups Viewer.processPopups(element);
+                return (React.createElement("div", {id: 'zone-' + this.id /*todo remore zone*/, className: 'zone-' + this.design /*todo remore zone add different name*/, dangerouslySetInnerHTML: { __html: innerHTML }}));
+            };
             ProtoBoard.prototype.createBoard = function (container) {
                 //if (object.name || object.html) {
                 var isNext = false;
@@ -2681,8 +2747,7 @@ var GALLERY;
                     e.preventDefault();
                     Viewer.appState($(this).attr('href'), false, false);
                 });
-                alert(1);
-                popup_arrow_1.processPopups(element);
+                Viewer.processPopups(element);
                 return (element);
                 //}
             };
@@ -2764,11 +2829,13 @@ var GALLERY;
             };
             BoardAmorph.prototype.show = function () {
                 //super.show();
-                this.getCreatedBoard().style.display = 'block';
+                if (this.getCreatedBoard())
+                    this.getCreatedBoard().style.display = 'block';
             };
             BoardAmorph.prototype.hide = function () {
                 //super.hide();
-                this.getCreatedBoard().style.display = 'none';
+                if (this.getCreatedBoard())
+                    this.getCreatedBoard().style.display = 'none';
             };
             return BoardAmorph;
         }(Objects.ProtoBoard));
@@ -3583,7 +3650,7 @@ var PH;
     PH.Notification = Notification;
 })(PH || (PH = {}));
 /// <reference path="lib/jquery.d.ts" />
-/// <reference path="lib/babylon.d.ts" />
+//--/ <reference path="lib/babylon.d.ts" />
 /// <reference path="script/uri-plugin.ts" />
 /// <reference path="script/05-objects/00-array.ts" />
 /// <reference path="script/05-objects/05-compiled-array.ts" />
@@ -4605,7 +4672,7 @@ var GALLERY;
             var gallery_domain;
             var gallery_password;
             var analyticsObject = objects.filterTypes('analytics').findBy('analyticsType', 'gallery');
-            var deployObject = objects.filterTypes('deploy').findBy('deployType', 'ftp');
+            var deployObject = objects.filterTypes('deploy').getObjectByIndex(0); //.findBy('deployType','ftp');
             localStorage.setItem('preview-compiledObjects', JSON.stringify(compiled_objects.getAll()));
             localStorage.setItem('preview-analyticsObject', JSON.stringify(analyticsObject));
             localStorage.setItem('preview-deployObject', JSON.stringify(deployObject));

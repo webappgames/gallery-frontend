@@ -246,6 +246,7 @@ if(isset($_GET['comments'])){
 
 
 
+<script src="/viewer/script/lib/lodash.min.js"></script>
 <script src="/viewer/script/lib/babylon.js"></script>
 <script src="/node_modules/handjs/hand.min.js"></script>
 

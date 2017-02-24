@@ -499,6 +499,7 @@ namespace GALLERY.Objects{
 
                     id: createGuid(),
                     type: 'zone',
+                    //virtual: true,
 
                     world: object.world,
                     storey: object.storey,

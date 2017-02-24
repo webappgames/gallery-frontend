@@ -480,7 +480,7 @@ namespace GALLERY.Viewer {
 
             virtualObjects.forEach(function (object) {
                 addObject(object);
-                objects.push(object);
+                //objects.push(object);
             });
         }
         

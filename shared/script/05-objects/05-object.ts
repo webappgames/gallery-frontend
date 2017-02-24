@@ -9,6 +9,7 @@ namespace GALLERY.Objects{
         public type: string;
         public world: string;
         public hidden: boolean;
+        public virtual: boolean;
         public position: {
           x: number,
           y: number
@@ -34,6 +35,7 @@ namespace GALLERY.Objects{
             object.world = object.world || 'main';
             object.storey = object.storey || '1NP';
             object.hidden = object.hidden || false;
+            object.virtual = object.virtual || false;
 
 
 

@@ -152,6 +152,7 @@ namespace GALLERY.Viewer {
                 '/node_modules/mustache/mustache.min.js',
 
                 '/viewer/script/lib/babylon.js',
+                '/viewer/script/lib/lodash.min.js',
                 '/node_modules/handjs/hand.min.js',
                 //'http://www.babylonjs.com/hand.minified-1.2.js',
                 //'http://www.babylonjs.com/babylon.js',
@@ -347,19 +348,36 @@ namespace GALLERY.Viewer {
 
 
             zip.file('script-bundle.js',script);
-            zip.file('objects.compiled.json',JSON.stringify(objects.getAll().map(function (object) {
+
+            const pureObjects = objects.getAll().map(function (object) {
 
                 let pureObject = {};
                 for (var key in object) {
-                    if(key.substr(0,1)!=='_'){
-                        pureObject[key] = object[key];
+
+                    if (!_.isFunction(object[key])) {
+                        if (!_.isObject(object[key]) || ['position','size'].indexOf(key)!==-1) {
+                            if (key.substr(0, 1) !== '_') {
+
+
+                                pureObject[key] = object[key];
+
+                            }
+                        }
                     }
                 }
 
                 return(pureObject);
 
 
-            }),null,true));
+
+            });
+
+            /*pureObjects.forEach(function (pureObject) {
+                r(pureObject);
+                r(JSON.stringify(pureObject,null,true));
+            });*/
+
+            zip.file('objects.compiled.json',JSON.stringify(pureObjects,null,true));
 
 
             zip.file('.htaccess',`
@@ -449,8 +467,18 @@ RewriteRule . / [L,QSA]
             formData.append("directory", deployObject.directory);
 
 
+
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'tools/ftp-deploy.php', true);
+
+            if(deployObject.deployType == 'ftp'){
+                xhr.open('POST', 'tools/ftp-deploy.php', true);
+            }else
+            if(deployObject.deployType == 'ssh'){
+                xhr.open('POST', 'tools/ssh-deploy.php', true);
+            }else{
+                throw new Error(`Unknown deploy type "${deployObject.deployType}".`);
+            }
+
 
 
             xhr.upload.onprogress = function(e) {

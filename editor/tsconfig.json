@@ -6,9 +6,9 @@
     "sourceMap": true,
     "inlineSourceMap": true,
     "inlineSources": true,
-    "outFile": "editor.js"
+    "outFile": "editor.js",
 
-
+    "jsx": "react"
 
 
   },

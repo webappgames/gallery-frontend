@@ -53,9 +53,9 @@ namespace GALLERY.Viewer {
 
 
             var src = src;
-            var src_uri = URI(src)//todo Di
-                .removeSearch("width");
-            var src_normal = src_uri.addSearch({width: width}).toString();
+            var src_uri = new Uri(src)//todo Di
+                .deleteQueryParam("width");
+            var src_normal = src_uri.addQueryParam({width: width}).toString();
 
 
             let onLoad = function () {

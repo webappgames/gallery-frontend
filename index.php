@@ -112,7 +112,7 @@ if(isset($_GET['comments'])){
     <script src="/node_modules/file-saver/FileSaver.min.js"></script>
     <script src="/node_modules/mustache/mustache.min.js"></script>
     <script src="/node_modules/html2canvas/dist/html2canvas.js"></script>
-
+    <script src="../../node_modules/jsuri/Uri.js"></script>
 
 
 

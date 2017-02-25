@@ -1,3 +1,5 @@
+/// <reference path="reference.ts" />
+
 namespace GALLERY.Viewer{
 
 
@@ -51,8 +53,8 @@ namespace GALLERY.Viewer{
 
         r('Processing location...');
 
-        let uri = new URI(location);
-        let pathname = uri.pathname();
+        let uri = new Uri(location);
+        let pathname = uri.path();
 
 
 
@@ -89,7 +91,7 @@ namespace GALLERY.Viewer{
         }
 
 
-        unlockGatesAndActivateKeys(uri.hash());
+        unlockGatesAndActivateKeys('#'+uri.anchor());
 
 
         //r(uri);

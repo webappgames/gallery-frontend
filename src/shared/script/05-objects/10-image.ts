@@ -228,11 +228,11 @@ namespace GALLERY.Objects{
 
         getSrc(width=0,ratio=0,rotation=0):string{//todo use this
 
-            let uri = URI(this.src);
+            let uri = new Uri(this.src);
 
-            if(width)uri.addSearch({width: width});
-            if(ratio)uri.addSearch({ratio: ratio});
-            if(rotation)uri.addSearch({rotation: rotation});
+            if(width)uri.addQueryParam({width: width});
+            if(ratio)uri.addQueryParam({ratio: ratio});
+            if(rotation)uri.addQueryParam({rotation: rotation});
 
             return uri.toString();
 

@@ -14,9 +14,8 @@
 
   },
   "include": [
-
-    "../shared/script",
-    "script"
+    "./.",
+    "src"
 
   ]
 }

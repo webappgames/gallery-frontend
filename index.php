@@ -246,8 +246,8 @@ if(isset($_GET['comments'])){
 
 
 
-<script src="/viewer/script/lib/lodash.min.js"></script>
-<script src="/viewer/script/lib/babylon.js"></script>
+<script src="/viewer/src/lib/lodash.min.js"></script>
+<script src="/viewer/src/lib/babylon.js"></script>
 <script src="/node_modules/handjs/hand.min.js"></script>
 
 
@@ -258,7 +258,7 @@ if(isset($_GET['comments'])){
 
 
 
-<script src="/viewer/script/viewer.js"></script>
+<script src="/viewer/src/viewer.js"></script>
 <script>
     /*$.get('/objects.compiled.json').done(function(response){
         GALLERY.Viewer.run(new GALLERY.Objects.CompiledArray(response));

@@ -266,29 +266,7 @@ if(isset($_GET['comments'])){
     });*/
 
     //alert(window.location.hash);
-    if(window.location.hash=='#preview'){
 
-
-
-        var compiled_objects = new GALLERY.Objects.CompiledArray(JSON.parse(localStorage.getItem('preview-compiledObjects')));
-
-
-
-
-        var analyticsObject = JSON.parse(localStorage.getItem('preview-analyticsObject'));
-        if(analyticsObject){
-            analyticsObject = new GALLERY.Objects.Analytics(analyticsObject);
-        }
-
-
-        var deployObject = JSON.parse(localStorage.getItem('preview-deployObject'));
-        if(deployObject){
-            deployObject = new GALLERY.Objects.Deploy(deployObject);
-        }
-
-
-        GALLERY.Viewer.run(compiled_objects, true, deployObject,analyticsObject);
-    }
 
 
 

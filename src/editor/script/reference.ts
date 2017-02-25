@@ -1,6 +1,6 @@
 
 
-/// <reference path="../../shared/reference.ts" />
+/// <reference path="../../shared/script/reference.ts" />
 
 
 /// <reference path="create-map.ts" />
@@ -18,7 +18,6 @@
 /// <reference path="palette.ts" />
 /// <reference path="export.ts" />
 /// <reference path="publish.ts" />
-/// <reference path="compile.ts" />
 /// <reference path="load-scripts-to-deploy" />
 
 

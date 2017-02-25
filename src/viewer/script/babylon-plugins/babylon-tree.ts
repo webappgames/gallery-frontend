@@ -32,7 +32,7 @@ function createTreeMesh(name, size, length, psi, bow, kink, detail, sections, br
         //cross section to extrude
         var cross_section =  [];
         var cross_section_radius = size;
-        for(theta = 0; theta<2*Math.PI; theta+=Math.PI/10) {
+        for(let theta = 0; theta<2*Math.PI; theta+=Math.PI/10) {
             cross_section.push(new BABYLON.Vector3(cross_section_radius*Math.cos(theta), cross_section_radius*Math.sin(theta), 0));
         }
         cross_section.push(cross_section[0]);
@@ -42,7 +42,7 @@ function createTreeMesh(name, size, length, psi, bow, kink, detail, sections, br
         var gap = (height - length)/branches; //gap between branches
         var twist = (height - length)/sections;	//used for bow occurances
 
-        branch_direction = [];	//path for extrusion
+        let branch_direction = [];	//path for extrusion
         var ring_size = height/(detail*sections);
         var Bdirection;
         for(var d=0; d<length; d+=ring_size) {
@@ -53,7 +53,7 @@ function createTreeMesh(name, size, length, psi, bow, kink, detail, sections, br
             branch_direction.push(Bdirection);
         }
         for(var s = 0; s<sections-1; s++) {
-            for(var d=length + s * gap*Math.pow(scale,s); d<length + (s+1) * gap*Math.pow(scale,s+1); d+=ring_size) {
+            for(let d:number=length + s * gap*Math.pow(scale,s); d<length + (s+1) * gap*Math.pow(scale,s+1); d+=ring_size) {
                 Bdirection = new BABYLON.Vector3(((s+1)*kink*Math.pow(scale,s+1)*d/height + s * kink*Math.pow(scale,s)),bow*Math.pow(scale,s)* Math.sin(Math.PI*d/twist) + (s+1)*kink*Math.pow(scale,s+1)*d/height + s * kink*Math.pow(scale,s),d);
                 Bdirection.x +=Math.random()*(Bdirection.x/10) - Bdirection.x/20;
                 Bdirection.y +=Math.random()*(Bdirection.y/10) - Bdirection.y/20;

@@ -1,10 +1,8 @@
 
 
-/// <reference path="../../shared/reference.ts" />
+/// <reference path="../../shared/script/reference.ts" />
 
 
-
-/// <reference path="lib/ion.sound.ts" />
 
 
 //todo deprecated
@@ -25,7 +23,6 @@
 /// <reference path="reference" />
 /// <reference path="popup-window" />
 /// <reference path="gates" />
-/// <reference path="sounds" />
 /// <reference path="stat" />
 /// <reference path="fps-meter" />
 
@@ -35,7 +32,6 @@
 
 /// <reference path="develop-menu" />
 /// <reference path="develop-deploy" />
-/// <reference path="error-reporting" />
 
 
 

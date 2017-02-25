@@ -10,7 +10,7 @@ gulp.task('default', function() {
     return gulp.src('./src/*')
         .pipe(webpack({
             entry: {
-                editor: './src/editor/script/index.ts',
+                editor: './src/editor/script/index.tsx',
                 viewer: './src/viewer/script/index.ts'
             },
             output: {
@@ -27,8 +27,18 @@ gulp.task('default', function() {
                         test: /\.tsx?$/,
                         loader: 'ts-loader'
                     }
+                ],
+                preLoaders: [
+                    // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
+                    {
+                        test: /\.js$/,
+                        loader: "source-map-loader"
+                    }
                 ]
-            }
+            },
+            //devtool: "source-map",
+
+
 
         }))
         .pipe(gulp.dest('./dist/'));

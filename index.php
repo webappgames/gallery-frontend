@@ -105,7 +105,7 @@ if(isset($_GET['comments'])){
             integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
             crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="/viewer/style/viewer.css">
+    <link rel="stylesheet" href="src/viewer/style/viewer.css">
 
 
     <script src="/node_modules/jszip/dist/jszip.min.js"></script>
@@ -116,7 +116,7 @@ if(isset($_GET['comments'])){
 
 
 
-    <script src="http://cssrefresh.frebsite.nl/js/cssrefresh.js"></script>
+    <!--<script src="http://cssrefresh.frebsite.nl/js/cssrefresh.js"></script>-->
     <!--<script src="https://cdn.ravenjs.com/3.9.1/raven.min.js"></script>-->
 
 
@@ -259,7 +259,7 @@ if(isset($_GET['comments'])){
 
 
 
-<script src="/viewer/src/viewer.js"></script>
+<script src="/dist/viewer.js"></script>
 <script>
     /*$.get('/objects.compiled.json').done(function(response){
         GALLERY.Viewer.run(new GALLERY.Objects.CompiledArray(response));

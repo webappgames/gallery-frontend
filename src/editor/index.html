@@ -8,7 +8,8 @@
 
 
 
-
+    <script src="/node_modules/react/dist/react.js"></script>
+    <script src="/node_modules/react-dom/dist/react-dom.js"></script>
     <script
             src="https://code.jquery.com/jquery-2.2.4.min.js"
             integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
@@ -26,7 +27,6 @@
 
 
 
-    <script src="../../dist/editor.js"></script>
     <link rel="stylesheet" href="style/editor.css">
 
 
@@ -35,230 +35,12 @@
 <body>
 
 
-    <form id="select-gallery">
+<div id="app"></div>
 
-        <div class="popup">
 
-            <div class="header">Administrace virtuálních galerií</div>
 
 
-            <p>Založte novou galerii napsáním jejího názvu a přístupového hesla k ní:</p>
-
-            <div>
-                <label>Galerie:</label>
-                <input type="text" name="gallery" pattern="([a-z]|[A-Z]|[0-9]|-|\.){2,150}" title="Zadejte název pouze z písmen, čísel, teček a pomlček, který má 2-150 znaků." >
-            </div>
-            <div>
-                <label>Heslo:</label>
-                <input type="password" name="password" required>
-            </div>
-
-            <input type="submit" name="submit" value="Vstoupit">
-
-            <p>Nebo klikněte na už existující galerii a upravte ji (pokud k ní máte přístupové heslo):</p>
-            <ul></ul>
-
-
-            <a href="/"><button>Procházet jednotlivé galerie</button></a>
-
-
-        </div>
-
-
-    </form>
-
-
-
-
-    <main>
-
-
-
-
-
-
-        <section id="admin-world-parts">
-
-            <div id="admin-world">
-            </div>
-            <canvas id="admin-world-canvas" width="200" height="100"></canvas>
-
-
-        </section>
-
-
-
-
-
-
-        <div id="dot"></div>
-
-
-        <div id="selected-toolbox">
-
-            <!--<i class="delete fa fa-trash" aria-hidden="true"></i>
-            <i class="resize fa fa-square" aria-hidden="true"></i>
-            <i class="rotate fa fa-circle" aria-hidden="true"></i>-->
-
-
-        </div>
-
-    </main>
-
-
-    <div id="save"></div>
-
-
-
-    <nav id="menu-left">
-        <fieldset class="palette" id="selected-properties">
-        </fieldset>
-    </nav>
-
-
-
-
-    <nav id="menu-right">
-
-
-
-        <fieldset class="palette" id="admin-tools">
-            <legend>Akce</legend>
-
-
-
-            <ul>
-                <li onclick="GALLERY.Editor.compile()">Kompilovat a spustit</li>
-                <li onclick="GALLERY.Editor.previewHTML()">Spustit</li>
-
-
-
-                <!--<li><a id="show-gallery" target="show-gallery">Zobrazit</a></li>-->
-                <li onclick="logout();">Odhlásit se</li>
-
-
-                <li onclick="GALLERY.Editor.exportJSON();">Exportovat</li>
-                <li onclick="GALLERY.Editor.exportJSONCompiled();">Exportovat kompilované</li>
-
-
-                <li onclick="GALLERY.Editor.publishOnWeb();">Publikovat na web</li>
-                <!--<li onclick="GALLERY.Editor.publishHTML();">Publikovat</li>-->
-
-               <!-- <li onclick="GALLERY.Editor.importJSON();">Importovat</li>-->
-
-                <!--<li onclick="runGenerator(GALLERY.Plugins.Generators.SimpleGarden);">Generátory</li>-->
-
-
-
-                <li onclick="cleanStorey();">Vyčistit patro</li>
-                <li onclick="cleanWorld();">Vyčistit svět</li>
-
-
-                <li onclick="copyStorey();">Kopírovat patro</li>
-            </ul>
-
-
-
-        </fieldset>
-
-
-
-
-
-        <fieldset class="palette">
-            <legend>Prostor</legend>
-
-
-            <fieldset class="select-worlds">
-                <legend>Svět</legend>
-                <ul></ul>
-            </fieldset>
-
-
-            <fieldset class="select-storeys">
-                <legend>Podlaží</legend>
-                <ul></ul>
-            </fieldset>
-
-
-            <fieldset class="select-zooms">
-                <legend>Zoom</legend>
-                <ul></ul>
-            </fieldset>
-
-
-        </fieldset>
-
-
-
-
-
-
-        <fieldset class="palette">
-            <legend>Budova</legend>
-
-
-            <fieldset class="select-materials">
-                <legend>Materiály</legend>
-
-                <fieldset class="select-textures">
-                    <legend>Textury</legend>
-                </fieldset>
-
-
-                <fieldset class="select-colors">
-                    <legend>Barvy</legend>
-                    <input type="color"><br>
-                </fieldset>
-
-
-
-            </fieldset>
-
-
-
-
-
-
-            <fieldset class="select-shapes">
-                <legend>Tvary</legend>
-            </fieldset>
-
-
-            <fieldset class="select-opacity">
-                <legend>Neprůhlednost</legend>
-            </fieldset>
-
-
-
-
-        </fieldset>
-
-
-
-
-        <fieldset class="palette select-dot-objects">
-            <legend>Předměty</legend>
-            <!--<div class="light" title="Světlo"><i class="fa fa-sun-o" aria-hidden="true"></i></div>
-            <div class="label" title="Odkaz"><i class="fa fa-arrow-circle-o-up" aria-hidden="true"></i></div>
-            <div class="tree" title="Strom"><i class="fa fa-pagelines" aria-hidden="true"></i></div>
-            <div class="stairs" title="Schody"><i class="fa fa-level-up" aria-hidden="true"></i></div>
-            <div class="key" title="Klíč"><i class="fa fa-key" aria-hidden="true"></i></div>-->
-           </fieldset>
-
-
-
-    </nav>
-
-
-
-    <section class="top-panel">
-        <div id="message-zone">
-        </div>
-    </section>
-
-
-
+<script src="../../dist/editor.js"></script>
 
 
 </body>

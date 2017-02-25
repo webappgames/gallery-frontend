@@ -1,3 +1,7 @@
+/// <reference path="reference.ts" />
+
+
+
 /*<?php
 
     error_reporting(E_ALL & ~E_NOTICE);
@@ -139,51 +143,8 @@ namespace GALLERY.Editor{
 
 
 
-        let previewWindow = window.open("../#preview", "gallery-preview");
+        let previewWindow = window.open("/#preview", "gallery-preview");
 
-
-        /*let previewLoaded = setInterval(function () {
-
-            try{
-
-                let compiled_objects_ = new preview.GALLERY.Objects.Array(JSON.parse(JSON.stringify(compiled_objects.getAll())));
-                preview.GALLERY.Viewer.run.call(preview,compiled_objects_,true,deployObject,analyticsObject);
-                clearInterval(previewLoaded);
-
-            }catch(e){
-
-                r('Not yet loaded!');
-                r(e);
-            }
-
-
-        },500);*/
-
-
-
-
-        /*var theWindow = window.open("../viewer", "gallery-preview"),
-            theDoc = theWindow.document,
-            theScript = document.createElement('script');
-        function injectThis() {
-            // The code you want to inject goes here
-            alert(document.body.innerHTML);
-        }
-        theScript.innerHTML = 'window.onload = ' + injectThis.toString() + ';';
-        theDoc.body.appendChild(theScript);*/
-
-
-
-        /*preview.onload = function () {
-
-            r('loaded');
-
-            preview.objects = compiled_objects;
-            preview.moveToBegining();
-
-        };
-
-        */
 
 
 

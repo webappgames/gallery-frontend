@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "system",
+    "target": "es5",
+
+    "sourceMap": true,
+    "outFile": "out.js",
+
+    "jsx": "react"
+
+
+
+  },
+  "include": [
+    "./script/*.ts"
+
+  ]
+}

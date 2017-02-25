@@ -93,7 +93,7 @@ function processAllRange(boxes,range){
 
 
 
-namespace GALLERY.Objects {
+module GALLERY.Objects {
 
 
     export class CompiledArray extends Array{

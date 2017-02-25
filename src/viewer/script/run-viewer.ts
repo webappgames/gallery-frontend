@@ -1,8 +1,19 @@
+/// <reference path="app-state.ts" />
+/// <reference path="@types/raven-js">
+/// <reference path="@types/jqueryui">
+
+
+/// <reference path="./reference.ts" />
 
 
 
 
-namespace GALLERY.Viewer{
+
+
+
+
+module GALLERY.Viewer{
+
 
     export var running = false;
     export var develop=false;
@@ -88,7 +99,7 @@ namespace GALLERY.Viewer{
 
         window.onpopstate = function(event) {
             //r("location: " + document.location + ", state: " + JSON.stringify(event.state));
-            processStateFromLocation(window.document.location);
+            processStateFromLocation(window.document.location.toString());
 
         };
 

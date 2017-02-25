@@ -1,8 +1,7 @@
-/// <reference path="reference.ts" />
+/// <reference path="./reference.ts" />
 
 
-
-namespace GALLERY.Viewer {
+module GALLERY.Viewer {
 
 
     window.addEventListener('keydown', function (e) {

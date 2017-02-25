@@ -1,7 +1,7 @@
 /// <reference path="../../reference.ts" />
 //import {Zone} from '10-zone';
 
-namespace GALLERY.Objects{
+module GALLERY.Objects{
 
     export class Environment extends Zone{
 

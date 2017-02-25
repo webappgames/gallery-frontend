@@ -2,7 +2,7 @@
 
 
 
-namespace GALLERY.Objects{
+module GALLERY.Objects{
 
     export class Button extends Poster{
 

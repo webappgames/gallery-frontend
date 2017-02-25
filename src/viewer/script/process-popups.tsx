@@ -1,8 +1,8 @@
-/// <reference path="./components/popup-arrow" />
+/// <reference path="./reference.ts" />
 
 
 
-namespace GALLERY.Viewer {
+module GALLERY.Viewer {
 
 
     //import * as React from "react";

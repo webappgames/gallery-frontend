@@ -1,6 +1,6 @@
+/// <reference path="./reference.ts" />
 
-
-namespace GALLERY.Viewer {
+module GALLERY.Viewer {
 
 
     export function makeScreenshots(labels: GALLERY.Objects.Array, options: Object, done, screenshots = []) {

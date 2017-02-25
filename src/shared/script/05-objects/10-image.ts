@@ -1,6 +1,6 @@
 /// <reference path="../../reference.ts" />
 
-namespace GALLERY.Objects{
+module GALLERY.Objects{
 
     export class Image extends Object{
 

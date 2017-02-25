@@ -1,4 +1,6 @@
-namespace GALLERY.Viewer {
+/// <reference path="./reference.ts" />
+
+module GALLERY.Viewer {
 
 
 

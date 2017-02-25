@@ -1,6 +1,6 @@
 
 
-namespace GALLERY.Viewer {
+module GALLERY.Viewer {
 
 
     export class GameSync {

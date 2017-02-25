@@ -108,7 +108,7 @@ var compiled_objects;
 
 
 
-namespace GALLERY.Editor{
+module GALLERY.Editor{
 
 
     export function compile(){

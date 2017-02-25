@@ -1,8 +1,8 @@
-/// <reference path="reference.ts" />
+/// <reference path="./reference.ts" />
 /// <reference path="game-sync" />
 
 
-namespace GALLERY.Viewer {
+module GALLERY.Viewer {
 
 
 

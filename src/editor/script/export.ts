@@ -33,7 +33,7 @@ function download(filename, contentType, content)
 
 
 
-namespace GALLERY.Editor{
+module GALLERY.Editor{
 
 
     export function exportJSON(){

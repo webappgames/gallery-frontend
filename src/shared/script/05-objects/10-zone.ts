@@ -1,7 +1,7 @@
 /// <reference path="07-protoboard" />
 
 
-namespace GALLERY.Objects{
+module GALLERY.Objects{
 
     //import analyticsObject = GALLERY.Viewer.analyticsObject;
     //import appState = GALLERY.Viewer.appState;

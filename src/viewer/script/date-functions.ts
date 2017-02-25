@@ -1,4 +1,4 @@
-
+/// <reference path="./reference.ts" />
 
 //document.getElementById("para1").innerHTML = dateToSmartString(new Date('2016-01-01T13:39:45.794Z'));
 

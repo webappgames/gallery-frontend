@@ -1,10 +1,10 @@
+/// <reference path="./reference.ts" />
 
 
 
 
 
-
-namespace GALLERY.Viewer{
+module GALLERY.Viewer{
 
 
 

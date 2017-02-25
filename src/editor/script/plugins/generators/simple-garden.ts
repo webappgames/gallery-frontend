@@ -2,7 +2,7 @@
 
 
 
-namespace GALLERY.Plugins.Generators {
+module GALLERY.Plugins.Generators {
 
 
     export function SimpleGarden(images) {

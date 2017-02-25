@@ -1,7 +1,7 @@
+/// <reference path="./reference.ts" />
 
 
-
-namespace GALLERY.Viewer.Effects{
+module GALLERY.Viewer.Effects{
 
     export function nuke(){
 

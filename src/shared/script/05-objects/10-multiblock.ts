@@ -3,7 +3,7 @@
 //r('created block');
 //r(GALLERY.Objects.Object);
 
-namespace GALLERY.Objects{
+module GALLERY.Objects{
 
     export class MultiBlock extends Object{
 

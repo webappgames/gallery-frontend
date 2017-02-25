@@ -1,12 +1,12 @@
-/// <reference path="reference.ts" />
-
-namespace GALLERY.Viewer{
 
 
+module GALLERY.Viewer{
 
-    export var MODE = 'WEB';
-    export var LOCKED = false;
-    export var current_label = null;
+
+
+    export let MODE = 'WEB';
+    export let LOCKED = false;
+    export let current_label = null;
 
 
 
@@ -21,6 +21,11 @@ namespace GALLERY.Viewer{
         });
     }
     currentLinks();
+
+
+
+
+    console.log('Defining appState');
 
 
 

@@ -1,4 +1,4 @@
-namespace GALLERY.Editor {
+module GALLERY.Editor {
 
 
     export function EditorApp(props) {

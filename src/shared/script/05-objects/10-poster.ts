@@ -1,6 +1,6 @@
 /// <reference path="../../reference.ts" />
 
-namespace GALLERY.Objects{
+module GALLERY.Objects{
 
     import scene = GALLERY.Viewer.scene;
     export class Poster extends Image{

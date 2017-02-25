@@ -1,7 +1,7 @@
-/// <reference path="reference.ts" />
+/// <reference path="./reference.ts" />
 
 
-namespace GALLERY.Viewer {
+module GALLERY.Viewer {
     const controls_keys = {
         'UP': [38, 87],
         'DOWN': [40, 83],

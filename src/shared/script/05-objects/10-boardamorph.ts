@@ -2,7 +2,7 @@
 /// <reference path="07-protoboard" />
 
 
-namespace GALLERY.Objects{
+module GALLERY.Objects{
 
 
     export class BoardAmorph extends ProtoBoard{

@@ -5,7 +5,7 @@
 
 
 
-namespace GALLERY.Editor{
+module GALLERY.Editor{
 
 
     console.log(EditorApp);

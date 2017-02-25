@@ -1,6 +1,6 @@
 /// <reference path="05-object" />
 
-namespace GALLERY.Objects{
+module GALLERY.Objects{
 
     //import analyticsObject = GALLERY.Viewer.analyticsObject;
     //import appState = GALLERY.Viewer.appState;

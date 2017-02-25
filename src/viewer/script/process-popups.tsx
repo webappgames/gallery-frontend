@@ -39,7 +39,7 @@ module GALLERY.Viewer {
 
 
             const popup_object = objects.findBy('id',$this.attr('popup-content'));
-            if(!(popup_object instanceof Objects.ProtoBoard){
+            if(!(popup_object instanceof Objects.ProtoBoard)){
                 r(popup_object);
                 throw new Error('popup-content attribute should refer to ProtoBoard object.');
             }

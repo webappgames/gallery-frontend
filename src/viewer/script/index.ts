@@ -1,29 +1,57 @@
-/// <reference path="./reference.ts" />
+/// <reference path="../../shared/script/shared.ts" />
+/// <reference path="./viewer.ts" />
 
 
-module GALLERY.Viewer {
 
 
-    if (window.location.hash == '#preview') {
+if (window.location.hash == '#preview') {
 
 
-        var compiled_objects = new Objects.CompiledArray(JSON.parse(localStorage.getItem('preview-compiledObjects')));
+    var compiled_objects = new GALLERY.Objects.CompiledArray(JSON.parse(localStorage.getItem('preview-compiledObjects')));
 
 
-        var analyticsObject = JSON.parse(localStorage.getItem('preview-analyticsObject'));
-        if (analyticsObject) {
-            analyticsObject = new Objects.Analytics(analyticsObject);
-        }
-
-
-        var deployObject = JSON.parse(localStorage.getItem('preview-deployObject'));
-        if (deployObject) {
-            deployObject = new Objects.Deploy(deployObject);
-        }
-
-
-        Viewer.run(compiled_objects, true, deployObject, analyticsObject);
+    var analyticsObject = JSON.parse(localStorage.getItem('preview-analyticsObject'));
+    if (analyticsObject) {
+        analyticsObject = new GALLERY.Objects.Analytics(analyticsObject);
     }
 
 
+    var deployObject = JSON.parse(localStorage.getItem('preview-deployObject'));
+    if (deployObject) {
+        deployObject = new GALLERY.Objects.Deploy(deployObject);
+    }
+
+
+
+
+
+
+
+    let viewerApp = GALLERY.Viewer.App(
+        compiled_objects,
+        document.getElementById('app'),
+        {
+            mode: 'develop',
+            state: location.toString(),
+            deployObject:deployObject,
+            analyticsObject: analyticsObject
+        },
+        function (newState) {
+            //...
+        }
+    );
+
+
+
+    viewerApp.setState('/',true,true);
+    viewerApp.getState();
+
+
+
+
+
+
+
 }
+
+

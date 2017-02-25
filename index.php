@@ -94,7 +94,6 @@ if(isset($_GET['comments'])){
 
 
     <!-- Dependencies -->
-    <script src="https://code.angularjs.org/tools/system.js"></script>
     <script src="/node_modules/react/dist/react.js"></script>
     <script src="/node_modules/react-dom/dist/react-dom.js"></script>
     <script
@@ -112,7 +111,9 @@ if(isset($_GET['comments'])){
     <script src="/node_modules/jszip/dist/jszip.min.js"></script>
     <script src="/node_modules/file-saver/FileSaver.min.js"></script>
     <script src="/node_modules/mustache/mustache.min.js"></script>
-    <script src="shared/lib/html2canvas.js"></script>
+    <script src="/node_modules/html2canvas/dist/html2canvas.js"></script>
+
+
 
 
     <script src="http://cssrefresh.frebsite.nl/js/cssrefresh.js"></script>
@@ -246,8 +247,8 @@ if(isset($_GET['comments'])){
 
 
 
-<script src="/viewer/src/lib/lodash.min.js"></script>
-<script src="/viewer/src/lib/babylon.js"></script>
+<script src="/node_modules/lodash/lodash.js"></script>
+<script src="/node_modules/babylonjs/babylon.js"></script>
 <script src="/node_modules/handjs/hand.min.js"></script>
 
 

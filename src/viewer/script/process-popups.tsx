@@ -10,7 +10,7 @@ module GALLERY.Viewer {
     //import * as ReactDOMServer from "react-dom/server";
 
     //import {PopupArrow} from './components/popup-arrow'
-    r('PopupArrow',PopupArrow);
+    //r('PopupArrow',PopupArrow);
 
 
 
@@ -54,7 +54,7 @@ module GALLERY.Viewer {
             function render(opened){
                 //r('rendering',opened);
                 ReactDOM.render(
-                    <PopupArrow anchor={anchor} close={render.bind(anchor,false)} hasClose={event=='click'} opened={opened}>{reactBoard}</PopupArrow>
+                    <Components.PopupArrow anchor={anchor} close={render.bind(anchor,false)} hasClose={event=='click'} opened={opened}>{reactBoard}</Components.PopupArrow>
                     ,container
                 );
             }

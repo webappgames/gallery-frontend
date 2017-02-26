@@ -1,4 +1,4 @@
-/// <reference path="./reference.ts" />
+/// <reference path="../reference.ts" />
 
 function dataURItoBlob(dataURI) {
     // convert base64 to raw binary data held in a string

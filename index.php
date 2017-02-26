@@ -112,7 +112,10 @@ if(isset($_GET['comments'])){
     <script src="/node_modules/file-saver/FileSaver.min.js"></script>
     <script src="/node_modules/mustache/mustache.min.js"></script>
     <script src="/node_modules/html2canvas/dist/html2canvas.js"></script>
-    <script src="../../node_modules/jsuri/Uri.js"></script>
+    <script src="/node_modules/jsuri/Uri.js"></script>
+    <script src="/node_modules/lodash/lodash.js"></script>
+    <script src="/node_modules/babylonjs/babylon.js"></script>
+    <script src="/node_modules/handjs/hand.min.js"></script>
 
 
 
@@ -138,108 +141,7 @@ if(isset($_GET['comments'])){
 
 
 
-<canvas id="scene"></canvas>
-
-
-<div class="fps" style="display: none;"></div>
-
-
-
-
-
-<!--<button class="bottomright" id="pointer-lock">
-    <i class="fa fa-gamepad" aria-hidden="true"></i> Herní mód
-</button>-->
-
-
-
-
-
-<!--<div class="bottomright" id="wasd" style="display: none;">
-   <table>
-       <tr>
-           <td colspan="3"><p class="hint">Pohybujte se těmito klávesy <i class="fa fa-hand-o-down" aria-hidden="true"></i></p></td>
-       </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td><div class="key"><p>W</p></div></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><div class="key"><p>A</p></div></td>
-            <td><div class="key"><p>S</p></div></td>
-            <td><div class="key"><p>D</p></div></td>
-        </tr>
-    </table>
-</div>-->
-
-
-
-
-
-
-
-
-
-
-
-<div class="overlay" style="display: none;"></div>
-<div class="popup-window" style="display: none;">
-    <div class="header"></div>
-    <div class="content"></div>
-
-
-    <div class="confirm js-popup-window-confirm"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></div>
-    <div class="close js-popup-window-close"><i class="fa fa-times" aria-hidden="true"></i></div>
-</div>
-
-
-
-
-
-
-
-
-
-
-<section id="newsletter-window" style="display: none;">
-
-    <div class="arrow"></div>
-    <i class="close fa fa-times" aria-hidden="true"></i>
-
-    <div class="content">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-    </div>
-
-
-</section>
-
-
-
-
-
-
-
-
-
-
-
-
-<section id="zones"></section>
-<section id="boards"></section>
-<section id="posters"></section>
-<section id="popups"></section>
-
-
-<!--<nav>
-    <div class="turn-left" onclick="GALLERY.Viewer.appStateTurnLeft();"><i class="fa fa-chevron-left" aria-hidden="true"></i></div>
-    <div class="turn-right" onclick="GALLERY.Viewer.appStateTurnRight();"><i class="fa fa-chevron-right" aria-hidden="true"></i></div>
-</nav>-->
+<div id="app"></div>
 
 
 
@@ -247,28 +149,68 @@ if(isset($_GET['comments'])){
 
 
 
-<script src="/node_modules/lodash/lodash.js"></script>
-<script src="/node_modules/babylonjs/babylon.js"></script>
-<script src="/node_modules/handjs/hand.min.js"></script>
-
-
-<!--<script src="http://www.babylonjs.com/hand.minified-1.2.js"></script>
-<script src="http://www.babylonjs.com/babylon.js"></script>-->
-
-
-
-
-
+<!--todo move to dependencies-->
 <script src="/dist/viewer.js"></script>
 <script>
-    /*$.get('/objects.compiled.json').done(function(response){
-        GALLERY.Viewer.run(new GALLERY.Objects.CompiledArray(response));
-    });*/
-
-    //alert(window.location.hash);
 
 
 
+    if (window.location.hash == '#preview') {
+
+
+        var compiled_objects = new GALLERY.Objects.CompiledArray(JSON.parse(localStorage.getItem('preview-compiledObjects')));
+
+
+        var analyticsObject = JSON.parse(localStorage.getItem('preview-analyticsObject'));
+        if (analyticsObject) {
+            analyticsObject = new GALLERY.Objects.Analytics(analyticsObject);
+        }
+
+
+        var deployObject = JSON.parse(localStorage.getItem('preview-deployObject'));
+        if (deployObject) {
+            deployObject = new GALLERY.Objects.Deploy(deployObject);
+        }
+
+
+
+
+        var viewerApp = GALLERY.Viewer.App(
+            compiled_objects,
+            document.getElementById('app'),
+            {
+                mode: 'develop',
+                state: location.toString(),
+                deployObject:deployObject,
+                analyticsObject: analyticsObject
+            },
+            function (newState) {
+                //...
+            }
+        );
+
+
+
+        window.onpopstate = function(event) {
+
+            viewerApp.setState(window.document.location.toString());
+
+        };
+
+
+
+        window.addEventListener("resize", function () {
+            viewerApp.resize();
+        });
+
+
+
+
+        //viewerApp.setState('/',true,true);
+        //viewerApp.getState();
+
+
+    }
 
 </script>
 

@@ -10,6 +10,7 @@
 /// <reference path="./babylon-plugins/babylon-stairs.ts" />
 
 
+/// <reference path="./app.ts" />
 /// <reference path="./app-state.ts" />
 
 
@@ -33,16 +34,15 @@
 /// <reference path="./get-material.ts" />
 /// <reference path="./popup-window.ts" />
 /// <reference path="./scroll-event.ts" />
-/// <reference path="./compatibility.ts" />
-/// <reference path="./date-functions.ts" />
+/// <reference path="./functions/date-functions.ts" />
 /// <reference path="./develop-deploy.ts" />
 /// <reference path="./process-popups.tsx" />
-/// <reference path="./data-uri-to-blob.ts" />
+/// <reference path="./functions/data-uri-to-blob.ts" />
 /// <reference path="./make-screenshots.ts" />
 /// <reference path="./develop-stat-show.ts" />
 /// <reference path="./game-sync.ts" />
 /// <reference path="./get-image-material.ts" />
-/// <reference path="./create-uri-from-name.ts" />
+/// <reference path="./functions/create-uri-from-name.ts" />
 /// <reference path="./components/popup-arrow.tsx" />
 
 /// <reference path="./game-mode.ts" />

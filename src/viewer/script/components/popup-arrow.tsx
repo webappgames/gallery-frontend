@@ -1,6 +1,6 @@
 
 
-module GALLERY.Viewer {
+module GALLERY.Viewer.Components {
 
     export function PopupArrow(props) {
 

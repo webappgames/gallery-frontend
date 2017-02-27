@@ -1,4 +1,4 @@
-/// <reference path="./reference.ts" />
+/// <reference path="../reference.ts" />
 /// <reference path="game-sync" />
 
 
@@ -64,7 +64,7 @@ module GALLERY.Viewer {
     }
 
 
-    const enginePlayReasonGameMode = new EnginePlayReason('game mode');
+    const enginePlayReasonGameMode = new AppEnginePlayReason('game mode');
 
 
     //let pointer_lock = document.getElementById("pointer-lock");
@@ -89,7 +89,7 @@ module GALLERY.Viewer {
     const WS_SERVER = 'webappgames.com:1357';
     export let gameSync = new GameSync(WS_SERVER,camera,scene);
     //gameSync.connect();
-    //playEngine(enginePlayReasonGameMode);
+    //play(enginePlayReasonGameMode);
 
 
     function lockChangeAlert() {
@@ -108,7 +108,7 @@ module GALLERY.Viewer {
 
             MODE = 'GAME';
             camera.angularSensibility = MOUSE_ANGULAR_SENSIBILITY;
-            playEngine(enginePlayReasonGameMode);
+            appEngine.play(enginePlayReasonGameMode);
             //triggerMouseEvent (canvas, "mousedown");
 
             gameSync.connect();
@@ -135,7 +135,7 @@ module GALLERY.Viewer {
 
             MODE = 'WEB';
             camera.angularSensibility = -MOUSE_ANGULAR_SENSIBILITY;
-            //pauseEngine(enginePlayReasonGameMode);
+            //pause(enginePlayReasonGameMode);
 
             /*gameSync.disconnect();*/
         }

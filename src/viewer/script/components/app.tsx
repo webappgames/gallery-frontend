@@ -7,7 +7,7 @@ module GALLERY.Viewer.Components {
 
         return (
             <div>
-                <canvas id="scene" />
+                <canvas id="" />
                 <div className="fps" style={{display: 'none'}} />
                 <div className="overlay" style={{display: 'none'}} />
                 <div className="popup-window" style={{display: 'none'}}>

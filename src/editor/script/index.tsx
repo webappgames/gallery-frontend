@@ -14,7 +14,7 @@ module GALLERY.Editor{
     ReactDOM.render(
 
         <EditorApp />,
-        document.getElementById('app')
+        document.getElementById('App')
 
     );
 

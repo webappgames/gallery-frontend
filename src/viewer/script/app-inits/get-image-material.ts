@@ -1,4 +1,4 @@
-/// <reference path="./reference.ts" />
+/// <reference path="../reference.ts" />
 
 module GALLERY.Viewer {
 
@@ -22,8 +22,9 @@ module GALLERY.Viewer {
 
     }*/
 
-    const enginePlayReasonLoadingTextures = new EnginePlayReason('loading textures');
-    playEngine(enginePlayReasonLoadingTextures);
+    const enginePlayReasonLoadingTextures = new AppEnginePlayReason('loading textures');
+    appEngine.play(enginePlayReasonLoadingTextures);
+
 
     let texturesCount = 0;
     let texturesLoaded = 0;
@@ -32,7 +33,7 @@ module GALLERY.Viewer {
         //r('Loaded texture '+texturesLoaded+' / '+texturesCount);
         if(texturesLoaded == texturesCount){
 
-            pauseEngine(enginePlayReasonLoadingTextures);
+            appEngine.pause(enginePlayReasonLoadingTextures);
             //renderTick();
 
         }
@@ -69,7 +70,7 @@ module GALLERY.Viewer {
             image_texture.hasAlpha = hasAlpha;
 
 
-            //image_texture.delayLoadState = BABYLON.Engine.DELAYLOADSTATE_NOTLOADED;
+            //image_texture.delayLoadState = BABYLON.AppEngine.DELAYLOADSTATE_NOTLOADED;
 
 
 

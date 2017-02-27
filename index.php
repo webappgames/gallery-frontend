@@ -175,7 +175,7 @@ if(isset($_GET['comments'])){
 
 
 
-        var viewerApp = GALLERY.Viewer.App(
+        var viewerApp = new GALLERY.Viewer.GalleryApp(
             compiled_objects,
             document.getElementById('app'),
             {

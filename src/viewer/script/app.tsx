@@ -1,7 +1,3 @@
-/// <reference path="app-state.ts" />
-//-/ <reference path="@types/raven-js">
-//-/ <reference path="@types/jqueryui">
-
 /// <reference path="./reference.ts" />
 
 
@@ -10,7 +6,7 @@ module GALLERY.Viewer{
 
 
 
-    interface appOptions {
+    interface AppOptions {
         mode: string;
         state: string;
         deployObject?: Objects.Deploy;
@@ -18,18 +14,27 @@ module GALLERY.Viewer{
     }
 
 
-    export class app{
+
+    export let canvas: HTMLCanvasElement;
+    export let appEngine: AppEngine;
+    export let objects: Objects.CompiledArray;
+
+
+
+
+
+    export class GalleryApp{
 
 
         private state: string;
         private develop: boolean;
-        private engine: Engine;
+        private appEngine: AppEngine;
 
 
         constructor(
             private objects:Objects.Array,
             private containerElement: HTMLElement,
-            private options: appOptions,
+            private options: AppOptions,
             private onStateChange: (state: string) => any,
         ){
 
@@ -50,7 +55,7 @@ module GALLERY.Viewer{
 
 
 
-            objects = compiled_objects;
+            //objects = compiled_objects;
             r('Running gallery with '+objects.getAll().length+' objects in '+(this.develop?'develop':'production')+' mode.');
 
             if(this.develop) {
@@ -81,8 +86,20 @@ module GALLERY.Viewer{
 
 
 
+            //todo better name for engine wrapper
+            this.appEngine = new AppEngine(containerElement.getElementsByTagName('canvas')[0]);
 
-            this.engine = new Engine(containerElement.getElementsByTagName('canvas')[0]);
+
+
+            fpsMeterInit(this.appEngine);
+            GamePlayerInit(this.appEngine.scene);
+
+
+
+
+            canvas = document.getElementById('scene');//this.canvas;
+            appEngine = this.appEngine;
+            objects = this.objects;
 
 
 

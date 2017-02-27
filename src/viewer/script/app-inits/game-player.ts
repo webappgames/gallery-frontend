@@ -1,4 +1,4 @@
-/// <reference path="./reference.ts" />
+/// <reference path="../reference.ts" />
 
 
 module GALLERY.Viewer {
@@ -9,25 +9,26 @@ module GALLERY.Viewer {
 
 
 
-    BABYLON.SceneLoader.ImportMesh("", "/media/meshes/dude/", "dude.babylon", scene, function (newMeshes, particleSystems, skeletons) {
 
-        newMeshes[0].scaling.x = 0.2;
-        newMeshes[0].scaling.y = 0.2;
-        newMeshes[0].scaling.z = 0.2;
+    export function GamePlayerInit(scene){
 
+        BABYLON.SceneLoader.ImportMesh("", "/media/meshes/dude/", "dude.babylon", scene, function (newMeshes, particleSystems, skeletons) {
 
-
-
-        personToClone = {
-            meshes: newMeshes,
-            skeleton: skeletons[0]
-        };
-
-
-    });
+            newMeshes[0].scaling.x = 0.2;
+            newMeshes[0].scaling.y = 0.2;
+            newMeshes[0].scaling.z = 0.2;
 
 
 
+
+            personToClone = {
+                meshes: newMeshes,
+                skeleton: skeletons[0]
+            };
+
+        });
+
+    }
 
 
 

@@ -1,4 +1,4 @@
-/// <reference path="./reference.ts" />
+/// <reference path="../reference.ts" />
 
 
 module GALLERY.Viewer {
@@ -143,9 +143,9 @@ module GALLERY.Viewer {
         scene._pendingData = [];
 
 
-        const enginePlayReasonMoving = new EnginePlayReason('moving');
+        const enginePlayReasonMoving = new AppEnginePlayReason('moving');
 
-        playEngine(enginePlayReasonMoving);
+        appEngine.play(enginePlayReasonMoving);
 
 
         let animation = BABYLON.Animation.CreateAndStartAnimation(
@@ -163,7 +163,7 @@ module GALLERY.Viewer {
                 console.log("Animation Finished!");
                 LOCKED = false;
 
-                pauseEngine(enginePlayReasonMoving);
+                appEngine.pause(enginePlayReasonMoving);
 
             }
         );
@@ -198,8 +198,8 @@ module GALLERY.Viewer {
 
 
 
-        const enginePlayReasonRotating = new EnginePlayReason('rotating');
-        playEngine(enginePlayReasonRotating);
+        const enginePlayReasonRotating = new AppEnginePlayReason('rotating');
+        appEngine.play(enginePlayReasonRotating);
         LOCKED = true;
 
         BABYLON.Animation.CreateAndStartAnimation(
@@ -217,7 +217,7 @@ module GALLERY.Viewer {
                 console.log("Animation Finished!");
                 LOCKED = false;
 
-                pauseEngine(enginePlayReasonRotating);
+                appEngine.pause(enginePlayReasonRotating);
 
             }
         );

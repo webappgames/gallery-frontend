@@ -6,6 +6,7 @@ module GALLERY.Viewer{
 
 
 
+    import Camera = BABYLON.Camera;
     interface AppOptions {
         mode: string;
         state: string;
@@ -14,10 +15,12 @@ module GALLERY.Viewer{
     }
 
 
-
+    export let objects: Objects.CompiledArray;
     export let canvas: HTMLCanvasElement;
     export let appEngine: AppEngine;
-    export let objects: Objects.CompiledArray;
+    export let camera: BABYLON.Camera;
+    export let scene: BABYLON.Scene;
+
 
 
 
@@ -96,10 +99,11 @@ module GALLERY.Viewer{
 
 
 
-
+            objects = this.objects;
             canvas = document.getElementById('scene');//this.canvas;
             appEngine = this.appEngine;
-            objects = this.objects;
+            camera = this.appEngine.camera;
+            scene = this.appEngine.scene;
 
 
 

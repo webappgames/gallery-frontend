@@ -67,16 +67,6 @@ module GALLERY.Viewer {
     const enginePlayReasonGameMode = new AppEnginePlayReason('game mode');
 
 
-    //let pointer_lock = document.getElementById("pointer-lock");
-    let wasd = document.getElementById("wasd");
-    //var $hints = $('.hints');
-
-
-    canvas.requestPointerLock = canvas.requestPointerLock ||
-        canvas.mozRequestPointerLock;
-
-    document.exitPointerLock = document.exitPointerLock ||
-        document.mozExitPointerLock;
 
 
 
@@ -90,6 +80,9 @@ module GALLERY.Viewer {
     export let gameSync = new GameSync(WS_SERVER,camera,scene);
     //gameSync.connect();
     //play(enginePlayReasonGameMode);
+
+
+
 
 
     function lockChangeAlert() {
@@ -147,18 +140,6 @@ module GALLERY.Viewer {
 
 
 
-
-    window.addEventListener('keydown', function (e) {
-        if (
-            camera.keysUp.indexOf(e.keyCode) != -1 ||
-            camera.keysDown.indexOf(e.keyCode) != -1 ||
-            camera.keysLeft.indexOf(e.keyCode) != -1 ||
-            camera.keysRight.indexOf(e.keyCode) != -1
-        ) {
-            $(wasd).fadeOut();
-            //wasd.style.display = 'none';
-        }
-    }, false);
 
 
 

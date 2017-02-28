@@ -62,7 +62,7 @@ module GALLERY.Viewer {
         let q = 1 + 0.005*distance;
         mesh.scaling.x *= q;
         mesh.scaling.y *= q;
-        renderTick();
+        appEngine.renderTick();
 
         /*let rad = 0;
         hooverInterval = setInterval(function () {
@@ -87,7 +87,7 @@ module GALLERY.Viewer {
         //r('onPointerLeave');
         //clearInterval(hooverInterval);
         mesh.scaling = beforeHoverScaling;
-        renderTick();
+        appEngine.renderTick();
         //hooverLayer.removeMesh(mesh);
     }
 

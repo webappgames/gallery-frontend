@@ -1,4 +1,5 @@
 /// <reference path="../app" />
+/// <reference path="./game-sync" />
 
 /// <reference path="../reference" />
 

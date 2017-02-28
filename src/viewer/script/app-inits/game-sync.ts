@@ -1,4 +1,5 @@
 /// <reference path="../app" />
+/// <reference path="./game-player" />
 
 /// <reference path="../reference" />
 

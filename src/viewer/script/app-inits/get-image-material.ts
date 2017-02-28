@@ -6,26 +6,7 @@
 module GALLERY.Viewer {
 
 
-
-
-    /*
-    let image_texture = new BABYLON.Texture('/media/images/sprite.jpg', scene);
-    image_texture.hasAlpha = false;
-
-
-
-
-    export function getImageMaterial(src: string, isEmitting: boolean, hasAlpha: boolean, backFace: boolean) {
-
-
-        let material = new BABYLON.StandardMaterial("texture4", scene);
-        material.diffuseTexture = image_texture;
-        return(material);
-
-
-    }*/
-
-    const enginePlayReasonLoadingTextures = new AppEnginePlayReason('loading textures');
+    /*const enginePlayReasonLoadingTextures = new AppEnginePlayReason('loading textures');
     appEngine.play(enginePlayReasonLoadingTextures);
 
 
@@ -37,20 +18,22 @@ module GALLERY.Viewer {
         if(texturesLoaded == texturesCount){
 
             appEngine.pause(enginePlayReasonLoadingTextures);
-            //renderTick();
+            //appEngine.renderTick();
 
         }
 
-    };
+    };*/
 
 
 
-    let imagesMaterials = {};//todo DI
     export function getImageMaterial(src: string, width: number, isEmitting: boolean, hasAlpha: boolean, backFace: boolean) {
+
+        this.imagesMaterials = this.imagesMaterials||{};
+
 
         let key = src + width + isEmitting + hasAlpha + backFace;//todo better - maybe hash
 
-        if (typeof imagesMaterials[key] === 'undefined') {
+        if (typeof this.imagesMaterials[key] === 'undefined') {
 
 
 
@@ -64,12 +47,18 @@ module GALLERY.Viewer {
 
             let onLoad = function () {
                 r('Loaded texture!');
-                renderTick();
+                appEngine.renderTick();
             };
 
 
-            texturesCount++;
-            let image_texture = new BABYLON.Texture(src_normal, scene, false, true, BABYLON.Texture.TRILINEAR_SAMPLINGMODE, onTextureLoad);
+            let enginePlayReasonLoadingTexture =  new AppEnginePlayReason('loading textures');
+
+            appEngine.play(enginePlayReasonLoadingTexture);
+            let image_texture = new BABYLON.Texture(src_normal, scene, false, true, BABYLON.Texture.TRILINEAR_SAMPLINGMODE, function () {
+
+                appEngine.pause(enginePlayReasonLoadingTexture);
+
+            });
             image_texture.hasAlpha = hasAlpha;
 
 
@@ -105,12 +94,12 @@ module GALLERY.Viewer {
             }
 
             material.freeze();
-            imagesMaterials[key] = material;
+            this.imagesMaterials[key] = material;
 
         }
 
 
-        return (imagesMaterials[key]);
+        return (this.imagesMaterials[key]);
 
 
     }

@@ -122,7 +122,7 @@ module GALLERY.Viewer {
                 camera.rotation = babylon_rotation;
             }
 
-            renderTick();
+            appEngine.renderTick();
 
             return;
         }

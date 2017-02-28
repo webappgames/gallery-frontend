@@ -68,7 +68,7 @@ module GALLERY.Objects{
             let mesh = this.getBabylonMesh(Viewer.scene);
             let vector = this._vectorFrontal.scale(this.offsetFrontalPressed - this.offsetFrontal);
             mesh.position.addInPlace(vector);
-            //Viewer.renderTick();
+            //Viewer.appEngine.renderTick();
         }
 
 
@@ -77,7 +77,7 @@ module GALLERY.Objects{
             let mesh = this.getBabylonMesh(Viewer.scene);
             let vector = this._vectorFrontal.scale(this.offsetFrontalPressed - this.offsetFrontal);
             mesh.position.subtractInPlace(vector);
-            //Viewer.renderTick();
+            //Viewer.appEngine.renderTick();
 
             if(pressed) {
                 r(this);

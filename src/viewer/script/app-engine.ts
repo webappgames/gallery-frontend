@@ -40,7 +40,7 @@ module GALLERY.Viewer {
 
 
 
-        renderTick() {
+        appEngine.renderTick() {
             this.scene.render();
         }
 

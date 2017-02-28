@@ -206,7 +206,7 @@ module GALLERY.Objects{
 
 
 
-                    GALLERY.Viewer.renderTick();//todo DI
+                    GALLERY.Viewer.appEngine.renderTick();//todo DI
 
 
                 }

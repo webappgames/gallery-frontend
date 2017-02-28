@@ -1,5 +1,5 @@
-/// <reference path="reference.ts" />
-/// <reference path="./view/editorapp.tsx" />
+/// <reference path="reference" />
+/// <reference path="./view/editorapp" />
 
 
 

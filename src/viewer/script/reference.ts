@@ -1,55 +1,55 @@
 console.log('reference');
 
 
-/// <reference path="../../shared/script/reference.ts" />
+/// <reference path="../../shared/script/reference" />
 /// <reference path="../../../node_modules/@types/raven-js/index.d.ts>
 
 
 
 
-/// <reference path="./babylon-plugins/babylon-tree.ts" />
-/// <reference path="./babylon-plugins/babylon-stairs.ts" />
+/// <reference path="./babylon-plugins/babylon-tree" />
+/// <reference path="./babylon-plugins/babylon-stairs" />
 
 
-/// <reference path="./app.tsx" />
-/// <reference path="./app-state.ts" />
-/// <reference path="./app-engine.ts" />
+/// <reference path="./app" />
+/// <reference path="./app-state" />
+/// <reference path="./app-engine" />
 
 
 
 
-/// <reference path="./app-inits/scene-collide.ts" />
-/// <reference path="./app-inits/scene.ts" />
-/// <reference path="./app-inits/run-viewer.ts" />
-/// <reference path="./app-inits/run-world.ts" />
+/// <reference path="./app-inits/scene-collide" />
+/// <reference path="./app-inits/scene" />
+/// <reference path="./app-inits/run-viewer" />
+/// <reference path="./app-inits/run-world" />
 
 
-/// <reference path="./app-inits/keys.ts" />
-/// <reference path="./app-inits/stat.ts" />
-/// <reference path="./app-inits/gates.ts" />
-/// <reference path="./app-inits/effects.ts" />
-/// <reference path="./app-inits/move-to.ts" />
-/// <reference path="./app-inits/fps-meter.ts" />
-/// <reference path="./app-inits/scene-pick.ts" />
-/// <reference path="./app-inits/game-player.ts" />
-/// <reference path="./app-inits/scene-hover.ts" />
-/// <reference path="./app-inits/develop-menu.ts" />
-/// <reference path="./app-inits/get-material.ts" />
-/// <reference path="./app-inits/popup-window.ts" />
-/// <reference path="./app-inits/scroll-event.ts" />
-/// <reference path="./functions/date-functions.ts" />
-/// <reference path="./app-inits/develop-deploy.ts" />
-/// <reference path="./app-inits/process-popups.tsx" />
-/// <reference path="./functions/data-uri-to-blob.ts" />
-/// <reference path="./app-inits/make-screenshots.ts" />
-/// <reference path="./app-inits/develop-stat-show.ts" />
-/// <reference path="./app-inits/game-sync.ts" />
-/// <reference path="./app-inits/get-image-material.ts" />
-/// <reference path="./functions/create-uri-from-name.ts" />
-/// <reference path="./components/popup-arrow.tsx" />
+/// <reference path="./app-inits/keys" />
+/// <reference path="./app-inits/stat" />
+/// <reference path="./app-inits/gates" />
+/// <reference path="./app-inits/effects" />
+/// <reference path="./app-inits/move-to" />
+/// <reference path="./app-inits/fps-meter" />
+/// <reference path="./app-inits/scene-pick" />
+/// <reference path="./app-inits/game-player" />
+/// <reference path="./app-inits/scene-hover" />
+/// <reference path="./app-inits/develop-menu" />
+/// <reference path="./app-inits/get-material" />
+/// <reference path="./app-inits/popup-window" />
+/// <reference path="./app-inits/scroll-event" />
+/// <reference path="./functions/date-functions" />
+/// <reference path="./app-inits/develop-deploy" />
+/// <reference path="./app-inits/process-popups" />
+/// <reference path="./functions/data-uri-to-blob" />
+/// <reference path="./app-inits/make-screenshots" />
+/// <reference path="./app-inits/develop-stat-show" />
+/// <reference path="./app-inits/game-sync" />
+/// <reference path="./app-inits/get-image-material" />
+/// <reference path="./functions/create-uri-from-name" />
+/// <reference path="./components/popup-arrow" />
 
-/// <reference path="./app-inits/game-mode.ts" />
-/// <reference path="./index.ts" />
+/// <reference path="./app-inits/game-mode" />
+/// <reference path="./index" />
 
 
 

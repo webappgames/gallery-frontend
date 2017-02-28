@@ -1,4 +1,7 @@
-/// <reference path="../reference.ts" />
+/// <reference path="../app" />
+
+/// <reference path="../reference" />
+
 
 module GALLERY.Viewer {
 

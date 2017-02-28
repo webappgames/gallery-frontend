@@ -1,4 +1,4 @@
-/// <reference path="../../reference.ts" />
+/// <reference path="../../reference" />
 //import {Zone} from '10-zone';
 
 module GALLERY.Objects {

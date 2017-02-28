@@ -1,4 +1,7 @@
-/// <reference path="./reference.ts" />
+/// <reference path="./components/app" />
+/// <reference path="./app-engine" />
+
+/// <reference path="./reference" />
 
 
 

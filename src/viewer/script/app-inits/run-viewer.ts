@@ -1,6 +1,6 @@
-/// <reference path="../reference.ts" />
+/// <reference path="../app" />
 
-
+/// <reference path="../reference" />
 
 
 

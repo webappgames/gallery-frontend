@@ -190,6 +190,9 @@ if(isset($_GET['comments'])){
         );
 
 
+        viewerApp.gameMode();
+
+
 
         window.onpopstate = function(event) {
 

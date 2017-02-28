@@ -1,25 +1,25 @@
 
 
-/// <reference path="../../shared/script/reference.ts" />
+/// <reference path="../../shared/script/reference" />
 
 
-/// <reference path="create-map.ts" />
-/// <reference path="create-object.ts" />
-/// <reference path="keys.ts" />
-/// <reference path="load.ts" />
-/// <reference path="message.ts" />
-/// <reference path="new.ts" />
-/// <reference path="outer-html.ts" />
-/// <reference path="plugins.ts" />
-/// <reference path="position.ts" />
-/// <reference path="save.ts" />
-/// <reference path="image-collection.ts" />
-/// <reference path="filedrop.ts" />
-/// <reference path="palette.ts" />
-/// <reference path="export.ts" />
-/// <reference path="publish.ts" />
+/// <reference path="create-map" />
+/// <reference path="create-object" />
+/// <reference path="keys" />
+/// <reference path="load" />
+/// <reference path="message" />
+/// <reference path="new" />
+/// <reference path="outer-html" />
+/// <reference path="plugins" />
+/// <reference path="position" />
+/// <reference path="save" />
+/// <reference path="image-collection" />
+/// <reference path="filedrop" />
+/// <reference path="palette" />
+/// <reference path="export" />
+/// <reference path="publish" />
 /// <reference path="load-scripts-to-deploy" />
 
 
-/// <reference path="plugins/generators/simple-garden.ts" />
+/// <reference path="plugins/generators/simple-garden" />
 

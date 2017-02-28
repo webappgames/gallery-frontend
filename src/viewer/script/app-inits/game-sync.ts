@@ -1,4 +1,6 @@
+/// <reference path="../app" />
 
+/// <reference path="../reference" />
 
 module GALLERY.Viewer {
 

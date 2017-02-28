@@ -1,4 +1,4 @@
-/// <reference path="reference.ts" />
+/// <reference path="reference" />
 
 
 var objects: GALLERY.Objects.Array = new GALLERY.Objects.Array();

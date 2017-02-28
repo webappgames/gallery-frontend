@@ -1,4 +1,4 @@
-/// <reference path="../../reference.ts" />
+/// <reference path="../../reference" />
 
 //r('created block');
 //r(GALLERY.Objects.Object);

@@ -1,8 +1,19 @@
-/// <reference path="../reference.ts" />
-/// <reference path="game-sync" />
+/// <reference path="../app" />
+
+/// <reference path="../reference" />
 
 
 module GALLERY.Viewer {
+
+
+    console.log(GalleryApp);
+    GalleryApp.prototype.gameMode = function(){
+
+
+        alert('GameMode');
+
+    };
+
 
 
 

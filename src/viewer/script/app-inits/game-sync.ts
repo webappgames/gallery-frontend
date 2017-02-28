@@ -3,6 +3,10 @@
 
 /// <reference path="../reference" />
 
+d('game-sync');
+
+
+
 module GALLERY.Viewer {
 
 

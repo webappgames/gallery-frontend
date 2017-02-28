@@ -3,6 +3,9 @@
 
 /// <reference path="../reference" />
 
+d('develop-deploy');
+
+
 module GALLERY.Viewer {
 
 

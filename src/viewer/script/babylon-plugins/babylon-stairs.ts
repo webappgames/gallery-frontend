@@ -1,5 +1,7 @@
 /// <reference path="../reference" />
 
+d('babylon-stairs');
+
 
 function createStairsMesh(name, stairs_count, isFull, scene){
 

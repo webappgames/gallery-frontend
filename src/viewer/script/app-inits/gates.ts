@@ -2,6 +2,8 @@
 
 /// <reference path="../reference" />
 
+d('gates');
+
 
 module GALLERY.Viewer {
 

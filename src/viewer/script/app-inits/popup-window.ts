@@ -2,6 +2,10 @@
 
 /// <reference path="../reference" />
 
+d('popup-window');
+
+
+
 var Window={};
 let window_opened = false;
 const IMMEDIATELY_MS = 50;

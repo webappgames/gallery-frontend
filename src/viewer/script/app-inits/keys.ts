@@ -2,6 +2,8 @@
 
 /// <reference path="../reference" />
 
+d('keys');
+
 
 module GALLERY.Viewer {
     const controls_keys = {

@@ -2,6 +2,10 @@
 
 /// <reference path="../reference" />
 
+d('scene-pick');
+
+
+
 module GALLERY.Viewer {
 
 

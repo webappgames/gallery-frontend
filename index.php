@@ -154,6 +154,8 @@ if(isset($_GET['comments'])){
 <script>
 
 
+    console.log(GALLERY);
+
 
     if (window.location.hash == '#preview') {
 

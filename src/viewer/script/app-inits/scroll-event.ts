@@ -2,6 +2,8 @@
 
 /// <reference path="../reference" />
 
+d('scroll-event');
+
 
 
 

@@ -1,5 +1,7 @@
 /// <reference path="../reference" />
 
+d('babylon-tree');
+
 
 
 function createTreeMesh(name, size, length, psi, bow, kink, detail, sections, branches, spirals, scale, start,scene) {

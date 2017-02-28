@@ -2,6 +2,8 @@
 
 /// <reference path="../reference" />
 
+d('fps-meter');
+
 
 module GALLERY.Viewer {
 

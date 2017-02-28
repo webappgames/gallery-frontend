@@ -1,4 +1,4 @@
-
+d('app');
 
 module GALLERY.Viewer.Components {
 

@@ -1,5 +1,7 @@
 /// <reference path="./reference" />
 
+d('app-state');
+
 
 module GALLERY.Viewer{
 
@@ -24,9 +26,6 @@ module GALLERY.Viewer{
     currentLinks();
 
 
-
-
-    console.log('Defining appState');
 
 
 

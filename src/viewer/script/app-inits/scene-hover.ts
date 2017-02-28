@@ -2,6 +2,10 @@
 
 /// <reference path="../reference" />
 
+d('scene-hover');
+
+
+
 module GALLERY.Viewer {
 
 

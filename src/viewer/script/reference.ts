@@ -1,8 +1,13 @@
-console.log('reference');
 
 
 /// <reference path="../../shared/script/reference" />
-/// <reference path="../../../node_modules/@types/raven-js/index.d.ts>
+
+
+
+
+/// <reference path="./app" />
+/// <reference path="./app-state" />
+/// <reference path="./app-engine" />
 
 
 
@@ -10,10 +15,6 @@ console.log('reference');
 /// <reference path="./babylon-plugins/babylon-tree" />
 /// <reference path="./babylon-plugins/babylon-stairs" />
 
-
-/// <reference path="./app" />
-/// <reference path="./app-state" />
-/// <reference path="./app-engine" />
 
 
 
@@ -52,5 +53,6 @@ console.log('reference');
 /// <reference path="./index" />
 
 
+d('reference');
 
 

@@ -1,5 +1,7 @@
 /// <reference path="../reference" />
 
+d('create-uri-from-name');
+
 
 
 let defaultDiacriticsRemovalMap = [

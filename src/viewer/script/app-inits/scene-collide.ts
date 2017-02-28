@@ -2,6 +2,8 @@
 
 /// <reference path="../reference" />
 
+d('scene-collide');
+
 module GALLERY.Viewer {
 
     export function onCollide(collidedMesh) {

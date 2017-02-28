@@ -2,6 +2,8 @@
 
 /// <reference path="../reference" />
 
+d('stat');
+
 /*
 module GALLERY.Viewer{
 

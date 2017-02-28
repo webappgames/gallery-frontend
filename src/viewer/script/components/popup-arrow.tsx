@@ -1,4 +1,4 @@
-
+d('popup-arrow');
 
 module GALLERY.Viewer.Components {
 

@@ -37,3 +37,6 @@
 /// <reference path="00-common" />
 /// <reference path="guid" />
 /// <reference path="notifications" />
+
+
+d('reference');

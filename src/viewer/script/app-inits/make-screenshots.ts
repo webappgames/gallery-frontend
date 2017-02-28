@@ -2,6 +2,10 @@
 
 /// <reference path="../reference" />
 
+d('make-screenshot');
+
+
+
 module GALLERY.Viewer {
 
 

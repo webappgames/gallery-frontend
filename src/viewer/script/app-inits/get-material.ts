@@ -2,6 +2,10 @@
 
 /// <reference path="../reference" />
 
+d('get-material');
+
+
+
 module GALLERY.Viewer {
 
 

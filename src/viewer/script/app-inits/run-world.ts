@@ -2,6 +2,8 @@
 
 /// <reference path="../reference" />
 
+d('run-world');
+
 
 module GALLERY.Viewer {
 

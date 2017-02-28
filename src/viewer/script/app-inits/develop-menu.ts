@@ -2,6 +2,10 @@
 
 /// <reference path="../reference" />
 
+d('develop-menu');
+
+
+
 
 module GALLERY.Viewer {
 

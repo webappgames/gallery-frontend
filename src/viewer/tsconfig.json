@@ -2,20 +2,10 @@
   "compilerOptions": {
     "module": "system",
     "target": "es5",
-
     "sourceMap": true,
     "inlineSourceMap": true,
-
-
     "outFile": "viewer.js",
-
     "jsx": "react"
-
-
-
   },
-  "include": [
-    "./script/*.ts"
-
-  ]
+  "files": ["script/index.ts"]
 }

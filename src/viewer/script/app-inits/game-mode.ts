@@ -1,7 +1,15 @@
 /// <reference path="../app" />
+/// <reference path="../app-engine" />
 /// <reference path="./game-sync" />
 
 /// <reference path="../reference" />
+
+d('game-mode');
+
+
+d('game-mode');
+
+
 
 
 module GALLERY.Viewer {

@@ -2,6 +2,7 @@
 
 /// <reference path="../reference" />
 
+d('develop-stat-show');
 
 
 

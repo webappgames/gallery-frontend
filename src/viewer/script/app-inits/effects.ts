@@ -2,6 +2,8 @@
 
 /// <reference path="../reference" />
 
+d('effects');
+
 
 module GALLERY.Viewer.Effects{
 

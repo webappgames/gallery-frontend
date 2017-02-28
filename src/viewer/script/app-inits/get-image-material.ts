@@ -1,6 +1,9 @@
 /// <reference path="../app" />
+/// <reference path="../app-engine" />
 
 /// <reference path="../reference" />
+
+d('get-image-material');
 
 
 module GALLERY.Viewer {

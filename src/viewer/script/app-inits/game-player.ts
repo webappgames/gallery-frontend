@@ -2,6 +2,8 @@
 
 /// <reference path="../reference" />
 
+d('game-player');
+
 
 module GALLERY.Viewer {
 

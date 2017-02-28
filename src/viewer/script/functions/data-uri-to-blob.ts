@@ -1,5 +1,8 @@
 /// <reference path="../reference" />
 
+d('data-uri-to-blob');
+
+
 function dataURItoBlob(dataURI) {
     // convert base64 to raw binary data held in a string
     // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this

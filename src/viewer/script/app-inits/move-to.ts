@@ -1,6 +1,9 @@
 /// <reference path="../app" />
+/// <reference path="../app-engine" />
 
 /// <reference path="../reference" />
+
+d('move-to');
 
 
 module GALLERY.Viewer {

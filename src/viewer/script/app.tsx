@@ -10,6 +10,20 @@ d('app');
 
 
 
+module GALLERY{
+    //todo refactor this shitty code below
+    export let objects: Objects.CompiledArray;
+    export let canvas: HTMLCanvasElement;
+    export let appEngine: AppEngine;
+    export let camera: BABYLON.Camera;
+    export let scene: BABYLON.Scene;
+    export let sun: BABYLON.Light;
+}
+
+
+
+
+
 module GALLERY.Viewer{
 
 
@@ -19,16 +33,6 @@ module GALLERY.Viewer{
         deployObject?: Objects.Deploy;
         analyticsObject?: Objects.Analytics;
     }
-
-
-
-    export let objects: Objects.CompiledArray;
-    export let canvas: HTMLCanvasElement;
-    export let appEngine: AppEngine;
-    export let camera: BABYLON.Camera;
-    export let scene: BABYLON.Scene;
-
-
 
 
 
@@ -73,20 +77,21 @@ module GALLERY.Viewer{
             });
 
 
-            r(containerElement);
-            r(containerElement.getElementsByTagName('canvas'));
-            this.appEngine = new AppEngine(containerElement.getElementsByTagName('canvas')[0] as HTMLCanvasElement);
+            let canvas = containerElement.getElementsByTagName('canvas')[0] as HTMLCanvasElement;
+            this.appEngine = new AppEngine(canvas);
+
 
 
 
 
 
             //todo refactor this shitty code below
-            Viewer.objects = this.objects;
-            Viewer.canvas = document.getElementById('scene');//this.canvas;
-            Viewer.appEngine = this.appEngine;
-            Viewer.camera = this.appEngine.camera;
-            Viewer.scene = this.appEngine.scene;
+            GALLERY.objects = this.objects;
+            GALLERY.canvas = canvas;
+            GALLERY.appEngine = this.appEngine;
+            GALLERY.camera = this.appEngine.camera;
+            GALLERY.scene = this.appEngine.scene;
+            GALLERY.sun = this.appEngine.sun;
 
 
 
@@ -124,8 +129,6 @@ module GALLERY.Viewer{
 
 
 
-
-
             fpsMeterInit(this.appEngine);
             GamePlayerInit(this.appEngine.scene);
 
@@ -148,9 +151,12 @@ module GALLERY.Viewer{
         }
 
 
-        setState(state:string){
+        setState(state:string,standGround=false,immediately=true){
 
+
+            appState(state,standGround,immediately);
             this.state = state;
+
 
 
         }

@@ -31,9 +31,15 @@ module GALLERY.Viewer {
 
 
             let scene_ = createScene(this.engine,canvas);
+
+            console.log(scene_);
+
+
+
             this.scene = scene_.scene;
             this.camera = scene_.camera;
             this.sun = scene_.sun;
+
 
 
         }
@@ -41,7 +47,9 @@ module GALLERY.Viewer {
 
 
 
-        appEngine.renderTick() {
+        renderTick() {
+            //r(this);
+            //r(this.scene);
             this.scene.render();
         }
 
@@ -62,7 +70,7 @@ module GALLERY.Viewer {
                 return(enginePlayReason!=enginePlayReason_);
             });
 
-            setTimeout(this._enginePlayReasonsChanged,100);
+            setTimeout(this._enginePlayReasonsChanged.bind(this),100);
 
         }
 
@@ -72,16 +80,41 @@ module GALLERY.Viewer {
         private _enginePlayReasonsChanged(){
             if(this.enginePlayReasons.length>0) {
 
-                let enginePlayReasonsNames = this.enginePlayReasons.map(function (enginePlayReason) {
-                    return(enginePlayReason.name);
-                }).join(' and ');
+                let enginePlayReasonsNamesMap = this.enginePlayReasons.reduce(function (reasons,enginePlayReason) {
 
-                r('Starting engine because of '+enginePlayReasonsNames+'.');
-                this.engine.runRenderLoop(this.renderTick);
+                    reasons[enginePlayReason.name] = reasons[enginePlayReason.name] || 0;
+                    reasons[enginePlayReason.name]++;
+
+                    return reasons;
+
+
+                },{});
+
+
+                //r(enginePlayReasonsNamesMap);
+
+                let enginePlayReasonsNamesArray = [];
+
+
+                for(let reason in enginePlayReasonsNamesMap){
+                    let count = enginePlayReasonsNamesMap[reason];
+
+                    if(count==1){
+                        enginePlayReasonsNamesArray.push(reason);
+                    }else{
+                        enginePlayReasonsNamesArray.push(count+'x '+reason);
+                    }
+
+                }
+
+                //r(enginePlayReasonsNamesArray);
+
+                r('Starting engine because of '+enginePlayReasonsNamesArray.join(' and ')+'.');
+                this.engine.runRenderLoop(this.renderTick.bind(this));
                 this.running = true;
             }else {
                 r('Pausing engine');
-                this.engine.stopRenderLoop(this.renderTick);
+                this.engine.stopRenderLoop();
                 this.running = false;
             }
         }

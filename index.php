@@ -193,7 +193,7 @@ if(isset($_GET['comments'])){
 
         console.log('Objects:: ',GALLERY.Viewer.objects);
 
-        viewerApp.gameMode();
+        //viewerApp.gameMode();
 
 
 
@@ -212,7 +212,15 @@ if(isset($_GET['comments'])){
 
 
 
-        //viewerApp.setState('/',true,true);
+        viewerApp.setState('/');
+        viewerApp.onStateChange(function (state) {
+
+            alert(state);
+
+
+
+
+        });
         //viewerApp.getState();
 
 

@@ -56,7 +56,7 @@ module GALLERY.Viewer{
 
     export function processStateFromLocation(location: string,standGround=false,immediately=true){
 
-        r('Processing location...');
+        r('Processing location...',arguments);
 
         let uri = new Uri(location);
         let pathname = uri.path();
@@ -82,6 +82,13 @@ module GALLERY.Viewer{
             }
 
         //}
+
+
+
+
+
+
+
 
         if(label == rootLabel || !label.name){
             window.document.title = rootLabel.name;

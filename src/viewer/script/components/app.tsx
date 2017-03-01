@@ -9,7 +9,7 @@ module GALLERY.Viewer.Components {
             <div>
 
                 {/*todo is thare a better was to declare canvas? When using only <canvas id="" ></canvas>, react render it as <viewer-canvas id="" ></viewer-canvas>*/}
-                <div dangerouslySetInnerHTML={{ __html: `<canvas id="" ></canvas>` }}></div>
+                <div dangerouslySetInnerHTML={{ __html: `<canvas id="scene" ></canvas>` }}></div>
 
 
                 <div className="fps" style={{display: 'none'}} />

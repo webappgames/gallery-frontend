@@ -48,13 +48,13 @@ module GALLERY.Viewer {
             var src_normal = src_uri.addQueryParam({width: width}).toString();
 
 
-            let onLoad = function () {
+            /*let onLoad = function () {
                 r('Loaded texture!');
                 appEngine.renderTick();
-            };
+            };*/
 
 
-            let enginePlayReasonLoadingTexture =  new AppEnginePlayReason('loading textures');
+            let enginePlayReasonLoadingTexture =  new AppEnginePlayReason('loading texture');
 
             appEngine.play(enginePlayReasonLoadingTexture);
             let image_texture = new BABYLON.Texture(src_normal, scene, false, true, BABYLON.Texture.TRILINEAR_SAMPLINGMODE, function () {

@@ -215,11 +215,16 @@ module GALLERY.Objects{
 
 
         show(){
-            this.getCreatedBabylonMesh().visibility = 1;
+            if(this.getCreatedBabylonMesh()){//todo maybe use Promise
+                this.getCreatedBabylonMesh().visibility = 1;
+            }
+
         }
 
         hide(){
-            this.getCreatedBabylonMesh().visibility = 0;
+            if(this.getCreatedBabylonMesh()) {
+                this.getCreatedBabylonMesh().visibility = 0;
+            }
         }
 
 

@@ -5,7 +5,7 @@ var gulp = require('gulp');
 var rename = require('gulp-rename');
 var ts = require('gulp-typescript');
 var runSequence = require('run-sequence');
-var webpack = require('gulp-webpack');
+var sourcemaps = require('gulp-sourcemaps');
 
 
 
@@ -78,6 +78,7 @@ gulp.task('compile',['compile-editor','compile-viewer'/*,'compress-viewer'*/]);
 
     gulp.task('compile-'+part, function () {
         return gulp.src('src/'+part+'/script/index.tsx')
+            .pipe(sourcemaps.init()) // This means sourcemaps will be generated
             .pipe(ts({
                 //"module": "system",
                 "target": "es3",
@@ -91,7 +92,10 @@ gulp.task('compile',['compile-editor','compile-viewer'/*,'compress-viewer'*/]);
 
                 "outFile": part+'.js'
             }))
-            .pipe(gulp.dest('dist/'));
+            .pipe(sourcemaps.write())
+            .pipe(gulp.dest('dist/'))
+
+            ;
     });
 
 });

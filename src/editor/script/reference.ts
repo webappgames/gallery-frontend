@@ -3,6 +3,7 @@
 /// <reference path="../../shared/script/reference" />
 
 
+/// <reference path="image-collection" />
 /// <reference path="create-map" />
 /// <reference path="create-object" />
 /// <reference path="keys" />
@@ -13,7 +14,6 @@
 /// <reference path="plugins" />
 /// <reference path="position" />
 /// <reference path="save" />
-/// <reference path="image-collection" />
 /// <reference path="filedrop" />
 /// <reference path="palette" />
 /// <reference path="export" />

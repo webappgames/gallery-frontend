@@ -14,8 +14,8 @@ module GALLERY{
     //todo refactor this shitty code below
     export let objects: Objects.CompiledArray;
     export let canvas: HTMLCanvasElement;
-    export let appEngine: AppEngine;
-    export let camera: BABYLON.Camera;
+    export let appEngine: Viewer.AppEngine;
+    export let camera: BABYLON.FreeCamera;
     export let scene: BABYLON.Scene;
     export let sun: BABYLON.Light;
     export let develop: boolean;

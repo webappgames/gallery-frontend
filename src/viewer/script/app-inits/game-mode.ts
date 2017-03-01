@@ -112,7 +112,7 @@ module GALLERY.Viewer {
             //$hints.hide();
             //pointer_lock.style.display = 'none';
             $('.game-mode').css('opacity','0.2');
-            wasd.style.display = 'block';
+            //wasd.style.display = 'block';
 
 
             MODE = 'GAME';
@@ -132,7 +132,7 @@ module GALLERY.Viewer {
 
             //pointer_lock.style.display = 'block';
             $('.game-mode').css('opacity','1');
-            wasd.style.display = 'none';
+            //wasd.style.display = 'none';
 
             camera.detachControl(canvas);
 

@@ -1,5 +1,5 @@
 /// <reference path="reference" />
-/// <reference path="./view/editorapp" />
+/// <reference path="./components/editorapp" />
 
 
 
@@ -8,13 +8,13 @@
 module GALLERY.Editor{
 
 
-    console.log(EditorApp);
+    //console.log(EditorApp);
 
 
     ReactDOM.render(
 
         <EditorApp />,
-        document.getElementById('App')
+        document.getElementById('app')
 
     );
 

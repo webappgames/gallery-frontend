@@ -74,8 +74,36 @@ gulp.task('compile',['compile-editor','compile-viewer'/*,'compress-viewer'*/]);
 
 
 
+['viewer','editor'].forEach(function (part) {
+
+    gulp.task('compile-'+part, function () {
+        return gulp.src('src/'+part+'/script/index.tsx')
+            .pipe(ts({
+                //"module": "system",
+                "target": "es3",
+
+                "sourceMap": true,
+                "inlineSourceMap": true,
+                "inlineSources": true,
 
 
+                "jsx": "react",
+
+                "outFile": part+'.js'
+            }))
+            .pipe(gulp.dest('dist/'));
+    });
+
+});
+
+
+
+
+
+
+
+
+/*
 gulp.task('compile-viewer', function () {
     var tsProject = ts.createProject('src/viewer/tsconfig.json');
     var tsResult = tsProject.src() // instead of gulp.src(...)
@@ -84,6 +112,7 @@ gulp.task('compile-viewer', function () {
 
 
 });
+*/
 
 
 

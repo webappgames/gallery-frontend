@@ -1,9 +1,13 @@
 {
   "compilerOptions": {
     "module": "system",
-    "target": "es5",
+    "target": "es3",
+
     "sourceMap": true,
     "inlineSourceMap": true,
+    "inlineSources": true,
+
+
     "outFile": "viewer.js",
     "jsx": "react"
   },

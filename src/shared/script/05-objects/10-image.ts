@@ -216,9 +216,9 @@ module GALLERY.Objects {
 
             let uri = new Uri(this.src);
 
-            if (width)uri.addQueryParam({width: width});
-            if (ratio)uri.addQueryParam({ratio: ratio});
-            if (rotation)uri.addQueryParam({rotation: rotation});
+            if (width)uri.addQueryParam('width',width);
+            if (ratio)uri.addQueryParam('ratio',ratio);
+            if (rotation)uri.addQueryParam('rotation',rotation);
 
             return uri.toString();
 

@@ -157,7 +157,7 @@ module GALLERY.Viewer {
 
         if (controls_down.JUMP) {
 
-            if (GALLERY.Viewer.develop) {
+            if (GALLERY.develop) {
                 camera.position.y += 1.6;
             }
 

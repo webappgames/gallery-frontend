@@ -18,6 +18,7 @@ module GALLERY{
     export let camera: BABYLON.Camera;
     export let scene: BABYLON.Scene;
     export let sun: BABYLON.Light;
+    export let develop: boolean;
 }
 
 
@@ -92,6 +93,7 @@ module GALLERY.Viewer{
             GALLERY.camera = this.appEngine.camera;
             GALLERY.scene = this.appEngine.scene;
             GALLERY.sun = this.appEngine.sun;
+            GALLERY.develop = this.develop;
 
 
 

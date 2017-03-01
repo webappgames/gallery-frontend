@@ -157,74 +157,72 @@ if(isset($_GET['comments'])){
     console.log(GALLERY);
 
 
-    if (window.location.hash == '#preview') {
+
+    var compiled_objects = new GALLERY.Objects.CompiledArray(JSON.parse(localStorage.getItem('preview-compiledObjects')));
 
 
-        var compiled_objects = new GALLERY.Objects.CompiledArray(JSON.parse(localStorage.getItem('preview-compiledObjects')));
-
-
-        var analyticsObject = JSON.parse(localStorage.getItem('preview-analyticsObject'));
-        if (analyticsObject) {
-            analyticsObject = new GALLERY.Objects.Analytics(analyticsObject);
-        }
-
-
-        var deployObject = JSON.parse(localStorage.getItem('preview-deployObject'));
-        if (deployObject) {
-            deployObject = new GALLERY.Objects.Deploy(deployObject);
-        }
-
-
-
-
-        var viewerApp = new GALLERY.Viewer.GalleryApp(
-            compiled_objects,
-            document.getElementById('app'),
-            {
-                mode: 'develop',
-                state: location.toString(),
-                deployObject:deployObject,
-                analyticsObject: analyticsObject
-            },
-            function (newState) {
-                //...
-            }
-        );
-
-        console.log('Objects:: ',GALLERY.Viewer.objects);
-
-        //viewerApp.gameMode();
-
-
-
-        window.onpopstate = function(event) {
-
-            viewerApp.setState(window.document.location.toString());
-
-        };
-
-
-
-        window.addEventListener("resize", function () {
-            viewerApp.resize();
-        });
-
-
-
-
-        viewerApp.setState('/');
-        viewerApp.onStateChange(function (state) {
-
-            alert(state);
-
-
-
-
-        });
-        //viewerApp.getState();
-
-
+    var analyticsObject = JSON.parse(localStorage.getItem('preview-analyticsObject'));
+    if (analyticsObject) {
+        analyticsObject = new GALLERY.Objects.Analytics(analyticsObject);
     }
+
+
+    var deployObject = JSON.parse(localStorage.getItem('preview-deployObject'));
+    if (deployObject) {
+        deployObject = new GALLERY.Objects.Deploy(deployObject);
+    }
+
+
+
+
+    var viewerApp = new GALLERY.Viewer.GalleryApp(
+        compiled_objects,
+        document.getElementById('app'),
+        {
+            mode: 'develop',
+            state: location.toString(),
+            deployObject:deployObject,
+            analyticsObject: analyticsObject
+        },
+        function (newState) {
+            //...
+        }
+    );
+
+    console.log('Objects:: ',GALLERY.Viewer.objects);
+
+    //viewerApp.gameMode();
+
+
+
+    window.onpopstate = function(event) {
+
+        viewerApp.setState(window.document.location.toString());
+
+    };
+
+
+
+    window.addEventListener("resize", function () {
+        viewerApp.resize();
+    });
+
+
+
+
+    viewerApp.setState('/');
+    viewerApp.onStateChange(function (state) {
+
+        alert(state);
+
+
+
+
+    });
+    //viewerApp.getState();
+
+
+
 
 </script>
 

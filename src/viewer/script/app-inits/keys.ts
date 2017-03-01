@@ -73,6 +73,9 @@ module GALLERY.Viewer {
     };
 
 
+    const appEnginePlayReasonKeyDown = new AppEnginePlayReason('keydown');
+
+
     window.addEventListener('keydown', function (e) {
 
         if(window_opened===false) {
@@ -82,6 +85,7 @@ module GALLERY.Viewer {
                 keys.push(e.keyCode);
 
                 controls_down.update();
+                appEngine.play(appEnginePlayReasonKeyDown);
 
             }
         }
@@ -100,6 +104,7 @@ module GALLERY.Viewer {
             keys.splice(i, 1);
 
             controls_down.update();
+            appEngine.pause(appEnginePlayReasonKeyDown);
 
         }
         //}

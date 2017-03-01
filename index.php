@@ -191,6 +191,7 @@ if(isset($_GET['comments'])){
             }
         );
 
+        console.log('Objects:: ',GALLERY.Viewer.objects);
 
         viewerApp.gameMode();
 

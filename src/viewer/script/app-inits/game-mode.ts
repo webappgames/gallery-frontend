@@ -7,15 +7,11 @@
 d('game-mode');
 
 
-d('game-mode');
-
-
 
 
 module GALLERY.Viewer {
 
 
-    console.log(GalleryApp);
     GalleryApp.prototype.gameMode = function(){
 
 

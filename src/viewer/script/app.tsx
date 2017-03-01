@@ -13,14 +13,13 @@ d('app');
 module GALLERY.Viewer{
 
 
-
-    import Camera = BABYLON.Camera;
     interface AppOptions {
         mode: string;
         state: string;
         deployObject?: Objects.Deploy;
         analyticsObject?: Objects.Analytics;
     }
+
 
 
     export let objects: Objects.CompiledArray;
@@ -43,7 +42,7 @@ module GALLERY.Viewer{
 
 
         constructor(
-            private objects:Objects.Array,
+            private objects:Objects.CompiledArray,
             private containerElement: HTMLElement,
             private options: AppOptions,
             private onStateChange: (state: string) => any,
@@ -53,21 +52,48 @@ module GALLERY.Viewer{
             if (!BABYLON.Engine.isSupported()) {
                 //todo
             }
+            if(!(this.objects instanceof Objects.Array)){
+                throw new Error('Creating GalleryApp: Param "objects" should be instance of GALLERY.Objects.CompiledArray.');
+            }
+            if(!(this.containerElement instanceof HTMLElement)){
+                throw new Error('Creating GalleryApp: Param "containerElement" should be instance of HTMLElement.');
+            }
+            //todo check all other public APIs
 
 
 
             this.develop = options.mode=='develop';
-
-
-            ReactDOM.render(
-                <Components.App/>
-                ,containerElement
-            );
-
-
-
-            //objects = compiled_objects;
             r('Running gallery with '+objects.getAll().length+' objects in '+(this.develop?'develop':'production')+' mode.');
+
+
+
+
+            ReactDOM.render(<Components.App/>,containerElement,function () {
+                r('App component rendered');
+            });
+
+
+            r(containerElement);
+            r(containerElement.getElementsByTagName('canvas'));
+            this.appEngine = new AppEngine(containerElement.getElementsByTagName('canvas')[0] as HTMLCanvasElement);
+
+
+
+
+
+            //todo refactor this shitty code below
+            Viewer.objects = this.objects;
+            Viewer.canvas = document.getElementById('scene');//this.canvas;
+            Viewer.appEngine = this.appEngine;
+            Viewer.camera = this.appEngine.camera;
+            Viewer.scene = this.appEngine.scene;
+
+
+
+
+
+
+
 
             if(this.develop) {
                 if (options.deployObject) {
@@ -97,21 +123,11 @@ module GALLERY.Viewer{
 
 
 
-            //todo better name for engine wrapper
-            this.appEngine = new AppEngine(containerElement.getElementsByTagName('canvas')[0]);
 
 
 
             fpsMeterInit(this.appEngine);
             GamePlayerInit(this.appEngine.scene);
-
-
-
-            objects = this.objects;
-            canvas = document.getElementById('scene');//this.canvas;
-            appEngine = this.appEngine;
-            camera = this.appEngine.camera;
-            scene = this.appEngine.scene;
 
 
 

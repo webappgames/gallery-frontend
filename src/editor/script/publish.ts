@@ -162,7 +162,7 @@ module GALLERY.Editor{
 
 
         var deploys = objects.filterTypes('deploy');
-        if(deploys.getAll().length == 1){
+        if(deploys.length == 1){
 
 
             var message = Message.info();
@@ -216,7 +216,7 @@ module GALLERY.Editor{
 
         }else{
 
-            alert('There is '+deploys.getAll().length+' deploy objects!');
+            alert('There is '+deploys.length+' deploy objects!');
         }
 
 

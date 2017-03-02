@@ -68,6 +68,18 @@ module GALLERY.Objects{
         }
 
 
+
+        public app: Viewer.GalleryApp;
+        registerApp(app: Viewer.GalleryApp){
+            if(this.app){
+                throw new Error('App was already registred on this Array.');
+            }
+            this.app = app;
+        }
+
+
+
+
         getEditorInputHtml(key:string):string{
 
             switch(key) {

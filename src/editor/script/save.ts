@@ -114,7 +114,7 @@ function save(force = false) {
 
     $button = $('#save');
 
-    if(!force && objects.getAll().length > 1000){
+    if(!force && objects.length > 1000){
 
 
 

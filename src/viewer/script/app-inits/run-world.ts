@@ -37,7 +37,7 @@ module GALLERY.Viewer {
 
         objects_world = _objects_world;
 
-        r('Running gallery with ' + objects_world.getAll().length + ' objects.', objects_world);
+        r('Running gallery with ' + objects_world.length + ' objects.', objects_world);
 
         rendered = false;
 
@@ -480,7 +480,7 @@ module GALLERY.Viewer {
         let virtualObjects = object.createVirtualObjects();
         if(virtualObjects) {
 
-            if(virtualObjects.getAll().length){
+            if(virtualObjects.length){
                 r('Created virtual objects for '+object.getConsoleName()+'.',virtualObjects);
             }
 

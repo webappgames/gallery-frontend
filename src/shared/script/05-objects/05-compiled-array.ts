@@ -120,7 +120,7 @@ module GALLERY.Objects {
 
 
 
-            r('Working on '+non_blocks.getAll().length+' non block objects!');
+            r('Working on '+non_blocks.length+' non block objects!');
 
             non_blocks.forEach(function (object) {
                 compiled_objects.push(object);
@@ -128,10 +128,10 @@ module GALLERY.Objects {
 
 
             var block_stat = {
-                all: blocks.getAll().length,
+                all: blocks.length,
                 done: 0
             };
-            r('Working on '+blocks.getAll().length+' non block objects!');
+            r('Working on '+blocks.length+' non block objects!');
 
 
 
@@ -445,7 +445,7 @@ module GALLERY.Objects {
 
 
 
-            r('Created '+compiled_objects.getAll().length+' compiled objects from '+objects.getAll().length+' objects in time of '+time()+'!');
+            r('Created '+compiled_objects.length+' compiled objects from '+objects.length+' objects in time of '+time()+'!');
 
 
             return(compiled_objects);

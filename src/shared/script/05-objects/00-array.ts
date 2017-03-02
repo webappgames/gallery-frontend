@@ -25,6 +25,13 @@ module GALLERY.Objects{
 
         }
 
+
+        get length(){
+            return this.objects.length;
+        }
+
+
+
         next():Object {
 
             if(this.objects.length <= this.index){

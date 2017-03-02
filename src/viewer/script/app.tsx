@@ -68,8 +68,13 @@ module GALLERY.Viewer{
 
 
             this.develop = options.mode=='develop';
-            r('Running gallery with '+objects.getAll().length+' objects in '+(this.develop?'develop':'production')+' mode.');
+            r('Running gallery with '+objects.length+' objects in '+(this.develop?'develop':'production')+' mode.');
 
+
+
+            objects.forEach(function (object) {
+                object.registerApp(this);
+            });
 
 
 

@@ -641,7 +641,7 @@ function createMap() {
 
 
 
-        if(drawing_objects.getAll().length === 1 && false){//todo better
+        if(drawing_objects.length === 1 && false){//todo better
 
             let object = drawing_objects.getAll()[0];
             let object_on_position = objects.getBlockOnPosition(object.position, object.storey, object.world);

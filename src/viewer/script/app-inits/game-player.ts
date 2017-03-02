@@ -30,6 +30,11 @@ module GALLERY.Viewer {
                 skeleton: skeletons[0]
             };
 
+
+            newMeshes[0].setEnabled(false);
+
+
+
         });
 
     }

@@ -110,6 +110,7 @@ module GALLERY.Viewer {
                 //r(enginePlayReasonsNamesArray);
 
                 r('Starting engine because of '+enginePlayReasonsNamesArray.join(' and ')+'.');
+                this.engine.stopRenderLoop();
                 this.engine.runRenderLoop(this.renderTick.bind(this));
                 this.running = true;
             }else {

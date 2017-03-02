@@ -164,7 +164,7 @@ module GALLERY.Viewer{
         }
 
         resize(){
-            //todo
+            this.appEngine.engine.resize();
         }
 
 

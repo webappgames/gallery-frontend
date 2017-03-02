@@ -412,9 +412,11 @@ module GALLERY.Objects {
         }
 
 
+
+        private virtualObjects: Objects.Array;//todo maybe in Object
         createVirtualObjects(): Objects.Array {
 
-            let virtualObjects = new Objects.Array();
+            this.virtualObjects = new Objects.Array();
 
 
             let object = this;
@@ -485,7 +487,7 @@ module GALLERY.Objects {
                     });
 
 
-                    virtualObjects.push(zone);
+                    this.virtualObjects.push(zone);
 
 
                     let label = new Objects.Label({
@@ -509,7 +511,7 @@ module GALLERY.Objects {
 
                     });
 
-                    virtualObjects.push(zone);
+                    this.virtualObjects.push(label);
                     //processObject(label);//todo better
                     //objects.push(label);
 
@@ -519,7 +521,7 @@ module GALLERY.Objects {
 
                 }
 
-                return (virtualObjects);
+                return (this.virtualObjects);
 
 
             }
@@ -527,6 +529,43 @@ module GALLERY.Objects {
 
         }
 
+
+        getVirtualLabel(): Label{
+            return this.virtualObjects.filterTypes('label').getObjectByIndex(0) as Label;
+        }
+
+
+        getUniqueUri(){
+            if(this.uri && this.uri!=='none'){
+                return(this.uri);
+            }else{
+                //r(this.virtualObjects);
+                return('/:'+this.id);//virtualObjects.filterTypes('label').getObjectByIndex(0).id);
+            }
+        }
+
+
+
+        handlePointerRelease(pressed:boolean, event, pickResult){
+
+            //todo maybe with decorator
+            /*if(!this.app){
+                throw new Error('This method can be used only when app is registered.', this);
+            }*/
+
+
+
+            if(pressed) {
+                this.app.setState(this.getUniqueUri(),false,false);
+            }
+
+        }
+
+
+
     }
+
+
+
 
 }

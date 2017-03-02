@@ -266,7 +266,7 @@ module GALLERY.Objects{
 
 
 
-        private virtualObjects=null;
+        private virtualObjects=null;//todo maybe in Object
         createVirtualObjects():Objects.Array{
             this.virtualObjects = new Objects.Array();
 

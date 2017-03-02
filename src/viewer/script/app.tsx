@@ -72,7 +72,7 @@ module GALLERY.Viewer{
 
 
 
-            objects.forEach(function (object) {
+            objects.forEach( (object) => {
                 object.registerApp(this);
             });
 

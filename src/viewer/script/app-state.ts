@@ -67,13 +67,22 @@ module GALLERY.Viewer{
         let label;
 
 
-        /*if (pathname.substr(0, 2) === '/:') {
+
+        if (pathname.substr(0, 2) === '/:') {
 
             let objectId = pathname.substr(2);
-            label = objects.filterTypes('label').getObjectById(objectId);
+            let object = objects.getObjectById(objectId) as Objects.Label|Objects.Image;
 
+            if(object instanceof Objects.Label){
+                label = object;
+            }else
+            if(object instanceof Objects.Image){
+                label = object.getVirtualLabel();
+            }else{
+                throw new Error(`App state string in format :id should be Label or Image.`);
+            }
 
-        } else {*/
+        } else {
 
             label = objects.filterTypes('label').findBy('uri',pathname);
 
@@ -81,9 +90,13 @@ module GALLERY.Viewer{
                 label = rootLabel;
             }
 
-        //}
+        }
 
 
+        if(!label){
+            r(objects.filterTypes('label'));
+            throw new Error(`Label identified as "${pathname}" do not exists.`);
+        }
 
 
 

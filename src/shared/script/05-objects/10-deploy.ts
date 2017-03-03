@@ -1,4 +1,4 @@
-/// <reference path="../../reference" />
+/// <reference path="../reference" />
 
 module GALLERY.Objects{
 
@@ -6,10 +6,12 @@ module GALLERY.Objects{
 
 
         public deployType: string;
-        public server: string;
-        public username: string;
+        public server?: string;
+        public username?: string;
+        public gallery?: string;
         public password: string;
-        public directory: string;
+        public directory?: string;
+        public url?: string;
 
 
 
@@ -21,8 +23,10 @@ module GALLERY.Objects{
             this.deployType = this.deployType || 'ftp';
             this.server = this.server || '';
             this.username = this.username || '';
+            this.gallery = this.gallery || '';
             this.password = this.password || '';
             this.directory = this.directory || '';
+            this.url = this.url || '';
 
         }
 
@@ -36,9 +40,13 @@ module GALLERY.Objects{
                     return('<input type="text">');
                 case 'username':
                     return('<input type="text">');
+                case 'gallery':
+                    return('<input type="text">');
                 case 'password':
                     return('<input type="password">');
                 case 'directory':
+                    return('<input type="text">');
+                case 'url':
                     return('<input type="text">');
                 default:
                     return(super.getEditorInputHtml(key));

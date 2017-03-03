@@ -19,6 +19,8 @@ module GALLERY{
     export let scene: BABYLON.Scene;
     export let sun: BABYLON.Light;
     export let develop: boolean;
+    export let deployObjects: Objects.Array;
+    export let analyticsObject: Objects.Analytics;
 }
 
 
@@ -31,7 +33,7 @@ module GALLERY.Viewer{
     interface AppOptions {
         mode: string;
         state: string;
-        deployObject?: Objects.Deploy;
+        deployObjects?: Objects.Array;
         analyticsObject?: Objects.Analytics;
     }
 
@@ -78,16 +80,13 @@ module GALLERY.Viewer{
 
 
 
-            ReactDOM.render(<Components.App/>,containerElement,function () {
+            ReactDOM.render(<Components.App app={this}/>,containerElement,function () {
                 r('App component rendered');
             });
 
 
             let canvas = containerElement.getElementsByTagName('canvas')[0] as HTMLCanvasElement;
             this.appEngine = new AppEngine(canvas);
-
-
-
 
 
 
@@ -99,6 +98,9 @@ module GALLERY.Viewer{
             GALLERY.scene = this.appEngine.scene;
             GALLERY.sun = this.appEngine.sun;
             GALLERY.develop = this.develop;
+            GALLERY.deployObjects = this.options.deployObjects;
+            GALLERY.analyticsObject = this.options.analyticsObject;
+
 
 
 
@@ -122,10 +124,6 @@ module GALLERY.Viewer{
 
 
             if(this.develop){
-                //showStats();
-                developMenu();
-                $('.develop-menu').draggable();
-
             }else{
                 //runStats();
 

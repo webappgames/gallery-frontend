@@ -161,9 +161,10 @@ if(isset($_GET['comments'])){
     var compiled_objects = new GALLERY.Objects.CompiledArray(JSON.parse(localStorage.getItem('preview-compiledObjects')));
 
 
-    var analyticsObject = JSON.parse(localStorage.getItem('preview-analyticsObject'));
-    if (analyticsObject) {
-        analyticsObject = new GALLERY.Objects.Analytics(analyticsObject);
+
+    var analyticsObjects = JSON.parse(localStorage.getItem('preview-analyticsObjects'));
+    if (analyticsObjects) {
+        analyticsObjects = new GALLERY.Objects.Array(analyticsObjects);
     }
 
 
@@ -182,7 +183,7 @@ if(isset($_GET['comments'])){
             mode: 'develop',
             state: location.toString(),
             deployObject:deployObject,
-            analyticsObject: analyticsObject
+            analyticsObjects: analyticsObjects
         },
         function (newState) {
             //...

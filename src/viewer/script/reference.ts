@@ -34,7 +34,6 @@
 /// <reference path="./app-inits/scene-pick" />
 /// <reference path="./app-inits/game-player" />
 /// <reference path="./app-inits/scene-hover" />
-/// <reference path="./app-inits/develop-menu" />
 /// <reference path="./app-inits/get-material" />
 /// <reference path="./app-inits/popup-window" />
 /// <reference path="./app-inits/scroll-event" />

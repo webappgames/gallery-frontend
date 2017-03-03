@@ -556,7 +556,17 @@ module GALLERY.Objects {
 
 
             if(pressed) {
-                this.app.setState(this.getUniqueUri(),false,false);
+
+
+                if(this.app.getState()!==this.getUniqueUri()){
+                    this.app.setState(this.getUniqueUri(),false,false);
+                }else{
+                    this.app.setState(this.parent,false,false);
+                }
+
+
+
+
             }
 
         }

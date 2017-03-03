@@ -357,7 +357,7 @@ module GALLERY.Viewer {
 
             zip.file('script-bundle.js',script);
 
-            const pureObjects = objects.getAll().map(function (object) {
+            /*const pureObjects = objects.getAll().map(function (object) {
 
                 let pureObject = {};
                 for (var key in object) {
@@ -378,14 +378,14 @@ module GALLERY.Viewer {
 
 
 
-            });
+            });*/
 
             /*pureObjects.forEach(function (pureObject) {
                 r(pureObject);
                 r(JSON.stringify(pureObject,null,true));
             });*/
 
-            zip.file('objects.compiled.json',JSON.stringify(pureObjects,null,true));
+            zip.file('objects.compiled.json',JSON.stringify(objects,null,4));
 
 
             zip.file('.htaccess',`
@@ -460,7 +460,7 @@ RewriteRule . / [L,QSA]
 
 
 
-    export function deployToFTP(){
+    export function deployToFTP(deployObject:Objects.Deploy){
 
         createZip(function(content,deployNotification){
 
@@ -469,20 +469,41 @@ RewriteRule . / [L,QSA]
             var formData = new FormData();
             formData.append("update", content);
 
-            formData.append("server",    deployObject.server);
-            formData.append("username",  deployObject.username);
-            formData.append("password",  deployObject.password);
-            formData.append("directory", deployObject.directory);
+
 
 
 
             var xhr = new XMLHttpRequest();
 
             if(deployObject.deployType == 'ftp'){
+
+
+                formData.append("server",    deployObject.server);
+                formData.append("username",  deployObject.username);
+                formData.append("password",  deployObject.password);
+                formData.append("directory", deployObject.directory);
                 xhr.open('POST', 'tools/ftp-deploy.php', true);
+
+
             }else
             if(deployObject.deployType == 'ssh'){
+
+
+                formData.append("server",    deployObject.server);
+                formData.append("username",  deployObject.username);
+                formData.append("password",  deployObject.password);
+                formData.append("directory", deployObject.directory);
                 xhr.open('POST', 'tools/ssh-deploy.php', true);
+
+
+            }else
+            if(deployObject.deployType == 'gallery'){
+
+                formData.append("gallery",  deployObject.gallery);
+                formData.append("password",  deployObject.password);
+                xhr.open('POST', deployObject.url, true);
+
+
             }else{
                 throw new Error(`Unknown deploy type "${deployObject.deployType}".`);
             }

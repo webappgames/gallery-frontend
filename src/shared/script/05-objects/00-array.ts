@@ -26,6 +26,15 @@ module GALLERY.Objects{
         }
 
 
+        toJSON(){
+            return(this.objects.map(function (object) {
+                return object.toJSON();
+            }));
+        }
+
+
+
+
         get length(){
             return this.objects.length;
         }
@@ -57,8 +66,12 @@ module GALLERY.Objects{
         }
 
 
-        forEach(callback: (item: any)=>void): void {
+        forEach(callback: (item: Object)=>void): void {
             return this.objects.forEach(callback);
+        }
+
+        map(callback: (item: Object)=>any): any[] {
+            return this.objects.map(callback);
         }
 
 

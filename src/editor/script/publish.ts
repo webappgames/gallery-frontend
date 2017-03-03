@@ -133,13 +133,14 @@ module GALLERY.Editor{
 
 
         let analyticsObject = objects.filterTypes('analytics').findBy('analyticsType','gallery');
-        let deployObject = objects.filterTypes('deploy').getObjectByIndex(0);//.findBy('deployType','ftp');
+        let deployObjects = objects.filterTypes('deploy');//.findBy('deployType','ftp');
 
 
 
-        localStorage.setItem('preview-compiledObjects', JSON.stringify(compiled_objects.getAll()));
-        localStorage.setItem('preview-analyticsObject', JSON.stringify(analyticsObject));
-        localStorage.setItem('preview-deployObject', JSON.stringify(deployObject));
+        localStorage.setItem('preview-compiledObjects', JSON.stringify(compiled_objects));
+
+        localStorage.setItem('preview-analyticsObject', JSON.stringify(analyticsObject));//todo deprecated
+        localStorage.setItem('preview-deployObjects', JSON.stringify(deployObjects));
 
 
 

@@ -1,8 +1,12 @@
+/// <reference path="./develop-menu" />
+
 d('app');
 
 module GALLERY.Viewer.Components {
 
-    export function App(props) {
+    export function App(props: {app: GalleryApp}) {
+
+        let {app} = props;
 
 
         return (
@@ -31,6 +35,11 @@ module GALLERY.Viewer.Components {
                 <section id="boards" />
                 <section id="posters" />
                 <section id="popups" />
+
+
+                {app.develop?<DevelopMenu app={app}/>:null}
+
+
             </div>
         )
     }

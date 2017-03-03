@@ -69,6 +69,28 @@ module GALLERY.Objects{
 
 
 
+        toJSON(){
+            let pureObject = {};
+            for (var key in this) {
+
+                if (!_.isFunction(this[key])) {
+                    if (!_.isObject(this[key]) || ['position','size'].indexOf(key)!==-1) {
+                        if (key.substr(0, 1) !== '_') {
+
+
+                            pureObject[key] = this[key];
+
+                        }
+                    }
+                }
+            }
+
+            return(pureObject);
+        }
+
+
+
+
         public app: Viewer.GalleryApp;
         registerApp(app: Viewer.GalleryApp){
             if(this.app){

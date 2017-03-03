@@ -76,6 +76,7 @@ module GALLERY.Objects{
 
 
 
+        //todo use this
         createReactComponent(props){
 
 
@@ -90,9 +91,10 @@ module GALLERY.Objects{
 
 
 
-            let html = this.html;
+            //let html = this.html;
 
-            html = Mustache.render(html, {gallery: function () {return function (val, render) {
+            //todo this.html should be immutable
+            this.html = Mustache.render(this.html, {gallery: function () {return function (val, render) {
 
                 let images = objects.filterTypes('image');
                 let conds = JSON.parse(val);
@@ -110,8 +112,13 @@ module GALLERY.Objects{
                 return html;
             }}});
 
+            r(this.html);
+
 
             let innerHTML = Mustache.render(this.structure, this);
+
+
+
 
             innerHTML += (isNext ? '<div class="next" onclick="GALLERY.Viewer.appStateNext();"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>' : '');
 
@@ -194,9 +201,8 @@ module GALLERY.Objects{
 
 
 
-            let html = this.html;
-
-            html = Mustache.render(html, {gallery: function () {return function (val, render) {
+            //todo this.html should be immutable
+            this.html = Mustache.render(this.html, {gallery: function () {return function (val, render) {
 
                 let images = objects.filterTypes('image');
                 let conds = JSON.parse(val);

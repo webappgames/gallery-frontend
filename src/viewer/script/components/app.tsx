@@ -2,7 +2,11 @@
 
 d('app');
 
+
+
+
 module GALLERY.Viewer.Components {
+
 
     export function App(props: {app: GalleryApp}) {
 

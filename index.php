@@ -96,6 +96,10 @@ if(isset($_GET['comments'])){
     <!-- Dependencies -->
     <script src="/node_modules/react/dist/react.js"></script>
     <script src="/node_modules/react-dom/dist/react-dom.js"></script>
+
+    <script src="/node_modules/react-draggable/dist/react-draggable.js"></script>
+
+
     <script
             src="https://code.jquery.com/jquery-2.2.4.min.js"
             integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="

@@ -10,6 +10,7 @@ var sourcemaps = require('gulp-sourcemaps');
 
 
 
+
 gulp.task('default',['build']);
 
 
@@ -72,7 +73,7 @@ gulp.task('compile',['compile-editor','compile-viewer'/*,'compress-viewer'*/]);
 
 
 
-
+//var webpack = require('webpack-stream');
 
 ['viewer','editor'].forEach(function (part) {
 
@@ -80,8 +81,9 @@ gulp.task('compile',['compile-editor','compile-viewer'/*,'compress-viewer'*/]);
         return gulp.src('src/'+part+'/script/index.tsx')
             .pipe(sourcemaps.init()) // This means sourcemaps will be generated
             .pipe(ts({
-                //"module": "system",
-                "target": "es3",
+                //"module": "commonjs",
+                "target": "es3",//es6
+                //"moduleResolution": "Classic",
 
                 "sourceMap": true,
                 "inlineSourceMap": true,
@@ -92,6 +94,7 @@ gulp.task('compile',['compile-editor','compile-viewer'/*,'compress-viewer'*/]);
 
                 "outFile": part+'.js'
             }))
+            //.pipe(webpack())
             .pipe(sourcemaps.write())
             .pipe(gulp.dest('dist/'))
 

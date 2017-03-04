@@ -166,16 +166,21 @@ if(isset($_GET['comments'])){
 
 
 
-    var analyticsObjects = JSON.parse(localStorage.getItem('preview-analyticsObjects'));
-    if (analyticsObjects) {
-        analyticsObjects = new GALLERY.Objects.Array(analyticsObjects);
+    var deployObjects = JSON.parse(localStorage.getItem('preview-deployObjects'));
+    if (deployObjects) {
+        deployObjects = new GALLERY.Objects.Array(deployObjects);
+    }
+
+    console.log(localStorage.getItem('preview-deployObjects'));
+
+
+
+    var analyticsObject = JSON.parse(localStorage.getItem('preview-analyticsObject'));
+    if (analyticsObject) {
+        analyticsObject = new GALLERY.Objects.Analytics(analyticsObject);
     }
 
 
-    var deployObject = JSON.parse(localStorage.getItem('preview-deployObject'));
-    if (deployObject) {
-        deployObject = new GALLERY.Objects.Deploy(deployObject);
-    }
 
 
 
@@ -186,8 +191,8 @@ if(isset($_GET['comments'])){
         {
             mode: 'develop',
             state: location.toString(),
-            deployObject:deployObject,
-            analyticsObjects: analyticsObjects
+            deployObjects:deployObjects,
+            analyticsObject: analyticsObject
         },
         function (newState) {
             //...

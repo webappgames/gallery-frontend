@@ -15,12 +15,20 @@ module GALLERY.Viewer {
 
         let {app} = props;
 
+        r(app.options);
+
         return (
             <ReactDraggable>
                 <div className="develop-menu">
                     <h2>Actions</h2>
                     <ul>
-                        <li><a onClick={GALLERY.Viewer.deployToFTP}>Deploy to FTP</a></li>
+                        {app.options.deployObjects.map(function (deploy, i) {
+                            return (
+                                <li key={i}>
+                                    <a onClick={GALLERY.Viewer.deployToFTP.bind(GALLERY.Viewer,deploy)}>{deploy.getConsoleName()}</a>
+                                </li>
+                            );
+                        })}
                         <li><a onClick={GALLERY.Viewer.downloadZip}>Download as ZIP</a></li>
                         {/*<a onClick={GALLERY.Viewer.showStats}>Show stats</a>*/}
                     </ul>

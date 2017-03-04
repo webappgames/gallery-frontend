@@ -51,7 +51,7 @@ module GALLERY.Viewer{
         constructor(
             private objects:Objects.CompiledArray,
             private containerElement: HTMLElement,
-            private options: AppOptions,
+            public options: AppOptions,
             private onStateChange: (state: string) => any,
         ){
 
@@ -65,6 +65,15 @@ module GALLERY.Viewer{
             if(!(this.containerElement instanceof HTMLElement)){
                 throw new Error('Creating GalleryApp: Param "containerElement" should be instance of HTMLElement.');
             }
+            if(options.mode=='develop'){
+                if(!(options.deployObjects||null)){
+                    throw new Error('Missing "option.deployObjects".');
+                }
+                if(!(options.analyticsObject||null)){
+                    throw new Error('Missing "option.analyticsObject".');
+                }
+            }
+
             //todo check all other public APIs
 
 

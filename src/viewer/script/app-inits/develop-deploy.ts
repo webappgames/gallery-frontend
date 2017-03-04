@@ -26,7 +26,7 @@ module GALLERY.Viewer {
         return new Promise(function(resolve, reject) {
 
 
-            let deployNotification = new PH.Notification('Deploy', 'Downloading files');
+            let deployNotification = new PH.Notification('Creating ZIP', 'Downloading files');
 
 
             let index;
@@ -344,7 +344,7 @@ RewriteRule . / [L,QSA]
 
 
                 zip.generateAsync({type: "blob"}).then(function (content) {
-
+                    
                     resolve(content);
                     //onDone(content,deployNotification);
 
@@ -372,7 +372,7 @@ RewriteRule . / [L,QSA]
 
         }).catch(function (reason) {
 
-            alert(reason);
+            console.warn(reason);
 
         });
 
@@ -383,7 +383,11 @@ RewriteRule . / [L,QSA]
 
     export function deployToFTP(deployObject:Objects.Deploy){
 
-        createZip(function(content,deployNotification){
+        createZip().then(function(content){
+
+
+
+            let deployNotification = new PH.Notification('Deploy', 'Starting');
 
 
 

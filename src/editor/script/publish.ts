@@ -139,8 +139,8 @@ module GALLERY.Editor{
 
         localStorage.setItem('preview-compiledObjects', JSON.stringify(compiled_objects));
 
-        localStorage.setItem('preview-analyticsObject', JSON.stringify(analyticsObject));//todo deprecated
         localStorage.setItem('preview-deployObjects', JSON.stringify(deployObjects));
+        localStorage.setItem('preview-analyticsObject', JSON.stringify(analyticsObject));//todo deprecated
 
 
 

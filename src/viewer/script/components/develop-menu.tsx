@@ -18,9 +18,13 @@ module GALLERY.Viewer {
         return (
             <ReactDraggable>
                 <div className="develop-menu">
-                    <a onClick={GALLERY.Viewer.deployToFTP}>Deploy to FTP</a>
-                    <a onClick={GALLERY.Viewer.downloadZip}>Download as ZIP</a>
-                    <a onClick={GALLERY.Viewer.showStats}>Show stats</a>
+                    <h2>Actions</h2>
+                    <ul>
+                        <li><a onClick={GALLERY.Viewer.deployToFTP}>Deploy to FTP</a></li>
+                        <li><a onClick={GALLERY.Viewer.downloadZip}>Download as ZIP</a></li>
+                        {/*<a onClick={GALLERY.Viewer.showStats}>Show stats</a>*/}
+                    </ul>
+                    <h2>Labels</h2>
                     <ul>
                         {app.objects.filterTypes('label').map(function (label, i) {
                             return (

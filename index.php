@@ -161,7 +161,7 @@ if(isset($_GET['comments'])){
     console.log(GALLERY);
 
 
-
+    /**/
     var compiled_objects = new GALLERY.Objects.CompiledArray(JSON.parse(localStorage.getItem('preview-compiledObjects')));
 
 
@@ -224,6 +224,7 @@ if(isset($_GET['comments'])){
 
 
     });
+    /**/
     //viewerApp.getState();
 
 

@@ -17,6 +17,14 @@ module GALLERY.Objects{
 
         }
 
+        toString():string{
+
+            return(this.domain+' ('+this.analyticsType+')');
+
+        }
+
+
+
         getEditorInputHtml(key:string):string{
 
             switch(key) {

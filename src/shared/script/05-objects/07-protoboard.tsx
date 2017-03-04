@@ -43,6 +43,17 @@ module GALLERY.Objects{
 
         }
 
+        toString():string{
+
+            if(this.name || false){
+                return(this.name+' ('+this.type+')')
+            }else{
+                return(this.id);
+            }
+
+
+        }
+
 
         getEditorInputHtml(key:string):string{
 

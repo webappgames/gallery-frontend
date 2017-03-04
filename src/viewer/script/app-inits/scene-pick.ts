@@ -77,7 +77,7 @@ module GALLERY.Viewer {
 
 
 
-                r('Pointer clicked on '+object.getConsoleName());
+                r('Pointer clicked on '+object.toString());
 
 
 

@@ -69,6 +69,12 @@ module GALLERY.Objects{
 
 
 
+        toString():string{
+            return(this.id);
+        }
+
+
+
         toJSON(){
             let pureObject = {};
             for (var key in this) {
@@ -102,7 +108,7 @@ module GALLERY.Objects{
 
 
 
-        getEditorInputHtml(key:string):string{
+        getEditorInputHtml(key:strEing):string{
 
             switch(key) {
                 case 'world': return('<input type="text">');
@@ -248,6 +254,9 @@ module GALLERY.Objects{
 
 
 
+
+
+
         show(){
             if(this.getCreatedBabylonMesh()){//todo maybe use Promise
                 this.getCreatedBabylonMesh().visibility = 1;
@@ -262,16 +271,6 @@ module GALLERY.Objects{
         }
 
 
-        getConsoleName(){
-
-            if(this.name || false){
-                return(this.name+' ('+this.type+')')
-            }else{
-                return(this.id);
-            }
-
-
-        }
 
 
 

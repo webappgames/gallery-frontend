@@ -481,7 +481,7 @@ module GALLERY.Viewer {
         if(virtualObjects) {
 
             if(virtualObjects.length){
-                r('Created virtual objects for '+object.getConsoleName()+'.',virtualObjects);
+                r('Created virtual objects for '+object.toString()+'.',virtualObjects);
             }
 
             virtualObjects.forEach(function (object) {

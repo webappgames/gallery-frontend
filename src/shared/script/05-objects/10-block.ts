@@ -23,6 +23,12 @@ module GALLERY.Objects{
 
         }
 
+        toString():string{
+
+            return(`block(${this.shape}|${this.material}|${this.opacity*100}%)`);
+
+        }
+
 
         getEditorInputHtml(key:string):string{
 

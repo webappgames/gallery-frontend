@@ -31,6 +31,29 @@ module GALLERY.Objects{
         }
 
 
+        toString():string{
+
+            if(this.deployType=='ftp'){
+
+                return(`${this.server} to ${this.directory} via FTP`);
+
+            }else
+            if(this.deployType=='ssh'){
+
+                return(`${this.server} to ${this.directory} via SSH`);
+            }else
+            if(this.deployType=='gallery'){
+
+                return(`${this.gallery} on ${this.url}`);
+
+            }else{
+                return super.toString();
+            }
+
+
+        }
+
+
         getEditorInputHtml(key:string):string{
 
             switch(key) {

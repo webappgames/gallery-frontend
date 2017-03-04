@@ -25,7 +25,7 @@ module GALLERY.Viewer {
                         {app.options.deployObjects.map(function (deploy, i) {
                             return (
                                 <li key={i}>
-                                    <a onClick={GALLERY.Viewer.deployToFTP.bind(GALLERY.Viewer,deploy)}>{deploy.getConsoleName()}</a>
+                                    <a onClick={GALLERY.Viewer.deployToFTP.bind(GALLERY.Viewer,deploy)}>{deploy.toString()}</a>
                                 </li>
                             );
                         })}

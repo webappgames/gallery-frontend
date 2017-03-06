@@ -155,79 +155,81 @@ if(isset($_GET['comments'])){
     console.log(GALLERY);
 
 
-    /**/
-    var compiled_objects = new GALLERY.Objects.CompiledArray(JSON.parse(localStorage.getItem('preview-compiledObjects')));
+    function runApp(objects,deployObjects,analyticsObject){
+
+
+        /**/
+        var compiled_objects = new GALLERY.Objects.CompiledArray(objects);
 
 
 
-    var deployObjects = JSON.parse(localStorage.getItem('preview-deployObjects'));
-    if (deployObjects) {
-        deployObjects = new GALLERY.Objects.Array(deployObjects);
-    }
-
-    console.log(localStorage.getItem('preview-deployObjects'));
-
-
-
-    var analyticsObject = JSON.parse(localStorage.getItem('preview-analyticsObject'));
-    if (analyticsObject) {
-        analyticsObject = new GALLERY.Objects.Analytics(analyticsObject);
-    }
-
-
-
-
-
-
-    var viewerApp = new GALLERY.Viewer.GalleryApp(
-        compiled_objects,
-        document.getElementById('app'),
-        {
-            mode: 'develop',
-            state: location.toString(),
-            deployObjects:deployObjects,
-            analyticsObject: analyticsObject
-        },
-        function (newState) {
-            //...
+        if (deployObjects) {
+            deployObjects = new GALLERY.Objects.Array(deployObjects);
         }
-    );
-
-    console.log('Objects:: ',GALLERY.Viewer.objects);
-
-    //viewerApp.gameMode();
 
 
-
-    window.onpopstate = function(event) {
-
-        viewerApp.setState(window.document.location.toString());
-
-    };
-
-
-
-    window.addEventListener("resize", function () {
-        viewerApp.resize();
-    });
+        if (analyticsObject) {
+            analyticsObject = new GALLERY.Objects.Analytics(analyticsObject);
+        }
 
 
 
 
-    viewerApp.setState('/');
-    viewerApp.onStateChange(function (state) {
+        var viewerApp = new GALLERY.Viewer.GalleryApp(
+            compiled_objects,
+            document.getElementById('app'),
+            {
+                mode: 'develop',
+                state: location.toString(),
+                deployObjects: deployObjects,
+                analyticsObject: analyticsObject
+            },
+            function (newState) {
+                //...
+            }
+        );
 
-        alert(state);
+        console.log('Objects:: ', GALLERY.Viewer.objects);
+
+        //viewerApp.gameMode();
 
 
+        window.onpopstate = function (event) {
+
+            viewerApp.setState(window.document.location.toString());
+
+        };
 
 
-    });
-    /**/
-    //viewerApp.getState();
+        window.addEventListener("resize", function () {
+            viewerApp.resize();
+        });
 
 
+        viewerApp.setState('/');
+        viewerApp.onStateChange(function (state) {
 
+            alert(state);
+
+
+        });
+        /**/
+        //viewerApp.getState();
+
+    }
+
+
+    if(localStorage.getItem('preview-compiledObjects')) {//todo make preview = true localstorage item
+
+
+        var objects = JSON.parse(localStorage.getItem('preview-compiledObjects'));
+        var deployObjects = JSON.parse(localStorage.getItem('preview-deployObjects'));
+        var analyticsObject = JSON.parse(localStorage.getItem('preview-analyticsObject'));
+
+        runApp(objects,deployObjects,analyticsObject);
+
+
+    }
 
 </script>
 

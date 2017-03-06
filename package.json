@@ -1,9 +1,14 @@
 {
   "devDependencies": {
     "awesome-typescript-loader": "^3.0.4",
+    "gulp-add": "0.0.2",
+    "gulp-add-src": "^0.2.0",
+    "gulp-closure-compiler": "^0.4.0",
+    "gulp-concat": "^2.6.1",
     "gulp-rename": "^1.2.2",
     "gulp-typescript": "^2.13.6",
     "gulp-uglify": "^2.0.0",
+    "gulp-uglifyjs": "^0.6.2",
     "pump": "^1.0.1",
     "run-sequence": "^1.2.2",
     "source-map-loader": "^0.1.6",

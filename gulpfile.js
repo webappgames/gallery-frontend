@@ -75,7 +75,7 @@ gulp.task('compile',['compile-editor','compile-viewer'/*,'compress-viewer'*/]);
 
 //var webpack = require('webpack-stream');
 
-['viewer','editor'].forEach(function (part) {
+['editor'/*,'viewer'*/].forEach(function (part) {
 
     gulp.task('compile-'+part, function () {
         return gulp.src('src/'+part+'/script/index.tsx')
@@ -103,6 +103,76 @@ gulp.task('compile',['compile-editor','compile-viewer'/*,'compress-viewer'*/]);
 
 });
 
+
+
+
+//var add = require('gulp-add');
+var addsrc = require('gulp-add-src');
+var concat = require('gulp-concat');
+//var closureCompiler = require('gulp-closure-compiler');
+var uglify = require('gulp-uglifyjs');
+
+
+/**/
+gulp.task('compile-viewer', function () {
+    return gulp.src('src/viewer/script/index.tsx')
+        .pipe(sourcemaps.init()) // This means sourcemaps will be generated
+        .pipe(ts({
+            //"module": "commonjs",
+            "target": "es3",//es6
+            //"moduleResolution": "Classic",
+
+            "sourceMap": true,
+            "inlineSourceMap": true,
+            "inlineSources": true,
+
+
+            "jsx": "react",
+
+            "outFile": 'viewer-gallery.js'
+        }))
+        //.pipe(webpack())
+
+
+
+        .pipe(addsrc.prepend('node_modules/react-draggable/dist/react-draggable.js'))
+        .pipe(addsrc.prepend('node_modules/react-dom/dist/react-dom.js'))
+        .pipe(addsrc.prepend('node_modules/react/dist/react.js'))
+
+
+
+        .pipe(addsrc.prepend('node_modules/jquery/dist/jquery.js'))
+        .pipe(addsrc.prepend('node_modules/jszip/dist/jszip.min.js'))
+        .pipe(addsrc.prepend('node_modules/file-saver/FileSaver.min.js'))
+        .pipe(addsrc.prepend('node_modules/mustache/mustache.min.js'))
+        .pipe(addsrc.prepend('node_modules/html2canvas/dist/html2canvas.js'))
+        .pipe(addsrc.prepend('node_modules/jsuri/Uri.js'))
+        .pipe(addsrc.prepend('node_modules/lodash/lodash.js'))
+        .pipe(addsrc.prepend('node_modules/babylonjs/babylon.js'))
+        .pipe(addsrc.prepend('node_modules/handjs/hand.min.js'))
+
+
+
+
+        .pipe(concat('viewer.js'))
+
+
+
+        /*.pipe(closureCompiler({
+            compilerPath: 'node_modules/google-closure-compiler/compiler.jar',
+            fileName: 'viewer.min.js'
+        }))*/
+
+        //.pipe(uglify())
+
+
+
+        .pipe(sourcemaps.write())
+        .pipe(gulp.dest('dist/'))
+
+        ;
+});
+/**/
 
 
 

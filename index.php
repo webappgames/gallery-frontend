@@ -93,25 +93,20 @@ if(isset($_GET['comments'])){
     <title><?=htmlspecialchars($title)?></title>
 
 
-    <!-- Dependencies -->
-    <script src="/node_modules/react/dist/react.js"></script>
-    <script src="/node_modules/react-dom/dist/react-dom.js"></script>
-
-    <script src="/node_modules/react-draggable/dist/react-draggable.js"></script>
-
-
-    <script
-            src="https://code.jquery.com/jquery-2.2.4.min.js"
-            integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
-            crossorigin="anonymous"></script>
-    <script
-            src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
-            integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
-            crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="src/viewer/style/viewer.css">
 
 
+
+
+
+
+
+    <!-- Dependencies -->
+    <!--<script src="/node_modules/react/dist/react.js"></script>
+    <script src="/node_modules/react-dom/dist/react-dom.js"></script>
+    <script src="/node_modules/react-draggable/dist/react-draggable.js"></script>
+    <script src="/node_modules/jquery/dist/jquery.js"></script>
     <script src="/node_modules/jszip/dist/jszip.min.js"></script>
     <script src="/node_modules/file-saver/FileSaver.min.js"></script>
     <script src="/node_modules/mustache/mustache.min.js"></script>
@@ -119,12 +114,11 @@ if(isset($_GET['comments'])){
     <script src="/node_modules/jsuri/Uri.js"></script>
     <script src="/node_modules/lodash/lodash.js"></script>
     <script src="/node_modules/babylonjs/babylon.js"></script>
-    <script src="/node_modules/handjs/hand.min.js"></script>
+    <script src="/node_modules/handjs/hand.min.js"></script>-->
 
 
 
-    <!--<script src="http://cssrefresh.frebsite.nl/js/cssrefresh.js"></script>-->
-    <!--<script src="https://cdn.ravenjs.com/3.9.1/raven.min.js"></script>-->
+
 
 
 
@@ -153,7 +147,7 @@ if(isset($_GET['comments'])){
 
 
 
-<!--todo move to dependencies-->
+<!--todo move to header-->
 <script src="/dist/viewer.js"></script>
 <script>
 

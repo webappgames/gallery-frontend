@@ -113,10 +113,11 @@ module GALLERY.Viewer {
             media = new Promise(function (resolve, reject) {
                 let sources = [
 
-                    /*'/viewer/style/viewer.css',
+                    '/src/viewer/style/viewer.css',
+                    '/dist/viewer.js',
 
 
-                    '/media/images/other/eye.jpg',
+                    /*'/media/images/other/eye.jpg',
 
 
                     '/node_modules/react/dist/react.js',
@@ -266,7 +267,7 @@ module GALLERY.Viewer {
                 let deployFiles = [].concat(screenshots, media);
 
 
-                let jsFiles = deployFiles.filter(function (file) {
+                /*let jsFiles = deployFiles.filter(function (file) {
                     return (file.name.substr(-3) == '.js');
                 });
 
@@ -275,16 +276,16 @@ module GALLERY.Viewer {
                 });
 
 
-                let scripts = jsFiles.map(function (file) {
+                /*let scripts = jsFiles.map(function (file) {
                     return file.content;
                 });
 
 
-                scripts.push(`
+                /*scripts.push(`
             $.get('/objects.compiled.json').done(function(response){
                 GALLERY.Viewer.run(new GALLERY.Objects.CompiledArray(response));
             });
-`);
+`);*/
 
 
                 /*scripts.push(`(function(d, s, id) {
@@ -296,7 +297,7 @@ module GALLERY.Viewer {
                  }(document, 'script', 'facebook-jssdk'));`);*/
 
 
-                let script = scripts.join(';/**/\n');
+                //let script = scripts.join(';/**/\n');
 
 
                 //let gallery_folder = gallery_domain.split('.').join('-');
@@ -306,7 +307,7 @@ module GALLERY.Viewer {
                 //let zipRoot = zip.folder(gallery_folder);
 
 
-                zip.file('script-bundle.js', script);
+                //zip.file('script-bundle.js', script);
 
 
                 zip.file('objects.compiled.json', JSON.stringify(objects, null, 4));
@@ -332,11 +333,11 @@ RewriteRule . / [L,QSA]
 
 
                 const COMMENT = /<!--((?!-->)(.|\s))*-->/g;
-                const SCRIPT = /<script((?!script>)(.|\s))*script>/g;
+                //const SCRIPT = /<script((?!script>)(.|\s))*script>/g;
 
 
-                html = html.replace(SCRIPT, '');
-                html = html.split('<!--GALLERY SCRIPT-->').join('<script src="/script-bundle.js" async></script>');
+                //html = html.replace(SCRIPT, '');
+                //html = html.split('<!--GALLERY SCRIPT-->').join('<script src="/script-bundle.js" async></script>');
                 html = html.replace(COMMENT, '');
 
 

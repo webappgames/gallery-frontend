@@ -94,7 +94,7 @@ if(isset($_GET['comments'])){
 
 
 
-    <link rel="stylesheet" href="src/viewer/style/viewer.css">
+    <link rel="stylesheet" href="/src/viewer/style/viewer.css">
 
 
 
@@ -155,7 +155,7 @@ if(isset($_GET['comments'])){
     console.log(GALLERY);
 
 
-    function runApp(objects,deployObjects,analyticsObject){
+    function runApp(objects,mode,deployObjects,analyticsObject){
 
 
         /**/
@@ -179,7 +179,7 @@ if(isset($_GET['comments'])){
             compiled_objects,
             document.getElementById('app'),
             {
-                mode: 'develop',
+                mode: mode,
                 state: location.toString(),
                 deployObjects: deployObjects,
                 analyticsObject: analyticsObject
@@ -226,7 +226,15 @@ if(isset($_GET['comments'])){
         var deployObjects = JSON.parse(localStorage.getItem('preview-deployObjects'));
         var analyticsObject = JSON.parse(localStorage.getItem('preview-analyticsObject'));
 
-        runApp(objects,deployObjects,analyticsObject);
+        runApp(objects,'develop',deployObjects,analyticsObject);
+
+
+    }else{
+
+
+        $.get('/objects.compiled.json').done(function(response){
+            runApp(response,'production',null,null);
+        });
 
 
     }

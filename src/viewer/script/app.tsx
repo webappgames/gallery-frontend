@@ -136,7 +136,7 @@ module GALLERY.Viewer{
             }else{
                 //runStats();
 
-                Raven.config('https://71d6fb2b651845dea3ef3861e8df529d@sentry.io/122195').install({});
+                //todo Raven.config('https://71d6fb2b651845dea3ef3861e8df529d@sentry.io/122195').install({});
 
             }
 

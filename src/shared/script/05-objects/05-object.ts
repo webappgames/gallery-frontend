@@ -10,6 +10,7 @@ module GALLERY.Objects{
         public world: string;
         public hidden: boolean;
         public virtual: boolean;
+        private virtualObjects: Objects.Array;
         public position: {
           x: number,
           y: number
@@ -65,7 +66,25 @@ module GALLERY.Objects{
 
 
 
+
+            this.virtualObjects = null;
+
         }
+
+
+
+        createVirtualObjects(): Objects.Array {
+            return new Objects.Array();
+        }
+        getVirtualObjects(): Objects.Array {
+            if(!this.virtualObjects){
+                this.virtualObjects = this.createVirtualObjects();
+            }
+
+            return(this.virtualObjects);
+        }
+
+
 
 
 

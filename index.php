@@ -148,6 +148,7 @@ if(isset($_GET['comments'])){
 
 
 <!--todo move to header-->
+<script src="/dist/viewer.libs.js"></script>
 <script src="/dist/viewer.js"></script>
 <script>
 

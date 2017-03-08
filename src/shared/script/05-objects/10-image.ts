@@ -413,10 +413,9 @@ module GALLERY.Objects {
 
 
 
-        private virtualObjects: Objects.Array;//todo maybe in Object
         createVirtualObjects(): Objects.Array {
 
-            this.virtualObjects = new Objects.Array();
+            let virtualObjects = new Objects.Array();
 
 
             let object = this;
@@ -487,7 +486,7 @@ module GALLERY.Objects {
                     }).registerApp(this.getApp());
 
 
-                    this.virtualObjects.push(zone);
+                    virtualObjects.push(zone);
 
 
                     let label = new Objects.Label({
@@ -511,7 +510,7 @@ module GALLERY.Objects {
 
                     }).registerApp(this.getApp());
 
-                    this.virtualObjects.push(label);
+                    virtualObjects.push(label);
                     //processObject(label);//todo better
                     //objects.push(label);
 
@@ -521,7 +520,7 @@ module GALLERY.Objects {
 
                 }
 
-                return (this.virtualObjects);
+                return (virtualObjects);
 
 
             }
@@ -531,7 +530,7 @@ module GALLERY.Objects {
 
 
         getVirtualLabel(): Label{
-            return this.virtualObjects.filterTypes('label').getObjectByIndex(0) as Label;
+            return this.getVirtualObjects().filterTypes('label').getObjectByIndex(0) as Label;
         }
 
 

@@ -115,6 +115,7 @@ module GALLERY.Viewer {
 
                     '/src/viewer/style/viewer.css',
                     '/dist/viewer.js',
+                    '/dist/viewer.libs.js',
 
 
                     /*'/media/images/other/eye.jpg',

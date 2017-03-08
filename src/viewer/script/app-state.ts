@@ -119,7 +119,7 @@ module GALLERY.Viewer{
         }
 
 
-        unlockGatesAndActivateKeys('#'+Uri(location).anchor());
+        unlockGatesAndActivateKeys('#'+ new Uri(location).anchor());
 
 
         //r(uri);

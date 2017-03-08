@@ -55,7 +55,7 @@ module GALLERY.Objects{
 
 
         createVirtualObjects():Objects.Array{
-            return(null);
+            return new Objects.Array();
         }
 
 

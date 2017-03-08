@@ -6,7 +6,12 @@ var rename = require('gulp-rename');
 var ts = require('gulp-typescript');
 var runSequence = require('run-sequence');
 var sourcemaps = require('gulp-sourcemaps');
-
+//var add = require('gulp-add');
+var addsrc = require('gulp-add-src');
+var concat = require('gulp-concat');
+//var closureCompiler = require('gulp-closure-compiler');
+var uglify = require('gulp-uglifyjs');
+gulpMerge = require('gulp-merge');
 
 
 
@@ -28,7 +33,7 @@ gulp.task('build', function() {
 
 
 
-gulp.task('compile',['compile-editor','compile-viewer'/*,'compress-viewer'*/]);
+gulp.task('compile',['compile-editor','compile-viewer-libs','compile-viewer'/*,'compress-viewer'*/]);
 
 
 
@@ -106,17 +111,40 @@ gulp.task('compile',['compile-editor','compile-viewer'/*,'compress-viewer'*/]);
 
 
 
-//var add = require('gulp-add');
-var addsrc = require('gulp-add-src');
-var concat = require('gulp-concat');
-//var closureCompiler = require('gulp-closure-compiler');
-var uglify = require('gulp-uglifyjs');
+
+
+/**/
+gulp.task('compile-viewer-libs', function () {
+
+
+    return gulp.src([
+        'node_modules/react/dist/react.js',
+        'node_modules/react-dom/dist/react-dom.js',
+        'node_modules/react-draggable/dist/react-draggable.js',
+        'node_modules/jquery/dist/jquery.js',
+        'node_modules/jszip/dist/jszip.min.js',
+        'node_modules/file-saver/FileSaver.min.js',
+        'node_modules/mustache/mustache.min.js',
+        'node_modules/html2canvas/dist/html2canvas.js',
+        'node_modules/jsuri/Uri.js',
+        'node_modules/lodash/lodash.js',
+        'node_modules/babylonjs/babylon.js',
+        'node_modules/handjs/hand.min.js'
+    ])
+        .pipe(sourcemaps.init())
+        .pipe(concat('viewer.libs.js'))
+        .pipe(sourcemaps.write())
+        .pipe(gulp.dest('dist/'))
+    ;
+});
 
 
 /**/
 gulp.task('compile-viewer', function () {
+
+
     return gulp.src('src/viewer/script/index.tsx')
-        .pipe(sourcemaps.init()) // This means sourcemaps will be generated
+        .pipe(sourcemaps.init())
         .pipe(ts({
             //"module": "commonjs",
             "target": "es3",//es6
@@ -129,50 +157,16 @@ gulp.task('compile-viewer', function () {
 
             "jsx": "react",
 
-            "outFile": 'viewer-gallery.js'
+            "outFile": 'viewer-gallery.js',
+
         }))
-        //.pipe(webpack())
-
-
-
-        .pipe(addsrc.prepend('node_modules/react-draggable/dist/react-draggable.js'))
-        .pipe(addsrc.prepend('node_modules/react-dom/dist/react-dom.js'))
-        .pipe(addsrc.prepend('node_modules/react/dist/react.js'))
-
-
-
-        .pipe(addsrc.prepend('node_modules/jquery/dist/jquery.js'))
-        .pipe(addsrc.prepend('node_modules/jszip/dist/jszip.min.js'))
-        .pipe(addsrc.prepend('node_modules/file-saver/FileSaver.min.js'))
-        .pipe(addsrc.prepend('node_modules/mustache/mustache.min.js'))
-        .pipe(addsrc.prepend('node_modules/html2canvas/dist/html2canvas.js'))
-        .pipe(addsrc.prepend('node_modules/jsuri/Uri.js'))
-        .pipe(addsrc.prepend('node_modules/lodash/lodash.js'))
-        .pipe(addsrc.prepend('node_modules/babylonjs/babylon.js'))
-        .pipe(addsrc.prepend('node_modules/handjs/hand.min.js'))
-
-
-
-
         .pipe(concat('viewer.js'))
-
-
-
-        /*.pipe(closureCompiler({
-            compilerPath: 'node_modules/google-closure-compiler/compiler.jar',
-            fileName: 'viewer.min.js'
-        }))*/
-
-        //.pipe(uglify())
-
-
-
         .pipe(sourcemaps.write())
         .pipe(gulp.dest('dist/'))
-
         ;
 });
-/**/
+
+
 
 
 

@@ -266,15 +266,15 @@ module GALLERY.Objects{
 
 
 
-        private virtualObjects=null;//todo maybe in Object
+
         createVirtualObjects():Objects.Array{
-            this.virtualObjects = new Objects.Array();
+            let virtualObjects = new Objects.Array();
 
 
 
 
             //------------------------------------------------------------
-            this.virtualObjects.push(new Objects.Board({
+            virtualObjects.push(new Objects.Board({
 
                 id: createGuid(),
                 type: 'board',
@@ -308,7 +308,7 @@ module GALLERY.Objects{
                 this.hide();
             }else{
                 //this.virtualObjects.getObjectByIndex(0).hide();
-                this.virtualObjects.getObjectByIndex(0).hidden=true;
+                virtualObjects.getObjectByIndex(0).hidden=true;
             }
             //------------------------------------------------------------
 
@@ -447,7 +447,7 @@ module GALLERY.Objects{
                 buttonMesh.offsetVertical -= this.height / 2;
 
 
-                this.virtualObjects.push(buttonMesh);
+                virtualObjects.push(buttonMesh);
 
             }
 
@@ -524,7 +524,7 @@ module GALLERY.Objects{
 
 
             //r(virtualObjects);
-            return(this.virtualObjects);
+            return(virtualObjects);
 
         }
 

@@ -93,8 +93,7 @@ module GALLERY.Objects{
         }
 
 
-        create$Element(){
-
+        create$Element() {
 
 
             var $element = this._create$Element();
@@ -104,19 +103,19 @@ module GALLERY.Objects{
             var $block = $('<div>').addClass('image');
 
 
-            var width = object.width*zoom_selected;
-            var height = object.height*zoom_selected;
+            var width = object.width * zoom_selected;
+            var height = object.height * zoom_selected;
 
-            $block.css('width',width);
-            $block.css('height',height);
-            $block.css('background-color','rgba(0,0,0,0.5)');
+            $block.css('width', width);
+            $block.css('height', height);
+            $block.css('background-color', 'rgba(0,0,0,0.5)');
 
 
-            $block.css('position','relative');
-            $block.css('top',-height/2);
-            $block.css('left',-width/2);
+            $block.css('position', 'relative');
+            $block.css('top', -height / 2);
+            $block.css('left', -width / 2);
 
-            $block.css('transform','rotate('+object.rotation+'deg)');
+            $block.css('transform', 'rotate(' + object.rotation + 'deg)');
 
 
             $element.append($block);
@@ -125,31 +124,39 @@ module GALLERY.Objects{
 
             return $element;
 
+
         }
 
 
         createBabylonMesh(scene) {
 
+            if (this.getApp().isDevelop()) {
 
-            let mesh = BABYLON.Mesh.CreateBox(this.id, BLOCK_SIZE, scene);
-            mesh.material =  new BABYLON.StandardMaterial("texture1", scene);
-            mesh.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
-            mesh.material.alpha = 0.2;
+                let mesh = BABYLON.Mesh.CreateBox(this.id, BLOCK_SIZE, scene);
+                mesh.material = new BABYLON.StandardMaterial("texture1", scene);
+                mesh.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+                mesh.material.alpha = 0.2;
 
-            mesh.position = this.getBabylonPosition();
+                mesh.position = this.getBabylonPosition();
 
-            mesh.position.y += BLOCK_SIZE;//* BLOCKS_2D_3D_SHAPES.room.length / 2;
-            mesh.scaling.y = 1;
+                mesh.position.y += BLOCK_SIZE;//* BLOCKS_2D_3D_SHAPES.room.length / 2;
+                mesh.scaling.y = 1;
 
-            mesh.scaling.x = this.width;
-            mesh.scaling.z = this.height;
+                mesh.scaling.x = this.width;
+                mesh.scaling.z = this.height;
 
 
-            mesh.checkCollisions = false;
-            mesh.isPickable = false;
+                mesh.checkCollisions = false;
+                mesh.isPickable = false;
 
-            //meshes.push(mesh);
-            return(mesh);
+                //meshes.push(mesh);
+                return (mesh);
+
+            } else {
+
+                return null;
+
+            }
         }
 
 

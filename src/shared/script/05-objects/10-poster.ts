@@ -302,7 +302,7 @@ module GALLERY.Objects{
                 //posterTextColor: '#000000',
 
 
-            },this));
+            },this).registerApp(this.getApp()));
 
             if(this.opened){
                 this.hide();

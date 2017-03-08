@@ -484,7 +484,7 @@ module GALLERY.Objects {
                         uri: uri,
                         uri_level: 10000,//todo better low priority
 
-                    });
+                    }).registerApp(this.getApp());
 
 
                     this.virtualObjects.push(zone);
@@ -509,7 +509,7 @@ module GALLERY.Objects {
                         uri: uri,
                         parent: object.parent,
 
-                    });
+                    }).registerApp(this.getApp());
 
                     this.virtualObjects.push(label);
                     //processObject(label);//todo better
@@ -558,10 +558,10 @@ module GALLERY.Objects {
             if(pressed) {
 
 
-                if(this.app.getState()!==this.getUniqueUri()){
-                    this.app.setState(this.getUniqueUri(),false,false);
+                if(this.getApp().getState()!==this.getUniqueUri()){
+                    this.getApp().setState(this.getUniqueUri(),false,false);
                 }else{
-                    this.app.setState(this.parent,false,false);
+                    this.getApp().setState(this.parent,false,false);
                 }
 
 

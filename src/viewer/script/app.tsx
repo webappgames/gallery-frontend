@@ -159,6 +159,10 @@ module GALLERY.Viewer{
         }
 
 
+        isDevelop():boolean{
+            return this.develop;
+        }
+
 
         getState():string{
             return(this.state);

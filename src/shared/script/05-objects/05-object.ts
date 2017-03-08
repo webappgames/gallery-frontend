@@ -97,12 +97,23 @@ module GALLERY.Objects{
 
 
 
-        public app: Viewer.GalleryApp;
+        private _app: Viewer.GalleryApp;
         registerApp(app: Viewer.GalleryApp){
-            if(this.app){
+            if(this._app){
                 throw new Error('App was already registred on this Array.');
             }
-            this.app = app;
+            this._app = app;
+
+            return this;
+        }
+
+
+        getApp():Viewer.GalleryApp{
+            if(this._app){
+                return this._app;
+            }else{
+                return null;
+            }
         }
 
 

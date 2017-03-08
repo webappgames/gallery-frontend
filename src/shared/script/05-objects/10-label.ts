@@ -8,6 +8,7 @@ module GALLERY.Objects{
         public storey: string;
         public name: string;
         public uri: string;
+        public parent: string;
         public next: string;
         public rotation: number;
         public rotationNotImportant: boolean;
@@ -20,6 +21,7 @@ module GALLERY.Objects{
 
             this.name = this.name || '';
             this.uri = this.uri || '';
+            this.parent = this.parent || '';
             this.next = this.next || 'none';
             this.rotation = this.rotation || 0;
             this.rotationNotImportant = this.rotationNotImportant || false;
@@ -33,6 +35,8 @@ module GALLERY.Objects{
                 case 'name':
                     return('<input type="text">');
                 case 'uri':
+                    return('<input type="text">');
+                case 'parent':
                     return('<input type="text">');
                 case 'next':
                     return('<input type="text">');

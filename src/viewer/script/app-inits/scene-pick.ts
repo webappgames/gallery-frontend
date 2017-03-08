@@ -9,22 +9,6 @@ d('scene-pick');
 module GALLERY.Viewer {
 
 
-    export function goToParent() {
-
-        let current = GALLERY.Viewer.getAppStateLabel();
-
-        //r(current);
-        if (current.parent && current.parent !== 'none') {
-
-            //r('Going to parent');
-            GALLERY.Viewer.appState(current.parent, false, false);
-        } else if (current.next && current.next !== 'none') {
-            //todo context menu
-            //GALLERY.Viewer.appState(current.next, false, false);
-        }
-
-
-    }
 
 
 
@@ -46,7 +30,7 @@ module GALLERY.Viewer {
             if (['ground','ground_merged','room','room_merged'].indexOf(pickResult.pickedMesh.name)!=-1) {
 
                 r(pickResult.pickedMesh.name+' picked');
-                goToParent();
+                appStateParent();
 
 
             }/* else {
@@ -95,7 +79,7 @@ module GALLERY.Viewer {
 
                 if(object)
                 if (current.getUri() == object.getUri()) {
-                    goToParent();
+                    appStateParent();
 
                 } else {
 
@@ -107,7 +91,7 @@ module GALLERY.Viewer {
 
         } else {
 
-            goToParent();
+            appStateParent();
         }
 
         /**/

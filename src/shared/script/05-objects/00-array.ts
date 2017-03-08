@@ -88,7 +88,7 @@ module GALLERY.Objects{
 
         findBy(key:string, value:string | number | boolean):Object {
 
-            //r('findBy',key,value);
+            r('findBy',key,value);
 
             let value_: any;
 

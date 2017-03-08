@@ -139,7 +139,7 @@ module GALLERY.Objects{
             //todo react component
             if(this.design=='board' && !isNext) {
 
-                innerHTML += `<button onclick="GALLERY.Viewer.goToParent();"><i class="fa fa-arrow-left" aria-hidden="true"></i> Zpět</button>`;
+                innerHTML += `<button onclick="GALLERY.Viewer.appStateParent();"><i class="fa fa-arrow-left" aria-hidden="true"></i> Zpět</button>`;
                 innerHTML += `<button onclick="GALLERY.Viewer.appStateTurnBack();"><i class="fa fa-repeat" aria-hidden="true"></i> Otočit se</button>`;
                 innerHTML += `<button class="discuss" onclick="fbDiscuss('`+fullUrl+`');"><i class="fa fa-pencil" aria-hidden="true"></i> Přidat komentář</button>`;
 
@@ -260,7 +260,7 @@ module GALLERY.Objects{
 
                 //element.innerHTML += `<button class="fb-share-button" data-href="http://www.your-domain.com/your-page.html"></button>`;
 
-                element.innerHTML += `<button onclick="GALLERY.Viewer.goToParent();"><i class="fa fa-arrow-left" aria-hidden="true"></i> Zpět</button>`;
+                element.innerHTML += `<button onclick="GALLERY.Viewer.appStateParent();"><i class="fa fa-arrow-left" aria-hidden="true"></i> Zpět</button>`;
                 element.innerHTML += `<button onclick="GALLERY.Viewer.appStateTurnBack();"><i class="fa fa-repeat" aria-hidden="true"></i> Otočit se</button>`;
                 element.innerHTML += `<button class="discuss" onclick="fbDiscuss('`+fullUrl+`');"><i class="fa fa-pencil" aria-hidden="true"></i> Přidat komentář</button>`;
 

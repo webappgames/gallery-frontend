@@ -58,39 +58,42 @@ module GALLERY.Viewer{
 
         r('Processing location...',arguments);
 
-        let uri = new Uri(location);
-        let pathname = uri.path();
 
 
+        const pathname =  new Uri(location).path();
+        r(pathname);
 
-        let rootLabel = objects.filterTypes('label').findBy('uri','/');
-        let label;
 
+        const rootLabel = objects.filterTypes('label').findBy('uri','/');
+
+
+        let object: Objects.Object;
 
 
         if (pathname.substr(0, 2) === '/:') {
-
-            let objectId = pathname.substr(2);
-            let object = objects.getObjectById(objectId) as Objects.Label|Objects.Image;
-
-            if(object instanceof Objects.Label){
-                label = object;
-            }else
-            if(object instanceof Objects.Image){
-                label = object.getVirtualLabel();
-            }else{
-                throw new Error(`App state string in format :id should be Label or Image.`);
-            }
-
+            object = objects.getObjectById(pathname.substr(2));
         } else {
-
-            label = objects.filterTypes('label').findBy('uri',pathname);
-
-            if (!label) {
-                label = rootLabel;
-            }
-
+            object = objects.findBy('uri',pathname);
         }
+
+
+
+        let label:Objects.Label;
+
+        if(object instanceof Objects.Label){
+            label = object;
+        }else
+        if(object instanceof Objects.Image){
+            label = object.getVirtualLabel();
+        }else{
+            throw new Error(`App state should refer to Label or Image.`);
+        }
+
+
+        /*if (!label) {
+            label = rootLabel;
+        }*/
+
 
 
         if(!label){
@@ -116,13 +119,31 @@ module GALLERY.Viewer{
         }
 
 
-        unlockGatesAndActivateKeys('#'+uri.anchor());
+        unlockGatesAndActivateKeys('#'+Uri(location).anchor());
 
 
         //r(uri);
 
     }
 
+
+
+    export function appStateParent() {
+
+        let current = getAppStateLabel();
+
+        r(current);
+        if (current.parent && current.parent !== 'none') {
+
+            //r('Going to parent');
+            GALLERY.Viewer.appState(current.parent, false, false);
+        } else if (current.next && current.next !== 'none') {
+            //todo context menu
+            //GALLERY.Viewer.appState(current.next, false, false);
+        }
+
+
+    }
 
 
 
@@ -193,13 +214,14 @@ module GALLERY.Viewer{
 
 
 
-    export function getAppStateLabel(){
+    export function getAppStateLabel():Objects.Label{
 
 
         //r(objects.filterTypes('label'),window.document.location);
 
         let pathname = window.document.location.pathname;
-        return objects.filterTypes('label').findBy('uri',pathname);
+        return objects.filterTypes('label').findBy('uri',pathname) as Objects.Label;
+
         /*if(pathname.substr(0,2)=='/:'){
             //r(pathname.substr(2));
             return objects.findBy('id',pathname.substr(2));

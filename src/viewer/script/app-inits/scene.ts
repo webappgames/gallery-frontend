@@ -527,7 +527,7 @@ module GALLERY.Viewer {
                 } else {
 
                     pressed = true;
-                    onPointerClick.call(this, evt, pickResult);
+                    //todo deprecated onPointerClick.call(this, evt, pickResult);
 
                 }
 
@@ -564,7 +564,16 @@ module GALLERY.Viewer {
                         object = eventObject;
                     }
 
-                    if(object)object.handlePointerRelease(pressed, evt, pickResult);
+
+
+                    if(object){
+
+                        try{
+                            object.handlePointerRelease(pressed, evt, pickResult);
+                        }catch(error){
+                            console.warn(`Error cached in handlePointerRelease: ${error}`);
+                        }
+                    }
 
 
 

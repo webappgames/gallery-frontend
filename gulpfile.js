@@ -131,9 +131,10 @@ gulp.task('compile-viewer-libs', function () {
         'node_modules/babylonjs/babylon.js',
         'node_modules/handjs/hand.min.js'
     ])
-        .pipe(sourcemaps.init())
+        //.pipe(sourcemaps.init())
+        .pipe(uglify())
         .pipe(concat('viewer.libs.js'))
-        .pipe(sourcemaps.write())
+        //.pipe(sourcemaps.write())
         .pipe(gulp.dest('dist/'))
     ;
 });
@@ -193,7 +194,7 @@ gulp.task('compile-viewer', function () {
 
 
 /*
-var uglify = require('gulp-uglify');
+
 var pump = require('pump');
 
 

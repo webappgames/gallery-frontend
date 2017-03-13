@@ -69,9 +69,9 @@ module GALLERY.Viewer{
                 if(!(options.deployObjects||null)){
                     throw new Error('Missing "option.deployObjects".');
                 }
-                if(!(options.analyticsObject||null)){
+                /*if(!(options.analyticsObject||null)){
                     throw new Error('Missing "option.analyticsObject".');
-                }
+                }*/
             }
 
             //todo check all other public APIs

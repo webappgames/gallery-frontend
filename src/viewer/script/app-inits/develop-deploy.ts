@@ -118,24 +118,6 @@ module GALLERY.Viewer {
                     '/dist/viewer.libs.js',
 
 
-                    /*'/media/images/other/eye.jpg',
-
-
-                    '/node_modules/react/dist/react.js',
-                    '/node_modules/react-dom/dist/react-dom.js',
-
-                    'https://code.jquery.com/jquery-2.2.4.min.js',
-                    'https://code.jquery.com/ui/1.12.0/jquery-ui.min.js',
-                    'https://cdn.ravenjs.com/3.9.1/raven.min.js',
-                    '/node_modules/jszip/dist/jszip.min.js',
-                    '/node_modules/file-saver/FileSaver.min.js',
-                    '/node_modules/mustache/mustache.min.js',
-
-                    '/viewer/script/lib/babylon.js',
-                    '/viewer/script/lib/lodash.min.js',
-                    '/node_modules/handjs/hand.min.js',
-
-                    '/viewer/script/viewer.js'*/
 
                 ];
 
@@ -268,47 +250,11 @@ module GALLERY.Viewer {
                 let deployFiles = [].concat(screenshots, media);
 
 
-                /*let jsFiles = deployFiles.filter(function (file) {
-                    return (file.name.substr(-3) == '.js');
-                });
 
-                deployFiles = deployFiles.filter(function (file) {
-                    return (file.name.substr(-3) !== '.js');
-                });
-
-
-                /*let scripts = jsFiles.map(function (file) {
-                    return file.content;
-                });
-
-
-                /*scripts.push(`
-            $.get('/objects.compiled.json').done(function(response){
-                GALLERY.Viewer.run(new GALLERY.Objects.CompiledArray(response));
-            });
-`);*/
-
-
-                /*scripts.push(`(function(d, s, id) {
-                 var js, fjs = d.getElementsByTagName(s)[0];
-                 if (d.getElementById(id)) return;
-                 js = d.createElement(s); js.id = id;
-                 js.src = "//connect.facebook.net/cs_CZ/sdk.js#xfbml=1&version=v2.8&appId=602465393294706";
-                 fjs.parentNode.insertBefore(js, fjs);
-                 }(document, 'script', 'facebook-jssdk'));`);*/
-
-
-                //let script = scripts.join(';/**/\n');
-
-
-                //let gallery_folder = gallery_domain.split('.').join('-');
 
 
                 let zip = new JSZip();
-                //let zipRoot = zip.folder(gallery_folder);
 
-
-                //zip.file('script-bundle.js', script);
 
 
                 zip.file('objects.compiled.json', JSON.stringify(objects, null, 4));

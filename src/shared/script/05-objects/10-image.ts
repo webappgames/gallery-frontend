@@ -31,6 +31,7 @@ module GALLERY.Objects {
         public checkCollisions: boolean;
         public backFace: boolean;
         public isSolid: boolean;
+        public isPassive: boolean;
 
 
         constructor(object) {
@@ -55,6 +56,7 @@ module GALLERY.Objects {
             this.checkCollisions = this.checkCollisions || false;
             this.backFace = this.backFace || false;
             this.isSolid = this.isSolid || false;
+            this.isPassive = this.isPassive || false;
 
             this.offsetHorizontal = this.offsetHorizontal || 0;
             this.offsetVertical = this.offsetVertical || 0;
@@ -101,6 +103,9 @@ module GALLERY.Objects {
                     return ('<input type="checkbox">');
                 case 'isSolid':
                     return ('<input type="checkbox">');
+                case 'isPassive':
+                    return ('<input type="checkbox">');
+
 
 
                 case 'design':

@@ -559,7 +559,7 @@ module GALLERY.Objects {
 
 
 
-            if(pressed) {
+            if(pressed && !this.isPassive) {
 
 
                 if(this.getApp().getState()!==this.getUniqueUri()){

@@ -34,6 +34,7 @@ module GALLERY.Objects {
         public isPassive: boolean;
 
 
+
         constructor(object) {
 
             super(object);
@@ -239,6 +240,9 @@ module GALLERY.Objects {
         createImageMesh(scene: BABYLON.Scene): BABYLON.Mesh {
             let quality;
 
+
+
+
             if (window.innerWidth > 1024) {
                 quality = 1024;
             } else if (window.innerWidth > 512) {
@@ -247,13 +251,15 @@ module GALLERY.Objects {
                 quality = 256;
             }
 
-            let distance = 5;
+
+            let distance = Math.max(this.width,this.height)*3;
+
 
             let image00 = BABYLON.Mesh.CreatePlane(this.id, BLOCK_SIZE, scene);
             image00.material = Viewer.getImageMaterial(this.src, quality, this.isEmitting, this.hasAlpha, this.backFace);
 
 
-            const lods = 5;
+            const lods = 3;
             let mesh;
 
             for (let lod = 0; lod < lods; lod++) {
@@ -292,6 +298,7 @@ module GALLERY.Objects {
 
             image.scaling.x = object.width;
             image.scaling.y = object.height;
+
 
 
             if (object.onGround) {
@@ -576,21 +583,39 @@ module GALLERY.Objects {
         }
 
 
+
+        setDefaultScaling(){
+            let imageMesh = this.getCreatedBabylonMesh();
+            imageMesh.scaling.x = this.width;
+            imageMesh.scaling.y = this.height;
+        }
+
+
         handlePointerEnter(event, pickResult){
 
-            let mesh = this.getCreatedBabylonMesh();
-            mesh.scaling.x *= 2;
-            mesh.scaling.y *= 2;
+            if(!this.isPassive) {
 
-            //todo DI
-            appEngine.renderTick();
+                let imageMesh = this.getCreatedBabylonMesh();
 
-            //alert('hu');
+
+                let distance = BABYLON.Vector3.Distance(camera.position,imageMesh.position)/BLOCK_SIZE;
+                let q = 1 + 0.005*distance;
+
+
+                imageMesh.scaling.x *= q;
+                imageMesh.scaling.y *= q;
+
+                this.getApp().engine.renderTick();
+            }
+
         }
 
         handlePointerLeave(event, pickResult){
-            //alert('ha');
 
+            if(!this.isPassive) {
+                this.setDefaultScaling();
+                this.getApp().engine.renderTick();
+            }
         }
 
 

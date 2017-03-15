@@ -169,6 +169,11 @@ module GALLERY.Viewer{
         }
 
 
+        get engine():AppEngine{
+            return this.appEngine;
+        }
+
+
         setState(state:string,standGround=false,immediately=true){
 
 

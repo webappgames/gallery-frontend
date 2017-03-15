@@ -11,47 +11,46 @@ module GALLERY.Viewer {
 
 
 
-    let last_hoovered_mesh = null;
-    export function onPointerHover(evt, pickResult) {
+    let hooveredObjectLast: Objects.Object;
+    export function onPointerHover(event) {
 
-        let hoovered_mesh;
+        //todo get x,y from event
+        var pickResult = scene.pick(scene.pointerX, scene.pointerY);
+
+
+
+        let hooveredObject;
         if (pickResult.hit) {
-
-
-            r('Hoover '+pickResult.pickedMesh.name);
-
-
-            if(pickResult.pickedMesh.name.split('-',2)[0]!=='image'){
-                hoovered_mesh = null;
-            }else{
-                hoovered_mesh=pickResult.pickedMesh;
-            }
-
-
-
+            hooveredObject = objects.getObjectById(pickResult.pickedMesh.name);
         }else{
-            hoovered_mesh = null;
+            hooveredObject = null;
         }
 
 
-        if(hoovered_mesh!==last_hoovered_mesh){
 
-            if(hoovered_mesh){
-                onPointerEnter(hoovered_mesh);
+
+        if(hooveredObject!==hooveredObjectLast){
+
+            if(hooveredObject){
+
+                hooveredObject.handlePointerEnter(event,pickResult);
+                //onPointerEnter(hooveredObject);
             }
 
-            if(last_hoovered_mesh){
-                onPointerLeave(last_hoovered_mesh);
+            if(hooveredObjectLast){
+
+                hooveredObjectLast.handlePointerLeave(event,pickResult);
+                //onPointerLeave(hooveredObjectLast);
             }
 
-            last_hoovered_mesh = hoovered_mesh;
+            hooveredObjectLast = hooveredObject;
 
         }
 
     }
 
 
-    let beforeHoverScaling;
+    /*let beforeHoverScaling;
     //let hooverInterval;
 
     //let hoverColor = BABYLON.Color3.White();//BABYLON.Color3.FromHexString('#37beff');
@@ -68,19 +67,6 @@ module GALLERY.Viewer {
         mesh.scaling.y *= q;
         appEngine.renderTick();
 
-        /*let rad = 0;
-        hooverInterval = setInterval(function () {
-
-            rad += 30 / 180 * Math.PI;
-            let q = 1+(-Math.cos(rad)+1)/5;
-
-            mesh.scaling = beforeHoverScaling.clone();
-            mesh.scaling.x *= q;
-            mesh.scaling.y *= q;
-
-
-        },50);*/
-
 
 
         //hooverLayer.addMesh(mesh, hoverColor);
@@ -93,7 +79,7 @@ module GALLERY.Viewer {
         mesh.scaling = beforeHoverScaling;
         appEngine.renderTick();
         //hooverLayer.removeMesh(mesh);
-    }
+    }*/
 
 
 }

@@ -576,6 +576,25 @@ module GALLERY.Objects {
         }
 
 
+        handlePointerEnter(event, pickResult){
+
+            let mesh = this.getCreatedBabylonMesh();
+            mesh.scaling.x *= 2;
+            mesh.scaling.y *= 2;
+
+            //todo DI
+            appEngine.renderTick();
+
+            //alert('hu');
+        }
+
+        handlePointerLeave(event, pickResult){
+            //alert('ha');
+
+        }
+
+
+
 
     }
 

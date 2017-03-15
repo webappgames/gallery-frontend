@@ -182,12 +182,17 @@ module GALLERY.Objects{
 
 
 
-
+        //todo this should be in some abstract meshObject
         handlePointerPress(event, pickResult){
         }
 
         handlePointerRelease(pressed:boolean, event, pickResult){
         }
+
+        handlePointerEnter(event, pickResult){}
+
+        handlePointerLeave(event, pickResult){}
+
 
 
 

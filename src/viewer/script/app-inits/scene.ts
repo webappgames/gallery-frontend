@@ -96,13 +96,7 @@ module GALLERY.Viewer {
 
 
 
-
-        canvas.addEventListener("mousemove", function (event) {
-            var pickResult = scene.pick(scene.pointerX, scene.pointerY);
-            onPointerHover(event,pickResult);
-        });
-
-
+        canvas.addEventListener("mousemove", onPointerHover);
 
 
 

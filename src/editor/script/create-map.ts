@@ -323,8 +323,18 @@ function createMap() {
                 //r(object[key]);
                 //$input_element.val(object[key]);
 
+                r($input_element,object[key]);
+
                 if($input_element.prop("tagName")=='INPUT'){//todo better
-                    $input_element.attr('value',object[key]);
+
+                    if($input_element.attr('type')!=='checkbox'){
+                        $input_element.attr('value',object[key]);
+                    }else{
+                        if(object[key])$input_element.attr('checked','checked');
+                    }
+
+
+
                 }else{
                     $input_element.text(object[key]);
                 }

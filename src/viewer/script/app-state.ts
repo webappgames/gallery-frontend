@@ -53,6 +53,7 @@ module GALLERY.Viewer{
     let observers=[];
     export function observeAppState(onChange:()=>{} ){
         observers.push(onChange);
+        onChange();
     }
 
 

@@ -40,7 +40,22 @@ module GALLERY.Viewer{
         GALLERY.Viewer.processStateFromLocation(/*window.document.location*/location,standGround,immediately);
 
         currentLinks();
+
+
+        observers.forEach(function (observerOnChange) {
+            observerOnChange();
+        });
+
     }
+
+
+
+    let observers=[];
+    export function observeAppState(onChange:()=>{} ){
+        observers.push(onChange);
+    }
+
+
 
     export function appStateBack(standGround=false,immediately=true) {
 
@@ -73,7 +88,7 @@ module GALLERY.Viewer{
         if (pathname.substr(0, 2) === '/:') {
             object = objects.getObjectById(pathname.substr(2));
         } else {
-            object = objects.findBy('uri',pathname);
+            object = objects.filterTypes('label').findBy('uri',pathname);
         }
 
 
@@ -213,21 +228,13 @@ module GALLERY.Viewer{
 
 
 
+    export function getAppState(){
+        return window.document.location.pathname;
+    }
+
 
     export function getAppStateLabel():Objects.Label{
-
-
-        //r(objects.filterTypes('label'),window.document.location);
-
-        let pathname = window.document.location.pathname;
-        return objects.filterTypes('label').findBy('uri',pathname) as Objects.Label;
-
-        /*if(pathname.substr(0,2)=='/:'){
-            //r(pathname.substr(2));
-            return objects.findBy('id',pathname.substr(2));
-        }else{
-            return objects.filterTypes('label').findBy('uri',pathname);
-        }*/
+        return objects.filterTypes('label').findBy('uri',getAppState()) as Objects.Label;
 
     }
 

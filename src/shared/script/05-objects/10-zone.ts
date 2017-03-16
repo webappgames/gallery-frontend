@@ -71,6 +71,8 @@ module GALLERY.Objects{
                     return('<input type="number">');
                 case 'height':
                     return('<input type="number">');
+                case 'uri':
+                    return('<input type="text">');
                 case 'uri_level':
                     return('<input type="number">');
                 case 'isPickable':

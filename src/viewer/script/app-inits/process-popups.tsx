@@ -75,8 +75,33 @@ module GALLERY.Viewer {
                 $this.mouseleave(render.bind(this,false));
             } else if (event === 'click') {
                 $this.click(function(){
+                    //todo depracated
                     render.call(this,true);//todo toggle
                 });
+            } else if (event === 'state') {
+
+
+
+                const turnOnState = $this.attr('popup-state');
+
+
+                observeAppState(()=>{
+
+                    r('observeAppState',turnOnState,getAppState());
+
+                    if(turnOnState===getAppState()){
+
+                        render.call(this,true);
+                    }else{
+                        render.call(this,false);
+                    }
+
+
+                });
+
+
+
+
             } else {
                 throw new Error(`Unknown event type ${event} in popup-event attribute!`);
             }

@@ -112,7 +112,9 @@ document.addEventListener("drop", function(e){
         let filename = file.name;
         let message = Message.info(filename+': Nahrávání...');
 
-        TOWNS.CDN.uploadFiles(
+
+
+        GALLERY.CDN.uploadFiles(
             [file]
             ,function(progress){
                 message.text(filename+': '+progress+'%');

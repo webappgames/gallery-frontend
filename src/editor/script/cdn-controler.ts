@@ -1,4 +1,4 @@
-namespace TOWNS.CDN{
+module GALLERY.CDN{
 
     
     const URL='http://cdn.pavolhejny.com/';

@@ -158,15 +158,18 @@ module GALLERY.Viewer {
 
             //=============================================================Zones
 
-            let inZonesAll = [];
 
-            //r(zones);aaa;
+            let inZonesAll = zones.filter(function (zone) {
 
-            zones.forEach(function (zone) {
+                if (zone.hidden) {
+                    return false;
+                }
 
                 if (zone.isIn(camera.position,camera.rotation)) {
-                    inZonesAll.push(zone);
+                    return true;
                 }
+
+                return false;
             });
 
 

@@ -18,6 +18,7 @@ module GALLERY.Viewer {
 
     export let meshes = [];
     export let zones = [];
+    //export let labels = new Objects.Array();
     export let boards = [];
     export let gates = [];
     export let links = [];
@@ -276,6 +277,8 @@ module GALLERY.Viewer {
 
 
         } else if (object.type == 'label') {
+
+            //labels.push(object);
             /*if(object.uri=='/'){
              r(object);
              moveTo(object.position.x,object.position.y,parseInt(object.rotation),object.world,object.storey,true);//todo repair in admin

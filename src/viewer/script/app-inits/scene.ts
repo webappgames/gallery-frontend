@@ -397,6 +397,7 @@ module GALLERY.Viewer {
 
         var sun = new BABYLON.DirectionalLight("Dir0", new BABYLON.Vector3(-0.7, -1, -0.5), scene);
         var sun2 = new BABYLON.DirectionalLight("Dir0", new BABYLON.Vector3(0.7, -1, 0.5), scene);
+        sun.intensity = 1;
         sun2.intensity = 0.5;
 
 

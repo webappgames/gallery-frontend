@@ -81,6 +81,12 @@ module GALLERY.Viewer {
 
             let material = new BABYLON.StandardMaterial("texture4", scene);
 
+
+            material.bumpTexture = new BABYLON.Texture(src_normal, scene);
+
+
+
+
             if (isEmitting) {
 
 

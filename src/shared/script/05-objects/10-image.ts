@@ -11,6 +11,7 @@ module GALLERY.Objects {
 
         public uri: string;
         public parent: string;
+        public next: string;
         public width: number;
         public height: number;
         public offsetVertical: number;
@@ -46,6 +47,7 @@ module GALLERY.Objects {
 
             this.uri = this.uri || 'none';
             this.parent = this.parent || 'none';
+            this.next = this.next || 'none';
 
 
             this.rotation = this.rotation || 0;
@@ -89,6 +91,8 @@ module GALLERY.Objects {
                 case 'uri':
                     return ('<input type="text">');
                 case 'parent':
+                    return ('<input type="text">');
+                case 'next':
                     return ('<input type="text">');
                 case 'rotation':
                     return ('<input type="number">');
@@ -519,6 +523,7 @@ module GALLERY.Objects {
                         name: object.name,
                         uri: uri,
                         parent: object.parent,
+                        next: object.next,
 
                     }).registerApp(this.getApp());
 

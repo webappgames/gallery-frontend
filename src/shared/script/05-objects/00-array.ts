@@ -348,6 +348,36 @@ module GALLERY.Objects{
 
 
 
+        createWithVirtual():Objects.Array{
+
+            var materialAndVirtualObjects = new Array();
+
+
+
+            function processObject(object:Object,objectsCollection:Array){
+
+                objectsCollection.push(object);
+
+                let virtualObjects = object.getVirtualObjects();
+                if(virtualObjects) {
+
+                    virtualObjects.forEach((object)=>{
+                        processObject(object,objectsCollection);
+                    });
+                }
+            }
+
+
+
+            this.forEach((object)=>{
+                processObject(object,materialAndVirtualObjects);
+            });
+
+
+            return materialAndVirtualObjects;
+
+        }
+
 
 
     }

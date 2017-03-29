@@ -89,8 +89,14 @@ module GALLERY.Viewer{
         if (pathname.substr(0, 2) === '/:') {
             object = objects.getObjectById(pathname.substr(2));
         } else {
-            object = objects.filterTypes('label').findBy('uri',pathname);
+            object = objects.createWithVirtual().filterTypes('label').findBy('uri',pathname);
+
+            if(!object){
+                throw new Error(`App state should refer to existing or virtual label.`);
+            }
         }
+
+
 
 
 
@@ -102,6 +108,7 @@ module GALLERY.Viewer{
         if(object instanceof Objects.Image){
             label = object.getVirtualLabel();
         }else{
+            r(object);
             throw new Error(`App state should refer to Label or Image.`);
         }
 
@@ -113,7 +120,7 @@ module GALLERY.Viewer{
 
 
         if(!label){
-            r(objects.filterTypes('label'));
+            r(objects.createWithVirtual().filterTypes('label'));
             throw new Error(`Label identified as "${pathname}" do not exists.`);
         }
 
@@ -169,7 +176,7 @@ module GALLERY.Viewer{
 
 
         let label = getAppStateLabel();
-        let label_next = objects.filterTypes('label').findBy('uri',label.next);
+        let label_next = objects.createWithVirtual().filterTypes('label').findBy('uri',label.next);
 
         if(label_next) {
 
@@ -186,7 +193,7 @@ module GALLERY.Viewer{
         if(LOCKED=='PREVIOUS')return;
 
         let label = getAppStateLabel();
-        let label_previous = objects.filterTypes('label').findBy('next',label.uri);
+        let label_previous = objects.createWithVirtual().filterTypes('label').findBy('next',label.uri);
 
         if(label_previous) {
             LOCKED = 'PREVIOUS';
@@ -235,7 +242,7 @@ module GALLERY.Viewer{
 
 
     export function getAppStateLabel():Objects.Label{
-        return objects.filterTypes('label').findBy('uri',getAppState()) as Objects.Label;
+        return objects.createWithVirtual().filterTypes('label').findBy('uri',getAppState()) as Objects.Label;
 
     }
 

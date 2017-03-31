@@ -87,7 +87,7 @@ module GALLERY.Viewer {
 
 
 
-            if (isEmitting) {
+            if (!hasAlpha) {
 
 
                 material.emissiveTexture = image_texture;
@@ -105,6 +105,9 @@ module GALLERY.Viewer {
             } else {
 
                 material.diffuseTexture = image_texture;
+                if(isEmitting){
+                    material.emissiveColor = new BABYLON.Color3(1, 1, 1);
+                }
 
             }
 

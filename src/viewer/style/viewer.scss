@@ -71,7 +71,7 @@ button:hover, .button:hover, input[type="submit"]:hover {
 
 @import 'profile';
 @import 'zone-window';
-@import '__3';
-@import '__4';
-@import '__5';
+@import 'zone-window-small';
+@import 'zone-hidden';
+@import 'zone-only-buttons';
 

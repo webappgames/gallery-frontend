@@ -17,6 +17,7 @@ module GALLERY.Objects {
         public endlessStructuresFromStorey: string;
         public shadows: boolean;
         public fov: number;
+        //public globalButtons: string;
 
 
         getEditorInputHtml(key: string): string {
@@ -44,6 +45,8 @@ module GALLERY.Objects {
                     return ('<input type="checkbox">');
                 case 'fov':
                     return ('<input type="number">');
+                //case 'globalButtons':
+                //    return ('<input type="text">');
                 default:
                     return (super.getEditorInputHtml(key));
             }
@@ -66,6 +69,7 @@ module GALLERY.Objects {
             this.endlessStructuresFromStorey = this.endlessStructuresFromStorey || '1NP';
             this.shadows = this.shadows || false;
             this.fov = this.fov || 1.3;
+            //this.globalButtons = this.globalButtons || '';
 
         }
 

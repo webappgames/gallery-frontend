@@ -491,7 +491,7 @@ section#boards {
         width: 86px;
         border: 2px solid #37beff; }
 
-.zone-board, .zone-board-small {
+.zone-board, .zone-board-small, .zone-board-pure {
   display: block;
   cursor: pointer;
   width: 320px;
@@ -508,30 +508,30 @@ section#boards {
 
     }
   }*/ }
-  .zone-board h1, .zone-board-small h1 {
+  .zone-board h1, .zone-board-small h1, .zone-board-pure h1 {
     margin: 0px;
     font-size: 2em;
     width: calc(100% - 12px);
     background-color: #ddd;
     padding: 6px;
     margin-bottom: 10px; }
-  .zone-board h1.important, .zone-board-small h1.important {
+  .zone-board h1.important, .zone-board-small h1.important, .zone-board-pure h1.important {
     font-size: 1.5em; }
-  .zone-board .text .gallery, .zone-board-small .text .gallery {
+  .zone-board .text .gallery, .zone-board-small .text .gallery, .zone-board-pure .text .gallery {
     display: block;
     text-align: center; }
-    .zone-board .text .gallery img, .zone-board-small .text .gallery img {
+    .zone-board .text .gallery img, .zone-board-small .text .gallery img, .zone-board-pure .text .gallery img {
       display: inline-block;
       width: 90px; }
-      .zone-board .text .gallery img:hover, .zone-board-small .text .gallery img:hover {
+      .zone-board .text .gallery img:hover, .zone-board-small .text .gallery img:hover, .zone-board-pure .text .gallery img:hover {
         width: 86px;
         border: 2px solid #37beff; }
-  .zone-board .next, .zone-board .previous, .zone-board-small .next, .zone-board-small .previous {
+  .zone-board .next, .zone-board .previous, .zone-board-small .next, .zone-board-small .previous, .zone-board-pure .next, .zone-board-pure .previous {
     font-size: 2em; }
-    .zone-board .next:hover, .zone-board .previous:hover, .zone-board-small .next:hover, .zone-board-small .previous:hover {
+    .zone-board .next:hover, .zone-board .previous:hover, .zone-board-small .next:hover, .zone-board-small .previous:hover, .zone-board-pure .next:hover, .zone-board-pure .previous:hover {
       color: #37beff; }
 
-.zone-board .text {
+.zone-board .text, .zone-board-pure .text {
   font-size: 1.5em; }
 
 .zone-board-small .text {
@@ -780,3 +780,27 @@ section.feed {
   padding: 0;
   overflow: hidden;
   background-color: white; }
+
+.zone-window-small {
+  z-index: 7000;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 5px;
+  margin: auto;
+  overflow: hidden;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.96);
+  box-shadow: #000 0 0 50px; }
+
+.zone-hidden {
+  display: none !important; }
+
+.zone-only-buttons h1 {
+  display: none; }
+.zone-only-buttons .text {
+  display: none; }

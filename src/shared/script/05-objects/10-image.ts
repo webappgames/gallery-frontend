@@ -8,6 +8,7 @@ module GALLERY.Objects {
         public design: string;
         public name: string;
         public html: string;
+        public buttons: string;
 
         public uri: string;
         public parent: string;
@@ -43,6 +44,7 @@ module GALLERY.Objects {
             this.design = this.design || 'board';
             this.name = this.name || '';
             this.html = this.html || '';
+            this.buttons = this.buttons || '';
 
 
             this.uri = this.uri || 'none';
@@ -496,6 +498,7 @@ module GALLERY.Objects {
                         design: object.design,
                         name: object.name,
                         html: object.html,
+                        buttons: object.buttons,
                         uri: uri,
                         uri_level: 10000,//todo better low priority
 
